@@ -1,0 +1,27 @@
+
+{
+    "name": "RCare/Patients",
+    "license": "MIT",
+    "description": "Patients module",
+    "authors": [
+        {
+            "name": "Pranali",
+            "email": "mhatre.pranali.d@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RCare\\Patients\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RCare\\Patients\\Providers\\PatientServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

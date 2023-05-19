@@ -1,0 +1,27 @@
+
+{
+    "name": "RCare/API",
+    "license": "MIT",
+    "description": "API module",
+    "authors": [
+        {
+            "name": "Pranali",
+            "email": "mhatre.pranali.d@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RCare\\API\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RCare\\API\\Providers\\APIServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

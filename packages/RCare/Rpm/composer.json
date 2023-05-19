@@ -1,0 +1,27 @@
+{
+    "name": "rcare/rpm",
+    "description": "Rpm Module",
+    "type": "metapackage",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aditya",
+            "email": "aditya.b@d-insights.global"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RCare\\Rpm\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RCare\\Rpm\\Providers\\RpmServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}

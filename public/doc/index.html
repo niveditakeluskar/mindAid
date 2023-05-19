@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Documentation | Gull angular bootstrap 4 admin template</title>
+    <meta name="description" content="Documentation of Gull Angular Bootstrap 4 Admin Template. Multi theme and feature rich angular admin dashboard template">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/material.indigo-light_blue.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        #view-source {
+            position: fixed;
+            display: block;
+            right: 0;
+            bottom: 0;
+            margin-right: 40px;
+            margin-bottom: 40px;
+            z-index: 900;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+        <header class="demo-header mdl-layout__header mdl-color-text--blue-grey-50">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">Documentation</span>
+                <div class="mdl-layout-spacer"></div>
+            </div>
+        </header>
+        <div class="demo-drawer mdl-layout__drawer mdl-color--indigo-900">
+            <header class="demo-drawer-header mdl-color--white-500">
+                <a href="" target="_blank">
+                    <img src="images/logo.png" class="doc-logo">
+                </a>
+            </header>
+            <nav class="demo-navigation mdl-navigation ">
+
+                <a class="mdl-navigation__link" href="#getting-started"><i class="mdl-color-text--blue-grey-400 material-icons" 
+            role="presentation">forward</i>Getting Started</a>
+
+                <a class="mdl-navigation__link" href="#navigation"><i class="mdl-color-text--blue-grey-400 material-icons" 
+            role="presentation">view_list</i>Navigation</a>
+
+                <a class="mdl-navigation__link" href="#theming"><i class="mdl-color-text--blue-grey-400 material-icons" 
+            role="presentation">format_color_fill</i>CSS & Theming</a>
+
+
+                <a class="mdl-navigation__link" href="#classes"><i class="mdl-color-text--blue-grey-400 material-icons" 
+            role="presentation">code</i>Css Classes</a>
+
+                <a class="mdl-navigation__link" href="#laravel"><i 
+  class="mdl-color-text--blue-grey-400 material-icons"
+   role="presentation">code</i>Laravel </a>
+                <a class="mdl-navigation__link" href="#folder-structure"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">code</i>Folder Structure
+</a>
+
+                <a class="mdl-navigation__link" href="#dependencies"><i class="mdl-color-text--blue-grey-400 material-icons" 
+            role="presentation">local_offer</i>Dependencies</a>
+
+            </nav>
+        </div>
+        <main class="mdl-layout__content mdl-color--grey-100">
+            <div class="mdl-grid demo-content">
+
+                <div id="getting-started" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Getting Started</h3>
+                    <p>Make sure you have <code>Nodejs</code>, <code>NPM</code> and <code>gulp</code> installed on your computer.</p>
+                    <p>Download node <a href="https://nodejs.org/en/download/" target="_blank">https://nodejs.org/en/download</a></p>
+                    <p><strong>Install gulp: </strong> Open terminal and run <code>npm install -g gulp</code></p>
+
+                    <h5>HTML Version: Serve and build</h5>
+                    <p>Use terminal and navigate to project root.</p>
+                    <p>Then run <code>npm install</code></p>
+
+                    <h5>Development server</h5>
+                    <p>Run <code>gulp</code> for a dev server. Navigate to <a href="http://localhost:3000" target="_blank">http://localhost:3000/dashboard.v1.html</a>. The app will automatically reload if you change any of the source files.</p>
+
+                    <h5>Build</h5>
+                    <p>Run <code>gulp build</code> to build the project. The build artifacts will be stored in the dist/ directory.</p>
+                </div>
+
+
+                <div id="navigation" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Side Navigation</h3>
+                    <p>Main menu item html markup. <code>data-item</code> defines a parent menu item</p>
+                    <pre>
+            <code class="language-html">
+            &lt;li class="nav-item" data-item="uikits">
+                &lt;a class="nav-item-hold" href="#">
+                    &lt;i class="nav-icon i-Library">&lt;/i>
+                    &lt;span class="nav-text">UI kits&lt;/span>
+                &lt;/a>
+                &lt;div class="triangle">&lt;/div>
+            &lt;/li>
+            </code>
+            </pre>
+
+                    <p>Secondary/child menu html markup. <code>data-parent</code> identifies it's parent menu item.</p>
+                    <pre>
+            <code class="language-html">
+                &lt;ul class="childNav" data-parent="uikits">
+                    &lt;li class="nav-item">
+                        &lt;a href="alerts.html">
+                            &lt;i class="nav-icon i-Bell1">&lt;/i>
+                            &lt;span class="item-name">Alerts&lt;/span>
+                        &lt;/a>
+                    &lt;/li>
+                    &lt;li class="nav-item">
+                        &lt;a href="accordion.html">
+                            &lt;i class="nav-icon i-Split-Horizontal-2-Window">&lt;/i>
+                            &lt;span class="item-name">Accordion&lt;/span>
+                        &lt;/a>
+                    &lt;/li>
+                &lt;/ul>
+            </code>
+            </pre>
+                </div>
+
+                <div id="theming" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>SASS/CSS & Theming Guide</h3>
+
+                    <p><strong>Root style files: </strong></p>
+                    <ul>
+                        <li>lite-purple</li>
+                        <li>lite-blue</li>
+                    </ul>
+                    <p>These files are located in <code>src/assets/styles/sass/themes</code></p>
+
+                    <p>Open <code>lite-purple.scss</code> (Location: src/assets/styles/sass/themes/lite-purple.scss) and and change the color variables
+                        <p>
+
+                            <p>Sass files are compiled and strored in <code>src/assets/styles/css</code></p>
+
+                            <h5>Color variables</h5>
+                            <ul>
+                                <li>primary</li>
+                                <li>secondary</li>
+                                <li>success</li>
+                                <li>warning</li>
+                                <li>info</li>
+                                <li>danger</li>
+                                <li>light</li>
+                                <li>dark</li>
+                            </ul>
+
+
+                            <p>For more about theming, visit these links</p>
+                            <ul>
+                                <li><a href="https://getbootstrap.com/docs/4.1/getting-started/theming/#theme-colors" target="_blank">Creating new bootstrap theme.</a></li>
+                            </ul>
+                </div>
+
+                <div id="classes" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Common CSS Classes</h3>
+                    <div class="mdl-cell--6-col mdl-grid">
+                        <h5>Background color</h5>
+                        <ul>
+                            <li>.bg-primary</li>
+                            <li>.bg-success</li>
+                            <li>.bg-warning</li>
+                            <li>.bg-danger</li>
+                            <li>.bg-light</li>
+                            <li>.bg-dark</li>
+                        </ul>
+                        <br>
+
+                        <h5>Color</h5>
+                        <ul>
+                            <li>.text-primary</li>
+                            <li>.text-success</li>
+                            <li>.text-warning</li>
+                            <li>.text-danger</li>
+                            <li>.text-light</li>
+                            <li>.text-dark</li>
+                        </ul>
+
+                    </div>
+                    <div class="mdl-cell--6-col mdl-grid">
+                        <h5>Margins</h5>
+                        <ul>
+                            <li>.m-0</li>
+                            <li>.m-0</li>
+                            <li>.mt-1</li>
+                            <li>.mr-1</li>
+                            <li>.mb-1</li>
+                            <li>.ml-1</li>
+                            <li>.mb-05 </li>
+                        </ul>
+                        <h5>Paddings</h5>
+                        <ul>
+                            <li>.pt-1 </li>
+                            <li>.pr-1 </li>
+                            <li>.pb-1</li>
+                            <li>.pl-1 </li>
+                            <li>.p-0</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <a href="https://getbootstrap.com/docs/4.1/utilities/borders/">View all Classes</a>
+                    </div>
+                </div>
+
+                <div id="laravel" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Laravel Installation</h3>
+                    <div class="mdl-cell--12-col mdl-grid">
+                        <i class="far fa-folder fa-li"></i>
+                        <h4>Gull Laravel Version</h4>
+                        <div>
+                            If you want to build your next Project Using Laravel, Then Gull-laravel Version Is Good Choice For you. There is Two Laravel Version included (1.Laravel starter kit and 2.Laravel full Verison) . You can start with what ever you prefer and get all the
+                            features available in the Gull Html Version .Its Fresh and Updated Laravel version(Laravel 5.7) with all features and assets. You can either take the parts you want and integrate them into your current project Or You can follow
+                            these stpes to make the Gull-Laravel working.
+
+                        </div>
+                        <h4>Server Requirement </h4>
+                        <p>The Laravel framework has a few system requirements. Of course, all of these requirements are satisfied by the <a href="https://laravel.com/docs/5.7/homestead">Laravel Homestead</a> virtual machine, so it's highly recommended that
+                            you use Homestead as your local Laravel development environment.</p>
+                        <p>However, if you are not using Homestead, you will need to make sure your server meets the following requirements:</p>
+                        <ul>
+                            <li>PHP &gt;= 7.1.3</li>
+                            <li>OpenSSL PHP Extension</li>
+                            <li>PDO PHP Extension</li>
+                            <li>Mbstring PHP Extension</li>
+                            <li>Tokenizer PHP Extension</li>
+                            <li>XML PHP Extension</li>
+                            <li>Ctype PHP Extension</li>
+                            <li>JSON PHP Extension</li>
+                            <li>BCMath PHP Extension</li>
+                        </ul>
+                        <h4>
+                            Installation Steps:
+                        </h4>
+                        <ul style="width:100%">
+                            <li>
+                                <i></i> <code>composer install</code>
+                            </li>
+                            <li>
+                                <i></i> <code>npm install</code>
+                            </li>
+                            <p>
+                                Now Need Rename the .env.example to .env
+                            </p><br>
+                            <li>
+                                <i></i> <code>php artisan key:generate</code>
+                            </li>
+                        </ul>
+                        <p>
+                            Now Need some Laravel Commands
+                        </p><br>
+                        <ul>
+                            <li>
+                                <i></i> <code>php artisan serve</code><br>Serves your project
+                            </li>
+                            <li>
+                                <i></i> <code>npm run watch</code><br>Watches your files and compiles your assets on the fly (also auto reloads your browser)
+                            </li>
+                            <li>
+                                <i></i> <code>npm run dev</code><br>Compiles your assets
+                            </li>
+                            <li>
+                                <i></i> <code>npm run prod</code><br>Compiles and prepares your assets for production
+                            </li>
+                        </ul>
+                        <div>
+                            You need to know how laravel works in order to use this version. Check the Laravel <a href="https://laravel.com/docs/5.6/">official documentation</a>.
+                        </div>
+                        <li>
+                    </div>
+                </div>
+
+
+                <div id="folder-structure" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Folder Structure</h3>
+                    <div class="mdl-cell--6-col mdl-grid">
+                        <img src="images/folder.PNG">
+                    </div>
+                </div>
+
+                <div id="dependencies" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                    <h3>Dependencies</h3>
+                    <b>Bootstrap</b>
+                    <p>Doc: <a href="https://getbootstrap.com/" target="_blank">https://getbootstrap.com</a></p>
+
+                    <b>Datatables</b>
+                    <p>Doc: <a href="https://datatables.net/" target="_blank">https://datatables.net</a></p>
+
+                    <b>Datepicker</b>
+                    <p>Doc: <a href="http://amsul.ca/pickadate.js/" target="_blank">http://amsul.ca/pickadate.js</a></p>
+
+                    <b>Cropper</b>
+                    <p>Doc: <a href="https://github.com/fengyuanchen/cropper" target="_blank">https://github.com/fengyuanchen/cropper</a></p>
+
+                    <b>echarts</b>
+                    <p><a href="https://ecomfe.github.io/echarts-doc/public/en/option.html#title" target="_blank">Echart Doc</a></p>
+
+                    <b>Ladda</b>
+                    <p>Doc: <a href="http://lab.hakim.se/ladda" target="_blank">http://lab.hakim.se/ladda</a></p>
+
+                    <b>Slider</b>
+                    <p>Doc: <a href="https://refreshless.com/nouislider/" target="_blank">https://refreshless.com/nouislider/</a></p>
+
+                    <b>Qill Rich text editor</b>
+                    <p>Doc: <a href="https://quilljs.com" target="_blank">https://quilljs.com</a></p>
+
+                    <b>Sweetalert2</b>
+                    <p>Doc: <a href="https://sweetalert2.github.io/" target="_blank">https://sweetalert2.github.io</a></p>
+
+                    <b>TaggingJs</b>
+                    <p>Doc: <a href="http://sniperwolf.github.io/taggingJS/" target="_blank">http://sniperwolf.github.io/taggingJS</a></p>
+
+                    <b>Toastr</b>
+                    <p>Doc: <a href="https://codeseven.github.io/toastr/" target="_blank">https://codeseven.github.io/toastr</a></p>
+
+                    <b>perfect-scrollbar</b>
+                    <p>Doc: <a href="https://github.com/noraesae/perfect-scrollbar" target="_blank">https://github.com/noraesae/perfect-scrollbar</a></p>
+
+
+                </div>
+                <div id="rate" class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid text-center">
+                    <p>Do you like Gull?</p>
+                    <h5 class="m-0">Don't forget to give a 5 star rating.</h5>
+                    <p>This will inspire us to add more features.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <a href="https://themeforest.net/user/mh_rafi/portfolio" target="_blank" id="view-source" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-500 mdl-color-text--black">Buy Gull</a>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <script src="js/prism.js"></script>
+</body>
+
+</html>

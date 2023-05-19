@@ -1,0 +1,46 @@
+.dropdown-item.active {
+    color: white !important;
+}
+
+.filter-option {
+    margin-bottom: -7px;
+}
+
+.selectpicker-form-control > .bootstrap-select {
+    width: auto !important;
+}
+
+.input-group > .bootstrap-select .btn {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.bootstrap-select > .custom-select::after {
+    display: none;
+}
+
+.input-group-prepend .custom-select {
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.select-other-container {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.select-other {
+    cursor: pointer;
+}
+
+.edit-option-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 28px;
+    box-sizing: border-box;
+}
+
+.edit-option {
+    border-color: rgba(0, 0, 0, 0);
+}

@@ -1,0 +1,492 @@
+<?php
+namespace RCare\Ccm\Http\Controllers;
+use App\Http\Controllers\Controller;
+use RCare\Org\OrgPackages\Users\src\Models\Users;
+use RCare\System\Http\Controllers\CommonFunctionController; 
+use RCare\Ccm\Models\CallPreparation;
+use RCare\Ccm\Models\CallStatus;
+use RCare\Ccm\Models\CallHipaaVerification;
+use RCare\Ccm\Models\CallHomeServiceVerification;
+use RCare\Ccm\Models\CallClose;
+use RCare\Ccm\Models\CallWrap;
+use RCare\Ccm\Models\FollowUp;
+use RCare\Ccm\Models\TextMsg;
+use RCare\Ccm\Models\PatientDataStatus;
+use RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents; 
+use RCare\Patients\Models\PatientPartResearchStudy;
+use RCare\Patients\Models\PatientPersonalNotes;
+use RCare\Patients\Models\PatientThreshold; 
+use RCare\Patients\Models\PatientAllergy;
+use RCare\Patients\Models\PatientHealthServices;
+use RCare\Patients\Models\PatientFamily;
+use RCare\Patients\Models\Patients; 
+use RCare\Patients\Models\PatientAddress;
+use RCare\Patients\Models\PatientContactTime; 
+use RCare\Patients\Models\PatientVitalsData;
+use RCare\Patients\Models\PatientHealthData;
+use RCare\Patients\Models\PatientLabRecs;
+use RCare\Org\OrgPackages\Labs\src\Models\LabsParam;
+use RCare\Patients\Models\PatientDemographics;
+use RCare\Patients\Models\PatientProvider;
+use RCare\Patients\Models\PatientMedication;
+use RCare\Org\OrgPackages\Medication\src\Models\Medication;
+use RCare\Org\OrgPackages\Diagnosis\src\Models\Diagnosis;
+use RCare\Org\OrgPackages\Providers\src\Models\Providers;
+use RCare\Org\OrgPackages\Practices\src\Models\Practices;
+use RCare\Patients\Models\PatientDiagnosis;
+use RCare\Patients\Models\PatientTravel;
+use RCare\Patients\Models\PatientHobbies;
+use RCare\Patients\Models\PatientPet;
+use RCare\Patients\Models\PatientServices;
+use RCare\Patients\Models\PatientDevices;
+use RCare\Patients\Models\PatientImaging;
+use RCare\Patients\Models\CarePlanUpdateLogs;
+use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;   
+use RCare\Patients\Models\PatientFirstReview;
+use RCare\Ccm\src\Http\Requests\AllergiesAddRequest;
+use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsVitalsDataAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsProvidersAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsProviderSpecilistAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsMedicationAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
+use RCare\Ccm\src\Http\Requests\PatientsLabRequest;
+use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
+use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
+use RCare\Ccm\src\Http\Requests\PatientsHealthDataRequest;
+use RCare\Org\OrgPackages\Modules\src\Models\Module;
+use RCare\Org\OrgPackages\StageCodes\src\Models\StageCode;
+use RCare\Org\OrgPackages\HealthServices\src\Models\HealthServices;
+use RCare\Org\OrgPackages\CarePlanTemplate\src\Models\CarePlanTemplate;
+use RCare\Ccm\Models\ContentTemplateUsageHistory;
+use RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate;
+use RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory;
+use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
+use RCare\Patients\Models\PatientCareplanLastUpdateandReview;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use DataTables;
+use Carbon\Carbon;
+use PDF;
+use Session;
+
+class CarePlanDevelopmentController extends Controller
+{
+    // created by radha 7dec2020
+    public function getLabData(Request $request) {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $month     = date('m');
+        $year      = date("Y");
+        $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
+                      plr.reading,
+                      ',' ) else STRING_AGG (
+                      rltpr.parameter || ' : ' || plr.high_val,
+                      ',' ) end) as labparameter,plr.notes,(case when plr.lab_date is null then '0' else '1' end) as labdateexist
+                      from patients.patient_lab_recs plr
+                      left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
+                      left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id
+                      where plr.lab_date is not null and plr.lab_test_id is not null and plr.patient_id=".$patientId."
+                      and EXTRACT(Month from plr.created_at) = '".$month."' AND EXTRACT(YEAR from plr.created_at) = '".$year."' 
+                      group  by plr.lab_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes
+                      union 
+                      select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as  description,plr.rec_date ,(case when rlt.description='COVID-19' then STRING_AGG (
+                      plr.reading,
+                      ',' ) else STRING_AGG (
+                      rltpr.parameter || ' : ' || plr.high_val,
+                      ',' ) end) as labparameter,plr.notes,(case when plr.lab_date is null then '0' else '1' end) as labdateexist
+                      from patients.patient_lab_recs plr
+                      left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
+                      left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id and rltpr.status=1
+                      where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =".$patientId."
+                      and EXTRACT(Month from plr.created_at) = '".$month."' AND EXTRACT(YEAR from plr.created_at) = '".$year."' 
+                      group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
+        $data = DB::select( DB::raw($qry) );
+        return Datatables::of($data)
+            ->addIndexColumn()  
+            ->addColumn('action', function($row){           
+            $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("'.date('m-d-Y',strtotime($row->lab_date)).'","'.$row->patient_id.'","'.$row->lab_test_id.'","'.$row->labdateexist.'") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+            $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("'.date('m-d-Y',strtotime($row->lab_date)).'","'.$row->patient_id.'","'.$row->lab_test_id.'","'.$row->labdateexist.'") title="Delete Labs" style="color: red;cursor: pointer;"></i>';            
+            return $btn; 
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }
+
+    public function getVitalData(Request $request) {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth(); 
+        $data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
+    //created by radha(2020-12-17)
+    public function deletePatientlab(Request $request) {
+        $patientId    = sanitizeVariable($request->patientid);
+        $labdate      = sanitizeVariable($request->labdate);
+        $labid        = sanitizeVariable($request->labid);
+        $labdateexist = sanitizeVariable($request->labdateexist);
+        DB::beginTransaction();
+        try { 
+            $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id',$labid)->get();
+            $LabName='';
+            if(isset($name_lab[0]->description)){
+                $LabName = $name_lab[0]->description.'('.$labdate.')';
+            }else{
+                $LabName='Other ('.$labdate.')';
+            }
+            $topic = 'Lab Data : '.$LabName;
+
+            $topic_name_exist  = callwrap::where('patient_id',$patientId)->where('topic',$topic)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists(); 
+            if($labdateexist=='1') {
+                $lab_exit = PatientLabRecs::where('patient_id',$patientId)->where('lab_date',$labdate)
+                ->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+                if($lab_exit == true) {          
+                    PatientLabRecs::where('patient_id',$patientId )->where('lab_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete(); 
+                //delete from Callwrap-table
+                callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();                         
+                }
+                else{
+                    PatientLabRecs::where('patient_id',$patientId )->where('rec_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                //delete from Callwrap-table
+                callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                } 
+            } else {
+                $lab_exit = PatientLabRecs::where('patient_id',$patientId)->where('rec_date',$labdate)->where('lab_test_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+                if($lab_exit == true) {          
+                    PatientLabRecs::where('patient_id',$patientId )->where('rec_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                //delete from Callwrap-table
+                    callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                    ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                } 
+            }
+            DB::commit();
+        } catch(\Exception $ex) {
+            DB::rollBack();
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
+
+    // created by radha 7dec2020
+    public function PopulateLabsData(Request $request) {
+        $patientId    = sanitizeVariable($request->route('patientid'));
+        $labdate      = sanitizeVariable($request->route('labdate')); 
+        $labid        = sanitizeVariable($request->route('labid'));
+        $labdateexist = sanitizeVariable($request->route('labdateexist'));
+        $result       = array();
+        if($labdateexist=='1') {          
+            if(PatientLabRecs::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists()) {
+                $PatientLab =PatientLabRecs::where('patient_id', $patientId)->where('lab_date',$labdate)->where('lab_test_id',$labid)
+                ->distinct()//->where('created_at', PatientLabRecs::max('created_at'))
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                ->get('lab_test_id')->toArray();
+                $result['number_tracking_labs_form']['static']['lab'] = '["'.implode('","',array_column($PatientLab, 'lab_test_id')).'"]';
+                $rec_date = PatientLabRecs::where('patient_id', $patientId)->max('rec_date');
+                $number_tracking_labs_details = DB::table('patients.patient_lab_recs')
+                ->select('patients.patient_lab_recs.lab_test_id', 
+                'patients.patient_lab_recs.lab_test_parameter_id', 
+                'patients.patient_lab_recs.reading', 'patients.patient_lab_recs.high_val',
+                'patients.patient_lab_recs.notes', 'ren_core.rcare_lab_test_param_range.parameter','patients.patient_lab_recs.lab_date')
+                ->leftjoin('ren_core.rcare_lab_test_param_range', function($join) {
+                $join->on('patients.patient_lab_recs.lab_test_id','=','ren_core.rcare_lab_test_param_range.lab_test_id');
+                $join->on('patients.patient_lab_recs.lab_test_parameter_id','=','ren_core.rcare_lab_test_param_range.id')->where('ren_core.rcare_lab_test_param_range.status','1');
+                })
+                ->where('patients.patient_lab_recs.lab_date',$labdate) 
+                ->where('patients.patient_lab_recs.patient_id',$patientId)
+                ->where('patients.patient_lab_recs.lab_test_id',$labid)
+                ->whereNotNull('patients.patient_lab_recs.lab_date')
+                ->whereMonth('patients.patient_lab_recs.created_at', date('m'))->whereYear('patients.patient_lab_recs.created_at', date('Y'))
+                ->get();
+                $result['number_tracking_labs_details']['dynamic']['lab'] = $number_tracking_labs_details;
+            }
+        } else {
+            if(PatientLabRecs::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists()) {
+                $PatientLab =PatientLabRecs::where('patient_id', $patientId)->where('rec_date',$labdate)->where('lab_test_id',$labid)
+                ->distinct()//->where('created_at', PatientLabRecs::max('created_at'))
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                ->get('lab_test_id')->toArray();
+                $result['number_tracking_labs_form']['static']['lab'] = '["'.implode('","',array_column($PatientLab, 'lab_test_id')).'"]';
+                $rec_date = PatientLabRecs::where('patient_id', $patientId)->max('rec_date');
+                $number_tracking_labs_details = DB::table('patients.patient_lab_recs')
+                ->select('patients.patient_lab_recs.lab_test_id', 
+                'patients.patient_lab_recs.lab_test_parameter_id', 
+                'patients.patient_lab_recs.reading', 'patients.patient_lab_recs.high_val',
+                'patients.patient_lab_recs.notes', 'ren_core.rcare_lab_test_param_range.parameter','patients.patient_lab_recs.lab_date','patients.patient_lab_recs.rec_date')
+                ->leftjoin('ren_core.rcare_lab_test_param_range', function($join) {
+                $join->on('patients.patient_lab_recs.lab_test_id','=','ren_core.rcare_lab_test_param_range.lab_test_id');
+                $join->on('patients.patient_lab_recs.lab_test_parameter_id','=','ren_core.rcare_lab_test_param_range.id')->where('ren_core.rcare_lab_test_param_range.status','1');
+                })
+                ->where('patients.patient_lab_recs.rec_date',$labdate) 
+                ->where('patients.patient_lab_recs.patient_id',$patientId)
+                ->where('patients.patient_lab_recs.lab_test_id',$labid)
+                ->whereNull('patients.patient_lab_recs.lab_date')
+                ->whereMonth('patients.patient_lab_recs.created_at', date('m'))->whereYear('patients.patient_lab_recs.created_at', date('Y'))
+                ->get();
+                $result['number_tracking_labs_details']['dynamic']['lab'] =$number_tracking_labs_details;
+            }
+        }
+        return $result;
+    }
+
+    public function deleteCarePlan(Request $request) {
+        $id           = sanitizeVariable($request->id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);  
+        $end_time     = sanitizeVariable($request->end_time);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id); 
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = 1;
+         
+        DB::beginTransaction();
+        try {
+            if(!empty($id) || $id!='') {
+                $update_diagnosis['status'] = 0; 
+                $update_diagnosis['updated_by'] = session()->get('userid'); 
+                $update_diagnosis['created_by'] = session()->get('userid');
+                $p = PatientDiagnosis::where('id',$id)->get();
+                $diagnosis_id= $p[0]->diagnosis;
+                $patient_id = $p[0]->patient_id;                     
+                PatientDiagnosis::where('id', $id)->update($update_diagnosis);
+
+                $careplandata = CarePlanUpdateLogs::where('patient_diagnosis_id',$id)->where('patient_id',$patient_id)->where('diagnosis_id',$diagnosis_id)->exists();
+                if($careplandata == true){//checking bcz previous-month data donot have entry in careplanlog and reviewtable
+                    CarePlanUpdateLogs::where('patient_diagnosis_id',$id)->where('diagnosis_id',$diagnosis_id)->update($update_diagnosis);
+                    PatientCareplanLastUpdateandReview::where('diagnosis_id',$diagnosis_id)->where('patient_id',$patient_id)->update($update_diagnosis);  
+                }
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+            }
+            DB::commit();
+        } catch(\Exception $ex) {
+            DB::rollBack();
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
+
+    public function deleteServices(Request $request) {   
+        $id           = sanitizeVariable($request->id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);  
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id); 
+        $billable     = sanitizeVariable($request->billable); 
+        $form_name    = sanitizeVariable($request->form_name);
+        DB::beginTransaction();
+        try {
+            if(!empty($id) || $id != '' ){ 
+                $update_PatientHealthServices['status'] = 0; 
+                $update_PatientHealthServices['updated_by'] = session()->get('userid'); 
+                $update_PatientHealthServices['created_by'] = session()->get('userid');
+                PatientHealthServices::where('id', $id)->update($update_PatientHealthServices);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+            }
+            DB::commit();
+        } catch(\Exception $ex) {
+            DB::rollBack();
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
+
+    public function deleteAllergies(Request $request) {
+        $id           = sanitizeVariable($request->id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);  
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id); 
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = sanitizeVariable($request->billable);
+
+        DB::beginTransaction();
+        try {
+            if(!empty($id) || $id != '' ){
+                $update_allergy['status'] = 0; 
+                $update_allergy['updated_by'] = session()->get('userid'); 
+                $update_allergy['created_by'] = session()->get('userid');
+                PatientAllergy::where('id', $id)->update($update_allergy);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            } 
+            DB::commit();
+        } catch(\Exception $ex) {
+            DB::rollBack();
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
+
+    public function addnewcode(Request $request) {
+        $conditionid = sanitizeVariable($request->condition);
+        $code        = sanitizeVariable($request->code);
+        $data   = array(
+            'code'         => $code,
+            'diagnosis_id' => $conditionid,
+            'created_by'   => session()->get('userid')  
+        ); 
+        $insert_query = DiagnosisCode::create($data);
+    }
+    
+    public function getAllergies(Request $request) {
+        $id          = sanitizeVariable($request->route('id'));
+        $allergytype = sanitizeVariable($request->route('allergytype'));
+        $data        = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($id, $allergytype);
+       
+        return Datatables::of($data)
+        ->addIndexColumn()
+        ->addColumn('action', function($row){
+            $btn ='<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=carePlanDevelopment.editAllergy("'.$row->id.'","'.$row->allergy_type.'",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';  
+            $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=carePlanDevelopment.deleteAllergies("'.$row->id.'","'.$row->allergy_type.'","'.$row->patient_id.'",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+            return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }
+    
+    public function getAllergiesOther(Request $request) { 
+        $id                  = sanitizeVariable($request->id);
+        $allergy_type        = sanitizeVariable($request->route('allergytype'));
+        $PatientOtherAllergy = (PatientAllergy::self($id) ? PatientAllergy::self($id)->population() : "");
+        if($allergy_type=='petrelated') {
+            $result['allergy_pet_related_form'] = $PatientOtherAllergy; 
+            $result['review_allergy_pet_related_form'] = $PatientOtherAllergy; 
+        } elseif ($allergy_type=='latex') {
+            $result['allergy_latex_form'] = $PatientOtherAllergy;
+            $result['review_allergy_latex_form'] = $PatientOtherAllergy;
+        } elseif ($allergy_type=='insect') {
+            $result['allergy_insect_form'] = $PatientOtherAllergy; 
+            $result['review_allergy_insect_form'] = $PatientOtherAllergy; 
+        } elseif ($allergy_type=='enviromental') {
+            $result['allergy_enviromental_form'] = $PatientOtherAllergy;
+            $result['review_allergy_enviromental_form'] = $PatientOtherAllergy;
+        } elseif ($allergy_type=='drug') {
+            $result['allergy_drug_form'] = $PatientOtherAllergy; 
+            $result['review_allergy_drug_form'] = $PatientOtherAllergy; 
+        } elseif ($allergy_type=='food') {
+            $result['allergy_food_form'] = $PatientOtherAllergy;
+            $result['review_allergy_food_form'] = $PatientOtherAllergy;
+        } elseif ($allergy_type=='other') {
+            $result['allergy_other_allergy_form'] = $PatientOtherAllergy; 
+            $result['review_allergy_other_allergy_form'] = $PatientOtherAllergy;
+        }
+        return $result; 
+    }
+    
+    public function Services_list(Request $Request){
+        $id               = sanitizeVariable($Request->route('id'));
+        $servicetype      = sanitizeVariable($Request->route('servicetype'));  
+        $lastMonthService = "";
+        $dataexist        = PatientHealthServices::where("patient_id", $id)->where("hid",$servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+        if($dataexist==true) { 
+            $lastMonthService = PatientHealthServices::where("patient_id", $id)->where('status',1)->where("hid",$servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->with('users')->get();
+        } else { 
+            $lastMonthService = PatientHealthServices::with('users')->where('patient_id', $id)->where('status',1)->where("hid",$servicetype)->where('created_at', '>=', Carbon::now()->subMonth())->get();
+        }
+        return Datatables::of($lastMonthService)
+        ->addIndexColumn()
+        ->addColumn('action', function($row){
+            $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  onclick=carePlanDevelopment.editService("'.$row->id.'") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';  
+            $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=carePlanDevelopment.deleteServices("'.$row->id.'",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+            return $btn;
+        })
+        ->rawColumns(['action']) 
+        ->make(true);
+    }
+    
+    public function getServices(Request $request) {
+        $id                    = sanitizeVariable($request->id);     
+        $PatientHealthServices = (PatientHealthServices::self($id) ? PatientHealthServices::self($id)->population() : ""); 
+        $hid                   = $PatientHealthServices['static']['hid'];
+        if($hid == '1') {
+            $result['service_dme_form'] = $PatientHealthServices;
+            $result['review_service_dme_form'] = $PatientHealthServices;
+        } elseif ($hid == '2') {
+            $result['service_home_health_form'] = $PatientHealthServices;
+            $result['review_service_home_health_form'] = $PatientHealthServices;
+        } elseif ($hid == '3') {
+            $result['service_dialysis_form'] = $PatientHealthServices;
+            $result['review_service_dialysis_form'] = $PatientHealthServices;
+        } elseif ($hid == '4') {
+            $result['service_therapy_form'] = $PatientHealthServices;
+            $result['review_service_therapy_form'] = $PatientHealthServices;
+        } elseif ($hid == '5') {
+            $result['service_social_form'] = $PatientHealthServices;
+            $result['review_service_social_form'] = $PatientHealthServices;
+        } elseif ($hid == '6') {
+            $result['service_medical_supplies_form'] = $PatientHealthServices;
+            $result['review_service_medical_supplies_form'] = $PatientHealthServices;
+        } elseif ($hid == '7') {
+            $result['service_other_health_form'] = $PatientHealthServices;
+            $result['review_service_other_health_form'] = $PatientHealthServices;
+        }
+        return $result; 
+    }
+
+    public function populateFormVizCarePlanDevelopmentData($patientId, $form) {
+        $patientId                        = sanitizeVariable($patientId);
+        $form                             = sanitizeVariable($form);
+
+        if(isset($form) && (($form == "family_info") || ($form == "all"))) {
+            $patientInfo                      = Patients::find($patientId) ? Patients::find($patientId)->population() : "";
+            $PatientFamily                    = (PatientFamily::latest($patientId,'spouse') ? PatientFamily::latest($patientId,'spouse')->population() : "");
+            $PatientCareGiver                 = (PatientFamily::latest($patientId,'care-giver') ? PatientFamily::latest($patientId,'care-giver')->population() : "");
+            $PatientEmergencyContact          = (PatientFamily::latest($patientId,'emergency-contact') ? PatientFamily::latest($patientId,'emergency-contact')->population() : "");
+            $patientAddresss                  = PatientAddress::latest($patientId);
+            $result['review_family_patient_data_form'] = $patientInfo;
+            $result['review_family_spouse_form'] = $PatientFamily;
+            $result['review_family_care_giver_form'] = $PatientCareGiver;
+            $result['review_family_emergency_contact_form'] = $PatientEmergencyContact;
+            if(!empty($patientAddresss->add_1)){
+                $result['review_family_patient_data_form']['static']['add_1'] = $patientAddresss->add_1; 
+            }
+        }
+
+        if(isset($form) && (($form == "provider_info") || ($form == "all"))) {
+            $PatientPcpProvider               = (PatientProvider::latest($patientId,'1') ? PatientProvider::latest($patientId,'1')->population() : "");
+            $PatientVisionProvider            = (PatientProvider::latest($patientId,'3') ? PatientProvider::latest($patientId,'3')->population() : "");
+            $PatientDentistProvider           = (PatientProvider::latest($patientId,'4') ? PatientProvider::latest($patientId,'4')->population() : "");
+            $result['review_provider_pcp_form'] = $PatientPcpProvider;
+            $result['review_provider_vision_form'] = $PatientVisionProvider;
+            $result['review_provider_dentist_form'] = $PatientDentistProvider;
+        }
+        return $result;
+    }
+
+    public function populateCarePlanDevelopmentData($patientId) {
+        $patientId                        = sanitizeVariable($patientId);
+        $mid                              = getPageModuleName();
+        $component_id                     = ModuleComponents::where('module_id',$mid)->where('components','Care Plan Development')->get('id');
+        $patient                          = Patients::find($patientId);         
+        $patientInfo                      = Patients::find($patientId) ? Patients::find($patientId)->population() : "";
+        $personal_notes                   = (PatientPersonalNotes::latest($patientId,'patient_id') ? PatientPersonalNotes::latest($patientId,'patient_id')->population() : "");
+        $research_study                   = (PatientPartResearchStudy::latest($patientId,'patient_id') ? PatientPartResearchStudy::latest($patientId,'patient_id')->population() : "");
+        $patient_threshold                = (PatientThreshold::latest($patientId,'patient_id') ? PatientThreshold::latest($patientId,'patient_id')->population() : "");
+        $patientAddresss                  = PatientAddress::latest($patientId);
+        $PatientFamily                    = (PatientFamily::latest($patientId,'spouse') ? PatientFamily::latest($patientId,'spouse')->population() : "");
+        $PatientCareGiver                 = (PatientFamily::latest($patientId,'care-giver') ? PatientFamily::latest($patientId,'care-giver')->population() : "");
+        $PatientEmergencyContact          = (PatientFamily::latest($patientId,'emergency-contact') ? PatientFamily::latest($patientId,'emergency-contact')->population() : "");
+        $PatientFoodAllergy               = (PatientAllergy::latest($patientId,'food') ? PatientAllergy::latest($patientId,'food')->population() : "");
+        $PatientDrugAllergy               = (PatientAllergy::latest($patientId,'drug') ? PatientAllergy::latest($patientId,'drug')->population() : "");
+        $PatientEnviromentalAllergy       = (PatientAllergy::latest($patientId,'enviromental') ? PatientAllergy::latest($patientId,'enviromental')->population() : "");
+        $PatientInsectAllergy             = (PatientAllergy::latest($patientId,'insect') ? PatientAllergy::latest($patientId,'insect')->population() : "");
+        $PatientLatexAllergy              = (PatientAllergy::latest($patientId,'latex') ? PatientAllergy::latest($patientId,'latex')->population() : "");
+        $PatientPreRelatedAllergy         = (PatientAllergy::latest($patientId,'petrelated') ? PatientAllergy::latest($patientId,'petrelated')->population() : "");
+        $PatientDmeServices               = (PatientHealthServices::latest($patientId,'1') ? PatientHealthServices::latest($patientId,'1')->population() : "");
+        $PatientFirstReview               = (PatientFirstRev

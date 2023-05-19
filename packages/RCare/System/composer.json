@@ -1,0 +1,28 @@
+{
+    "name": "rcare/system",
+    "description": "System Module",
+    "type": "metapackage",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "priya",
+            "email": "priyasingh95161@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+
+    "autoload": {
+    "psr-4": {
+        "RCare\\System\\": "src/"
+    }
+},
+"extra": {
+    "laravel": {
+        "providers": [
+            "RCare\\System\\Providers\\LoginServiceProvider"
+        ],
+        "aliases": {}
+    }
+}
+}

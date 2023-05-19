@@ -1,0 +1,59 @@
+{
+  "data": [
+    [
+      "topic":"Last month follow-up",
+      "notes":"",
+      "action_taken":""
+    ],
+    [
+      "topic":"Greatest health concern?",
+      "Can't get to the doctor",
+      "action_taken":"Note in EMR"
+    ],
+    [
+      "topic":"Fallen/dizzy spells recentlly?",
+      "notes":"Yes, twice",
+      "action_taken":"1. Checked on meds 2. Went over fall preparation module"
+    ],
+    [
+      "topic":"Depressed/sad?",
+      "notes":"No",
+      "action_taken":""
+    ],
+    [
+      "topic":"Upcoming office visits?",
+      "notes":"yes, on Octomber 15th ",
+      "action_taken":"1. Went over office visit module 2. Put in EMR"
+    ],
+    [
+      "topic":"Changes in cognitive ability/mood?",
+      "notes":"None detected",
+      "action_taken":""
+    ],
+    [
+      "topic":"Disease specific questions?",
+      "notes":"Run out of glucose strips",
+      "action_taken":"1. Looked for best price. 2. Communicated with patient"
+    ],
+    [
+      "topic":"Other issues?",
+      "notes":"None reported",
+      "action_taken":""
+    ],
+    [
+      "topic":"Preffered day/time",
+      "notes":"Tuesday, Octomber 9th ,9:00",
+      "action_taken":""
+    ],
+    [
+      "topic":"Annual screening/vascination?",
+      "notes":"Yes, Flu shots",
+      "action_taken":"Scheduled for patient"
+    ],
+    [
+      "topic":"Topic for next month",
+      "notes":"Do module for fall prevention",
+      "action_taken":""
+    ]
+  ]
+}

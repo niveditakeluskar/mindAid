@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Documentation Timon - Step Form Wizard</title>
+    <meta name="description" lang="en" content="Timon Step Form Wizard - With Timon - Step Form Wizard you will have power combo of 21 different styles, 8 different transition effects, validation in your step form, titles and subtitles with multiple step, also Timon - Step Form Wizard has predefined set of form sizes from tiny to large. You can easily create and customize any form to fit your needs">
+    <meta name="keywords" lang="en" content="timon,checkout, configuration, form, jquery plugin, multi step, multistep, navigation, registration, responsive, slider form, step, step by step, steps, tabs, wizard">
+    <meta name="robots" content="index, follow">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .buy-it {
+            border-left: 3px solid #181818;
+            border-right: 3px solid #181818;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="w0" class="navbar-inverse navbar-fixed-top navbar" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle" data-toggle="collapse" data-target="#w0-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button><a class="navbar-brand" href="/">Home</a>
+            </div>
+            <div id="w0-collapse" class="collapse navbar-collapse">
+                <ul id="w1" class="navbar-nav navbar-right nav">
+                    <li><a href="index.html">Examples</a></li>
+                    <li class="active"><a href="documentation.html">Docs</a></li>
+                    <li><a class="buy-it" href="https://codecanyon.net/item/timon-step-form-wizard/15830006?ref=askerov" target="_blank">Get on codecanyon</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="site-index">
+
+            <div class="jumbotron">
+                <h1>Documentation</h1>
+
+                <p class="lead">This is may help you.</p>
+            </div>
+            <div class="body-content">
+                <h2 id="structure">With easy structure and different options, You can show your forms like multi step</h2>
+                <h3>Html structure</h3>
+                <pre><code>&lt;div class="tsf-wizard tsf-wizard-1">
+        &lt;div class="tsf-nav-step">
+            &lt;ul class="gsi-step-indicator triangle gsi-style-1  gsi-transition ">
+                &lt;li class="current" data-target="step-1">
+                    &lt;a href="#0">
+                        &lt;span class="number">1&lt;/span>
+                        &lt;span class="desc">
+                            &lt;label>Account setup&lt;/label>
+                            &lt;span>Account details&lt;/span>
+                        &lt;/span>
+                    &lt;/a>
+                &lt;/li>
+               &lt;!-- ADD YOUR STEPS HERE -->
+            &lt;/ul>
+        &lt;/div>
+        &lt;!-- BEGIN STEP CONTAINER -->
+        &lt;div class="tsf-container">
+            &lt;form class="tsf-content">
+               &lt;!-- BEGIN STEP-->
+                &lt;div class="tsf-step step-1 active">
+                    &lt;fieldset>
+                        &lt;legend>Provide your account details&lt;/legend>
+                        &lt;div class="row">
+                            &lt;div class="tsf-step-content">
+                                &lt;div class="col-lg-12">
+                                    &lt;div class="form-group">
+                                        &lt;label for="email">Email&lt;/label>
+                                        &lt;input type="email" class="form-control required" id="email" name="email" placeholder="Email">
+                                    &lt;/div>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/fieldset>
+                &lt;/div>
+              &lt;!-- END STEP-->
+            &lt;/form>
+            &lt;div class="tsf-controls ">
+                &lt;button type="button" data-type="prev" class="btn btn-left tsf-wizard-btn">
+                    &lt;i class="fa fa-chevron-left">&lt;/i> PREV
+                &lt;/button>
+                &lt;button type="button" data-type="next" class="btn btn-right tsf-wizard-btn">
+                    NEXT &lt;i class="fa fa-chevron-right">&lt;/i>
+                &lt;/button>
+                &lt;button type="submit" data-type="finish" class="btn btn-right tsf-wizard-btn">
+                    FINISH
+                &lt;/button>
+            &lt;/div>
+        &lt;/div>
+    &lt;/div>
+
+
+</code></pre>
+                <h3>JavaScript</h3>
+                <pre><code>
+$('.your selector').tsfWizard({
+  stepEffect: 'basic',
+  stepStyle: 'style1',
+  navPosition: 'top',
+  validation: false,
+  stepTransition: true,
+  showButtons: true,
+  showStepNum: true,
+  height: '200px',
+  disableSteps:'none',
+  onBeforeNextButtonClick:function (e, validation) {
+  },
+  onAfterNextButtonClick:function (e, from, to, validation) {
+  },
+  onBeforePrevButtonClick:function (e, from, to) {
+
+  },
+  onAfterPrevButtonClick:function (e, from, to) {
+  },
+  onBeforeFinishButtonClick:function (e, validation) {
+  },
+  onAfterFinishButtonClick:function (e, validation) {
+  }
+});
+                    </code></pre>
+            </div>
+            <div class="body-content">
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                            <th>Values</th>
+                            <th>Default</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>stepStyle</td>
+                            <td>Show your multi step style</td>
+                            <td>
+                                <b>style1</b><br />
+                                <b>style2</b><br />
+                                <b>style3</b><br />
+                                <b>style4</b><br />
+                                <b>style5</b><br />
+                                <b>style5_circle</b><br />
+                                <b>style6</b><br />
+                                <b>style7_borderTop</b><br />
+                                <b>style7_borderBottom</b><br />
+                                <b>style7_borderLeft</b><br />
+                                <b>style7_borderRight</b><br />
+                                <b>style7_borderTop_circle </b><br />
+                                <b>style7_borderBottom_circle </b><br />
+                                <b> style7_borderLeft_circle </b><br />
+                                <b> style7_borderRight_circle </b><br />
+                                <b>style8</b><br />
+                                <b> style8_circle </b><br />
+                                <b> style9 </b><br />
+                                <b> style10 </b><br />
+                                <b> style11 </b><br />
+                                <b> style12</b><br />
+                            </td>
+                            <td>
+                                style1
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>stepEffect</td>
+                            <td>Show your data special animation effect's.</td>
+                            <td>
+                                <b>basic</b> - Basic <br />
+                                <b>bounce</b> - Bounce <br />
+                                <b>slideRightLeft</b> - Slide from right to left <br />
+                                <b>slideLeftRight</b> - Slide from left to right <br />
+                                <b>flip</b> - Flip <br />
+                                <b>transformation</b> - Transformation <br />
+                                <b>slideDownUp</b> - Slide from down to up <br />
+                                <b>slideUpDown</b> - Slide from up to down<br />
+                            </td>
+                            <td>
+                                basic
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>showStepNum</td>
+                            <td>Show or hide step numbers</td>
+                            <td>true | false</td>
+                            <td>true</td>
+                        </tr>
+                        <tr>
+                            <td>stepTransition</td>
+                            <td>Change steps smoothly </td>
+                            <td>true | false</td>
+                            <td>true</td>
+                        </tr>
+                        <tr>
+                            <td>validation</td>
+                            <td>
+                                Validate form or not.
+                                <br />Note : Validation and showButtons properties not be true same time.
+                            </td>
+                            <td>true | false</td>
+                            <td>false</td>
+                        </tr>
+                        <tr>
+                            <td>navPosition</td>
+                            <td>Multi step navigation position</td>
+                            <td>top | right | left | bottom</td>
+                            <td>'top'</td>
+                        </tr>
+                        <tr>
+                            <td>height</td>
+                            <td>Set any height (600px,400px etc) </td>
+                            <td>String</td>
+                            <td>'auto'</td>
+                        </tr>
+                        <tr>
+                            <td>showButtons</td>
+                            <td>Show or hide step controls</td>
+                            <td>true | false</td>
+                            <td>true</td>
+                        </tr>
+                        <tr>
+                            <td>manySteps</td>
+                            <td>If you have many steps. Or your steps will be added dynamically you can use this option</td>
+                            <td>true | false</td>
+                            <td>true</td>
+                        </tr>
+                        <tr>
+                            <td>prevBtn</td>
+                            <td>Previous button text</td>
+                            <td>String</td>
+                            <td>'&lt;i class="fa fa-chevron-left">&lt;/i> PREV'</td>
+                        </tr>
+                        <tr>
+                            <td>nextBtn</td>
+                            <td>Next button text</td>
+                            <td>String</td>
+                            <td>'NEXT &lt;i class="fa fa-chevron-right">&lt;/i>'</td>
+                        </tr>
+
+                        <tr>
+                            <td>finishBtn</td>
+                            <td>Finish button text</td>
+                            <td>String</td>
+                            <td>'FINISH'</td>
+                        </tr>
+                        <tr>
+                            <td>disableSteps</td>
+                            <td>If you want disable steps, you can use this option</td>
+                            <td>
+                                <b> all</b> – disable all steps except current step<br />
+                                <b> after_current</b> – disable after steps except current step<br />
+                                <b> before_current</b> – disable before steps except current step<br />
+                                <b> none</b> – default value,enable all steps<br />
+                            </td>
+                            <td>'none'</td>
+                        </tr>
+
+                        <tr>
+                            <td>onBeforeNextButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parameter is validation value.</td>
+                            <td>function(e,validation){}</td>
+                        </tr>
+                        <tr>
+                            <td>onAfterNextButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parameter is a number of actual step index, third parameter is jquery wrap for wizard, fourth parametr is validation value.</td>
+                            <td>function(e,from,to, validation){}</td>
+                        </tr>
+                        <tr>
+                            <td>onBeforePrevButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parameter is a number of actual step index, third parameter is jquery wrap for wizard.</td>
+                            <td> function (e,from,to) {}</td>
+                        </tr>
+                        <tr>
+                            <td>onAfterPrevButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parameter is a number of actual step index, third parameter is jquery wrap for wizard.</td>
+                            <td> function (e,from,to) {}</td>
+                        </tr>
+                        <tr>
+                            <td>onBeforeFinishButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parametr is validation value.</td>
+                            <td>function (e, validation) {}</td>
+                        </tr>
+                        <tr>
+                            <td>onAfterFinishButtonClick</td>
+                            <td>Function for any issue of your choice</td>
+                            <td>Name of function or anonymous function. First parameter is a element of clicked, second parametr is validation value.</td>
+                            <td>function (e, validation) {}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>If you want to stop running function, you should use below code in before events</h4>
+                <pre>
+  <code>$('.tsf-wizard-1').tsfWizard({
+          onBeforeNextButtonClick:function (e, validation) {
+            console.log('onBeforeNextButtonClick');
+            //  e.preventDefault();
+          }
+  })</code>
+</pre>
+                <h2 style="margin-top: 60px;">API Methods</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 220px;">Name</th>
+                            <th>Description</th>
+                            <th>Return</th>
+                            <th style="width: 400px;">Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>goto()</td>
+                            <td>Go to specific index</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>var _tsfWizard = $(".your selector").tsfWizard();
+_tsfWizard.goto(index);</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>getCurrentIndex()</td>
+                            <td>Return a number of actual active step.</td>
+                            <td>number</td>
+                            <td>
+                                <pre><code>_tsfWizard.getCurrentIndex();</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>setDisableSteps(value)</td>
+                            <td>Disable step in wizard</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.setDisableSteps('all');</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>nextStep()</td>
+                            <td>Go to next step</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.nextStep();</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>previousStep()</td>
+                            <td>Go to previous step</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.previousStep();</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>validate()</td>
+                            <td>Validate current step</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.validate();</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>nextButtonLabel()</td>
+                            <td>Set label for next button.</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.nextButtonLabel('go next');</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>prevButtonLabel()</td>
+                            <td>Set label for previous button.</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.nextButtonLabel('go back');</code></pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>finishButtonLabel()</td>
+                            <td>Set label for finish button.</td>
+                            <td>undefined</td>
+                            <td>
+                                <pre><code>_tsfWizard.nextButtonLabel('Finish');</code></pre>
+                            </td>
+                        </tr>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left"><a href="https://codecanyon.net/user/askerov?ref=askerov">askerov</a> &copy; 2016</p>
+        </div>
+    </footer>
+    <script src="assets/js/jquery-3.1.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+
+</html>

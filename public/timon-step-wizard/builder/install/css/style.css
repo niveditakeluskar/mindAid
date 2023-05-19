@@ -1,0 +1,144 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700);
+
+body {
+    margin:40px;
+    font-family: 'Roboto Condensed', sans-serif;
+  background: #f0f0f0 url('../images/image.gif');
+
+}
+.nextBtn{
+    margin-bottom:20px;
+}
+.tab-content>.active{
+    border-radius: 0px 0px 5px 5px;
+}
+.head {
+    /* color: #000000; */
+    text-align: center;
+}
+.required.form-control{
+  color: red;
+border: 1px solid red;
+}
+.required.form-control::-webkit-input-placeholder { /* Chrome */
+  color: red;
+}
+.required.form-control:-ms-input-placeholder { /* IE 10+ */
+  color: red;
+}
+.required.form-control::-moz-placeholder { /* Firefox 19+ */
+  color: red;
+  opacity: 1;
+}
+.required.form-control:-moz-placeholder { /* Firefox 4 - 18 */
+  color: red;
+  opacity: 1;
+}
+.board {
+    width: 100%;
+    height: auto;
+    /* margin: 20px auto; */
+    background: #fefefe;
+    border-radius: 8px 8px 0 0;
+}
+
+.board .nav-tabs {
+    position: relative;
+    margin: 40px auto;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    background-color: #fdfdfd;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.liner {
+    height: 2px;
+    background: #ddd;
+    position: absolute;
+    width: 80%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+    z-index: 1;
+}
+
+.nav-tabs > li {
+    width: 100%;
+}
+
+.nav-tabs > li:after {
+    content: " ";
+    position: absolute;
+    opacity: 0;
+    margin: 0 auto;
+    bottom: 0px;
+    border: 10px solid transparent;
+    border-bottom-color: #aaa;
+    transition: left 1s;
+}
+
+.nav-tabs > li.active:after {
+    left: calc(50% - 10px);
+    opacity: 1;
+}
+
+
+
+.nav-tabs > li a {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    margin: 20px auto;
+    border-radius: 100%;
+    padding: 0;
+}
+
+.nav-tabs > li a:hover{
+    background: transparent;
+}
+
+.nav-tabs > li span {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    display: inline-block;
+    border-radius: 100px;
+    background: white;
+    z-index: 2;
+    position: absolute;
+    left: 0;
+    text-align: center;
+    font-size: 25px;
+}
+
+.nav-tabs > li span {
+    color: #3e5e9a;
+    border: 2px solid #3e5e9a;
+}
+
+
+
+.nav-tabs > li.active span {
+    color: #fff;
+    background: #337ab7;
+    border: 2px solid #337ab7;
+}
+
+.nav-tabs > li > a.disabled {
+    opacity: 1;
+}
+
+.nav-tabs > li > a.disabled span {
+    border-color: #ddd;
+    color: #aaa;
+}
+
+div#step-1,div#step-2 ,div#step-3,div#step-4  {
+    background: #fff;
+}
+
+div[role="tabpanel"]:after {
+    content: "";
+    display: block;
+    clear: both;

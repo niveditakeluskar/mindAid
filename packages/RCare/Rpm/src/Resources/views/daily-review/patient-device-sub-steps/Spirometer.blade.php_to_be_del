@@ -1,0 +1,786 @@
+   <?php 
+            $module_id    = getPageModuleName();
+            $submodule_id = getPageSubModuleName();
+
+            // $stage_id = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'daily-review'); 
+            ?>
+            <div class="card-body"> 
+                <div class="row"> 
+                    <div class="col-md-12" id ="time_add_success_msg"></div>
+                    <div class="col-md-12 steps_section">
+                    <div class="title">
+                        <input type="hidden" id="patient_id" value="<?php echo $patient[0]->id; ?>">
+                        <input type="hidden" id="module_id" name="module_id" value="{{$module_id}}">
+                        <input type="hidden" id= "component_id" name="sub_module_id" value="{{$submodule_id}}">
+                        <input type="hidden" name="stage_id" value="0">
+                        <input type="hidden" name="step_id" value="0"> 
+                        <h5 class="text-center">Today's Vitals</h5>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="card">
+                            <div class="card-body device_box">
+                                <span id="spirometer_reading_0" class="day"></span>
+                                <span id="spirometer_unit_0" class="unit"></span>
+                                   <input class="checkbox" type="checkbox" id="spirometer_review_0" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')"  style="top: 1px;">
+                                          <input type="hidden" id="spirometer_id_0" >
+                            </div>                               
+                        </div>                        
+                    </div>
+                    </div>                   
+                </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+                <div class="align-self-start pt-3">
+                    <div class="d-flex justify-content-center">
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">7 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id ="spirometer_reading_7" class="day"></span>
+                                            <span id="spirometer_unit_7" class="unit"></span>
+                                            <input class="checkbox" type="checkbox" id="spirometer_review_7" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_7">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">6 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="spirometer_reading_6" class="day"></span>
+                                        <span id="spirometer_unit_6" class="unit"></span>
+                                            <input class="checkbox" type="checkbox" id="spirometer_review_6" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_6">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">5 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="spirometer_reading_5" class="day"></span>
+                                        <span id="spirometer_unit_5" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="spirometer_review_5" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_5">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">4 Days Ago</div>
+                                    <div class="card-body device_box">
+                                          <span id="spirometer_reading_4" class="day"></span>
+                                          <span id="spirometer_unit_4" class="unit"></span>
+                                            <input class="checkbox" type="checkbox" id="spirometer_review_4" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_4">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">3 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="spirometer_reading_3" class="day"></span>
+                                        <span id="spirometer_unit_3" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="spirometer_review_3" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_3">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">2 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="spirometer_reading_2" class="day"></span>
+                                        <span id="spirometer_unit_2" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="spirometer_review_2" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_2">
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class=" rounded" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">Yesterday</div>
+                                    <div class="card-body device_box">
+                                        <span id="spirometer_reading_1" class="day"></span>
+                                        <span id="spirometer_unit_1" class="unit"></span>
+                                          <input class="checkbox" type="checkbox" id="spirometer_review_1" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="spirometer_id_1">
+                                    </div>                               
+                                </div>  
+                            </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+                <div class="align-self-start pt-3">
+                    <div class="row justify-content-center">
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-lg textbtn" id="textbtn_{{$devices[$i]->id}}">Text Patient</button>
+                            </div> 
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-lg">Message Care Manager</button>
+                            </div> 
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" onclick="showtable('{{$devices[$i]->id}}')" class="btn btn-primary btn-lg">View Vitals</button>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+
+                <div id="textcard_{{$devices[$i]->id}}" style="display: none;width: 79%;">               
+                 @include('Rpm::daily-review.text')
+                 </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+               @include('Rpm::daily-review.notes')
+       
+            <div class="row mb-4 justify-content-center" id="review-table_{{$devices[$i]->id}}" style="display: none;">
+                <div class="col-md-10 mb-4" id="test3">                  
+                    <div class="card text-left" id="test2">
+                        <div class="card-body">
+                         <div class="review-table_{{$devices[$i]->id}}">
+                        <button type="button" id="tableclose" class="close" style="font-size: 35px;">×</button>  
+                        </div> 
+                      @include('Rpm::daily-review.patient-device-vitals-filter')
+                            
+                            @include('Theme::layouts.flash-message')
+                            <div class="table-responsive">
+                                <!-- <table id="SPmonthlyreviewlist" class="display table table-striped table-bordered" style="width:100%"> -->
+                                     <table id="monthlyreviewlist_{{$devices[$i]->id}}" class="display table table-striped table-bordered" style="width:100%">
+
+                                <thead>
+                                    <tr>
+                                        <th width="35px">Sr No.</th>
+                                        <th width="35px">View details</th> 
+                                        <th width="205px">Patient</th>
+                                        <th width="97px">DOB</th>
+                                        <th width="97px">Clinic</th>
+                                        <th>Provider</th>                            
+                                        <th>Care Manager</th>
+                                        <th>Device</th>
+                                        <th>Range</th>
+                                        <th>Reading</th>
+                                        <th>TimeStamp</th> 
+                                        <th>Reviewed</th>                                      
+                                    </tr>  
+                                   
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+          
+
+<style type="text/css">
+.checkbox {
+position: absolute;
+    right: 1px;
+    top: 37px;
+}
+
+.device_box{
+    min-height:38px;
+    min-width: 130px;
+}
+.device_header{
+    text-align: center;
+    font-size: revert;
+    font-weight: 400; 
+}
+
+.day{
+    font-weight: bold;
+    font-size: medium;
+}
+.unit{
+    font-weight: bold;
+    font-size: medium;  
+}
+</style><!-- 
+<script type="text/javascript">
+$(document).ready(function(){ 
+    
+    var patient_id = $('#patient_id').val();    
+   var deviceid = '<?php echo $devices[$i]->id;?>';
+
+    getSPMonthlyReviewPatientList(patient_id,deviceid);
+
+    function getMonth(date) {
+            var month = date.getMonth() + 1;
+            return month < 10 ? '0' + month : '' + month; // ('' + month) for string result
+            }
+
+            var c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+            var c_year = new Date().getFullYear();
+            var current_MonthYear = c_year+'-'+c_month;
+            $("#monthly_"+deviceid).val(current_MonthYear);
+            $("#monthlyto_"+deviceid).val(current_MonthYear);
+
+}); 
+
+$.ajaxSetup({    
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+  var getSPMonthlyReviewPatientList = function(patientid,deviceid,monthly=null,monthlyto=null) {
+            var columns = [
+                               { data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                               {data: 'action', name: 'action'}, 
+                                { data: 'pfname',name: 'pfname',
+                                    mRender: function(data, type, full, meta){
+                                        m_Name = full['pmname'];
+                                            if(full['pmname'] == null){
+                                                m_Name = '';
+                                        }
+                                        if(data!='' && data!='NULL' && data!=undefined){
+                                            return ["<img src={{asset('assets/images/faces/avatar.png')}} width='50px' class='user-image' />"]+' '+full['pfname']+' '+m_Name+' '+full['plname'];
+                                        }
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'pdob', type: 'date-dd-mmm-yyyy', name: 'pdob',
+                                    "render":function (value) {
+                                    if (value === null) return "";
+                                        return moment(value).format('MM-DD-YYYY');
+                                    }
+                                },
+                         
+                                { data: 'practicename',name: 'practicename',
+                                    mRender: function(data, type, full, meta){
+                                        practice_name = full['practicename'];
+                                            if(full['practicename'] == null){
+                                                practice_name = '';
+                                        }
+                                        else{
+                                            return practice_name;
+                                        }
+                                         
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'providername',name: 'providername',
+                                    mRender: function(data, type, full, meta){
+                                        providername = full['providername'];
+                                            if(full['providername'] == null){
+                                                providername = '';
+                                        }
+                                        else{
+                                            return providername;
+                                        }
+                                         
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'caremanagerfname',name: 'caremanagerfname',
+                                    mRender: function(data, type, full, meta){
+                                        caremanagerfname = full['caremanagerfname'];
+                                            if(full['caremanagerfname'] == null){
+                                                caremanagerfname = '';
+                                        }
+                                        else{
+                                            return full['caremanagerfname']+' '+full['caremanagerlname']; 
+                                        }
+                                        
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'unit',name: 'unit',
+                                    mRender: function(data, type, full, meta){
+                                        r_unit = full['unit'];
+                                            if(full['unit'] == null){
+                                                r_unit = '';
+                                            }
+                                            else{
+                                                if(r_unit == '%'){
+                                                    return 'Pulse Oximeter';
+                                                }
+                                                else if(r_unit == 'beats/minute'){
+                                                    return 'Spirometer';
+                                                }
+                                                else{
+                                                    //mmHg
+                                                    return 'Blood Pressure Cuff';
+                                                }
+                                            }
+                                        
+                                    },
+                                    orderable: false
+                                },
+
+                                { data: 'fname',name: 'fname',
+                                    mRender: function(data, type, full, meta){
+                                        m_Name = full['mname'];
+                                            if(full['mname'] == null){
+                                                m_Name = '';
+                                        }
+                                        if(data!='' && data!='NULL' && data!=undefined){
+                                            return 0;
+                                        }
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'reading',name: 'reading',
+                                    mRender: function(data, type, full, meta){
+                                        m_reading = full['reading'];
+                                        m_unit = full['unit'];
+                                            if(full['reading'] == null){
+                                                m_reading = '';
+                                        }
+                                        else{
+                                            return m_reading+' '+m_unit;
+                                        }
+                                        // if(data!='' && data!='NULL' && data!=undefined){
+                                        //     return 0;
+                                        // }
+                                    },
+                                    orderable: false
+                                },  
+                               
+                                {data:null,
+                                    mRender: function(data, type, full, meta){
+                                        totaltime = full['csseffdate'];  
+                                        if(full['csseffdate'] == null){
+                                            totaltime = '';
+                                        }
+                                        if(data!='' && data!='NULL' && data!=undefined){
+                                            return totaltime;
+                                        }
+                                    },
+                                    orderable: true   
+                                },
+
+                                {data: null, 'render': function (data, type, full, meta){
+                                    if(full['reviewedflag'] == null || full['reviewedflag']==0){
+                                        check = '';
+                                    }else{
+                                        check = 'checked';
+                                    }
+                                     return '<input type="checkbox" id="reviewpatientstatus_'+full['pid']+'" class="reviewpatientstatus" name="reviewpatientstatus" value="'+full['pid']+'" '+check+'>';
+                                 },
+                                 orderable: false                               
+                             }        
+                        ];    
+          
+                if(monthly=='')
+                 {
+                     monthly=null;
+                 }
+                 if(monthlyto=='')
+                 { 
+                     monthlyto=null;
+                }
+                var url ="/rpm/monthly-review-list/"+patientid+"/"+monthly+"/"+monthlyto+"/"+deviceid;  
+                console.log(url+"testurl");
+                var table1 = util.renderDataTable('SPmonthlyreviewlist', url, columns, "{{ asset('') }}"); 
+            
+        } 
+
+       
+       
+       $('form[name="rpm_text_form_{{$devices[$i]->id}}"] #text_template_id').change(function(){
+             var deviceid=$(this).val();
+            var patient_id = $('#patient_id').val();           
+            $.ajax({
+                url: '/ccm/get-call-scripts-by-id/'+deviceid+'/'+patient_id+"/call-script",
+                type: 'get',                
+                success: function(data) {   
+                  $('form[name="rpm_text_form_{{$devices[$i]->id}}"] #templatearea_sms').html(data[0].content_title);
+                    
+                },
+            });
+        });
+
+       
+           $('#SPmonthlyreviewlist tbody').on('click', 'td a', function () {     
+            var data_id=  $(this).attr('id');                    
+            var res = data_id.split("/");
+            var patient_id=res[0];
+            var fromdate=res[1];
+            var unittable=res[2];
+            var reviewedstatus=res[3];
+            var serialid=res[4];
+
+            var tr  = $(this).closest('tr'),
+            row = $('#DTmonthlyreviewlist').DataTable().row(tr);  
+            if (row.child.isShown()) {                 
+            destroyChild(row);
+            tr.removeClass('shown');
+            $(this).find('i').removeClass('i-Remove');
+            $(this).find('i').addClass('i-Add');
+                              
+            }
+            else
+            {                      
+                tr.addClass('shown');
+                //$(this).attr("src","https://i.imgur.com/d4ICC.png");
+                $(this).find('i').removeClass('i-Add');
+                $(this).find('i').addClass('i-Remove');
+                
+                var reviewchild=' <div class="table-responsive">';
+                reviewchild = reviewchild + '<table id="DTReviewMonthly-Child-list'+patient_id+'" class="display table table-striped table-bordered reviewdailychildtable" style="width:100%">';
+                reviewchild = reviewchild + '<thead>';
+                reviewchild = reviewchild + '<tr>';
+                reviewchild = reviewchild + '<th width="35px">Sr No.</th>';  
+                reviewchild = reviewchild + '<th width="35px">Patient</th>';                         
+                reviewchild = reviewchild + '<th width="205px">DOB</th>';
+                reviewchild = reviewchild + '<th width="205px">Clinic</th>';
+                reviewchild = reviewchild + '<th width="97px">Provider</th>';
+                reviewchild = reviewchild + '<th width="97px">CareManager</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Device</th>';
+                reviewchild = reviewchild + '<th width="97px">Range</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Reading</th>';  
+                reviewchild = reviewchild + '<th width="97px">Timestamp</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Review</th>';                             
+                reviewchild = reviewchild +  '</tr></thead><tbody></tbody> </table></div>';
+                row.child( reviewchild ).show();
+                getSPReviewMonthlyChildList(row,row.data().FindField1,patient_id,fromdate,unittable,reviewedstatus,serialid);
+            }
+        });
+
+ var getSPReviewMonthlyChildList = function(row=null,$Find1=null,patient_id=null,fromdate=null,unittable=null,reviewedstatus=null,serialid=null)
+                {
+                   var columns =  [   
+                                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                                { data: 'pfname',name: 'pfname',
+                                    mRender: function(data, type, full, meta){
+                                        m_Name = full['pmname'];
+                                            if(full['pmname'] == null){
+                                                m_Name = '';
+                                        }
+                                         r_unit = full['unit'];
+                                          var unitval='';
+                                            if(full['unit'] == null){
+                                                r_unit = '';
+                                            }
+                                            else{
+                                                if(r_unit == '%'){
+                                                    unitval='2';
+                                                }
+                                                else if(r_unit == 'beats/minute'){
+                                                    // return 'Blood Pressure Cuff';
+                                                    unitval='5';
+                                                }
+                                                else{
+                                                    //mmHg
+                                                    unitval='3';
+                                                }
+                                            }
+                                        if(data!='' && data!='NULL' && data!=undefined){
+                                            return ["<a href='/rpm/daily-reading/"+full['pid']+"/"+unitval+"'><img src={{asset('assets/images/faces/avatar.png')}} width='50px' class='user-image' />"]+' '+full['pfname']+' '+m_Name+' '+full['plname']+'</a>';
+                                            // return ["<a href='/rpm/daily-reading/"+full['pid']'><img src={{asset('assets/images/faces/avatar.png')}} width='50px' class='user-image' />"]+' '+full['pfname']+' '+m_Name+' '+full['plname']+'</a>';
+                                        }
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'pdob', type: 'date-dd-mmm-yyyy', name: 'pdob',
+                                    "render":function (value) {
+                                    if (value === null) return "";
+                                        return moment(value).format('MM-DD-YYYY');
+                                    }
+                                },
+                         
+                                { data: 'practicename',name: 'practicename',
+                                    mRender: function(data, type, full, meta){
+                                        practice_name = full['practicename'];
+                                            if(full['practicename'] == null){
+                                                practice_name = '';
+                                        }
+                                        else{
+                                            return practice_name;
+                                        }
+                                         
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'providername',name: 'providername',
+                                    mRender: function(data, type, full, meta){
+                                        providername = full['providername'];
+                                            if(full['providername'] == null){
+                                                providername = '';
+                                        }
+                                        else{
+                                            return providername;
+                                        }
+                                         
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'caremanagerfname',name: 'caremanagerfname',
+                                    mRender: function(data, type, full, meta){
+                                        caremanagerfname = full['caremanagerfname'];
+                                            if(full['caremanagerfname'] == null){
+                                                caremanagerfname = '';
+                                        }
+                                        else{
+                                            return full['caremanagerfname']+' '+full['caremanagerlname']; 
+                                        }
+                                        
+                                    },
+                                    orderable: false
+                                },
+                                { data: 'unit',name: 'unit',
+                                    mRender: function(data, type, full, meta){
+                                        r_unit = full['unit'];
+                                            if(full['unit'] == null){
+                                                r_unit = '';
+                                            }
+                                            else{
+                                                if(r_unit == '%'){
+                                                    return 'Pulse Oximeter';
+                                                }
+                                                else if(r_unit == 'beats/minute'){
+                                                    return 'Spirometer';
+                                                }
+                                                else{
+                                                    //mmHg
+                                                   
+                                                    return 'Blood Pressure Cuff';
+                                                }
+                                            }
+                                        
+                                    },
+                                    orderable: false
+                                },
+
+                                { data: null,
+                                    mRender: function(data, type, full, meta){
+                                        thres = full['thresholdrange'];
+                                            if(full['thresholdrange'] == null){
+                                                thres = '';
+                                        }
+                                        if(thres!='' && thres!='NULL' && thres!=undefined){
+                                            return thres;
+                                        }
+                                    },
+                                    orderable: false
+                                },  
+
+                                { data: 'reading',name: 'reading',  
+                                    mRender: function(data, type, full, meta){
+                                        m_reading = full['reading'];
+                                        m_unit = full['unit'];
+                                            if(full['reading'] == null){
+                                                m_reading = '';
+                                        }
+                                        else{
+                                            return m_reading+' '+m_unit;
+                                        }
+                                        // if(data!='' && data!='NULL' && data!=undefined){
+                                        //     return 0;
+                                        // }
+                                    },
+                                    orderable: false  
+                                },  
+
+                                {data:null,
+                                    mRender: function(data, type, full, meta){
+                                        totaltime = full['csseffdate'];  
+                                        if(full['csseffdate'] == null){
+                                            totaltime = '';
+                                        }
+                                        if(data!='' && data!='NULL' && data!=undefined){
+                                            return totaltime;
+                                        }
+                                    },
+                                    orderable: true   
+                                },
+                                   
+                                {data: null, 'render': function (data, type, full, meta){
+                                  
+                                    if(full['reviewedflag'] == null || full['reviewedflag']==0){
+                                        check = '';
+                                    }else{
+                                        check = 'checked';
+                                    }
+                                     return '<input type="checkbox" id="childreviewpatientstatus_'+full['pid']+'" class="childreviewpatientstatus" name="childreviewpatientstatus" value="'+full['pid']+'" '+check+'>';
+                                 },
+                                 orderable: false
+                               
+                            } 
+                               
+                  ]               
+                
+                    var childurl = "/rpm/monthly-review-list-details/"+patient_id+'/'+fromdate+'/'+unittable+'/'+reviewedstatus+'/'+serialid; 
+                    var childtableid='DTReviewMonthly-Child-list'+patient_id;
+                    childtable = util.renderDataTable(childtableid, childurl, columns, "{{ asset('') }}");
+
+                }
+
+
+
+         function destroyChild(row) {
+            var tabledestroy = $("childtable", row.child());
+            tabledestroy.detach();
+            tabledestroy.DataTable().destroy();
+            // And then hide the row
+            row.child.hide();
+            }
+
+            var deviceid = '<?php echo $devices[$i]->id;?>'; 
+           $("#month-search_"+deviceid).click(function(){   
+                var patient_id = $('#patient_id').val();   
+                var deviceid = '<?php echo $devices[$i]->id;?>'; 
+                var monthly = $('#monthly_'+deviceid).val();
+                var monthlyto = $('#monthlyto_'+deviceid).val();               
+                if(monthlyto < monthly)
+                {
+                    $('#monthlyto_'+deviceid).addClass("is-invalid");
+                    $('#monthlyto_'+deviceid).next(".invalid-feedback").html("Please select to-month properly .");
+                    $('#monthly_'+deviceid).addClass("is-invalid");
+                    $('#monthly_'+deviceid).next(".invalid-feedback").html("Please select from-month properly .");   
+                } 
+                
+                else{ 
+                    $('#monthlyto_'+deviceid).removeClass("is-invalid");
+                    $('#monthlyto_'+deviceid).removeClass("invalid-feedback");
+                    $('#monthly_'+deviceid).removeClass("is-invalid");
+                    $('#monthly_'+deviceid).removeClass("invalid-feedback");
+                    getSPMonthlyReviewPatientList(patient_id,deviceid,monthly,monthlyto); 
+                }
+        
+            });
+
+            $("#month-reset_"+deviceid).click(function(){
+             var patient_id = $('#patient_id').val(); 
+              var deviceid = '<?php echo $devices[$i]->id;?>';  
+                $('#monthlyto_'+deviceid).removeClass("is-invalid");
+                $('#monthlyto_'+deviceid).removeClass("invalid-feedback");
+                $('#monthly_'+deviceid).removeClass("is-invalid");
+                $('#monthly_'+deviceid).removeClass("invalid-feedback"); 
+            function getMonth(date) {
+            var month = date.getMonth() + 1;
+            return month < 10 ? '0' + month : '' + month; // ('' + month) for string result
+            }
+            var c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
+            var c_year = new Date().getFullYear();
+            var current_MonthYear = c_year+'-'+c_month;
+            $("#monthly_"+deviceid).val(current_MonthYear);
+            $("#monthlyto_"+deviceid).val(current_MonthYear);
+                
+                var monthly =  $("#monthly_"+deviceid).val();
+                var monthlyto = $("#monthlyto_"+deviceid).val();               
+       
+        getSPMonthlyReviewPatientList(patient_id,deviceid,monthly,monthlyto);
+        });
+
+     $('#SPmonthlyreviewlist tbody').on('change', '.reviewpatientstatus', function () {
+            if($(this).is(":checked")){
+                var reviewstatus = 1;
+            }
+            else{
+                var reviewstatus = 0;
+            }   
+
+            var table = $('#SPmonthlyreviewlist').DataTable();
+            var rowdata = table.row($(this).parents('tr')).data();
+           // console.log(rowdata);
+        
+            var patient_id =rowdata.pid;
+            var serialid = rowdata.rwserialid;
+            var childdatacount = rowdata.childdatacount;
+            // alert(rowdata.unit);
+            // alert(rowdata.csseffdate);
+            var componentid = $('#component_id').val();
+            var reviewdata = {
+            patient_id: rowdata.pid,
+            unit: rowdata.unit,
+            csseffdate : rowdata.csseffdate,
+            reviewstatus : reviewstatus,
+            component_id :  componentid  
+            }
+            // console.log(reviewdata);  
+            
+            if(reviewstatus == 1 && childdatacount>0)
+            {
+                var fullfromdate = rowdata.csseffdate;
+                var newfromdate = fullfromdate.split(" ");
+                var fromdate =  newfromdate[0]; 
+                var reviewedstatus = 0;
+                var r = rowdata.unit;
+                var serialid = rowdata.rwserialid;
+              
+
+                if(r=='mm[Hg]'){
+                    var  unittable = 'observationsbp';
+                 }
+                 else if(r=='%'){
+                    var unittable = 'observationsoxymeter';
+                 }
+                 else{
+                    var unittable = 'observationsheartrate';
+                 }
+                //  alert(unittable);
+
+               
+                var tr  = $(this).closest('tr');
+                // console.log(tr);    
+                tr.addClass('shown');
+                
+                row = $('#SPmonthlyreviewlist').DataTable().row(tr);    
+                
+                tr.find('i').removeClass('i-Add');
+                tr.find('i').addClass('i-Remove');   
+               
+                var reviewchild=' <div class="table-responsive">';
+                reviewchild = reviewchild + '<table id="Reviewdaily-Child-list'+patient_id+'" class="display table table-striped table-bordered reviewdailychildtable" style="width:100%">';
+                reviewchild = reviewchild + '<thead>';
+                reviewchild = reviewchild + '<tr>';
+                reviewchild = reviewchild + '<th width="35px">Sr No.</th>';  
+                reviewchild = reviewchild + '<th width="35px">Patient</th>';                         
+                reviewchild = reviewchild + '<th width="205px">DOB</th>';
+                reviewchild = reviewchild + '<th width="205px">Clinic</th>';
+                reviewchild = reviewchild + '<th width="97px">Provider</th>';
+                reviewchild = reviewchild + '<th width="97px">CareManager</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Device</th>';
+                reviewchild = reviewchild + '<th width="97px">Range</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Reading</th>';  
+                reviewchild = reviewchild + '<th width="97px">Timestamp</th>'; 
+                reviewchild = reviewchild + '<th width="97px">Review</th>';                             
+                reviewchild = reviewchild +  '</tr></thead><tbody></tbody> </table></div>';
+                row.child( reviewchild ).show();
+                getSPReviewMonthlyChildList(row,row.data().FindField1,patient_id,fromdate,unittable,reviewedstatus,serialid);
+
+            }
+          
+          
+            $.ajaxSetup({    
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+           });
+           $.ajax({
+                type: 'POST',
+                url: '/rpm/daily-review-updatereviewstatus',  
+                data: reviewdata,
+                success: function (data) {
+                       
+                    var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Review Status Updated Successfully!</strong></div>';
+                    $("#success").html(txt);
+                    var scrollPos = $(".main-content").offset().top;
+                    $(window).scrollTop(scrollPos);
+                    //goToNextStep("call_step_1_id");
+                    setTimeout(function () {
+                        $("#success").hide();
+                    }, 3000);
+                   
+
+                }
+           });
+        
+        } ); 
+
+
+   
+
+</script> -->

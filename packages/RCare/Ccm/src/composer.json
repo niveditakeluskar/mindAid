@@ -1,0 +1,27 @@
+
+{
+    "name": "RCare/Ccm",
+    "license": "MIT",
+    "description": "CCM module",
+    "authors": [
+        {
+            "name": "Pranali",
+            "email": "mhatre.pranali.d@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RCare\\Ccm\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RCare\\Ccm\\Providers\\CcmServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

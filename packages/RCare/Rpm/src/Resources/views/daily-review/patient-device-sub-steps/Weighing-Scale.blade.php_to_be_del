@@ -1,0 +1,211 @@
+   <?php 
+            $module_id    = getPageModuleName();
+            $submodule_id = getPageSubModuleName();
+
+            // $stage_id = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'daily-review'); 
+            ?>
+            <div class="card-body"> 
+                <div class="row"> 
+                    <div class="col-md-12" id ="time_add_success_msg"></div>
+                    <div class="col-md-12 steps_section">
+                    <div class="title">
+                        <input type="hidden" id="patient_id" value="<?php echo $patient[0]->id; ?>">
+                        <input type="hidden" id="module_id" name="module_id" value="{{$module_id}}">
+                        <input type="hidden" id= "component_id" name="sub_module_id" value="{{$submodule_id}}">
+                        <input type="hidden" name="stage_id" value="0">
+                        <input type="hidden" name="step_id" value="0">                      
+                        <h5 class="text-center">Today's Vitals</h5>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="card">
+                            <div class="card-body device_box">
+                                <span id="ws_reading_0" class="day"></span>
+                                <span id="ws_unit_0" class="unit"></span>
+                                 <input class="checkbox" type="checkbox" id="ws_review_0" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')"  style="top: 1px;">
+                                          <input type="hidden" id="ws_id_0" >
+                            </div>                               
+                        </div>                        
+                    </div>
+                    </div>                   
+                </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+                <div class="align-self-start pt-3">
+                    <div class="d-flex justify-content-center">
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">7 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id ="ws_reading_7" class="day"></span>
+                                            <span id="ws_unit_7" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_7" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_7">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">6 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="ws_reading_6" class="day"></span>
+                                        <span id="ws_unit_6" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_6" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_6">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">5 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="ws_reading_5" class="day"></span>
+                                        <span id="ws_unit_5" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_5" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_5">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">4 Days Ago</div>
+                                    <div class="card-body device_box">
+                                          <span id="ws_reading_4" class="day"></span>
+                                          <span id="ws_unit_4" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_4" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_4">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">3 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="ws_reading_3" class="day"></span>
+                                        <span id="ws_unit_3" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_3" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_3">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mr-2" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">2 Days Ago</div>
+                                    <div class="card-body device_box">
+                                        <span id="ws_reading_2" class="day"></span>
+                                        <span id="ws_unit_2" class="unit"></span>
+                                           <input class="checkbox" type="checkbox" id="ws_review_2" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_2">
+                                    </div>
+                                </div>  
+                            </div>
+                            <div class=" rounded" style="">
+                                <div class="card">
+                                    <div class="card-header device_header">Yesterday</div>
+                                    <div class="card-body device_box">
+                                        <span id="ws_reading_1" class="day"></span>
+                                        <span id="ws_unit_1" class="unit"></span>
+                                         <input class="checkbox" type="checkbox" id="ws_review_1" onclick="checkreviewclick(this,'{{$devices[$i]->id}}')" >
+                                          <input type="hidden" id="ws_id_1">
+                                    </div>                               
+                                </div>  
+                            </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+                <div class="align-self-start pt-3">
+                    <div class="row justify-content-center">
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-lg textbtn" id="textbtn_{{$devices[$i]->id}}">Text Patient</button>
+                            </div> 
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-lg">Message Care Manager</button>
+                            </div> 
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="form-group">
+                                <button type="button" onclick="showtable('{{$devices[$i]->id}}')" class="btn btn-primary btn-lg">View Vitals</button>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+
+                <div id="textcard_{{$devices[$i]->id}}" style="display: none;width: 79%;">               
+                 @include('Rpm::daily-review.text')
+                 </div>
+                <!-- <div class="col-md-6 steps_section" id="select-activity-2" style=""></div> -->
+                  @include('Rpm::daily-review.notes')
+       
+            <div class="row mb-4 justify-content-center" id="review-table_{{$devices[$i]->id}}" style="display: none;">
+                <div class="col-md-10 mb-4" id="test3">                  
+                    <div class="card text-left" id="test2">                        
+                        <div class="card-body"> 
+                       <div class="review-table_{{$devices[$i]->id}}">
+                        <button type="button" id="tableclose" class="close" style="font-size: 35px;">×</button>  
+                        </div>
+                          @include('Rpm::daily-review.patient-device-vitals-filter')
+                              
+                            @include('Theme::layouts.flash-message')
+                            <div class="table-responsive">
+                                <table id="monthlyreviewlist_{{$devices[$i]->id}}" class="display table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th width="35px">Sr No.</th>
+                                        <th width="35px">View details</th> 
+                                        <th width="205px">Patient</th>
+                                        <th width="97px">DOB</th>
+                                        <th width="97px">Clinic</th>
+                                        <th>Provider</th>                            
+                                        <th>Care Manager</th>
+                                        <th>Device</th>
+                                        <th>Range</th>
+                                        <th>Reading</th>
+                                        <th>TimeStamp</th> 
+                                        <th>Reviwed</th>                                       
+                                    </tr>  
+                                   
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+         <!--    <div class="card-footer"> 
+                <div class="mc-footer">
+                    <button type="submit" class="btn  btn-primary m-1 float-right" >Save</button>
+                </div>
+            </div> -->
+       
+
+<style type="text/css">
+.checkbox {
+position: absolute;
+    right: 1px;
+    top: 37px;
+}
+
+.device_box{
+    min-height:38px;
+    min-width: 130px;
+}
+.device_header{
+    text-align: center;
+    font-size: revert;
+    font-weight: 400; 
+}
+
+.day{
+    font-weight: bold;
+    font-size: medium;
+}
+.unit{
+    font-weight: bold;
+    font-size: medium;  
+}
+</style>

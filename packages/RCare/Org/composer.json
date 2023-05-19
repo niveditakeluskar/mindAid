@@ -1,0 +1,27 @@
+
+{
+    "name": "RCare/Org",
+    "license": "MIT",
+    "description": "Theme module",
+    "authors": [
+        {
+            "name": "Pranali",
+            "email": "mhatre.pranali.d@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RCare\\Org\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RCare\\Org\\Providers\\OrgServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}
