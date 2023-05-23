@@ -19,6 +19,7 @@ use RCare\Patients\Models\PatientServices;
 use RCare\Patients\Models\PatientThreshold;
 use RCare\Patients\Models\PatientDevices;
 use RCare\Patients\Models\PatientTimeRecords;
+
 use RCare\Rpm\Models\Devices;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
 use RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents;
@@ -65,7 +66,8 @@ use RCare\Org\OrgPackages\Partner\src\Models\Partner;
 use RCare\TaskManagement\Models\PatientActivity;
 use RCare\Rpm\Models\Partner_Devices;
 use RCare\Patients\Models\VitalsObservationNotes;
-use RCare\Ccm\Models\CallWrapupChecklist;  
+use RCare\Ccm\Models\CallWrapupChecklist; 
+use RCare\Ccm\Models\EmrMonthlySummary; 
 use Illuminate\Support\Facades\Response; 
 use View;
 use Illuminate\Support\Facades\DB;
@@ -94,22 +96,167 @@ class CcmController extends Controller {
         return view('Ccm::current-month-data', compact('curr_topics'));
     }
     
-    public function previousMonthStatus($patient_id,$module_id,$month,$year) {
+     public function previousMonthStatus($patient_id,$module_id,$month,$year) {
         $patient_id  = sanitizeVariable($patient_id);
         $module_id   = sanitizeVariable($module_id);
         $month       = sanitizeVariable($month);
-        $year        = sanitizeVariable($year);
+        $year        = sanitizeVariable($year);  
 
-        // dd($month ,$year );
+        // dd($month ,$year, date('m'), date('Y') );  
+
+
+                        $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                            where id in (select max(id)
+                            FROM ccm.ccm_topics
+                            WHERE patient_id='".$patient_id."'
+                            AND EXTRACT(Month from record_date) = '".$month."'  
+                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
+                            group by topic)
+                            order by sequence, sub_sequence ASC) 
+                            ") );
+                        
+                        if($month == date('m') && $year == date('Y')){
+                            
+                            
+                            $emr_table = DB::select(DB::raw("(select topic, notes
+                            from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
+                            AND EXTRACT(Month from record_date) = '".$month."' 
+                            AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)"));
+
+                            foreach($emr_table as $e){
+                                if($e!=''){
+                                    array_push($prev_topics,$e);
+                                }
+                                 
+                            }
+
+                            if(count($emr_table)==0){
+                                $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                                where id in (select max(id)
+                                FROM ccm.ccm_topics
+                                WHERE patient_id='".$patient_id."'
+                                AND topic LIKE 'EMR Monthly Summary%'  
+                                AND EXTRACT(Month from record_date) = '".$month."'  
+                                AND EXTRACT(YEAR from record_date) = '".$year."' 
+                                group by topic)
+                                order by sequence, sub_sequence ASC)"));
+
+                                foreach($emr_table as $e){
+                                    if($e!=''){
+                                        array_push($prev_topics,$e);
+                                    }
+                                   
+                                }
+
+                                $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                                from ccm.ccm_topics
+                                WHERE patient_id='".$patient_id."'
+                                AND topic LIKE 'Summary notes added on%'  
+                                AND EXTRACT(Month from record_date) = '".$month."'  
+                                AND EXTRACT(YEAR from record_date) = '".$year."'
+                                AND status = 1
+                                order by sequence, sub_sequence ASC)"));
+
+                                foreach($emr_table_summary_notes as $n){
+                                    if($n!=''){
+                                        array_push($prev_topics,$n);
+                                    } 
+                                }
+
+
+
+                            }
+                            
+                        }else{
+                            $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_emr_monthly_summary
+                                             WHERE patient_id='".$patient_id."'
+                                             AND topic LIKE 'EMR Monthly Summary%'  
+                                             AND EXTRACT(Month from record_date) = '".$month."'  
+                                             AND EXTRACT(YEAR from record_date) = '".$year."'
+                                             And status = 1
+                                             order by sequence, sub_sequence ASC)"));
+
+                            if(count($emr_table)==0){
+                                $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                                where id in (select max(id)
+                                FROM ccm.ccm_topics
+                                WHERE patient_id='".$patient_id."'
+                                AND topic LIKE 'EMR Monthly Summary%'  
+                                AND EXTRACT(Month from record_date) = '".$month."'  
+                                AND EXTRACT(YEAR from record_date) = '".$year."' 
+                                group by topic)
+                                order by sequence, sub_sequence ASC)"));
+
+                            }
+                            if(count($emr_table)>0){
+                                foreach($emr_table as $e){
+                                    array_push($prev_topics,$e);
+                                }
+                                
+                            }
+                            
+
+                            $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                            from ccm.ccm_emr_monthly_summary
+                            WHERE patient_id='".$patient_id."'
+                            AND topic LIKE 'Summary notes added on%'  
+                            AND EXTRACT(Month from record_date) = '".$month."'  
+                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            AND status = 1
+                            order by sequence, sub_sequence ASC)"));
+
+                            if(count($emr_table_summary_notes)==0){
+                            $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                            from ccm.ccm_topics
+                            WHERE patient_id='".$patient_id."'
+                            AND topic LIKE 'Summary notes added on%'  
+                            AND EXTRACT(Month from record_date) = '".$month."'  
+                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            order by sequence, sub_sequence ASC)"));
+                            }
+
+                            if(count($emr_table_summary_notes) > 0){
+                                foreach($emr_table_summary_notes as $notes){
+                                    array_push($prev_topics,$notes);  
+                                }
+                               
+
+                            }
+
+                            
+                        }
+                        // dd($prev_topics);
+                        
         
-        $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
-                        where id in (select max(id)
-                        FROM ccm.ccm_topics
-                        WHERE patient_id='".$patient_id."'
-                        AND EXTRACT(Month from record_date) = '".$month."'  
-                        AND EXTRACT(YEAR from record_date) = '".$year."' 
-                        group by topic)
-                        order by sequence, sub_sequence ASC) ") );
+        // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+        //                 where id in (select max(id)
+        //                 FROM ccm.ccm_topics
+        //                 WHERE patient_id='".$patient_id."'
+        //                 AND EXTRACT(Month from record_date) = '".$month."'  
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' 
+        //                 AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
+        //                 group by topic)
+        //                 order by sequence, sub_sequence ASC) 
+        //                 union
+        //                 (select topic, notes
+        //                 from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
+        //                 AND EXTRACT(Month from record_date) = '".$month."' 
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
+                        
+        //                 ") ); 
+
+                        // dd($prev_topics);                
+
+        
+        // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+        //                 where id in (select max(id)
+        //                 FROM ccm.ccm_topics
+        //                 WHERE patient_id='".$patient_id."'
+        //                 AND EXTRACT(Month from record_date) = '".$month."'  
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' 
+        //                 group by topic)
+        //                 order by sequence, sub_sequence ASC) ") );
 
         //  $prev_checklist_topics = DB::select(DB::raw(" ( select schedule_office_appointment,
         //                             resources_for_medication, medical_renewal, called_office_patientbehalf, referral_support, no_other_services 
@@ -119,8 +266,8 @@ class CcmController extends Controller {
         
         return view('Ccm::previous-month-data', compact('prev_topics'));
     }
-
-    // public function previousMonthStatusForCheckList($patient_id,$module_id) {
+	
+	// public function previousMonthStatusForCheckList($patient_id,$module_id) {
     //     $patient_id  = sanitizeVariable($patient_id);
     //     $module_id   = sanitizeVariable($module_id);
     //     // $month       = sanitizeVariable($month);
@@ -2804,7 +2951,7 @@ class CcmController extends Controller {
         $patientContactTime = PatientContactTime::where('patient_id',$patientId)->first();
         $callWrapUp         = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");  //added by ashvini 28June2022
         $result['call_preparation_preparation_followup_form']   = $callp;
-        $result['research_follow_up_preparation_followup_form'] = "";
+        $result['research_follow_up_preparation_followup_form'] = $callp;
         if( CallHipaaVerification::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $result['hippa_form']['static']['verification'] = $hippa['static']['verification'];
         }
@@ -2832,6 +2979,7 @@ class CcmController extends Controller {
     }
     
     public function getCcmMonthlyReasearchFollowupData($patientId) {
+		
         $patientId          = sanitizeVariable($patientId);
         $mid                = sanitizeVariable(getPageModuleName());
         $component_id       = ModuleComponents::where('module_id',$mid)->where('components','Monthly Monitoring')->get('id'); 
@@ -2848,36 +2996,82 @@ class CcmController extends Controller {
         $result['rpm_review_form'] = $rpmReviewData;
         $result['followup_form'] = $followUp;
         $result['callwrapup_form'] = $callWrapUp;  //added by 28thjune2022
+		
         if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
-            $CallWrap = CallWrap::where('patient_id', $patientId)
-            ->where('sequence',5)
-            ->whereMonth('created_at', date('m'))
-			->where('status',1)
-            ->select(DB::raw("emr_monthly_summary, emr_entry_completed,emr_monthly_summary_date"))
-            ->whereYear('created_at', date('Y'))->get(); 
-            if(isset($CallWrap[0]->emr_monthly_summary)){ 
-                $result['callwrapup_form']['static']['emr_monthly_summary'] = $CallWrap;
+			
+             
+        
+
+            $EmrMonthlySummary = EmrMonthlySummary::where('patient_id', $patientId)
+                                    ->where('sequence',5)
+                                    ->whereMonth('created_at', date('m'))
+                                    ->whereYear('created_at', date('Y'))
+                                    ->where('status',1)
+                                    ->where('emr_type',1)
+                                    ->select(DB::raw("notes,emr_entry_completed,record_date"))
+                                    ->get();
+									
+
+            if(count($EmrMonthlySummary)==0){
+                $EmrMonthlySummary = CallWrap::where('patient_id', $patientId)
+                                    ->where('sequence',5)
+                                    ->whereMonth('created_at', date('m'))
+                                    ->whereYear('created_at', date('Y'))
+                                    ->where('status',1)
+                                    ->select(DB::raw("notes,emr_entry_completed,record_date"))
+                                    ->get();
+            }                        
+
+
+                $Summary =          EmrMonthlySummary::where('patient_id', $patientId)
+                                    ->where('sequence',5)
+                                    ->whereMonth('created_at', date('m'))
+                                    ->whereYear('created_at', date('Y'))
+                                    ->where('status',1)
+                                    ->where('emr_type',2)
+                                    ->select(DB::raw("notes,record_date"))
+                                    ->get();
+
+            if(count($Summary)==0){
+                $Summary =       CallWrap::where('patient_id', $patientId)
+                                ->where('sequence',5)
+                                ->whereMonth('created_at', date('m'))
+                                ->whereYear('created_at', date('Y'))
+                                ->where('status',1)
+                                ->select(DB::raw("notes,record_date"))
+                                ->get();
+            }
+
+                         
+
+
+
+                                // dd($EmrMonthlySummary);   
+
+            if(isset($EmrMonthlySummary[0]->notes)){ 
+                $result['callwrapup_form']['static']['emr_monthly_summary'] = $EmrMonthlySummary;
             }else{
                 $result['callwrapup_form']['static']['emr_monthly_summary'] = ' ';
             }
-            if(isset($CallWrap[0]->emr_entry_completed)){ 
-                $result['callwrapup_form']['static']['emr_entry_completed'] = $CallWrap[0]->emr_entry_completed;
+
+
+            if(isset($EmrMonthlySummary[0]->emr_entry_completed)){ 
+                $result['callwrapup_form']['static']['emr_entry_completed'] = $EmrMonthlySummary[0]->emr_entry_completed;
             }else{
                 $result['callwrapup_form']['static']['emr_entry_completed'] = ' '; 
             }
 
-            //changes by ashvini 28thjune2022
-            if(isset($CallWrap[0]->emr_monthly_summary_date)){ 
-                $result['callwrapup_form']['static']['emr_monthly_summary_date'] = $CallWrap[0]->emr_monthly_summary_date;
+            if(isset($Summary[0]->notes)){ 
+                $result['callwrapup_form']['static']['summary'] = $Summary;
             }else{
-                $result['callwrapup_form']['static']['emr_monthly_summary_date'] = ' '; 
-            }
+                $result['callwrapup_form']['static']['summary'] = ' '; 
+            }            
+
 
             $callwrapupchecklistdata = CallWrapupChecklist::where('patient_id', $patientId)->latest()->first();
-            // dd($callwrapupchecklistdata);
             $result['callwrapup_form']['static']['checklist_data'] = $callwrapupchecklistdata;
         }
-        if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
+		if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $CallWrap =DB::select(DB::raw("select ct.topic,ct.notes from ccm.ccm_topics ct  
                                         inner join ren_core.followup_tasks rft on ct.topic = rft.task 
                                          WHERE ct.patient_id ='".$patientId."' 

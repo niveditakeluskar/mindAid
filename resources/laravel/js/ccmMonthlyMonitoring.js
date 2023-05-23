@@ -41,22 +41,32 @@ var populateForm = function (data, url) {
                    
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) {
                         var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
+                        var summarys = result[key].static['summary'];
                         var checklist_data = result[key].static['checklist_data'];
 
-
-                        // console.log(checklist_data);
-                        // console.log(result[key].static['checklist_data']['emr_entry_completed']+"emr_entry_completed");
-
+						if(emr_monthly_summarys != null && emr_monthly_summarys != ""){
+                            $("textarea#callwrap_up_emr_monthly_summary").html(emr_monthly_summarys[0]['notes']);
+                        }
+                      
 
                         var inc_notes = 0;
-                        for (var emr_monthly_summary in emr_monthly_summarys) {
-                            if (emr_monthly_summarys[emr_monthly_summary]['emr_monthly_summary_date'] == null || emr_monthly_summarys[emr_monthly_summary]['emr_monthly_summary_date'] == '') {
-                                $("textarea#callwrap_up_emr_monthly_summary").html(emr_monthly_summarys[emr_monthly_summary]['emr_monthly_summary']);
-                            } else {
-                                $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" >' + emr_monthly_summarys[emr_monthly_summary]['emr_monthly_summary'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
-                                $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(emr_monthly_summarys[emr_monthly_summary]['emr_monthly_summary_date']);
-                            }
-                            inc_notes++;
+                        for (var summary in summarys) {
+                           
+                              
+                                var e_date = summarys[summary]['record_date'];
+                                edate = e_date.split(' ');
+                                // console.log(edate);
+                                var enew_date = edate[0];
+                                var echange_date_format = enew_date.split('-');
+                                var e_set_date = echange_date_format[2] + '-' + echange_date_format[0] + '-' + echange_date_format[1];
+                                console.log(e_set_date); 
+                                // alert(e_set_date);  
+                                
+
+                                $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" >' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+                                $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date); 
+                            
+                            inc_notes++;  
                         }
                         if (checklist_data && checklist_data['emr_entry_completed'] != null) {
                             var emr_entry_completed = checklist_data['emr_entry_completed'];
@@ -1706,7 +1716,8 @@ $(document).on('click', 'i.removenotes', function (e) {
 
 $("#addnotes").click(function () {
     summarycount++;
-    $('#additional_monthly_notes').append('<div class="additionalfeilds row"  style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;"><div class="col-md-4"><input type="date" class="form-control emr_monthly_summary_date" id="emr_monthly_summary_date_' + summarycount + '"  name="emr_monthly_summary_date[]"><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90"  name="emr_monthly_summary[]" ></textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+    var childrenlength = $("div#additional_monthly_notes").children().length;
+    $('#additional_monthly_notes').append('<div class="additionalfeilds row"  style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;"><div class="col-md-4"><input type="date" class="form-control emr_monthly_summary_date" id="emr_monthly_summary_date_' + childrenlength + '"  name="emr_monthly_summary_date[]"><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90"  name="emr_monthly_summary[]" ></textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
     var date = new Date();
     var day = date.getDate();
     var month = date.getMonth() + 1;
@@ -1714,10 +1725,10 @@ $("#addnotes").click(function () {
     if (month < 10) month = "0" + month;
     if (day < 10) day = "0" + day;
     var today = year + "-" + month + "-" + day;
-    $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + summarycount).val(today);
+    $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + childrenlength).val(today);
 });
 
-// Module Export ---------------------------------------------------------------
+// Module Export---------------------------------------------------------------
 // Export the module functions
 window.ccmMonthlyMonitoring = {
     init: init,
