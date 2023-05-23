@@ -172,6 +172,17 @@
                             
                         </div>
                         <div class="separator-breadcrumb border-top"></div>
+                        <div class="form-group">  
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="copy_from" class="">Copy Questionnaire Template From </label>
+                                    <select class="custom-select select2" name="copy_from" id="copy_from"  >
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div> 
+                        <div id="question_content">
                         <div class="question_div" id="first_question_div">
                             <div class="form-group" id = "question">
                                 <div class="row">
@@ -217,6 +228,7 @@
                             <div class="separator-breadcrumb border-top"></div>
                         </div>
                         <div class="abc" id="append_div"></div>
+                </div>
                         <div class="col-md-4 mb-3"><button type="button" class="btn btn-success btn-sm " id="addQuestion" style="">Add Question</button></div>
                         <button type="" id="save-template" class="btn btn-info btn-lg btn-block">Save</button> 
                     </form>
@@ -358,11 +370,28 @@
 
         $("[name='sub_module']").on("change", function () {
             util.updateStageList(parseInt($(this).val()), $("#stages"));
+            util.updateTemplateLists(module_id, parseInt($(this).val()), $("#copy_from"), 5);
         });
 
         $("[name='stages']").on("change", function () {
             util.updateStageCodeList(parseInt($(this).val()), $("#stage_code"));
         });
+
+        $("[name='copy_from']").on("change", function () {
+        var templateid = parseInt($(this).val());
+        var templatetype = $("#template_type").val();
+        $('#question_content').html('');
+        var url = '/ccm/render-template';
+        $.ajax({
+					url: url, 
+					type: 'POST',
+					data:{"_token": "{{ csrf_token() }}", id:templateid, type:templatetype},
+					dataType:"JSON",
+					success : function(response) {
+                        $('#question_content').append(response.html);
+					}
+				});
+    });
 
         $(document).on('click', 'button.queRemove', function( e ) {
             e.preventDefault();

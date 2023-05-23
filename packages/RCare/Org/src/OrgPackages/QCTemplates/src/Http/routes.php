@@ -33,6 +33,8 @@ Route::middleware(["auth","roleAccess", "web"])->group(function () {
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('org')->group(function () {
         Route::get('/get-dynamic-template/{moduleId}/{subModuleId}/{stageId}/{stepId}/questionnaire-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getDynamicQuestionnaireTemplate')->name('get.dynamic.questionnaire.template');
+        Route::get('get-template/{moduleid}/{stepid}/{type}/stepWise', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getTemplate');
+        Route::get('/ajax/template/{module}/{subModuleId}/{templateId}/list', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getTemplateList')->name('get.template.list');
     });
     Route::prefix('ccm')->group(function () {
         //ccm content template routes
@@ -54,7 +56,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('view-questionnaire-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@viewTemplateDetails');
         Route::view('dynamic-template-question', 'QCTemplates::QuestionnaireTemplates.dynamic-template-question');
         Route::get('print-questionnaire-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@printQuestionnaireTemplate')->name('print.questionnaire.template');
-
+        Route::get('/copy-questionnaire-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyQTemplate')->name('copy-questionnaire-template');
 
         
         Route::get('/add-decisiontree-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@addDecision')->name('add-decisiontree-template');
@@ -66,6 +68,10 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('update-decision-tree-inline', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@UpdateDecisionTreeInline')->name('update.decision.tree.inline');
         Route::get('print-decisiontree-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@printDecisionTreeTemplate')->name('print.decisiontree.template');
         Route::post('/ajax/uploadDTImage','RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@DecisionTreeimage');
+        Route::get('/copy-decisiontree-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyDecision')->name('copy-decisiontree-template');
+        Route::post('copy-dtemplate', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyDTemplate')->name('copy-dtemplate');
+
+        Route::post('render-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@renderTemplate')->name('render-template');
     });
 
     Route::prefix('rpm')->group(function () {
@@ -87,7 +93,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('view-questionnaire-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@viewTemplateDetails');
         Route::view('dynamic-template-question', 'QCTemplates::QuestionnaireTemplates.dynamic-template-question');
         Route::get('print-questionnaire-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@printQuestionnaireTemplate')->name('print.questionnaire.template');
-
+        Route::get('/copy-questionnaire-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyQTemplate')->name('copy-questionnaire-template');
         //rpm decision tree
         //Route::get('/decisiontree-template', 'RCare\Rpm\Http\Controllers\QuestionnaireController@listDecision')->name('listRpmDecision');
        
@@ -95,8 +101,14 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('save-dtemplate', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@saveDTemplate')->name('save-dtemplate');
         Route::view('dynamic-template-decision', 'QCTemplates::DecisionTreeTemplates.questionnairetest');
         Route::get('view-decisiontree-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@viewdecisiontree');
+        Route::get('update-decisiontree-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@viewdecisiontree');
         Route::post('EditDecisionTree', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@EditDecision')->name('edit-Decision-Tree');
         Route::get('print-decisiontree-template/{id}', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@printDecisionTreeTemplate')->name('print.decisiontree.template');
+   
+        Route::get('/copy-decisiontree-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyDecision')->name('copy-decisiontree-template');
+        Route::post('copy-dtemplate', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@copyDTemplate')->name('copy-dtemplate');
+
+        Route::post('render-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@renderTemplate')->name('render-template');
     });
 
     Route::prefix('patients')->group(function () {
