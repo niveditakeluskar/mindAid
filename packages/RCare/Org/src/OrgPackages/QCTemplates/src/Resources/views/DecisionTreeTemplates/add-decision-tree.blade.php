@@ -264,7 +264,17 @@ The markup will be simple nested lists
                     </div> 
                    
                     <hr>
-<div class="tree">
+            <div class="form-group">  
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label for="copy_from" class="">Copy Decision Tree From </label>
+                        <select class="custom-select select2" name="copy_from" id="copy_from"  >
+
+                        </select>
+                    </div>
+                </div>
+            </div>  
+<div class="tree" id="decision_tree_content">
     <ul>
 		<li class="question_tree" id="question_tree_1">
 			<a href="#" onclick="return false;"><button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Question 1</button>
@@ -642,13 +652,30 @@ function addSubQuestion(valOfCount,labelname,lbid) {
     });
 
     $("[name='sub_module']").on("change", function () {
+        var module_id    = '{{ getPageModuleName() }}';
         util.updateStageList(parseInt($(this).val()), $("#stages"));
+        util.updateTemplateLists(module_id, parseInt($(this).val()), $("#copy_from"), 6);
     });
 
     $("[name='stage_id']").on("change", function () {
         util.updateStageCodeList(parseInt($(this).val()), $("#stage_code"));
     });
 
+    $("[name='copy_from']").on("change", function () {
+        var templateid = parseInt($(this).val());
+        var templatetype = $("#template_type").val();
+        $('#decision_tree_content').html('');
+        var url = '/ccm/render-template';
+        $.ajax({
+					url: url, 
+					type: 'POST',
+					data:{"_token": "{{ csrf_token() }}", id:templateid, type:templatetype},
+					dataType:"JSON",
+					success : function(response) {
+                        $('#decision_tree_content').append(response.html);
+					}
+				});
+    });
      //Multiple Dropdown Select
      $('.multiDrop').on('click', function (event) { 
         event.stopPropagation();

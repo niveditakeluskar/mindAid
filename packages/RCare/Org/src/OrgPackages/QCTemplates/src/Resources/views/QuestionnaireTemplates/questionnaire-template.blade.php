@@ -6,12 +6,16 @@
 @section('main-content')
 <div class="breadcrusmb">
     <div class="row">
-        <div class="col-md-11">
+        <div class="col-md-10">
             <h4 class="card-title mb-3">Questionnaire Template</h4>
         </div>
         <div class="col-md-1">
             <!-- <a class="btn btn-success btn-sm " href="addTemplate" > Add Questionnaire Template</a>   -->
             <a class="" href="add-questionnaire-template"><i class="add-icons i-Blinklist" data-toggle="tooltip" data-placement="top" title="Add Questionnaire Template" style="margin-right:-7px"></i>&nbsp;<i class="plus-icons i-Add" data-toggle="tooltip" data-placement="top" title="Add Questionnaire Template"></i></a> 
+        </div> 
+        <div class="col-md-1">
+            <!-- <a class="btn btn-success btn-sm " href="addTemplate" > Add Questionnaire Template</a>   -->
+            <a class="" href="copy-questionnaire-template"><i class="add-icons i-Data-Copy" data-toggle="tooltip" data-placement="top" title="Copy questionnaire Template" style="margin-right: -7px"></i>&nbsp;<i class="plus-icons i-Add" data-toggle="tooltip" data-placement="top" title="Copy questionnaire Template"></i></a> 
         </div> 
     </div>
    <!-- ss -->             

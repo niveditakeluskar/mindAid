@@ -61,6 +61,19 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::QuestionnaireTemplates.add-questionnaire-template', compact('data','components','devices', 'module')); 
     }
 
+    public function getTemplate($moduleid, $stepid, $type){
+
+        $template = QuestionnaireTemplate::where('module_id', $moduleid)->where('template_type_id',$type)->where('stage_code', $stepid)->where('status', 1)->get();
+        return response()->json($template); 
+    }
+
+    public function getTemplateList($module, $subModuleId, $templateId){
+        $template = [];
+        //$stages = Stage::all()->where("submodule_id", $id)->where("status", 1);
+        $template = QuestionnaireTemplate::where('module_id',$module)->where('component_id',$subModuleId)->where('template_type_id',$templateId)->where('status', 1)->orderBy('content_title', 'asc')->get();
+        return response()->json($template);
+    }
+
     public function saveTemplate(SaveQuestionnaireTemplateRequest $request)
     {
 
@@ -301,6 +314,13 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::DecisionTreeTemplates.add-decision-tree', compact('data','service','devices', 'sub_service'));
     }
 
+    public function copyDecision(){
+        return view('QCTemplates::DecisionTreeTemplates.copy-decisiontree');
+    }
+
+    public function copyQTemplate(){
+        return view('QCTemplates::QuestionnaireTemplates.copy-questionnaire-template');
+    }
 
     public function saveDTemplate(Request $request)
     {
@@ -482,7 +502,59 @@ class QuestionnaireTemplateController extends Controller
         $d['data'][0] = $data1;
         return $d;
         
-    }    
+    }   
+    
+    public function copyDTemplate(Request $request)
+    {
+        $module_id = sanitizeVariable($request->module_id);
+        $fromstep = sanitizeVariable($request->from);
+        $tostep = sanitizeVariable($request->to);
+        $questionsToCopy = sanitizeMultiDimensionalArray($request->template);
+        $step_name = sanitizeMultiDimensionalArray($request->step_name);
+        //print_r($questionsToCopy['copy']);
+        foreach($questionsToCopy['copy'] as $key=>$value)
+        {
+            $template = QuestionnaireTemplate::where('id',$key)->get();
+            $data = array(
+            'content_title' => $step_name.' '.$template[0]->content_title,
+            'template_type_id' => $template[0]->template_type_id,
+            'module_id' => $module_id,
+            'stage_id' => $template[0]->stage_id,
+            'stage_code' => $tostep,
+            'component_id' => $template[0]->component_id,
+            'question' => $template[0]->question,
+            'status'   => 1,
+            'add_to_patient_status' => $template[0]->add_to_patient_status,
+            'one_time_entry'   => $template[0]->one_time_entry,
+            'score'   => $template[0]->score,
+            'sequence' => $template[0]->sequence,
+            'display_months' => $template[0]->display_months
+            );
+            $data['created_by'] =session()->get('userid');
+            $user = QuestionnaireTemplate::create($data);
+            //print_r($data);
+        }
+       
+    }
+
+    public function renderTemplate(Request $request){
+        $id = sanitizeVariable($request->id);
+        //$template = QuestionnaireTemplate::where('id',$id)->get();
+        //dd($id);
+        $data = QuestionnaireTemplate::find($id);
+        if(sanitizeVariable($request->type) == '6'){
+            $html = view('QCTemplates::DecisionTreeTemplates.view-return', compact('data'))->render();
+        }else{
+            $html = view('QCTemplates::QuestionnaireTemplates.view-return', compact('data'))->render();
+        }
+        
+        return response()->json([
+            'status' => true,
+            'html' => $html,
+            'message' => 'successfully.',
+        ]);
+       // return $html;
+    }
 
 
 }

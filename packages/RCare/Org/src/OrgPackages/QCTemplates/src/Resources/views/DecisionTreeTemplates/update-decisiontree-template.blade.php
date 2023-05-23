@@ -520,7 +520,8 @@ Thanks :)*/
                             </div>   
                 </div>
             </div>          
-            <?php            
+            <?php
+            
             function renderTree($treeObj,$lab,$val,$tree_id){
                 $optCount = count((array)$treeObj);
                 $allKeys = array_keys((array)$treeObj);
@@ -566,7 +567,7 @@ Thanks :)*/
                             $question_label = $qs_label."[qs][".$j."][q]";
                             $af_label = $qs_label."[qs][".$j."][AF]";
                             echo "<li class='question_tree' id='subquestion_tree".$ids."'><a href='#' onclick='return false;'>" ; ?>
-                            <div class="appendedQuestion" id="appendedSubQuestion_<?php echo $ids; ?>" > 
+                            <div class="appendedQuestion" id="appendedSubQuestion_<?php echo $ids; ?>" >
                                 <div class="form-group" >
                                     <div class="row">	
                                         <?php if(property_exists($treeObj->$i->qs->$j, 'opt')){
@@ -647,9 +648,13 @@ Thanks :)*/
             <div class="question_div" id="demo">
                         <div class="form-group" id = "question">
                             <div class="row">
-							<?php $c = count((array)$queData->question->qs->opt) ; 
+							<?php
+                           
+                            if(property_exists($queData->question->qs, 'opt')){ 
+                                $c = count((array)$queData->question->qs->opt) ; 
 								$allKeys = array_keys((array)$queData->question->qs->opt);
 								$co = $allKeys[$c-1];
+                            }
 							?>
                             <input type="hidden" value="<?php if(property_exists($queData->question->qs, 'opt')){ echo $co ; }else{echo 0;} ?>" id="lbcount">    
                             <input type="hidden" value="0" id="count">
