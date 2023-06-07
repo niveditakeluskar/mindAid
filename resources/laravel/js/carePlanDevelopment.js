@@ -3494,6 +3494,11 @@ var init = function () {
         form.ajaxSubmit('devices_form', patientEnrollment.onMasterDevices);
     });
 	
+	$('form[name="fin_number_form"] .submit-add-patient-fin-number').on('click', function (e) {
+        carePlanDevelopment.updateTimerFieldsOnForm('fin_number_form');
+        form.ajaxSubmit('fin_number_form', patientEnrollment.onFinNumber);
+    });
+	
 	$('form[name="personal_notes_form"] .submit-personal-notes').on('click', function (e) {
 		updateTimerFieldsOnForm('personal_notes_form');
 		form.ajaxSubmit('personal_notes_form', patientEnrollment.onPersonalNotes);

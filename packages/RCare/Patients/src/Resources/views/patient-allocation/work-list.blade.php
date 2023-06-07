@@ -95,6 +95,7 @@
                                     <th>Action</th>
                                     <th width="35px">Patient Status</th>
                                     <th width="35px">Add'l Act</th>
+                                    <th width="35px">Call Score</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -271,7 +272,19 @@
                             }
                         }, orderable: true, searchable: false
                     },
-                    { data: 'addaction', name: 'addaction', orderable: true, searchable: false},                    
+                    { data: 'addaction', name: 'addaction', orderable: true, searchable: false}, 
+                    
+                    { data: 'pssscore', name: 'pssscore',
+                        mRender: function(data, type, full, meta){
+                        // $(row).css('color', 'red');
+                        if(data!='' && data!='NULL' && data!=undefined){
+                            return full["pssscore"];   
+                        } else {
+                            return '';
+                        }
+                        }, orderable: true
+                    }, 
+                    
             ]//,
             if(practice_id=='') { 
                 practice_id=null;
@@ -398,7 +411,7 @@
         var getmnth=("0" +(date.getMonth() + 1)).slice(-2);
         var firstDayWithSlashes = date.getFullYear()+ '-' + getmnth + '-' +('0' +(firstDay.getDate())).slice(-2);
 
-        $(document).ready(function() { 
+        $(document).ready(function() {
             $('#davice_traning_date').val(currentdate); 
             worklist.init();
             filters();

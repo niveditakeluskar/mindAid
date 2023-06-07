@@ -22,6 +22,10 @@ var populateForm = function (data, url) {
             // console.log(result);
             for (var key in result) {
                 form.dynamicFormPopulate(key, result[key]);
+				if(key == "fin_number_form"){ 
+                    var finnumber = result[key][0].fin_number;
+                    $("form[name='fin_number_form'] #fin_number_new").val(result[key][0].fin_number);                    
+                }
                 if (key == "enroll_services_form") {
                     patient_services = result[key].dynamic['patientService'];
                     for (group in patient_services) {
@@ -354,6 +358,37 @@ var onMasterDevices = function (formObj, fields, response) {
     }
 };
 
+var onFinNumber = function(formObj, fields, response) {
+    if (response.status == 200) {
+        util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+
+        $("#patient-finnumber").modal('hide');
+        var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Fin Number Update successfully!</strong></div>';
+        $("#success").html(txt);
+        $("#success").show();
+        setTimeout(function () {
+            $("#success").hide();
+        }, 3000);
+
+        var finnumber = $("#fin_number_form input[name='fin_number']").val();
+		console.log(finnumber);
+		$("a span#fin_number").html(finnumber);
+        
+        var timer_paused = $("form[name='fin_number_form'] input[name='end_time']").val();
+        $("#timer_start").val(timer_paused);
+        var patient_id = $("input[name='patient_id']").val();
+        var module_id = $("input[name='module_id']").val();
+        util.totalTimeSpentByCM();        
+    } else {
+        var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please fill mandatory fields!</strong></div>';
+        $("#success").html(txt);
+        $("#success").show();
+        setTimeout(function () {
+            $("#success").hide();
+        }, 3000);
+    }
+
+}
 
 var onPersonalNotes = function (formObj, fields, response) {
     if (response.status == 200) {
@@ -530,6 +565,18 @@ var init = function () {
         $("#timer_end").val(timer_paused);
         $("#time-container").val(AppStopwatch.startClock);
         form.ajaxSubmit("text_form", onTextSave);
+    });
+	
+	 $('form[name="fin_number_form"] .submit-add-patient-fin-number').on('click', function (e) {
+        $("#time-container").val(AppStopwatch.pauseClock);
+        var timer_start = $("#timer_start").val();
+        var timer_paused = $("#time-container").text();
+        $("form[name='fin_number_form'] input[name='start_time']").val(timer_start);
+        $("form[name='fin_number_form'] input[name='end_time']").val(timer_paused);
+        // $("#timer_start").val(timer_paused);
+        $("#timer_end").val(timer_paused);
+        $("#time-container").val(AppStopwatch.startClock);
+        form.ajaxSubmit('fin_number_form', onFinNumber);
     });
 
     $('form[name="personal_notes_form"] .submit-personal-notes').on('click', function (e) {
@@ -910,6 +957,20 @@ $('body').on('click', '.editDevicesdata', function () { //alert("working");
     populateForm(data, formpopulateurl);
 });
 
+$('body').on('click','.patient_finnumber',function () { 
+    $("#fin_number_form input[name='fin_number']").val('');
+    $(`form[name="fin_number_form"]`).find(".is-invalid").removeClass("is-invalid");
+    $(`form[name="fin_number_form"]`).find(".invalid-feedback").html("");
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/");
+    id = parts[parts.length - 1];   
+    var idd = $(this).data('id');
+    var data = "";
+    URL_POPULATE1 = "/patients/ajax/populatefinnumber";
+    var formpopulateurl = URL_POPULATE1 + "/" + id;   
+    populateForm(data, formpopulateurl);
+});
+
 
 $(document).ready(function () {
     $('#add_replace_device').change();
@@ -922,6 +983,7 @@ $(document).ready(function () {
 window.patientEnrollment = {
     init: init,
     onPersonalNotes: onPersonalNotes,
+	onFinNumber: onFinNumber,
     onMasterDevices: onMasterDevices,
     onPartOfResearchStudy: onPartOfResearchStudy,
     onPatientThreshold: onPatientThreshold,

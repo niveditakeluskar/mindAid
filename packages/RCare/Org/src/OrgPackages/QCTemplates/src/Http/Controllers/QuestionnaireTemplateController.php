@@ -318,7 +318,7 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::DecisionTreeTemplates.copy-decisiontree');
     }
 
-    public function copyQTemplate(){
+    public function copyQTemplate(){		
         return view('QCTemplates::QuestionnaireTemplates.copy-questionnaire-template');
     }
 

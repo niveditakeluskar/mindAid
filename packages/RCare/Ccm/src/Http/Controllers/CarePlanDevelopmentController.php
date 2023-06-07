@@ -123,8 +123,20 @@ class CarePlanDevelopmentController extends Controller
         $patientId = sanitizeVariable($request->route('patientid'));
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);
         $dateE = Carbon::now()->endOfMonth(); 
-        $data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
-                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();
+		$configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+		$qry = "select rec_date,height,weight,bmi,bp,o2,pulse_rate,
+            diastolic,other_vitals,oxygen,notes,pain_level
+            from patients.patient_vitals
+            where rec_date is not null and patient_id =".$patientId."
+            and rec_date::timestamp between '".$dateS."' and '".$dateE."' 
+            order by id desc";
+            $data = DB::select( DB::raw($qry) );
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
         return Datatables::of($data)
             ->addIndexColumn()
             ->make(true);

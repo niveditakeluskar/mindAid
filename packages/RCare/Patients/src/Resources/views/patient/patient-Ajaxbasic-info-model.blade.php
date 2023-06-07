@@ -29,6 +29,13 @@
                                     <label data-toggle="tooltip" data-toggle="tooltip" id="model-F_L_name" class="model-F_L_name"  data-placement="top" title="Name"></label><br/>
                                     <label data-toggle="tooltip" title="Gender(DOB)" id="model-gender" class="model-gender" data-original-title=" Gender" for="dob"></label>
                                     <label data-toggle="tooltip" title="DOB" data-original-title="Patient DOB" for="dob" id="model-dob" class="model-dob"></label><br>
+									<label data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number" data-original-title="Patient FIN Number" for="FIN Number" style="padding-right:2px;">
+                                    <i class="text-muted i-ID-Card"></i> : 
+                                    <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm patient_finnumber" data-toggle="modal" data-target="#patient-finnumber" style="background-color:#27a7de;border:none;" id="patient_finnumber">
+                                        <span id ="fin_number" class="patient_fin_number" ></span>
+                                    </a>
+									</label><br/>
+								
                                     <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm model-vateran_service" data-toggle="modal" data-target="#vateran-service" style="background-color:#27a7de;border:none;" id="model-vateran_service" ></a>                                                   
                                 
                                 </div> 

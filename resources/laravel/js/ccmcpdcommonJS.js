@@ -6,6 +6,7 @@ const URL_SAVE = "/ajax/test_save";
 const URL_POPULATE_PREPARATION_NOTES = "/ccm/ajax/populate_preparation_notes";
 const URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES = "/ccm/ajax/populate_research_followup_preparation_notes";
 
+
 var baseURL = window.location.origin + '/';
 var patient_id = $("#hidden_id").val();
 var sPageURL = window.location.pathname;
@@ -165,53 +166,57 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
-var onActiveDeactiveClick = function ($pid, $status) {
-  // alert($pid +'pid' + $status);
-  //$('body').on('click', '.ActiveDeactiveClass', function () {
+var onActiveDeactiveClick = function ($pid,$status) {
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
+  parts = sPageURL.split("/"), 
     patientId = parts[parts.length - 1];
   if ($.isNumeric(patientId) == true) {
+    //patient list
     var patientId = $("#hidden_id").val();
+    var module = $("input[name='module_id']").val();
     var status = $("#service_status").val();
+    $('#enrolledservice_modules').val(module).trigger('change');
+    $('#enrolledservice_modules').change();
+    // util.getPatientDetails(patientId, module);
   } else {
-    // var data = $(this).data('id');  
-    // var val = data.split("/");
-    var patientId = $pid;
-    var status = $status;
+    //worklist 
+    var patientId = $pid; 
+    var selmoduleId = $("#modules").val(); 
+    util.getPatientEnrollModule(patientId,selmoduleId);
+    var status = $status; 
     $("form[name='active_deactive_form'] #worklistclick").val("1");
     $("form[name='active_deactive_form'] #patientid").val(patientId);
+    $("form[name='active_deactive_form'] #date_value").hide();
+      $("form[name='active_deactive_form'] #fromdate").hide();
+      $("form[name='active_deactive_form'] #todate").hide();
+      if ($status == 0) {
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").hide();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if ($status == 1) {
+        $("form[name='active_deactive_form'] #role1").hide();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if ($status == 2) {
+        // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").hide();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if ($status == 3) {
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").hide();
+      } 
   }
-  $("form[name='active_deactive_form'] #date_value").hide();
-  $("form[name='active_deactive_form'] #fromdate").hide();
-  $("form[name='active_deactive_form'] #todate").hide();
-  if ($status == 0) {
-    $("form[name='active_deactive_form'] #role1").show();
-    $("form[name='active_deactive_form'] #role0").hide();
-    $("form[name='active_deactive_form'] #role2").show();
-    $("form[name='active_deactive_form'] #role3").show();
-  }
-  if ($status == 1) {
-    $("form[name='active_deactive_form'] #role1").hide();
-    $("form[name='active_deactive_form'] #role0").show();
-    $("form[name='active_deactive_form'] #role2").show();
-    $("form[name='active_deactive_form'] #role3").show();
-  }
-  if ($status == 2) {
-    // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
-    $("form[name='active_deactive_form'] #role1").show();
-    $("form[name='active_deactive_form'] #role0").show();
-    $("form[name='active_deactive_form'] #role2").hide();
-    $("form[name='active_deactive_form'] #role3").show();
-  }
-  if ($status == 3) {
-    $("form[name='active_deactive_form'] #role1").show();
-    $("form[name='active_deactive_form'] #role0").show();
-    $("form[name='active_deactive_form'] #role2").show();
-    $("form[name='active_deactive_form'] #role3").hide();
-  }
-  //});
 }
+
 
 var onSaveenrolleddateform = function (formObj, fields, response) {
   if (response.status == 200) {
@@ -882,6 +887,47 @@ var noallergiescheck = function (formsObj) {
       $("form[name='" + formName + "'] textarea[name='notes']").prop("disabled", false);
   }
 }
+
+$('#enrolledservice_modules').on('change', function (event) { 
+  $("form[name='active_deactive_form'] #date_value").hide();
+  $("form[name='active_deactive_form'] #fromdate").hide();
+  $("form[name='active_deactive_form'] #todate").hide();
+  var moduleId = $("#enrolledservice_modules").val();
+  var patientId = ($("form[name='active_deactive_form'] input[name='patientid']").val()!='') ? $("form[name='active_deactive_form'] input[name='patientid']").val() : $("form[name='active_deactive_form'] input[name='patient_id']").val();
+  $.ajax({
+    type: 'GET',
+    url: '/patients/patient-module-status/'+patientId+'/'+moduleId+'/patient-module-status', 
+    success: function (response) { 
+      var status = response[0].status;
+      if (status == 0) {
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").hide();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if (status == 1) {
+        $("form[name='active_deactive_form'] #role1").hide();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if (status == 2) {
+        // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").hide();
+        $("form[name='active_deactive_form'] #role3").show();
+      }
+      if (status == 3) {
+        $("form[name='active_deactive_form'] #role1").show();
+        $("form[name='active_deactive_form'] #role0").show();
+        $("form[name='active_deactive_form'] #role2").show();
+        $("form[name='active_deactive_form'] #role3").hide();
+      }
+    }
+    }); 
+});
+
 
 
 function newcheckquery2(value) {

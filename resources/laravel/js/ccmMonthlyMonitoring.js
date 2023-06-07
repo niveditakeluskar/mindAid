@@ -42,14 +42,18 @@ var populateForm = function (data, url) {
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) {
                         var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
                         var summarys = result[key].static['summary'];
+						var summaryslength = result[key].static['summary'].length;
                         var checklist_data = result[key].static['checklist_data'];
 
 						if(emr_monthly_summarys != null && emr_monthly_summarys != ""){
                             $("textarea#callwrap_up_emr_monthly_summary").html(emr_monthly_summarys[0]['notes']);
                         }
                       
-
+						 var newwwchildrenlength = $("div#additional_monthly_notes").children().length;
                         var inc_notes = 0;
+						  if(newwwchildrenlength == summaryslength ){
+                        
+                        }else{
                         for (var summary in summarys) {
                            
                               
@@ -68,6 +72,7 @@ var populateForm = function (data, url) {
                             
                             inc_notes++;  
                         }
+						}
                         if (checklist_data && checklist_data['emr_entry_completed'] != null) {
                             var emr_entry_completed = checklist_data['emr_entry_completed'];
                             
@@ -1170,6 +1175,11 @@ var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]'
     $('form[name="devices_form"] .submit-add-patient-devices').on('click', function (e) {
         carePlanDevelopment.updateTimerFieldsOnForm('devices_form');
         form.ajaxSubmit('devices_form', patientEnrollment.onMasterDevices);
+    });
+	
+	$('form[name="fin_number_form"] .submit-add-patient-fin-number').on('click', function (e) {
+        carePlanDevelopment.updateTimerFieldsOnForm('fin_number_form');
+        form.ajaxSubmit('fin_number_form', patientEnrollment.onFinNumber);
     });
 
     $('form[name="personal_notes_form"] .submit-personal-notes').on('click', function (e) {

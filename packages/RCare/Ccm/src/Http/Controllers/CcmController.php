@@ -971,18 +971,46 @@ class CcmController extends Controller {
         $id    = sanitizeVariable($id);
         $year  = date('Y');
         $month = date('m');
-        $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes, action_taken, status, created_at, id, sequence, sub_sequence 
-            from ccm.ccm_topics
-            where id in (select max(id)
-            FROM ccm.ccm_topics
-            WHERE patient_id='".$id."' And topic NOT LIKE 'Summary notes added on%' And topic NOT LIKE 'Additional Services%'
-            AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
-            group by topic) order by sequence, sub_sequence ASC)
-         union 
-         (select id as \"DT_RowId\", topic, notes, action_taken, status, created_at, id, sequence, sub_sequence 
-            from ccm.ccm_topics  WHERE patient_id='".$id."' And topic LIKE 'Summary notes added on%' and status = 1
-            AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' and status = 1 order by id desc)"     
-         )  );
+
+        // $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
+        //     from ccm.ccm_topics
+        //     where id in (select max(id)
+        //     FROM ccm.ccm_topics
+        //     WHERE patient_id='".$id."'  And topic NOT LIKE 'EMR Monthly Summary' And topic NOT LIKE 'Summary notes added on%' 
+        //     And topic NOT LIKE 'Additional Services%'
+        //     AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
+        //     group by topic) order by sequence, sub_sequence ASC)
+        //     union 
+        //     (select id as \"DT_RowId\", topic, notes, status, created_at, id, sequence, sub_sequence 
+        //         from ccm.ccm_emr_monthly_summary WHERE patient_id='".$id."' And status = 1
+        //         AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
+         
+            
+        //     "     
+        //  )  ); 
+        
+        $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
+        from ccm.ccm_topics
+        where id in (select max(id)
+        FROM ccm.ccm_topics
+        WHERE patient_id='".$id."'  And topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
+        And topic NOT LIKE 'Additional Services%'
+        AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
+        group by topic) order by sequence, sub_sequence ASC)
+        union 
+        (select id as \"DT_RowId\", topic, notes, status, created_at, id, sequence, sub_sequence 
+         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic NOT LIKE 'EMR Monthly Summary%'
+         AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
+         union
+         (select id as \"DT_RowId\", topic, notes, status, created_at, id, sequence, sub_sequence 
+         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic NOT LIKE 'Summary notes added on%'
+         AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)  
+     
+        
+        "     
+     )  ); 
+
+
         return Datatables::of($data)  
             ->addIndexColumn()
             ->addColumn('action', function($row){
@@ -992,7 +1020,6 @@ class CcmController extends Controller {
             ->rawColumns(['action'])
             ->make(true);  
     }
-
     public function downloadAbleFile($id){
         $id  = sanitizeVariable($id);
         $year  = date('Y');
@@ -2370,161 +2397,242 @@ class CcmController extends Controller {
 
     //please donot remove this function = created and modified ashwini 19th sept 2022     
     public function SaveCallWrapUp(CallwrapAddRequest $request) {
-        // dd($request->all());
-        $uid                 = sanitizeVariable($request->uid);
-        $patient_id          = sanitizeVariable($request->patient_id);
-        $sequence            = 5;
-        $emr_entry_completed = empty(sanitizeVariable($request->emr_entry_completed)) ?'0' : sanitizeVariable($request->emr_entry_completed);
-        $emr_monthly_summary = sanitizeVariable($request->emr_monthly_summary);
-        $emr_monthly_summary_date = sanitizeVariable($request->emr_monthly_summary_date);
-        //record time
-        $start_time          = sanitizeVariable($request->start_time);
-        $end_time            = sanitizeVariable($request->end_time);
-        $module_id           = sanitizeVariable($request->module_id);
-        $component_id        = sanitizeVariable($request->component_id);
-        $stage_id            = sanitizeVariable($request->stage_id);
-        $step_id             = sanitizeVariable($request->step_id);
-        $form_name           = sanitizeVariable($request->form_name);
-        $schedule_office_appointment = sanitizeVariable($request->schedule_office_appointment);
-        $resources_for_medication = sanitizeVariable($request->resources_for_medication);
-        $medical_renewal = sanitizeVariable($request->medical_renewal);
-        $called_office_patientbehalf = sanitizeVariable($request->called_office_patientbehalf);
-        $referral_support = sanitizeVariable($request->referral_support);
-        $no_other_services = sanitizeVariable($request->no_other_services); 
-        $currentmonth = date('m'); 
-        $currentyear  = date('Y');
-        $record_date  = Carbon::now();
-        $billable            = 1;
-        $last_sub_sequence   = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
-        $new_sub_sequence    = $last_sub_sequence + 1;
-        DB::beginTransaction();
-        try {
-			$country_timezone=Session::get('timezone');
-			date_default_timezone_set($country_timezone);
-			$timestamp = date("Y-m-d H:i:s");
-			$time=strtotime($timestamp);
-			$month=date("m",$time);
-			$year=date("Y",$time);
-			$v = 'Summary notes added on';
-            $c= CallWrap::where('patient_id', $patient_id)
-			->whereMonth('created_at', $month)
-                ->whereYear('created_at', $year)
-				->where(function ($query) use ($v){
-					$query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%');
-				})->update([
-                    'status' => 0,
-                    'updated_at' =>Carbon::now()
-                 ]);
-				 
-				 /*
-			$v = 'Summary notes added on';
-            $c= CallWrap::where('patient_id', $patient_id)->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%')
-                ->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))
-                ->delete();*/
-           
-            foreach($emr_monthly_summary as $key => $emr_monthly_summary_notes){
-                if($key==0){
-                    $emr_monthly_summary_data = array(  
-                        'uid'                       => $uid,
-                        'record_date'               => Carbon::now(),
-                        'topic'                     => 'EMR Monthly Summary',
-                        'notes'                     => $emr_monthly_summary_notes,
-                        'emr_entry_completed'       => $emr_entry_completed,
-                        'emr_monthly_summary'       => $emr_monthly_summary_notes, 
-                        'created_by'                => session()->get('userid') , 
-                        'patient_id'                => $patient_id,
-                    );
-                }else{
-                    $d= explode("-",$emr_monthly_summary_date[$key-1]);
-                    $summary='Summary notes added on '.$d[1]."-".$d[2]."-".$d[0];
-                    $emr_monthly_summary_data = array(  
-                        'uid'                       => $uid,
-                        'record_date'               => Carbon::now(),
-                        'topic'                     => $summary,
-                        'notes'                     => $emr_monthly_summary_notes,
-                        'emr_entry_completed'       => $emr_entry_completed,
-                        'emr_monthly_summary'       => $emr_monthly_summary_notes, 
-                        'created_by'                => session()->get('userid') , 
-                        'patient_id'                => $patient_id,
-                        'emr_monthly_summary_date'  => $emr_monthly_summary_date[$key-1]
-                    );
-                }
-            $emr_monthly_summary_data['sequence']     = $sequence;
-            $emr_monthly_summary_data['sub_sequence'] = $new_sub_sequence;
-			
-            CallWrap::create($emr_monthly_summary_data); 
-        }
-        $d = array(
-                'emr_entry_completed' => $emr_entry_completed,
-                'schedule_office_appointment'  => $schedule_office_appointment,
-                'resources_for_medication' => $resources_for_medication,
-                'medical_renewal' => $medical_renewal,
-                'called_office_patientbehalf' => $called_office_patientbehalf,
-                'referral_support' => $referral_support,
-                'no_other_services' => $no_other_services,
-                'created_by' => session()->get('userid'),
-                'updated_by' => session()->get('userid'),
-                'record_date' => $record_date,
-                'patient_id'  => $patient_id  
-            ); 
 
-           
-            $check =  CallWrapupChecklist::where('patient_id',$patient_id)->whereMonth('record_date',$currentmonth)->whereYear('record_date',$currentyear)->exists();
-            // dd($d, $check);
+        //    dd('hello');
+    
+            $uid                 = sanitizeVariable($request->uid);
+            $patient_id          = sanitizeVariable($request->patient_id);
+            $sequence            = 5;
+            $emr_entry_completed = empty(sanitizeVariable($request->emr_entry_completed)) ?'0' : sanitizeVariable($request->emr_entry_completed);
+            $emr_monthly_summary = sanitizeVariable($request->emr_monthly_summary);
+            $emr_monthly_summary_date = sanitizeVariable($request->emr_monthly_summary_date);
+            //record time
+            $start_time          = sanitizeVariable($request->start_time);
+            $end_time            = sanitizeVariable($request->end_time);
+            $module_id           = sanitizeVariable($request->module_id);
+            $component_id        = sanitizeVariable($request->component_id);
+            $stage_id            = sanitizeVariable($request->stage_id);
+            $step_id             = sanitizeVariable($request->step_id);
+            $form_name           = sanitizeVariable($request->form_name);
+            $schedule_office_appointment = sanitizeVariable($request->schedule_office_appointment);
+            $resources_for_medication = sanitizeVariable($request->resources_for_medication);
+            $medical_renewal = sanitizeVariable($request->medical_renewal);
+            $called_office_patientbehalf = sanitizeVariable($request->called_office_patientbehalf);
+            $referral_support = sanitizeVariable($request->referral_support);
+            $no_other_services = sanitizeVariable($request->no_other_services); 
+            $currentmonth = date('m'); 
+            $currentyear  = date('Y');
+            $record_date  = Carbon::now();
+            $billable            = 1;
+            $last_sub_sequence   = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+            $new_sub_sequence    = $last_sub_sequence + 1;
+            DB::beginTransaction();
+            try {
+    
+                
+               $v = 'Summary notes added on';
+
+               $c= CallWrap::where('patient_id', $patient_id)
+                    ->whereMonth('created_at',  date('m'))
+                    ->whereYear('created_at',  date('Y'))
+                    ->where(function ($query) use ($v){
+                        $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%'); 
+                    })->update([
+                        'status' => 0,
+                        'updated_at' =>Carbon::now()
+                    ]);
+
+                $e =    EmrMonthlySummary::where('patient_id', $patient_id)
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at',  date('Y'))
+                        ->where(function ($query) use ($v){
+                            $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%');
+                        })->update([
+                            'status' => 0,
+                            'updated_at' =>Carbon::now()
+                        ]);    
+
+
+            //    $c= CallWrap::where('patient_id', $patient_id)
+            //         ->where('topic', 'EMR Monthly Summary')               
+            //         ->whereMonth('created_at', date('m'))
+            //         ->whereYear('created_at', date('Y'))
+            //         ->update(['status'=>0]);
+
+            //     $c1= CallWrap::where('patient_id', $patient_id)
+            //     ->where('topic', 'like', $v.'%')              
+            //     ->whereMonth('created_at', date('m'))
+            //     ->whereYear('created_at', date('Y'))
+            //     ->update(['status'=>0]);
+
+            //    $e = EmrMonthlySummary::where('patient_id', $patient_id)
+            //         ->where('topic', 'EMR Monthly Summary')
+            //         ->whereMonth('created_at', date('m'))
+            //         ->whereYear('created_at', date('Y'))
+            //         ->get();  
+
+            //    $e1 = EmrMonthlySummary::where('patient_id', $patient_id)
+            //       ->where('topic', 'like', $v.'%')
+            //       ->whereMonth('created_at', date('m'))
+            //       ->whereYear('created_at', date('Y'))
+            //       ->get(); 
+                 
+            //     if(count($e) > 0) {
+            //         $emr_dold_data = EmrMonthlySummary::where('patient_id', $patient_id)
+            //         ->where('topic', 'EMR Monthly Summary')
+            //         ->whereMonth('created_at', date('m'))
+            //         ->whereYear('created_at', date('Y'))
+            //         ->update(['status'=>0]);     
+    
+            //     }
+                
+            //     if(count($e1) > 0) {
+            //         $emr1_dold_data = EmrMonthlySummary::where('patient_id', $patient_id)
+            //         ->where('topic', 'like', $v.'%')
+            //         ->whereMonth('created_at', date('m'))
+            //         ->whereYear('created_at', date('Y'))
+            //         ->update(['status'=>0]);     
+    
+            //     } 
+
             
             
-            if($check==true){
-                // CallWrapupChecklist::where('patient_id',$patient_id)->whereDate('record_date', '=', $record_date)->update($d);
-                CallWrapupChecklist::where('patient_id',$patient_id)->update($d);
-            }else{
-                CallWrapupChecklist::create($d); 
-            }
-
-            $prev_checklist_topics = DB::select(DB::raw(" ( select schedule_office_appointment,
-                            resources_for_medication, medical_renewal, called_office_patientbehalf, referral_support, no_other_services 
-                            from ccm.callwrapup_checklist where patient_id = '".$patient_id."' order by id desc limit 1  ) ")       );
-
-            // dd($prev_checklist_topics);
-            $servicesdata = '';
-            foreach($prev_checklist_topics as  $checklistvalue){
-                foreach($checklistvalue as $k=>$v){
-                   
-                    if($v == 1){
-                        $services = str_replace('_',' ', $k);
-                        // $services.", " ;  
-                        // $additional_services ='Additional Services: '.$services.',';
-                        $servicesdata = $servicesdata.$services.", ";
+              
+               
+    
+          
+               
+                foreach($emr_monthly_summary as $key => $emr_monthly_summary_notes)
+                {
+                    if($key==0){
+                        $emr_monthly_summary_data = array(  
+                            'uid'                       => $uid,
+                            'record_date'               => Carbon::now(),
+                            'topic'                     => 'EMR Monthly Summary',
+                            'notes'                     => $emr_monthly_summary_notes,
+                            'emr_entry_completed'       => $emr_entry_completed, 
+                            'created_by'                => session()->get('userid') , 
+                            'patient_id'                => $patient_id,
+                            'sequence'                  => $sequence,
+                            'sub_sequence'              => $new_sub_sequence
+    
+                        );
+                        $monthlydate =  Carbon::now();  
+                        $emr_type = 1;
+                        // $is_old_emr = 1;
+                      
+                    }else{
+                        $d= explode("-",$emr_monthly_summary_date[$key-1]);
+                        $summary='Summary notes added on '.$d[1]."-".$d[2]."-".$d[0];
+                        $emr_monthly_summary_data = array(  
+                            'uid'                       => $uid,
+                            'record_date'               => Carbon::now(),
+                            'topic'                     => $summary,
+                            'notes'                     => $emr_monthly_summary_notes,
+                            'emr_entry_completed'       => $emr_entry_completed, 
+                            'created_by'                => session()->get('userid'), 
+                            'patient_id'                => $patient_id,
+                            'sequence'                  => $sequence,
+                            'sub_sequence'              => $new_sub_sequence
+                           
+                        );
+                        $monthlydate = $emr_monthly_summary_date[$key-1];
+                        $emr_type = 2;
 
                     }
-                 }
-            }
-
-
-            $additional_services_data = array(  
-                'uid'                       => $uid,
-                'record_date'               => Carbon::now(),
-                'topic'                     => 'Additional Services :',
-                'notes'                     => $servicesdata ,
-                // 'emr_entry_completed'       => '',
-                // 'emr_monthly_summary'       => $emr_monthly_summary_notes, 
-                'created_by'                => session()->get('userid') , 
-                'patient_id'                => $patient_id,
-                // 'emr_monthly_summary_date'  => $emr_monthly_summary_date[$key-1]
-            );
-
-            CallWrap::create($additional_services_data);
-            // dd()
+    
+                     /**ccm-emr-monthly-summarytable-start*****/
+    
+                     $emr_monthly_summary_data['record_date'] = $monthlydate; 
+                     $emr_monthly_summary_data['status'] = 1;
+                     $emr_monthly_summary_data['emr_type'] = $emr_type;  
+                    
+                     $e = EmrMonthlySummary::create($emr_monthly_summary_data);  
+                   
+     
+                      /**ccm-emr-monthly-summarytable-end*****/ 
+    
+    
+                    $emr_monthly_summary_data['uid']     = $uid; 
+                    $emr_monthly_summary_data['emr_monthly_summary'] = $emr_monthly_summary_notes;
+                    $emr_monthly_summary_data['emr_monthly_summary_date']     = $monthlydate;     
+    
+                    //some fields are added seperately bcz these fields are not present in ccm_emr_monthly_summary
+                  
+                    CallWrap::create($emr_monthly_summary_data);
+    
+                    
+                    
+                }
+         
+  
+            $d = array(
+                    'emr_entry_completed' => $emr_entry_completed,
+                    'schedule_office_appointment'  => $schedule_office_appointment,
+                    'resources_for_medication' => $resources_for_medication,
+                    'medical_renewal' => $medical_renewal,
+                    'called_office_patientbehalf' => $called_office_patientbehalf,
+                    'referral_support' => $referral_support,
+                    'no_other_services' => $no_other_services,
+                    'created_by' => session()->get('userid'),
+                    'updated_by' => session()->get('userid'),
+                    'record_date' => $record_date,
+                    'patient_id'  => $patient_id  
+                ); 
+    
+               
+                $check =  CallWrapupChecklist::where('patient_id',$patient_id)->whereMonth('record_date',$currentmonth)->whereYear('record_date',$currentyear)->exists();
+                // dd($d, $check);
+                
+                
+                if($check==true){
+                    // CallWrapupChecklist::where('patient_id',$patient_id)->whereDate('record_date', '=', $record_date)->update($d);
+                    CallWrapupChecklist::where('patient_id',$patient_id)->update($d);
+                }else{
+                    CallWrapupChecklist::create($d); 
+                }
+    
+                $prev_checklist_topics = DB::select(DB::raw(" ( select schedule_office_appointment,
+                                resources_for_medication, medical_renewal, called_office_patientbehalf, referral_support, no_other_services 
+                                from ccm.callwrapup_checklist where patient_id = '".$patient_id."' order by id desc limit 1  ) ")       );
+    
+                // dd($prev_checklist_topics);
+                $servicesdata = '';
+                foreach($prev_checklist_topics as  $checklistvalue){
+                    foreach($checklistvalue as $k=>$v){
+                       
+                        if($v == 1){
+                            $services = str_replace('_',' ', $k);
+                            // $services.", " ;  
+                            // $additional_services ='Additional Services: '.$services.',';
+                            $servicesdata = $servicesdata.$services.", ";
+    
+                        }
+                     }
+                }
+    
+    
+                $additional_services_data = array(  
+                    'uid'                       => $uid,
+                    'record_date'               => Carbon::now(),
+                    'topic'                     => 'Additional Services :',
+                    'notes'                     => $servicesdata ,              
+                    'created_by'                => session()->get('userid') , 
+                    'patient_id'                => $patient_id
+                
+                );
             
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
-            DB::commit();
-        } catch(\Exception $ex) {
-            DB::rollBack();
-            return $ex;
-            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+                 
+                CallWrap::create($additional_services_data);    
+                
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                DB::commit();
+            } catch(\Exception $ex) {
+                DB::rollBack();
+                return $ex;
+                return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+            }
         }
-    }
-
     public function SaveFollowup(FollowupAddRequest $request) {  
         $patient_id            = sanitizeVariable($request->input('patient_id'));
         $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ?'0' : sanitizeVariable($request->emr_complete);//($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
@@ -2998,9 +3106,8 @@ class CcmController extends Controller {
         $result['callwrapup_form'] = $callWrapUp;  //added by 28thjune2022
 		
         if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
-			
              
-        
+           
 
             $EmrMonthlySummary = EmrMonthlySummary::where('patient_id', $patientId)
                                     ->where('sequence',5)
@@ -3008,9 +3115,10 @@ class CcmController extends Controller {
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
                                     ->where('emr_type',1)
-                                    ->select(DB::raw("notes,emr_entry_completed,record_date"))
+                                    ->select(DB::raw("notes,topic,record_date"))
                                     ->get();
-									
+
+                                 
 
             if(count($EmrMonthlySummary)==0){
                 $EmrMonthlySummary = CallWrap::where('patient_id', $patientId)
@@ -3018,7 +3126,8 @@ class CcmController extends Controller {
                                     ->whereMonth('created_at', date('m'))
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
-                                    ->select(DB::raw("notes,emr_entry_completed,record_date"))
+                                    ->where('topic', 'like', 'EMR Monthly Summary%')
+                                    ->select(DB::raw("topic,notes,emr_entry_completed,record_date"))
                                     ->get();
             }                        
 
@@ -3029,7 +3138,7 @@ class CcmController extends Controller {
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
                                     ->where('emr_type',2)
-                                    ->select(DB::raw("notes,record_date"))
+                                    ->select(DB::raw("topic,notes,record_date"))
                                     ->get();
 
             if(count($Summary)==0){
@@ -3038,8 +3147,9 @@ class CcmController extends Controller {
                                 ->whereMonth('created_at', date('m'))
                                 ->whereYear('created_at', date('Y'))
                                 ->where('status',1)
-                                ->select(DB::raw("notes,record_date"))
-                                ->get();
+                                ->where('topic', 'like', 'Summary notes added on%')
+                                ->select(DB::raw("topic,notes,record_date,emr_entry_completed"))
+                                ->get();  
             }
 
                          
@@ -3053,6 +3163,8 @@ class CcmController extends Controller {
             }else{
                 $result['callwrapup_form']['static']['emr_monthly_summary'] = ' ';
             }
+
+                
 
 
             if(isset($EmrMonthlySummary[0]->emr_entry_completed)){ 
@@ -3071,6 +3183,7 @@ class CcmController extends Controller {
             $callwrapupchecklistdata = CallWrapupChecklist::where('patient_id', $patientId)->latest()->first();
             $result['callwrapup_form']['static']['checklist_data'] = $callwrapupchecklistdata;
         }
+		
 		if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $CallWrap =DB::select(DB::raw("select ct.topic,ct.notes from ccm.ccm_topics ct  
                                         inner join ren_core.followup_tasks rft on ct.topic = rft.task 

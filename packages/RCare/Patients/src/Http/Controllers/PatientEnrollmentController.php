@@ -16,6 +16,7 @@ use RCare\Patients\Models\PatientContactTime;
 use RCare\Patients\Models\PatientPartResearchStudy;
 use RCare\Patients\Models\PatientPersonalNotes;
 use RCare\Patients\Models\PatientThreshold;
+use RCare\Patients\Models\PatientFinNumber;
 use RCare\TaskManagement\Models\ToDoList;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
 use Illuminate\Http\Request;
@@ -415,6 +416,8 @@ class PatientEnrollmentController extends Controller
         $billable                    = 1;
         $fin_number                  = sanitizeVariable($request->fin_number);
         $time_rec_module             = sanitizeVariable($request->time_rec_module);
+		$currentMonth                  = date('m');
+        $currentYear                   = date('Y');
         // dd($fin_number);
 
         DB::beginTransaction();
@@ -467,8 +470,27 @@ class PatientEnrollmentController extends Controller
                 'enrolled_service_id'     => $enrolled_service_id,
                 'created_by'              => session()->get('userid')
             );
-
+			if($fin_number != null || $fin_number != ''){
             $updatepatient = Patients::where('id',$patient_id)->update(['fin_number'=>$fin_number]);
+			$patientfin = array(
+                    'patient_id'    => $patient_id, 
+                    'status'        => '1',
+                    'fin_number'    => $fin_number
+            );
+
+            $check_exist_for_month         = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+
+            if ($check_exist_for_month == true) {
+                $patientfin['updated_at']= Carbon::now();
+                $patientfin['updated_by']= session()->get('userid');
+                $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($patientfin);
+            } else {
+                $patientfin['created_at']= Carbon::now();
+                $patientfin['created_by']= session()->get('userid');
+                $insert_query = PatientFinNumber::create($patientfin);
+            }
+			}
+			
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
 
             $enrollment = PatientEnrollment::create($data);

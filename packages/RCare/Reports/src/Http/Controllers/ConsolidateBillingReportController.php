@@ -157,7 +157,10 @@ class ConsolidateBillingReportController extends Controller
                         
                         $splitcode=explode(',', $dcode);
                         
-    
+                        if(is_null($data[$i]->pfin_number)){
+                          $data[$i]->pfin_number='';
+                        }
+
                         if(is_null($data[$i]->prprovidername)){
                           $data[$i]->prprovidername='';
                         }
@@ -300,7 +303,8 @@ class ConsolidateBillingReportController extends Controller
                         }
 
                       $arrydata=array($data[$i]->prprovidername,$data[$i]->pppracticeemr,
-                      ucwords(strtolower($data[$i]->pfname)),ucwords(strtolower($data[$i]->plname)),$data[$i]->pdob,
+                      ucwords(strtolower($data[$i]->pfname)),ucwords(strtolower($data[$i]->plname)),
+                      $data[$i]->pfin_number,$data[$i]->pdob,
                       $enrolled_modules,$data[$i]->ccsrecdate,$billingcode,$unit,$status,$assign_cm,
                       $data[$i]->call_conti_status,$finalize_cpd,$count_distinct_days, 
                       $reading_days,$total_reading_days,$rpm_dos_date,$billing_threshold_days,$reading_exceeds,$dev_traing_date);
@@ -547,7 +551,7 @@ class ConsolidateBillingReportController extends Controller
                
     
                   $dynamicheader=array();
-                  $columnheader=array("Provider","EMR","Patient First Name","Patient Last Name","DOB","Enrolled Services","CCM(DOS)","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status",
+                  $columnheader=array("Provider","EMR","Patient First Name","Patient Last Name","Patient FIN Number","DOB","Enrolled Services","CCM(DOS)","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status",
                   "Number of days readings","Days of the month of readings","Number of unique readings","RPM(DOS)","Billing threshold # days",
                   "Billing threshold met","Device Education Date",
                   "Billable","Qualifying Conditions");

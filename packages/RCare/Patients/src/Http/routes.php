@@ -13,6 +13,7 @@
 Route::get("/test1", "RCare\Patients\Http\Controllers\DashboardController@test")->name("home");
 Route::middleware(["auth","roleAccess", "web"])->group(function () {
     Route::prefix('patients')->group(function () {  
+	
         //patientStatus        
 
         // //to-do-list -> moved to task management
@@ -188,7 +189,9 @@ Route::get('ajax/relationship/list', 'RCare\Patients\Http\Controllers\PatientCon
 });
 
 Route::middleware(["auth", "web"])->group(function () {
-    Route::prefix('patients')->group(function () {   
+    Route::prefix('patients')->group(function () {  
+
+        Route::post('/save-patient-fin-number', 'RCare\Patients\Http\Controllers\PatientController@savepatientfinnumber')->name('patient.savefinnumber');	
 		Route::get("/generate-careplan-age","RCare\Patients\Http\Controllers\PatientWorklistController@addCarePlanAge")->name("generate.careplan.age");
 		
         Route::get("/activity_time/{id}/{practice_id}","RCare\Patients\Http\Controllers\PatientWorklistController@get_activitytime")->name("get.activitytime");
@@ -198,7 +201,8 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get("/getuser-filters", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserFilters")->name("user.filters");                     
         Route::post("/worklist/saveuser-filters/{practice_id}/{patient_id}/{module_id}/{timeoption}/{time}/{activedeactivestatus}", "RCare\Patients\Http\Controllers\PatientWorklistController@saveUserFilters")->name("save.user.filters");  
 
-
+		
+		
         Route::get('/ajax/rpmpatientlist/{practiceId}/patientlist', 'RCare\Patients\Http\Controllers\PatientController@practiceRPMPatients')->name('ajax.rpmpatientlist.patientlist'); 
         Route::get('/ajax/rpmproviderpatientlist/{providerId}/providerpatientlist', 'RCare\Patients\Http\Controllers\PatientController@providerRPMPatients')->name('ajax.rpmproviderpatientlist.patientlist');   
         Route::get('/enroll-patient-details/{id}', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientEnrollTraning')->name('enroll-patient-details');
@@ -257,7 +261,14 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/patient-threshold', 'RCare\Patients\Http\Controllers\PatientController@savePatientThreshold')->name('patient.threshold');
         Route::post('/vateran-service', 'RCare\Patients\Http\Controllers\PatientController@saveVateranService')->name('vateran.service');
 		
+		
+        Route::get('/ajax/populatefinnumber/{id}','RCare\Patients\Http\Controllers\PatientController@populateFinNumberData')->name("ajax.populate.Fin.Number");
+		
 		 Route::post('/master-devices', 'RCare\Patients\Http\Controllers\PatientController@savepatientdevices')->name('master.devices');
+		Route::get('/patient-module-status/{patient_id}/{module_id}/patient-module-status', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientModuleStatus')->name('patient_module_status');
+
+		Route::get('/patient-module/{patient_id}/patient-module', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientModule')->name('patient_module');
+		
         Route::post('/delete-device/{id}', 'RCare\Patients\Http\Controllers\PatientController@acticeinactivedevice')->name('delete.devices');
         Route::get('/ajax/populatedevice/{id}','RCare\Patients\Http\Controllers\PatientController@populateDeviceData')->name("ajax.populate.devices.data");
 		

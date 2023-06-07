@@ -159,6 +159,12 @@ class RpmBillingReportController extends Controller
                     $provider_name = $data[$i]->provider_name;
                   }
                   
+                  $pfinnumber = '';
+                  if(is_null($data[$i]->pfin_number)){
+                    $pfin_number ='';
+                  }else{
+                     $pfin_number = $data[$i]->pfin_number;
+                  }
 
                   $patientdetails='';
 
@@ -167,7 +173,7 @@ class RpmBillingReportController extends Controller
                   }
                   if(is_null($data[$i]->plname)){
                     $data[$i]->plname='';
-                  }
+                  } 
                   $patientdetails = $data[$i]->pfname.' '.$data[$i]->plname;;
 
                   // if($data[$i]->pprofileimg=='' || $data[$i]->pprofileimg==null)
@@ -300,8 +306,8 @@ class RpmBillingReportController extends Controller
                 //     $reading_exceeds = 'Yes';
                 //     $billingcode = $data[$i]->billingcode;
                 //     $unit = $data[$i]->unit;
-               $arrydata=array($provider_name,$practiceemr,$data[$i]->pfname,$data[$i]->plname,$pdob,$count_distinct_days,
-                $reading_days,$total_reading_days,
+               $arrydata=array($provider_name,$practiceemr,ucwords(strtolower($data[$i]->pfname)),ucwords(strtolower($data[$i]->plname)),$data[$i]->pfin_number,$pdob,$count_distinct_days,
+                $reading_days,$total_reading_days, 
                 $billing_threshold_days,$reading_exceeds,$dos,$billingcode,$unit,$status,$assign_cm,$dev_traing_date);
                       $qualified_array=array();
                       $nonqualified_array=array();
@@ -508,7 +514,7 @@ class RpmBillingReportController extends Controller
             }//end for loop
              
              $dynamicheader=array();
-             $columnheader=array("Provider Name","EMR","First Name","Last Name","DOB","Number of days of readings","Days of the month of readings","Number of unique readings","Billing threshold # days","Billing threshold met","Date of Service","CPT Code","Number of units","Status","Assigned Care Manager","Device Education Date");
+             $columnheader=array("Provider Name","EMR","First Name","Last Name","Patient Fin Number","DOB","Number of days of readings","Days of the month of readings","Number of unique readings","Billing threshold # days","Billing threshold met","Date of Service","CPT Code","Number of units","Status","Assigned Care Manager","Device Education Date");
                 for($m=0;$m<count($columnheader);$m++)
              { 
               $dynamicheader[]=array("title"=>$columnheader[$m]);  

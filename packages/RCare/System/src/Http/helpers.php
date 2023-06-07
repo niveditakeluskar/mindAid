@@ -940,6 +940,15 @@ function getFormStageId($module_id, $component_id, $stage_name = null) {
     return (count($check_stage_name) > 0 ? $check_stage_name[0]->id : 0 );
 }
 
+function getFormStagesId($module_id, $stage_name = null) {
+    $check_component_name = DB::connection('ren_core')->select("SELECT * FROM ren_core.module_components WHERE module_id = '".$module_id."' AND LOWER(components) ='monthly monitoring'");
+    $check_stage_name = DB::connection('ren_core')->select("SELECT * FROM ren_core.stage WHERE module_id = '".$module_id."' AND submodule_id = '".$check_component_name[0]->id."' AND LOWER(TRIM(description))='".strtolower($stage_name)."'");
+    // echo "SELECT * FROM ren_core.stage WHERE module_id = '".$module_id."' AND submodule_id = '".$component_id."' AND LOWER(TRIM(description)) ='".strtolower($stage_name)."'";
+//    dd( $check_stage_name[0]->id );
+    return (count($check_stage_name) > 0 ? $check_stage_name[0]->id : 0 );
+}
+
+
 function getFormStepId($module_id, $submodule_id, $stage_id, $step_name = null) {
     $check_step_name = DB::connection('ren_core')->select("SELECT * FROM ren_core.stage_codes WHERE module_id = '".$module_id."' AND submodule_id = '".$submodule_id."' AND stage_id = '".$stage_id."' AND LOWER(description) ='".strtolower($step_name)."'");
     // $check_step_name = RCare\Org\OrgPackages\StageCodes\src\Models\StageCode::where("module_id", $module_id)->where("submodule_id", $submodule_id)->where("stage_id", $stage_id)->where("description", strtolower($step_name))->orderBy('id','DESC')->get();

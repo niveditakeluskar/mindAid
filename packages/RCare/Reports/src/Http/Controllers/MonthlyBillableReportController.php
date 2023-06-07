@@ -468,7 +468,11 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
                     }
                     if(is_null($data[$i]->plname)){
                       $data[$i]->plname='';
-                    }if(is_null($data[$i]->pdob)){
+                    }
+                    if(is_null($data[$i]->pfin_number)){
+                      $data[$i]->pfin_number='';
+                    }
+                    if(is_null($data[$i]->pdob)){
                       $data[$i]->pdob='';
                     }else{
                       $data[$i]->pdob = gmdate("m/d/Y", strtotime($data[$i]->pdob));
@@ -496,7 +500,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
                     if(is_null($data[$i]->userid)){
                       $assign_cm ='';
                     }else{
-                      $assign_cm = $data[$i]->userfname.' '.$data[$i]->userlname;
+                      $assign_cm = ucwords(strtolower($data[$i]->userfname.' '.$data[$i]->userlname));
                     }
                     
 
@@ -526,6 +530,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
                       $unit = '1';
                     } 
 
+                    
                     if($data[$i]->call_conti_status == '000'){
                       $data[$i]->call_conti_status='';
                     }
@@ -540,7 +545,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
                         $finalize_cpd ='No';
                       }
                     }
-                  $arrydata=array($data[$i]->prprovidername,$data[$i]->pppracticeemr,$data[$i]->pfname,$data[$i]->plname,$data[$i]->pdob,$data[$i]->ccsrecdate,$data[$i]->billingcode,$unit,$status,$assign_cm,$data[$i]->call_conti_status,$finalize_cpd);
+                    $arrydata=array($data[$i]->prprovidername,$data[$i]->pppracticeemr,$data[$i]->pfname,$data[$i]->plname,$data[$i]->pfin_number,$data[$i]->pdob,$data[$i]->ccsrecdate,$data[$i]->billingcode,$unit,$status,$assign_cm,$data[$i]->call_conti_status,$finalize_cpd);
                 //  $arrydata=array($data[$i]->pfname);            
                 
                         $qualified_array=array();
@@ -784,7 +789,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
            
 
               $dynamicheader=array();
-              $columnheader=array("Provider","EMR","Patient First Name","Patient Last Name","DOB","DOS","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status","Billable","Qualifying Conditions");
+              $columnheader=array("Provider","EMR","Patient First Name","Patient Last Name","Patient Fin Number","DOB","DOS","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status","Billable","Qualifying Conditions");
               // $columnheader=array("Patient First Name");  
 
 

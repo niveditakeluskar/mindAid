@@ -2286,6 +2286,22 @@ var updateStageCodeList = function (stageId, selectElement, selectedStageCodes =
         console.error(error, error.response);
     });
 };
+
+var updateTemplateList = function (moduleId,stepId,selectElement) {
+    $("#template-list").html("");
+    axios({
+        method: "GET",
+        url: `/org/get-template/${moduleId}/${stepId}/stepWise`,
+    }).then(function (response) {
+        Object.values(response.data).forEach(function (stages) {
+           // $("<option>").val(stages.id).html(stages.description).appendTo(selectElement);
+            $("#template-list").append('<li><label for="'+stages.id+'" class="checkbox checkbox-primary mr-3"><input type="checkbox" name="template[copy]['+stages.id+']" id="'+stages.id+'" value="1"  formControlName="checkbox" /><span>'+stages.content_title+'</span><span class="checkmark"></span></label></li>');
+        });
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
 // /**
 //  * Update the list of patients to select from
 //  *
@@ -2319,6 +2335,21 @@ var gatCaretoolData = function (patientId, moduleId) {
         console.error(error, error.response);
     });
 };
+
+var updateTemplateLists = function (module, subModules, selectElement, templateId) {
+    selectElement.html($("<option>").html("Select Template"));
+    axios({
+        method: "GET",
+        url: `/org/ajax/template/${module}/${subModules}/${templateId}/list`,
+    }).then(function (response) {
+        Object.values(response.data).forEach(function (template) {
+            $("<option>").val(template.id).html(template.content_title).appendTo(selectElement);
+        });
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
 
 var updatePracticeListWithoutOther = function (caremanager, selectElement, selectedPractice = null) {
     //  alert(caremanager);  
@@ -2483,20 +2514,70 @@ var getPatientStatus = function (patientId, moduleId) {
 //     }); 
 // }; 
 
+var getPatientEnrollModule = function (patientId,selmoduleId) {
+    axios({ 
+        method: "GET", 
+        url: `/patients/patient-module/${patientId}/patient-module`,
+    }).then(function (response){
+        $('.enrolledservice_modules').html('');
+        enr = response.data; 
+        count_enroll = enr.length; 
+        for(var i=0; i < count_enroll; i++){  
+            $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
+        }
+        $("#enrolledservice_modules").val(selmoduleId).trigger('change');
+        // $("#patient-Ajaxdetails-model").html(response.data); 
+    }).catch(function (error) {
+        console.error(error, error.response);
+    }); 
+}; 
+
+
 var getPatientDetails = function (patientId, moduleId) {
     axios({
         method: "GET",
         url: `/patients/patient-details/${patientId}/${moduleId}/patient-details`,
     }).then(function (response) {
-        var i = 0;
-        count_enroll_Services = response.data.patient[0].patient_services.length;
+        // ptient enrolleed module in change status
+            $('.enrolledservice_modules').html('');
+            enr = response.data.patient_services.length;
+            // alert(response.data.patient_services[0].module.module); 
+			
+			
+            for(i= 0; i < enr; i++){
+                // alert(i); 
+                // var module_name = response.data.patient[0].patient_services[i].module.module;
+                var module_id = response.data.patient_services[i].module_id; 
+                $('.enrolledservice_modules').append(`<option value="${module_id}">${response.data.patient_services[i].module.module}</option>`);
+            } 
+        // 
+        count_enroll_Services = response.data.patient_services.length;
         var enroll_services = [];
+        var enroll_services_status = []; 
         for (i = 0; i < count_enroll_Services; i++) {
-            enroll_services[i] = response.data.patient[0].patient_services[i].module.module;
-        }
+            enroll_services_status = response.data.patient_services[i].status;
+            if(enroll_services_status == 0){ 
+                patient_enroll_services_status = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
+            }else if(enroll_services_status == 1){
+                patient_enroll_services_status = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
+            }else if(enroll_services_status == 2){
+                patient_enroll_services_status = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
+            }else if(enroll_services_status == 3){
+                patient_enroll_services_status = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
+            }
+            enroll_services[i] = response.data.patient_services[i].module.module +"-"+patient_enroll_services_status;
+			if(response.data.patient_services[i].module.module == 'RPM'){
+				$("#add_patient_devices").show();
+			}
+        } 
+        console.log(enroll_services+'enroll_services')
         $(".patient_enroll_services").html(enroll_services.toString());
-		 //changes for devices button ashwini mali 02 02 2023
-        var devicesdata = enroll_services[0];
+
+        //dropdown for change modules in Change Patient Status priya 14 04 2023
+
+        
+		//changes for devices button ashwini mali 02 02 2023
+        /*var devicesdata = enroll_services[0];
         var devicesdata1 = enroll_services[1];
         if(devicesdata == 'RPM'){ 
               $("#add_patient_devices").show();
@@ -2507,7 +2588,7 @@ var getPatientDetails = function (patientId, moduleId) {
                 $("#add_patient_devices").hide(); 
             }
 
-        }
+        }*/
         
         //end
 
@@ -2637,6 +2718,7 @@ var getPatientDetails = function (patientId, moduleId) {
         if (response.data.suspended_from != '') {
             fromDate = response.data.suspended_from;
         }
+
         if (response.data.hasOwnProperty("patient_enroll_date") && response.data.patient_enroll_date.length > 0) {
             if (response.data.patient_enroll_date[0].status == 1) {
                 patient_status = 'Active';
@@ -2954,6 +3036,24 @@ var getToDoListData = function (patientId, moduleId) {
     });
 };
 
+var getToDoListCalendarData = function (patient_id, module_id) {
+    if (patient_id==''){
+        patient_id = 0;
+    }
+    if(module_id == ''){   
+        module_id = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/org/calender/${patient_id}/${module_id}/cal`,
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#todo-calendar").html(response.data);
+        //alert();
+    }).catch(function (error) {
+        console.error(error, error.response);
+    }); 
+};
 // var getDataCalender = function (patientId, moduleId){
 //   axios({
 //         method: "GET",
@@ -4316,5 +4416,10 @@ window.util = {
     getDiagnosisCount: getDiagnosisCount,
     getDistinctDiagnosisCountForBubble:getDistinctDiagnosisCountForBubble,
 	displayLoader:displayLoader,
-	updatePartnerDevice:updatePartnerDevice
+	updatePartnerDevice:updatePartnerDevice,
+	getPatientEnrollModule:getPatientEnrollModule,
+	getToDoListCalendarData:getToDoListCalendarData,
+	updateTemplateList:updateTemplateList,
+	updateTemplateLists:updateTemplateLists
+	
 };

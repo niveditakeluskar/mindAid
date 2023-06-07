@@ -5,9 +5,11 @@
 
 @section('main-content')
 <?php
+
 $module_id = getPageModuleName();
 $stage_id = getFormStagesId($module_id, 'Relationship');
 ?>
+
 <div class="breadcrusmb">
 
   <div class="row">
@@ -33,10 +35,12 @@ $stage_id = getFormStagesId($module_id, 'Relationship');
                             <div class="col-md-4 form-group mb-3">
                                 <label for="loginuser" class="">Module <span class="error">*</span></label> 
                                  @selectMasterModule("module",["id"=>"module", "disabled"=>"disabled"])
+								 
                             </div>
                             <div class="col-md-4 form-group mb-3">
                                 <label for="loginuser" class="">Sub Module <span class="error">*</span></label>
                                 @select("Sub Module", "sub_module", [], ["id" => "sub_module", "class"=>"custom-select"])
+								
                             </div>
                             <div class="col-md-4 form-group mb-3">
                                 <label>Stage</label>

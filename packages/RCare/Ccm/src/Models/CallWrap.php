@@ -58,7 +58,7 @@ class CallWrap extends Model
         $year = Carbon::now()->year;
         // return self::where('patient_id', $patientId)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->orderBy('created_at', 'desc')->first();
         //updated by pranali on 9Nov2020 added sub_sequence column in order by clause
-        return self::where('patient_id', $patientId)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->first();
+        return self::where('patient_id', $patientId)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->orderBy('created_at', 'desc')->first();
         //return self::where('patient_id', $patientId)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->orderBy('sequence', 'desc')->orderBy('sub_sequence', 'desc')->first();
     }
 }

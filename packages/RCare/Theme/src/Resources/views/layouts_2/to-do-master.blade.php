@@ -118,13 +118,59 @@
                     @include('Theme::layouts_2.patient_careplan')
                     @include('Theme::layouts_2.previous-month-notes')
                 <?php }?>
-            @include('Theme::layouts_2.to-list-customizer') 
+					@include('Theme::layouts_2.to-list-customizer') 
 			
              
         <!-- </div> -->
         <!-- ============ Horizontal Layout End ============= -->
 
-        
+<div id="patient-finnumber" class="modal fade" role="dialog">  
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="fin_number_title">Fin Number</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('patient.savefinnumber')}}" method="post" name ="fin_number_form"  id="fin_number_form">
+                @csrf
+                <?php
+                    $module_id    = getPageModuleName();
+                    $submodule_id = getPageSubModuleName();
+                    $stage_id     = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'devices form ');
+                    // $step_id      = getFormStepId($module_id, $submodule_id, $stage_id, 'Personal Notes');
+                ?>
+                <input type="hidden" name="patient_id" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>" />
+                <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
+                <input type="hidden" name="start_time" value="00:00:00">
+                <input type="hidden" name="end_time" value="00:00:00"> 
+                <input type="hidden" name="module_id" value="{{ $module_id }}" />
+                <input type="hidden" name="component_id" value="{{ $submodule_id }}" /> 
+                <input type="hidden" name="stage_id" value="{{ $stage_id }}" /> 
+                <input type="hidden" name="form_name" value="devices_form">
+                <input type="hidden" name="idd" id="idd">
+
+                <div class="row">
+                    <div id="devices_success"></div>  
+                    <div class="col-md-12 form-group">
+                        <label>FIN Number<span class='error'>*</span></label>
+                        <!-- <input type="text" class="form-control patient_fin_number" name="fin_number" id = "fin_number"> -->
+                        <input id="fin_number_new" name="fin_number" type="text"  class="form-control">
+                        <div class="invalid-feedback"></div>
+
+                        <!-- <span type="hidden id ="fin_number" class="patient_fin_number" ></span> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary float-right submit-add-patient-fin-number">Submit</button>
+                        <button type="button" class="btn btn-default float-left" onclick="devicesclear()" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Fin Number -->            
 
         <!-- Vatran Service -->
 <div id="vateran-service" class="modal fade" role="dialog">  
@@ -686,7 +732,11 @@
                         <input type="hidden" name="worklistclick" id="worklistclick">
                         <input type="hidden" name="patientid" id="patientid">
                         <div class="card-body">
-                        <div class="row">
+                        <div class="row"> 
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="module">Module</label>
+                                <select name="modules" id="enrolledservice_modules" class="custom-select show-tick enrolledservice_modules"></select> 
+                            </div>   
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="status"> Select the Status <span class="error">*</span></label>

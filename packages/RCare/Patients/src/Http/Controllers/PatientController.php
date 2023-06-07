@@ -18,6 +18,7 @@ use RCare\Org\OrgPackages\Roles\src\Models\Roles;
 use RCare\Org\OrgPackages\Practices\src\Models\Practices; 
 use RCare\Org\OrgPackages\Practices\src\Models\PracticesGroup;
 use RCare\Org\OrgPackages\Providers\src\Models\Providers;
+use RCare\Patients\Models\PatientFinNumber;
 use RCare\Rpm\Models\PatientTimeRecordPatients;
 Use RCare\Org\OrgPackages\Threshold\src\Models\GroupThreshold;
 use RCare\Ccm\Models\PatientCareplanCarertool;
@@ -55,6 +56,7 @@ use RCare\Patients\Http\Requests\PatientProfileImage;
 use RCare\Patients\Http\Requests\ActiveDeactiveAddRequest;
 use RCare\Patients\Http\Requests\RecaptchaRequest;
 use RCare\Patients\Http\Requests\MasterDevicesRequest;
+use RCare\Patients\Http\Requests\FinNumberRequest;
 use RCare\Org\OrgPackages\Protocol\src\Models\RPMProtocol;
 use RCare\API\Http\Controllers\ECGAPIController;
 use RCare\API\Models\ApiException;
@@ -71,6 +73,60 @@ use File,DB;
 class PatientController extends Controller
 {    
   //all functions are cleaned by ashvini (15dec2020) 
+	public function savepatientfinnumber(FinNumberRequest $request){ 
+		
+        $id                 = sanitizeVariable($request->uid);
+        $rowid              = sanitizeVariable($request->idd);
+        $patient_id         = sanitizeVariable($request->patient_id);
+        $module_id          = sanitizeVariable($request->module_id);
+        $currentMonth       = date('m');
+        $currentYear        = date('Y');
+        $fin_number        = sanitizeVariable($request->fin_number);
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $component_id = sanitizeVariable($request->component_id);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $billable     = 1;
+        $form_name    = sanitizeVariable($request->form_name);
+        $step_id      = 0; 
+
+        $check_fn = Patients::where('id',$patient_id)->exists();
+
+        $data = array(
+            'fin_number'  => $fin_number
+        );
+
+        $patientfin = array(
+                    'patient_id'    => $patient_id, 
+                    'status'        => '1',
+                    'fin_number'    => $fin_number
+        );
+
+        if($check_fn == true){
+             $data['updated_by'] = session()->get('userid');
+             $update = Patients::where('id',$patient_id)->where('uid',$id)->update($data);
+        }
+
+        $check_exist_for_month         = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+        if ($check_exist_for_month == true) {
+            $patientfin['updated_at']= Carbon::now();
+            $patientfin['updated_by']= session()->get('userid');
+            $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($patientfin);
+        } else {
+            $patientfin['created_at']= Carbon::now();
+            $patientfin['created_by']= session()->get('userid');
+            $insert_query = PatientFinNumber::create($patientfin);
+        }
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+    }
+	
+	public function populateFinNumberData($id){        
+        $id = sanitizeVariable($id);
+        $data=DB::select( DB::raw("select fin_number from patients.patient where id = '".$id."'" ));
+        $result['fin_number_form'] = $data;
+        return $result;
+    }
+	
     public function getPatientRegistrationForm() {
         $module_id    = getPageModuleName();
         $SID = getFormStageId(getPageModuleName(), 	9, 'Veteran');
@@ -124,11 +180,30 @@ class PatientController extends Controller
             echo "Empty";
         }
     }
+	
+	 public function fetchPatientModuleStatus(Request $request) {
+        $patient_id = sanitizeVariable($request->route('patient_id')); 
+        $module_id = sanitizeVariable($request->route('module_id'));
+        $patientService = PatientServices::where('patient_id',$patient_id)->where('module_id',$module_id)->get();
+        return $patientService;
+    }
+
+
+    public function fetchPatientModule(Request $request) {
+        $patient_id = sanitizeVariable($request->route('patient_id'));
+        $patientService = PatientServices::with('module')->where('patient_id', $patient_id)->distinct()->get()//->pluck('module_id')
+        ->toArray(); 
+        //PatientServices::with('module')->where('patient_id',$patient_id)->select('module_id,module.module')->get()toArray();  
+        return $patientService; 
+    }
+	
 
     public function fetchPatientDetails(Request $request) {
         $uid       = sanitizeVariable($request->route('patient_id'));
         $module_id = sanitizeVariable($request->route('module_id'));
         $patient =  Patients::with('patientServices', 'patientServices.module')->where('id',$uid)->get();
+        $patient_services = PatientServices::with('module')->where('patient_id', $uid)->distinct()->get()//->pluck('module_id')
+        ->toArray(); 
         $age = empty($patient[0]->dob) ?'' : age($patient[0]->dob);
         $patient_demographics = PatientDemographics::where('patient_id', $uid)->latest()->first();
         $gender = isset($patient_demographics)?$patient_demographics->gender:'';
@@ -202,6 +277,7 @@ class PatientController extends Controller
         }
         
         $PatientDevices = PatientDevices::where('patient_id',$uid)->orderby('id','desc')->first();
+        
         $device_code = empty($PatientDevices->device_code)?'':$PatientDevices->device_code;
 
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
@@ -249,6 +325,7 @@ class PatientController extends Controller
 
    return [
            'patient'               =>$patient,
+           'patient_services'      =>$patient_services,
            'gender'                =>$gender,
            'military_status'       =>$military_status,
            'age'                   =>$age,
@@ -298,7 +375,8 @@ class PatientController extends Controller
            'enroll_in_rpm'         => $enroll_in_rpm
         ];
 }
-    // public function fetchPatientDetailsinModel($patient_id,$module_id){ 
+    
+   // public function fetchPatientDetailsinModel($patient_id,$module_id){ 
     //     $uid       = sanitizeVariable($patient_id);
     //     $module_id = sanitizeVariable($module_id);
     //     $patient =  Patients::with('patientServices', 'patientServices.module')->where('id',$uid)->get();
@@ -454,6 +532,7 @@ class PatientController extends Controller
     //created by Priya for deactivation patient 
     public function savePatientActiveDeactive(ActiveDeactiveAddRequest $request)
     {
+		
         $patient_id     = sanitizeVariable($request->patient_id);
         if($patient_id=='') {
             $patient_id = sanitizeVariable($request->patientid);
@@ -493,7 +572,8 @@ class PatientController extends Controller
             'created_by'        => session()->get('userid'),
             'updated_by'        => session()->get('userid')                     
         );
-        if($patient_status=='3'){
+		
+        if($patient_status == '3'){			
             $status_value ='Deceased';
             $service_data =array(
                 'status'                => '3',  
@@ -502,8 +582,10 @@ class PatientController extends Controller
                 'deactivation_reason'   => $comments,
                 'updated_by'            => session()->get('userid')  
                 );
+				
             PatientServices::where('patient_id',$patient_id)->update($service_data);  
             // PatientServices::where('patient_id',$patient_id)->get(); 
+			
             $data =array(
                 'status'                => '3',
                 'service_count'         => 0, 
@@ -511,9 +593,12 @@ class PatientController extends Controller
                 'from_date'             => $deceased_date,//date('Y-m-d h:i:s'),  
                 'updated_by'            => session()->get('userid')  
                 );
+				
             Patients::where('id',$patient_id)->update($data);
             PatientActiveDeactiveHistory::create($activedataInsert); 
+			
         }else{ 
+			
             $check_patient_status_from_master = Patients::where('id',$patient_id)->where('status',3)->exists();
             $total_services = PatientServices::where('patient_id', $patient_id)->distinct()->pluck('module_id')->whereNotIn('status',[2,3])->count();
                 if($patient_status!='' && $patient_status=='1'){
@@ -554,14 +639,16 @@ class PatientController extends Controller
                 'from_date'             => date('Y-m-d h:i:s'),
                 'updated_by'            => session()->get('userid')  
                 );
-            // dd($patient_data);
+            
             if($check_patient_status_from_master==true){ 
                 $enrolled_module = PatientServices::where('patient_id', $patient_id)->distinct()->pluck('module_id')->toArray();
+				
                 foreach($enrolled_module as $old) {   
                      $last_lates_rec = PatientActiveDeactiveHistory::where('patient_id',$patient_id)
                      ->where('module_id',$old)
                      ->orderBy('id','desc')->get();
-                    if($last_lates_rec!=''){
+					
+                    if(!$last_lates_rec->isEmpty()){
                         $exist_data_revert=array(              
                         // 'patient_id'            => $last_lates_rec [0]->$last_lates_rec[0];
                         'suspended_from'        => $last_lates_rec[0]->fromdate,
@@ -570,13 +657,17 @@ class PatientController extends Controller
                         'status_value'          => $last_lates_rec[0]->status_value,               
                         'deactivation_reason'   => $last_lates_rec[0]->comments,
                         'updated_by'            => session()->get('userid')
-                        );         
+                        );       
+						
                         PatientServices::where('patient_id',$patient_id)
                         ->where('module_id','!=',$select_module)->update($exist_data_revert);
                     }
+					
                     PatientServices::where('patient_id',$patient_id)
                     ->where('module_id',$select_module)->update($data);
+					
                 }
+				
                 PatientActiveDeactiveHistory::create($activedataInsert); 
                 Patients::where('id',$patient_id)->update($patient_data); 
             }else{ 
@@ -2085,6 +2176,7 @@ public function practicePatientsAssignDevice($practice,$moduleId){
     }
 
     public function patientRegistration(PatientAddRequest $request) {
+		
         $review   = "0";
         $uid      = "0";
         $img_path = "";
@@ -2132,18 +2224,44 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         $primary_cell_phone         = sanitizeVariable($request->primary_cell_phone);
         $secondary_cell_phone       = sanitizeVariable($request->secondary_cell_phone);
         $consent_to_text            = sanitizeVariable($request->consent_to_text);
-        $entrollment_form            = sanitizeVariable($request->entrollment_form);
+        //$entrollment_form            = sanitizeVariable($request->entrollment_form);
+		$entrollment_form            = sanitizeVariable($request->entrollment_from);
+        $currentMonth       = date('m');
+        $currentYear        = date('Y');
+		
+		
         if($military_status == '0'){
             $vtemplate = sanitizeVariable(json_encode($request->question['question']));
         }
         else{ 
             $vtemplate = null;
         }
+			
 
         $data     = DB::select("SELECT patients.generate_patient_uid('".$fname."' , '".$dob."', '".$lname."') AS id");  
         $uid      = $data[0]->id;
+		$patient_id = $uid;
         DB::beginTransaction();
         try {
+			$patientfin = array(
+                    'patient_id'    => $patient_id, 
+                    'status'        => '1',
+                    'fin_number'    => $fin_number
+            );
+			if($fin_number != null || $fin_number != ''){
+				$check_exist_for_month  = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+
+				if ($check_exist_for_month == true) {
+					$patientfin['updated_at']= Carbon::now();
+					$patientfin['updated_by']= session()->get('userid');
+					$update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($patientfin);
+				} else {
+					$patientfin['created_at']= Carbon::now();
+					$patientfin['created_by']= session()->get('userid');
+					$insert_query = PatientFinNumber::create($patientfin);
+				}
+			}			
+			
             $patient_data = array(  
                                     'id'                         => $uid,
                                     'fname'                      => $fname,
@@ -2512,6 +2630,8 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         $primary_cell_phone        = sanitizeVariable($request->primary_cell_phone);
         $secondary_cell_phone      = sanitizeVariable($request->secondary_cell_phone);
         $consent_to_text            = sanitizeVariable($request->consent_to_text);
+		 $currentMonth       = date('m');
+        $currentYear        = date('Y');
 
         if($military_status == '0'){
             $vtemplate = sanitizeVariable(json_encode($request->question['question']));
@@ -2519,6 +2639,26 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         else{ 
             $vtemplate = null;
         }
+		
+			if($fin_number != null || $fin_number != ''){
+			$patientfin = array(
+                    'patient_id'    => $patient_id, 
+                    'status'        => '1',
+                    'fin_number'    => $fin_number
+            );
+
+            $check_exist_for_month         = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+
+            if ($check_exist_for_month == true) {
+                $patientfin['updated_at']= Carbon::now();
+                $patientfin['updated_by']= session()->get('userid');
+                $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($patientfin);
+            } else {
+                $patientfin['created_at']= Carbon::now();
+                $patientfin['created_by']= session()->get('userid');
+                $insert_query = PatientFinNumber::create($patientfin);
+            } 
+			}
 
         $patient_data = array(  
                                 
