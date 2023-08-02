@@ -34,6 +34,7 @@ Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('org')->group(function () {
         Route::get('/get-dynamic-template/{moduleId}/{subModuleId}/{stageId}/{stepId}/questionnaire-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getDynamicQuestionnaireTemplate')->name('get.dynamic.questionnaire.template');
         Route::get('get-template/{moduleid}/{stepid}/{type}/stepWise', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getTemplate');
+		
         Route::get('/ajax/template/{module}/{subModuleId}/{templateId}/list', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@getTemplateList')->name('get.template.list');
     });
     Route::prefix('ccm')->group(function () {

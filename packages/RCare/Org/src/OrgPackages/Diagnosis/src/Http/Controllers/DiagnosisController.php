@@ -24,10 +24,12 @@ class DiagnosisController extends Controller {
     }
 
     public function populateDiagnosisData($patientId){
-	$patientId = sanitizeVariable($patientId);
-    $diagnosis_data=DB::select( DB::raw("select d.id,d.condition,upper(dc.code) as code,d.status,d.qualified from ren_core.diagnosis as d left join ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id  where d.id='$patientId' and dc.status=1 order by d.created_at desc"));  
-    $result['main_diagnosis_form'] = $diagnosis_data;
-    return $result;
+      $patientId = sanitizeVariable($patientId);
+      $diagnosis_data=DB::select( DB::raw("select d.id,d.condition,upper(dc.code) as code,d.status,d.qualified 
+      from ren_core.diagnosis as d left join ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id  
+      where d.id='$patientId' and dc.status=1 order by d.created_at desc"));        
+      $result['main_diagnosis_form'] = $diagnosis_data;
+      return $result;
     }
 
     // created by ashwini 26april2022
@@ -267,15 +269,14 @@ class DiagnosisController extends Controller {
            $configTZ = config('app.timezone'); 
            $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
           // dd($userTZ);
-           $data=DB::select( DB::raw("select d.id,d.condition,array_to_string(array_agg(upper(concat(dc.code , '#' , dc.valid_invalid))), ',') as code, d.status, to_char(d.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at,
+           $data=DB::select( DB::raw("select d.id,d.condition,
+           rtrim(array_to_string(array_agg(upper(concat(dc.code , '#' , dc.valid_invalid))), ','),'#') as code, d.status, to_char(d.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at,
                u.f_name, u.l_name,d.qualified from ren_core.diagnosis as d 
               FULL OUTER JOIN  ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id and dc.status=1 and dc.code is not null 
               left join ren_core.users as u on d.created_by=u.id  
               where d.condition is not null
               group by d.id,u.f_name,u.l_name,d.qualified order by d.created_at desc"));
           
-
-          //dd($data);
             return Datatables::of($data)
             ->addIndexColumn()
             ->editColumn('code', function($row){
@@ -292,14 +293,16 @@ class DiagnosisController extends Controller {
                 $dccode = $codevi[$i];
                 // print_r($dccode); 
                 $color_vi = preg_split('/[#]/' , $dccode);
-                $codedata = $color_vi[0];
-                // print_r($codedata);echo "<pre>";
-                $validinvalid = $color_vi[1];
-                if($validinvalid == '0'){
-                    //$invalidcolor = '<div class="color-red">'.$codedata.'</div>';
-                    array_push($invalidcodearray,"<span style='color: red;'>".$codedata."</span>");
-                }else{
-                  array_push($validcodearray,$codedata);
+                if(count($color_vi)>=2){
+                  $codedata = $color_vi[0];
+                  // print_r($codedata);echo "<pre>";
+                  $validinvalid = $color_vi[1];
+                  if($validinvalid == '0'){
+                      //$invalidcolor = '<div class="color-red">'.$codedata.'</div>';
+                      array_push($invalidcodearray,"<span style='color: red;'>".$codedata."</span>");
+                  }else{
+                    array_push($validcodearray,$codedata);
+                  }
                 }
                 $invalidcolor = implode(",",$invalidcodearray); 
                 $validcolor = implode(",",$validcodearray);

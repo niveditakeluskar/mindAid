@@ -67,7 +67,7 @@ function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet)
 		}
 	}
 }?>
-@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3"])	
+@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2"])	
 
 <div class="alert alert-success general_success" id="success-alert" style="display: none;">
 	<button type="button" class="close" data-dismiss="alert">x</button>
@@ -161,6 +161,6 @@ foreach($stepWiseDecisionTree as $skey => $stepvalue){ ?>
 	<button type="button" class="close" data-dismiss="alert">x</button>
 	<strong> General question data saved successfully! </strong><span id="text"></span>
 </div>
-@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 bottom"])						
+@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2 bottom"])						
 <div style="padding-left: 20px; color:red; font-size:13px;"><b>Select additional applicable questions</b></div>
 <button type="button" class="btn  btn-primary m-1 nexttab" onclick="nexttab()" style='display:none;'>Next</button>

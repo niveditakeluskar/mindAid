@@ -3316,8 +3316,8 @@ class CarePlanDevelopmentController extends Controller
         $oxygen               = sanitizeVariable($request->oxygen);
         $notes                = sanitizeVariable($request->notes);
        // dd($pain_level);
-        DB::beginTransaction();
-        try {
+        //DB::beginTransaction();
+       // try {
             $cv1 = is_numeric($height);  
             $cv2 = is_numeric($weight);  
             $cv3 = is_numeric($bmi);
@@ -3330,7 +3330,7 @@ class CarePlanDevelopmentController extends Controller
             // dd($cv8);
 
             if(( $cv1 || $cv2 || $cv3 || $cv4 || $cv5 || $cv6 || $cv7 || $cv8 || $cv9)=='true'){ 
-                $current_date = Carbon::now();
+                $current_date = date('Y-m-d H:i:s');
                 $data   = array(
                                     'patient_id'    => $patient_id,
                                     'uid'           => $patient_id,
@@ -3348,6 +3348,16 @@ class CarePlanDevelopmentController extends Controller
                                     'oxygen'        => $oxygen,
                                     'notes'         => $notes
                                 );
+								
+					$check = PatientVitalsData::where('patient_id',$patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists(); 
+					
+                    if($check=='true'){
+                        PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($data);
+                    }else{						
+                        $insert_query = PatientVitalsData::create($data);
+						
+                    }
+								
                         $cw_height               = !empty(sanitizeVariable($request->height))?'height:'.sanitizeVariable($request->height).',':'';
                         $cw_weight               = !empty(sanitizeVariable($request->weight))?'weight:'.sanitizeVariable($request->weight).',':'';
                         $cw_bmi                  = !empty(sanitizeVariable($request->bmi))?'bmi:'.sanitizeVariable($request->bmi).',':'';
@@ -3378,12 +3388,9 @@ class CarePlanDevelopmentController extends Controller
                     'notes'               => $vitals_data_array,
                     'patient_id'          => $patient_id
                 );
-                $check = PatientVitalsData::where('patient_id',$patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists(); 
-                    if($check=='true'){
-                        PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($data);
-                    }else{
-                        $insert_query = PatientVitalsData::create($data);
-                    }
+				
+                
+					
                 $CallWrap_check = CallWrap::where('patient_id', $patient_id)->where('topic','Vitals Data')->whereDate('created_at', '=', Carbon::today()->toDateString())->exists(); 
                 // if($module_id=='3' && $component_id=='19'){
                     if($CallWrap_check=='true'){ 
@@ -3405,12 +3412,12 @@ class CarePlanDevelopmentController extends Controller
             } else {
                 echo "false";
             }
-            DB::commit();
-        } catch(\Exception $ex) {
-            DB::rollBack();
+            //DB::commit();
+        //} catch(\Exception $ex) {
+          //  DB::rollBack();
             // return $ex;
-            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+            //return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        //}
     }
     
 	

@@ -22,7 +22,8 @@ Route::middleware(["auth", "web"])->group(function () {
         
         //     Route::get('/monthly-monitoring-patient-list', 'RCare\Ccm\Http\Controllers\CcmController@index')->name('monthly.monitoring.patient.list');
         ///////////////////////New Monthly Monitoring/////////////////////////////
-        
+        Route::get('/monthly-monitoring-call-wrap-up-activities/activities', 'RCare\Ccm\Http\Controllers\CcmController@callWrapUpActivities')->name('call.wrap.up.activities');  
+		
         Route::get('/testScheduler', 'RCare\Ccm\Http\Controllers\CcmController@testScheduler')->name('testScheduler');  
         
         Route::post('/monthly-monitoring/enrolled-date', 'RCare\Ccm\Http\Controllers\CcmController@saveEnrolleddate')->name('save.enrolleddate');  

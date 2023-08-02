@@ -2287,15 +2287,15 @@ var updateStageCodeList = function (stageId, selectElement, selectedStageCodes =
     });
 };
 
-var updateTemplateList = function (moduleId,stepId,selectElement) {
+var updateTemplateList = function (moduleId, stepId, type, selectElement) {
     $("#template-list").html("");
     axios({
         method: "GET",
-        url: `/org/get-template/${moduleId}/${stepId}/stepWise`,
+        url: `/org/get-template/${moduleId}/${stepId}/${type}/stepWise`,
     }).then(function (response) {
         Object.values(response.data).forEach(function (stages) {
-           // $("<option>").val(stages.id).html(stages.description).appendTo(selectElement);
-            $("#template-list").append('<li><label for="'+stages.id+'" class="checkbox checkbox-primary mr-3"><input type="checkbox" name="template[copy]['+stages.id+']" id="'+stages.id+'" value="1"  formControlName="checkbox" /><span>'+stages.content_title+'</span><span class="checkmark"></span></label></li>');
+            // $("<option>").val(stages.id).html(stages.description).appendTo(selectElement);
+            $("#template-list").append('<li><label for="' + stages.id + '" class="checkbox checkbox-primary mr-3"><input type="checkbox" name="template[copy][' + stages.id + ']" id="' + stages.id + '" value="1"  formControlName="checkbox" /><span>' + stages.content_title + '</span><span class="checkmark"></span></label></li>');
         });
     }).catch(function (error) {
         console.error(error, error.response);
@@ -3590,7 +3590,7 @@ const getCircularReplacer = () => {
 //     }
 // };
 
-var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId) {
+var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId, totaltimeonly= null) {
 
     axios({
         method: "GET",
@@ -3603,22 +3603,24 @@ var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId) {
         M = splitTime[1];
         S = splitTime[2];
         $("#time-container").val(AppStopwatch.resetTickingTimeClock);
-        $("#start").hide();
-        $("#pause").show();
+		if(totaltimeonly==null){
+			$("#start").hide();
+			$("#pause").show();
 
-        $("#timer_start").val(time);
-        $("#page_landing_time").val(moment(Date.now()).format('HH:mm:ss'));
-        $("#patient_time").val(time);
-        $("#pause_time").val('0');
-        $("#play_time").val('0');
-        $("#pauseplaydiff").val('0');
+			$("#timer_start").val(time);
+			$("#page_landing_time").val(moment(Date.now()).format('HH:mm:ss'));
+			$("#patient_time").val(time);
+			$("#pause_time").val('0');
+			$("#play_time").val('0');
+			$("#pauseplaydiff").val('0');
 
 
-        var billableTime = data['billable_time'];
-        $(".last_time_spend").html(billableTime);
+			var billableTime = data['billable_time'];
+			$(".last_time_spend").html(billableTime);
 
-        var nonBillableTime = data['non_billable_time'];
-        $(".non_billabel_last_time_spend").html(nonBillableTime);
+			var nonBillableTime = data['non_billable_time'];
+			$(".non_billabel_last_time_spend").html(nonBillableTime);
+		}
 
     }).catch(function (error) {
         console.error(error, error.response);

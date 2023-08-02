@@ -20,7 +20,7 @@ Route::prefix('org')->group(function () {
         });
         Route::post('/ajax/submitHoliday','RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@saveHoliday')->name("ajax.save.holiday");
         Route::get("/holiday-list", "RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@HolidayList")->name("holidays_list");
-        Route::get('/ajax/populateForm/{patientId}','RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@populateHolidayData')->name("ajax.populate.holiday.data");
+       // Route::get('/ajax/populateForm/{patientId}','RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@populateHolidayData')->name("ajax.populate.holiday.data");
         Route::get("/holiday-edit/{id}", "RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@editHoliday")->name("holiday_edit");
         Route::post('/delete-holiday/{id}', 'RCare\Org\OrgPackages\Holiday\src\Http\Controllers\holidayController@deleteHoliday')->name('delete.holiday'); 
     });

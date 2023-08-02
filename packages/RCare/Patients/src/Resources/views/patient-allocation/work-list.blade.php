@@ -94,7 +94,7 @@
                                     <th width="115px">Total Time Spent</th>
                                     <th>Action</th>
                                     <th width="35px">Patient Status</th>
-                                    <th width="35px">Add'l Act</th>
+                                   <!-- <th width="35px">Add'l Act</th> -->
                                     <th width="35px">Call Score</th>
                                 </tr>
                             </thead>
@@ -272,7 +272,7 @@
                             }
                         }, orderable: true, searchable: false
                     },
-                    { data: 'addaction', name: 'addaction', orderable: true, searchable: false}, 
+                   /* { data: 'addaction', name: 'addaction', orderable: true, searchable: false}, */
                     
                     { data: 'pssscore', name: 'pssscore',
                         mRender: function(data, type, full, meta){

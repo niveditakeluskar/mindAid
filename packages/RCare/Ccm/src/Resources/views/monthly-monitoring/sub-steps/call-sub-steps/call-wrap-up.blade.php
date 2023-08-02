@@ -113,49 +113,140 @@
                             <div class="col-md-12"><b><label style="margin-left: 20px; color: #69aac2;">Additional Services :</label></b></div>
                          
 
-                            <div class="col-md-4">
-                                <label for="schedule_office_appointment" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="schedule_office_appointment" id="schedule_office_appointment" value="1" class="RRclass schedule_office_appointment" formControlName="checkbox" />
-                                    <span>Scheduled or requested an office appointment</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        </div>
-                        <div class="col-md-4">
-                                <label for="resources_for_medication" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="resources_for_medication" id="resources_for_medication" value="1" class="RRclass resources_for_medication" formControlName="checkbox" />
-                                    <span>Provided resources for medication or social needs</span>
-                                    <span class="checkmark"></span>
-                                </label>
-                        </div>
+                              
 
-                        <div class="col-md-4">
-                                <label for="medical_renewal" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="medical_renewal" id="medical_renewal" value="1" class="RRclass medical_renewal" formControlName="checkbox" />
-                                    <span>Researched or requested medication renewal</span>
+                            <div class="col-md-4">
+                                <label for="routine_response" class="checkbox checkbox-primary mr-3">
+                                    <input type="checkbox" name="routine_response" id="routine_response" value="1" class="RRclass routine_response" formControlName="checkbox" />  
+                                    <span>Routine Response</span>
                                     <span class="checkmark"></span>
                                 </label>
-                        </div>
-                        <div class="col-md-4">
-                                <label for="called_office_patientbehalf" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="called_office_patientbehalf"  id="called_office_patientbehalf" value="1" class="RRclass called_office_patientbehalf" formControlName="checkbox" />
-                                    <span>Called the office on behalf of patient</span>
+
+                                <div class="col-md-12" id="routinediv">
+                                    <span class="checkmark"></span>
+                                </div>
+                            </div>
+                            
+                            
+
+                            <div class="col-md-4">
+                                <label for="urgent_emergent_response" class="checkbox checkbox-primary mr-3">
+                                    <input type="checkbox" name="urgent_emergent_response" id="urgent_emergent_response" value="1" class="RRclass urgent_emergent_response" formControlName="checkbox" />  
+                                    <span>Urgent/Emergent Response</span>
                                     <span class="checkmark"></span>
                                 </label>
-                        </div>
-                        <div class="col-md-4">
-                                <label for="referral_support" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="referral_support"  id="referral_support" value="1" class="RRclass referral_support" formControlName="checkbox" />
-                                    <span>Referral support for Home Health, Oxygen or DME</span>
+
+                                <div class="col-md-12" id="emergentdiv">
+                                    <span class="checkmark"></span>
+                                </div>
+                            </div>
+
+                            
+
+                            <div class="col-md-4">
+                                    <label for="referral_order_support" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="referral_order_support" id="referral_order_support" value="1" class="RRclass referral_order_support" formControlName="checkbox" />
+                                        <span>Referral/Order Support</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="referraldiv">
+                                        <span class="checkmark"></span>
+                                    </div>
+                            </div>
+
+                            
+
+                            <div class="col-md-4">
+                                    <label for="medication_support" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="medication_support"  id="medication_support" value="1" class="RRclass medication_support" formControlName="checkbox" />
+                                        <span>Medication Support</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="medicationdiv">
+                                        <span class="checkmark"></span>
+                                    </div>
+                            </div>
+
+                            
+
+                            <div class="col-md-4">
+                                    <label for="verbal_education_review_with_patient" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="verbal_education_review_with_patient"  id="verbal_education_review_with_patient" value="1" class="RRclass verbal_education_review_with_patient" formControlName="checkbox" />
+                                        <span>Verbal Education/Review with Patient</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="verbaldiv">
+                                        <span class="checkmark"></span>
+                                    </div>
+                            </div>
+
+                           
+
+                            <div class="col-md-4">
+                                    <label for="mailed_documents" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="mailed_documents"  id="mailed_documents" value="1" class="RRclass mailed_documents" formControlName="checkbox" />
+                                        <span>Mailed Documents</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="maileddiv">
+                                        <span class="checkmark"></span>
+                                    </div>
+                            </div>
+
+                            
+
+                            <div class="col-md-4">
+                                <label for="resource_support" class="checkbox checkbox-primary mr-3">
+                                    <input type="checkbox" name="resource_support"  id="resource_support" value="1" class="RRclass resource_support" formControlName="checkbox" />
+                                    <span>Resource Support</span>
                                     <span class="checkmark"></span>
                                 </label>
-                        </div>
-                        <div class="col-md-4">
-                                <label for="no_other_services" class="checkbox checkbox-primary mr-3">
-                                    <input type="checkbox" name="no_other_services"  id="no_other_services" value="1" class="RRclass no_other_services" formControlName="checkbox" />
-                                    <span>No other services provided</span>
+
+                                <div class="col-md-12" id="resourcediv">
                                     <span class="checkmark"></span>
-                                </label>
-                        </div>
+                                </div>
+
+                            </div>
+
+                            
+
+                            <div class="col-md-4">
+                                    <label for="veterans_services" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="veterans_services"  id="veterans_services" value="1" class="RRclass veterans_services" formControlName="checkbox" />
+                                        <span>Veterans Services</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="veteransdiv">
+                                        <span class="checkmark"></span>
+                                    </div>
+                            </div> 
+
+                            <div class="col-md-4">
+                                    <label for="authorized_cm_only" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="authorized_cm_only"  id="authorized_cm_only" value="1" class="RRclass authorized_cm_only" formControlName="checkbox" />
+                                        <span><b>Authorized CM Only:</b></span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    <div class="col-md-12" id="authorizeddiv">
+                                        <span class="checkmark"></span>
+                                    </div> 
+                            </div>
+
+                            <div class="col-md-4">
+                                    <label for="no_additional_services_provided" class="checkbox checkbox-primary mr-3">
+                                        <input type="checkbox" name="no_additional_services_provided"  id="no_additional_services_provided" value="1" class="RRclass no_additional_services_provided" formControlName="checkbox" />
+                                        <span>No Additional Services Provided:</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+
+                                    
+                            </div>
 
                             </div>
 

@@ -530,9 +530,8 @@ class PatientController extends Controller
     }
      
     //created by Priya for deactivation patient 
-    public function savePatientActiveDeactive(ActiveDeactiveAddRequest $request)
-    {
-		
+    public function savePatientActiveDeactive(ActiveDeactiveAddRequest $request) 
+    {	
         $patient_id     = sanitizeVariable($request->patient_id);
         if($patient_id=='') {
             $patient_id = sanitizeVariable($request->patientid);
@@ -547,11 +546,13 @@ class PatientController extends Controller
         $todate         = sanitizeVariable($request->activedeactivetodate); 
         $comments       = sanitizeVariable($request->deactivation_reason); 
         $module_id      = sanitizeVariable($request->module_id);
-        if($module_id==8){ 
-            $select_module = 3;
-        }else{
-           $select_module = $module_id;
-        }
+        // if($module_id==8){ 
+        //     $select_module = 3;
+        // }else{
+        //    $select_module = $module_id; 
+        // } no more used
+        $select_module = sanitizeVariable($request->modules);
+       
         $deactivation_drpdwn = sanitizeVariable($request->deactivation_drpdwn); 
         // dd($select_module); 
         $start_time     = sanitizeVariable($request->start_time);//echo "<br>";
@@ -667,7 +668,6 @@ class PatientController extends Controller
                     ->where('module_id',$select_module)->update($data);
 					
                 }
-				
                 PatientActiveDeactiveHistory::create($activedataInsert); 
                 Patients::where('id',$patient_id)->update($patient_data); 
             }else{ 
@@ -680,6 +680,7 @@ class PatientController extends Controller
 
         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
     }
+	
     public function getPatientActiveDeactive(Request $request)
     {
         $patient_id                     = sanitizeVariable($request->route('patient_id'));

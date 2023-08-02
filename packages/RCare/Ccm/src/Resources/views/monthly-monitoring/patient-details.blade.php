@@ -507,8 +507,98 @@
             getPatientAlertHistoryList('000000000','observationsbp',fromdatevalue,todatevalue,value);
         }
     }
+	
+	function getCallWrapupActivities(){
+       
+       $.ajax({
+       type: 'get',
+       url: '/ccm/monthly-monitoring-call-wrap-up-activities/activities',
+       success: function(response) {
+
+        // console.log(response);
+        // console.log(response.length);
+        // console.log(response[0].activity);
+
+        // alert('patientdetails function called');
+       
+         
+        for (var j = 0; j < response.length ; j++) {
+            var a = response[j].activity;
+            var a2 = a.replace(/ /g, "_");
+            a1 = a2.replace(/\//g, "_");
+            var acttype = [];
+       
+           
+            var classname = "RRclass "+a1;  
+            // var result = a.split(" ").join("_");
+            // var txt = '<div><input type="checkbox" name="acttype[]" id="acttype'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+            
+            if(response[j].activity_type == 'Routine Response'){
+             
+                var txt = '<div><input type="checkbox" name="routineresponse['+a1+']" id="routineresponse_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #routinediv').append(txt);
+
+            }else if(response[j].activity_type == 'Urgent/Emergent Response'){
+                
+                var txt = '<div><input type="checkbox" name="urgentemergentresponse['+a1+']" id="urgentemergentresponse_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #emergentdiv').append(txt);
+
+            }else if(response[j].activity_type == 'Referral/Order Support'){
+
+                var txt = '<div><input type="checkbox" name="referralordersupport['+a1+']" id="referralordersupport_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #referraldiv').append(txt);
+
+            }else if(response[j].activity_type == 'Medication Support'){
+
+               
+                var txt = '<div><input type="checkbox" name="medicationsupport['+a1+']" id="medicationsupport_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #medicationdiv').append(txt);
+                 
+            }else if(response[j].activity_type == 'Verbal Education/Review with Patient'){
+
+                var txt = '<div><input type="checkbox" name="verbaleducationreviewwithpatient['+a1+']" id="verbaleducationreviewwithpatient_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #verbaldiv').append(txt);
+
+            }else if(response[j].activity_type == 'Mailed Documents'){  
+
+                   
+                var txt = '<div><input type="checkbox" name="maileddocuments['+a1+']" id="maileddocuments_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #maileddiv').append(txt);
+
+            }else if(response[j].activity_type == 'Resource Support'){
+
+                var txt = '<div><input type="checkbox" name="resourcesupport['+a1+']" id="resourcesupport_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #resourcediv').append(txt);
+
+            }else if(response[j].activity_type == 'Veterans Services'){
+
+                var txt = '<div><input type="checkbox" name="veteransservices['+a1+']" id="veteransservices_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+                $('form[name="callwrapup_form"] #veteransdiv').append(txt);   
+
+            }else if(response[j].activity_type == 'Authorized CM Only'){ 
+
+               
+            var txt = '<div><input type="checkbox" name="authorizedcmonly['+a1+']" id="authorizedcmonly_'+a1+'" value="1" class="'+classname+'" formControlName="checkbox" /><span>'+a+'</span><br></div>';  
+            $('form[name="callwrapup_form"] #authorizeddiv').append(txt);     
+            }
+
+
+           
+            // $('form[name="callwrapup_form"] #routinediv').append('<div><input type="checkbox" name="interaction_with_Office_staff" id="interaction_with_Office_staff" value="1" class="RRclass interaction_with_Office_staff" formControlName="checkbox" /><span>"interaction_with_Office_staff"</span><br></div>');
+            // $('form[name="callwrapup_form"] #routinediv').append(txt);      
+        
+        } 
+      
+       
+       
+       }
+   }); 
+
+}
+
 
     $(document).ready(function(){ 
+		getCallWrapupActivities();
         rpmReviewDataLink.init();
         setdata();
         $('#btn_datalist').click(function(){

@@ -11,6 +11,10 @@
 |
 */
 Route::prefix('rpm')->group(function () {
+	 Route::get('/timeline-activity', function(){
+        return view('Rpm::timeline_rpm.Timeline-Activities');
+    })->name('timeline.activities');
+	
 	Route::get('preview', 'RCare\Rpm\Http\Controllers\PDFController@preview');
     Route::get('download', 'RCare\Rpm\Http\Controllers\PDFController@download')->name('download');
 	Route::get('/rpm-device-report-pdf', 'RCare\Ccm\Http\Controllers\CPDController@rpmDeviceReport')->name('rpm.device.report'); 

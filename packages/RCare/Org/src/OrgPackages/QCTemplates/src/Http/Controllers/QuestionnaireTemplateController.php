@@ -61,8 +61,7 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::QuestionnaireTemplates.add-questionnaire-template', compact('data','components','devices', 'module')); 
     }
 
-    public function getTemplate($moduleid, $stepid, $type){
-
+    public function getTemplate($moduleid, $stepid, $type){		
         $template = QuestionnaireTemplate::where('module_id', $moduleid)->where('template_type_id',$type)->where('stage_code', $stepid)->where('status', 1)->get();
         return response()->json($template); 
     }

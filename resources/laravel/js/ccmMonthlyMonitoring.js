@@ -44,7 +44,89 @@ var populateForm = function (data, url) {
                         var summarys = result[key].static['summary'];
 						var summaryslength = result[key].static['summary'].length;
                         var checklist_data = result[key].static['checklist_data'];
+						
+						if(result[key].static['additional_services'] != null && typeof(result[key].static['additional_services'])!= "undefined" && result[key].static['additional_services'] != ""){
 
+                            var additionalservices = result[key].static['additional_services'][0]['notes'];  
+                           
+
+                            var resultnew = additionalservices.split(';').map(e => e.split(':'));
+                            
+                            for(var i = 0; i < resultnew.length; i++){
+                                var servicedata = resultnew[i];
+                                
+                                for(var k = 0 ; k< servicedata.length; k++){
+    
+                                    var maindivname = servicedata[0];
+                                    var lwercase = maindivname.toLowerCase();
+                                    var trimcase = lwercase.trim();
+                                    newtrimcase = trimcase.replace('/', '');
+                                    var mymaindiv = newtrimcase.replace(/ /g, "");
+                                    
+                                 
+                                    var finalservicedata = servicedata[k];
+
+                                    if(finalservicedata == 'No Additional Services Provided ' || finalservicedata == "No Additional Services Provided " ){
+                                        // alert('if');
+                                        // alert(finalservicedata);
+                                        if(finalservicedata!=''){
+                                          
+                                            $("form[name='callwrapup_form'] #no_additional_services_provided").prop('checked', true);  
+                                           
+                                        }
+    
+    
+                                    }else{
+                                    
+                                    if (finalservicedata.indexOf(',') > -1) { 
+                                        var additionaldata = finalservicedata.split(',');                                       
+    
+                                                for(var n = 0; n< additionaldata.length; n++){
+                                                    w = additionaldata[n];
+                                                    var y = w.trim();
+                                                    var y_old = y.replace(/ /g, "_"); 
+                                                    var mydata = y_old.replace(/\//g, "_");
+                                                  
+                                                    if(mydata!=''){
+                                                    
+                                                        var addname = "RRclass "+mydata;
+                                                        var checkboxid = mymaindiv+'_'+mydata;
+                                                       
+                                                        $("form[name='callwrapup_form'] #"+checkboxid).prop('checked', true);
+                                                        // $("form[name='callwrapup_form'] #"+mydata).prop('checked', true);
+                                                        // $('input:checkbox[name="urgentemergentresponse[Interaction_with_Office_Staff]"][value="1"]').prop('checked',true);
+                                                       
+                                                    }
+                                                  
+                                                    
+                                                }
+    
+                                               
+                                     }else{
+                                        var f_lowercase = finalservicedata.toLowerCase();
+                                        var x = f_lowercase.trim();
+                                        x = x.replace('/', ' ');
+                                        var n_lowercase_old = x.replace(/ /g, "_");
+                                        var n_lowercase = n_lowercase_old.replace(/\//g, "_");
+                                     
+                                        if( n_lowercase!='' ){
+                                      
+                                            $("form[name='callwrapup_form'] #"+n_lowercase ).prop('checked', true); 
+                                            
+                                        }
+                                   
+                                     }
+
+                                    }
+
+    
+                                }
+                            }
+                           
+    
+                        }
+    
+                        callWrapUpShowHide();
 						if(emr_monthly_summarys != null && emr_monthly_summarys != ""){
                             $("textarea#callwrap_up_emr_monthly_summary").html(emr_monthly_summarys[0]['notes']);
                         }
@@ -854,6 +936,127 @@ $('#myIconTab li a').on('click', function () {
 //     populateForm(patientId, preparationNotesFormPopulateURL);
 // }
 
+var callWrapUpShowHide = function() {
+    
+    var newcheckbox_1 = $('form[name="callwrapup_form"] #routine_response').prop("checked");
+    var newcheckbox_2 = $('form[name="callwrapup_form"] #urgent_emergent_response').prop("checked");
+    var newcheckbox_3 = $('form[name="callwrapup_form"] #referral_order_support').prop("checked");
+    var newcheckbox_4 = $('form[name="callwrapup_form"] #medication_support').prop("checked");
+    var newcheckbox_5 = $('form[name="callwrapup_form"] #verbal_education_review_with_patient').prop("checked");
+    var newcheckbox_6 = $('form[name="callwrapup_form"] #mailed_documents').prop("checked");
+    var newcheckbox_7 = $('form[name="callwrapup_form"] #resource_support').prop("checked");
+    var newcheckbox_8 = $('form[name="callwrapup_form"] #veterans_services').prop("checked");
+    var newcheckbox_9 = $('form[name="callwrapup_form"] #authorized_cm_only').prop("checked");
+    var newcheckbox_10 = $('form[name="callwrapup_form"] #no_additional_services_provided').prop("checked");
+  
+   
+    if(newcheckbox_1 == true){
+        $('form[name="callwrapup_form"] #routinediv').show();  
+    }else{
+        $('form[name="callwrapup_form"] #routinediv').hide();
+    }
+
+    if(newcheckbox_2 == true){
+        $('form[name="callwrapup_form"] #emergentdiv').show();
+    }else{
+        $('form[name="callwrapup_form"] #emergentdiv').hide();
+    }
+
+    if(newcheckbox_3 == true){
+        $('form[name="callwrapup_form"] #referraldiv').show();
+    }else{
+        $('form[name="callwrapup_form"] #referraldiv').hide();
+    }
+    
+    if(newcheckbox_4 == true){
+      
+        $('form[name="callwrapup_form"] #medicationdiv').show();
+    }else{
+        $('form[name="callwrapup_form"] #medicationdiv').hide();
+    }
+    
+    if(newcheckbox_5 == true){
+        $('form[name="callwrapup_form"] #verbaldiv').show();
+    }else{
+        $('form[name="callwrapup_form"] #verbaldiv').hide();
+    }
+
+    if(newcheckbox_6 == true){
+    $('form[name="callwrapup_form"] #maileddiv').show();
+    }else{
+        $('form[name="callwrapup_form"] #maileddiv').hide();
+    }
+    
+    if(newcheckbox_7 == true){
+        $('form[name="callwrapup_form"] #resourcediv').show();
+    }else{
+        $('form[name="callwrapup_form"] #resourcediv').hide();
+    }
+    
+    if(newcheckbox_8 == true){
+        $('form[name="callwrapup_form"] #veteransdiv').show();  
+    }else{ 
+        $('form[name="callwrapup_form"] #veteransdiv').hide();
+    }
+
+    if(newcheckbox_9 == true){
+        $('form[name="callwrapup_form"] #authorizeddiv').show();  
+    }else{ 
+        $('form[name="callwrapup_form"] #authorizeddiv').hide();
+    }
+
+    if(newcheckbox_10 == true) {
+            
+        // alert('newcheckbox10  checked');
+        
+        $("form[name='callwrapup_form'] #authorizeddiv").hide();  
+        $("form[name='callwrapup_form'] #veteransdiv").hide();   
+        $("form[name='callwrapup_form'] #resourcediv").hide();   
+        $("form[name='callwrapup_form'] #maileddiv").hide();
+        $("form[name='callwrapup_form'] #verbaldiv").hide();   
+        $("form[name='callwrapup_form'] #medicationdiv").hide(); 
+        $("form[name='callwrapup_form'] #referraldiv").hide();
+        $("form[name='callwrapup_form'] #emergentdiv").hide();
+        $("form[name='callwrapup_form'] #routinediv").hide();
+        $('form[name="callwrapup_form"] #authorizeddiv').hide(); 
+        
+        $("form[name='callwrapup_form'] #routine_response").prop("checked", false);
+        $("form[name='callwrapup_form'] #urgent_emergent_response").prop("checked", false);
+        $("form[name='callwrapup_form'] #referral_order_support").prop("checked", false);
+        $("form[name='callwrapup_form'] #medication_support").prop("checked", false);
+        $("form[name='callwrapup_form'] #verbal_education_review_with_patient").prop("checked", false);
+        $("form[name='callwrapup_form'] #mailed_documents").prop("checked", false);
+        $("form[name='callwrapup_form'] #resource_support").prop("checked", false);
+        $("form[name='callwrapup_form'] #veterans_services").prop("checked", false);
+        $("form[name='callwrapup_form'] #authorized_cm_only").prop("checked", false);
+
+    }else{
+        // alert('newcheckbox10  not checked');
+
+        // $("form[name='callwrapup_form'] #authorizeddiv").show();  
+        // $("form[name='callwrapup_form'] #veteransdiv").show();   
+        // $("form[name='callwrapup_form'] #resourcediv").show();   
+        // $("form[name='callwrapup_form'] #maileddiv").show();
+        // $("form[name='callwrapup_form'] #verbaldiv").show();   
+        // $("form[name='callwrapup_form'] #medicationdiv").show(); 
+        // $("form[name='callwrapup_form'] #referraldiv").show();
+        // $("form[name='callwrapup_form'] #emergentdiv").show();
+        // $("form[name='callwrapup_form'] #routinediv").show();
+
+        // $("form[name='callwrapup_form'] #routine_response").prop("checked", false);
+        // $("form[name='callwrapup_form'] #urgent_emergent_response").prop("checked", false);
+        // $("form[name='callwrapup_form'] #referral_order_support").prop("checked", false);
+        // $("form[name='callwrapup_form'] #medication_support").prop("checked", false);
+        // $("form[name='callwrapup_form'] #verbal_education_review_with_patient").prop("checked", false);
+        // $("form[name='callwrapup_form'] #mailed_documents").prop("checked", false);
+        // $("form[name='callwrapup_form'] #resource_support").prop("checked", false);
+        // $("form[name='callwrapup_form'] #veterans_services").prop("checked", false);
+
+    }
+
+}
+
+
 var init = function () {
     var year = (new Date).getFullYear();
     var month = (new Date).getMonth() + 1; //add +1 for current mnth
@@ -863,6 +1066,7 @@ var init = function () {
     // util.redirectToWorklistPage();
     ccmcpdcommonJS.copyPreviousMonthDataToThisMonth($("#hidden_id").val(), $("#page_module_id").val());
     util.getDistinctDiagnosisCountForBubble(patient_id);
+	callWrapUpShowHide();
 
 
 // starts here
@@ -937,6 +1141,156 @@ var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]'
 
 
 // ends here
+	
+	$("form[name='callwrapup_form'] #routine_response").change(function() {  
+    if($("form[name='callwrapup_form'] #routine_response").is(":checked")) {
+        $("form[name='callwrapup_form'] #routinediv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #routinediv").hide();
+        
+    }
+});
+   
+
+$("form[name='callwrapup_form'] #urgent_emergent_response").change(function() {  
+    if($("form[name='callwrapup_form'] #urgent_emergent_response").is(":checked")) {
+        $("form[name='callwrapup_form'] #emergentdiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #emergentdiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #referral_order_support").change(function() {  
+    if($("form[name='callwrapup_form'] #referral_order_support").is(":checked")) {
+        $("form[name='callwrapup_form'] #referraldiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #referraldiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #medication_support").change(function() {  
+    if($("form[name='callwrapup_form'] #medication_support").is(":checked")) {
+        $("form[name='callwrapup_form'] #medicationdiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #medicationdiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #verbal_education_review_with_patient").change(function() {  
+    if($("form[name='callwrapup_form'] #verbal_education_review_with_patient").is(":checked")) {
+        $("form[name='callwrapup_form'] #verbaldiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #verbaldiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #verbal_education_review_with_patient").change(function() {  
+    if($("form[name='callwrapup_form'] #verbal_education_review_with_patient").is(":checked")) {
+        $("form[name='callwrapup_form'] #verbaldiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #verbaldiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #mailed_documents").change(function() {  
+    if($("form[name='callwrapup_form'] #mailed_documents").is(":checked")) {
+        $("form[name='callwrapup_form'] #maileddiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #maileddiv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #resource_support").change(function() {  
+    if($("form[name='callwrapup_form'] #resource_support").is(":checked")) {
+        $("form[name='callwrapup_form'] #resourcediv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #resourcediv").hide();
+        
+    }
+});
+
+$("form[name='callwrapup_form'] #veterans_services").change(function() {  
+    if($("form[name='callwrapup_form'] #veterans_services").is(":checked")) {
+        $("form[name='callwrapup_form'] #veteransdiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #veteransdiv").hide(); 
+    }
+});
+
+$("form[name='callwrapup_form'] #authorized_cm_only").change(function() {  
+    if($("form[name='callwrapup_form'] #authorized_cm_only").is(":checked")) {
+        $("form[name='callwrapup_form'] #authorizeddiv").show();   
+    }else{
+        $("form[name='callwrapup_form'] #authorizeddiv").hide(); 
+    }
+});
+
+    $("form[name='callwrapup_form'] #no_additional_services_provided").change(function() {  
+        if($("form[name='callwrapup_form'] #no_additional_services_provided").is(":checked")) {
+            
+            // alert('no additional checked');
+            
+            $("form[name='callwrapup_form'] #authorizeddiv").hide();  
+            $("form[name='callwrapup_form'] #veteransdiv").hide();   
+            $("form[name='callwrapup_form'] #resourcediv").hide();   
+            $("form[name='callwrapup_form'] #maileddiv").hide();
+            $("form[name='callwrapup_form'] #verbaldiv").hide();   
+            $("form[name='callwrapup_form'] #medicationdiv").hide(); 
+            $("form[name='callwrapup_form'] #referraldiv").hide();
+            $("form[name='callwrapup_form'] #emergentdiv").hide();
+            $("form[name='callwrapup_form'] #routinediv").hide();
+            $("form[name='callwrapup_form'] #authorizeddiv").hide();
+            
+            $("form[name='callwrapup_form'] #routine_response").prop("checked", false);
+            $("form[name='callwrapup_form'] #urgent_emergent_response").prop("checked", false);
+            $("form[name='callwrapup_form'] #referral_order_support").prop("checked", false);
+            $("form[name='callwrapup_form'] #medication_support").prop("checked", false);
+            $("form[name='callwrapup_form'] #verbal_education_review_with_patient").prop("checked", false);
+            $("form[name='callwrapup_form'] #mailed_documents").prop("checked", false);
+            $("form[name='callwrapup_form'] #resource_support").prop("checked", false);
+            $("form[name='callwrapup_form'] #veterans_services").prop("checked", false);
+            $("form[name='callwrapup_form'] #authorized_cm_only").prop("checked", false);
+
+
+
+
+
+        }else{
+            // alert('authorized not checked');
+
+            // $("form[name='callwrapup_form'] #authorizeddiv").show();  
+            // $("form[name='callwrapup_form'] #veteransdiv").show();   
+            // $("form[name='callwrapup_form'] #resourcediv").show();   
+            // $("form[name='callwrapup_form'] #maileddiv").show();
+            // $("form[name='callwrapup_form'] #verbaldiv").show();   
+            // $("form[name='callwrapup_form'] #medicationdiv").show(); 
+            // $("form[name='callwrapup_form'] #referraldiv").show();
+            // $("form[name='callwrapup_form'] #emergentdiv").show();
+            // $("form[name='callwrapup_form'] #routinediv").show();
+
+            // $("form[name='callwrapup_form'] #routine_response").prop("checked", false);
+            // $("form[name='callwrapup_form'] #urgent_emergent_response").prop("checked", false);
+            // $("form[name='callwrapup_form'] #referral_order_support").prop("checked", false);
+            // $("form[name='callwrapup_form'] #medication_support").prop("checked", false);
+            // $("form[name='callwrapup_form'] #verbal_education_review_with_patient").prop("checked", false);
+            // $("form[name='callwrapup_form'] #mailed_documents").prop("checked", false);
+            // $("form[name='callwrapup_form'] #resource_support").prop("checked", false);
+            // $("form[name='callwrapup_form'] #veterans_services").prop("checked", false);
+
+
+            
+    
+
+            
+        }
+    });
+
 
 
 
@@ -1374,18 +1728,42 @@ var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]'
 
      // form.ajaxForm("callwrapup_form", onCallWrapUp, function () {
     form.ajaxForm("callwrapup_form", ccmcpdcommonJS.onCallWrapUp, function () { //final changes
-        
-            // var checkbox_1 = $('form[name="callwrapup_form"] #emr_entry_completed ').prop("checked");
-            var checkbox_1 = $('form[name="callwrapup_form"] #schedule_office_appointment ').prop("checked");
-            var checkbox_2 = $('form[name="callwrapup_form"] #resources_for_medication ').prop("checked");
-            var checkbox_3 = $('form[name="callwrapup_form"] #medical_renewal ').prop("checked");
-            var checkbox_4 = $('form[name="callwrapup_form"] #called_office_patientbehalf ').prop("checked");
-            var checkbox_5 = $('form[name="callwrapup_form"] #referral_support ').prop("checked");
-            var checkbox_6 = $('form[name="callwrapup_form"] #no_other_services ').prop("checked");
-            if( (checkbox_1 == true || checkbox_2 == true ||  checkbox_3 == true || checkbox_4 == true || checkbox_5 == true || checkbox_6 == true )) {	
+                   
+            var checkbox_1 = $('form[name="callwrapup_form"] #routine_response ').prop("checked"); 
+            var checkbox_2 = $('form[name="callwrapup_form"] #urgent_emergent_response ').prop("checked"); 
+            var checkbox_3 = $('form[name="callwrapup_form"] #referral_order_support ').prop("checked"); 
+            var checkbox_4 = $('form[name="callwrapup_form"] #medication_support ').prop("checked"); 
+            var checkbox_5 = $('form[name="callwrapup_form"] #verbal_education_review_with_patient ').prop("checked"); 
+            var checkbox_6 = $('form[name="callwrapup_form"] #mailed_documents ').prop("checked");  
+            var checkbox_7 = $('form[name="callwrapup_form"] #resource_support ').prop("checked"); 
+            var checkbox_8 = $('form[name="callwrapup_form"] #veterans_services ').prop("checked"); 
+            var checkbox_9 = $('form[name="callwrapup_form"] #authorized_cm_only ').prop("checked"); 
+            var checkbox_10 = $('form[name="callwrapup_form"] #no_additional_services_provided ').prop("checked"); 
+
+           
+            var checkbox1_length = $('#routinediv input:checked').length;
+            var checkbox2_length = $('#emergentdiv input:checked').length;
+            var checkbox3_length = $('#referraldiv input:checked').length;
+            var checkbox4_length = $('#medicationdiv input:checked').length;
+            var checkbox5_length = $('#verbaldiv input:checked').length;
+            var checkbox6_length = $('#maileddiv input:checked').length;
+            var checkbox7_length = $('#resourcediv input:checked').length;
+            var checkbox8_length = $('#veteransdiv input:checked').length;
+            var checkbox9_length = $('#authorizeddiv input:checked').length;
+
+
+             // if(jQuery('#frmTest input[type=checkbox]:checked').length) { … }
+            // var q = (jQuery('#routine_response input[type=checkbox]:checked').length) ;
+
+            if( (checkbox_1 == true && (checkbox1_length > 0 ) ) || (checkbox_2 == true && (checkbox2_length >0) ) || 
+                (checkbox_3 == true && (checkbox3_length > 0) ) || (checkbox_4 == true && (checkbox4_length >0) ) || 
+                (checkbox_5 == true && (checkbox5_length > 0) ) || (checkbox_6 == true && (checkbox6_length >0) ) ||
+                (checkbox_7 == true && (checkbox7_length > 0) ) || (checkbox_8 == true && (checkbox8_length >0) ) ||
+                (checkbox_9 == true && (checkbox9_length > 0) ) || (checkbox_10 == true) 
+                ) {	
                 $('form[name="callwrapup_form"] #checkboxerror' ).css('display', 'none');
                 carePlanDevelopment.updateTimerFieldsOnForm('callwrapup_form');
-                return true;
+                return true; 
             } else {           
                 $('form[name="callwrapup_form"] #checkboxerror' ).css('display', 'block');
                 setTimeout(function () { $('form[name="callwrapup_form"]').find(":submit").attr("disabled", false) }, 3000);
@@ -1393,6 +1771,8 @@ var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]'
             }
           
     });
+
+
 
     form.ajaxForm("text_form", onText, function () {
         carePlanDevelopment.updateTimerFieldsOnForm('text_form');
@@ -1747,6 +2127,7 @@ window.ccmMonthlyMonitoring = {
     onRelationship: onRelationship,
     onPreparationResearchFollowUp: onPreparationResearchFollowUp,
     onPreparationFollowUp: onPreparationFollowUp,
+	callWrapUpShowHide:callWrapUpShowHide,
     // onCallClose: onCallClose, //moved to common js
     // onCallWrapUp: onCallWrapUp, //moved to common js
     // callMonthllyMonitoringInitFunctions: callMonthllyMonitoringInitFunctions, //moved to common js

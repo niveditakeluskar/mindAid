@@ -755,6 +755,7 @@ var onCallWrapUp = function (formObj, fields, response) { //moved to common js /
             var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
             populateForm(patient_id, preparationNotesFormPopulateURL); //please donot change sept 12 2022
       } else {
+		// util.updateBillableNonBillableAndTickingTimer(patient_id, module_id, 1);
           $("#callwrapform-success-alert").show();
           var table = $('#callwrap-list');
           table.DataTable().ajax.reload();
@@ -762,12 +763,17 @@ var onCallWrapUp = function (formObj, fields, response) { //moved to common js /
           var scrollPos = $(".main-content").offset().top;
           $(window).scrollTop(scrollPos);
           setTimeout(function () { $("#callwrapform-success-alert").fadeOut('fast'); }, 5000);
-          goToNextStep("followup-step");
+          
           $(".remove-icons").trigger("click");
           $(".additionalfeilds").remove();
           var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
           // carePlanDevelopment.populateForm(patient_id, preparationNotesFormPopulateURL);
           ccmMonthlyMonitoring.populateForm(patient_id, preparationNotesFormPopulateURL);  //please donot change sept 12 2022
+		  //location.reload(true);
+		  //alert(window.location.origin+sPageURL+'#3');
+		  window.location.replace(window.location.origin+sPageURL+'#3');
+		  
+		  goToNextStep("followup-step");
       }
   }else{
     return false;

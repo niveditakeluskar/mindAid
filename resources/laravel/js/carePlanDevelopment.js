@@ -3462,6 +3462,12 @@ var init = function () {
 	
 	// var d = $('form[name="diagnosis_code_form"] #hiddenenablebutton').val();
 	// alert(d);
+	if(window.location.hash) {
+		var hash = window.location.hash.substring(1);
+		if(hash=='3'){
+		goToNextStep("followup-step");
+		}
+	}
 	
 	ccmcpdcommonJS.copyPreviousMonthDataToThisMonth($("#hidden_id").val(),$("#page_module_id").val());
 	var patient_id = $("input[name='patient_id']").val();
