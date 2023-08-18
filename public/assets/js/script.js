@@ -1,1 +1,272 @@
-!function(e){var t={};function n(o){if(t[o])return t[o].exports;var l=t[o]={i:o,l:!1,exports:{}};return e[o].call(l.exports,l,l.exports,n),l.l=!0,l.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var l in e)n.d(o,l,function(t){return e[t]}.bind(null,l));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="/",n(n.s=21)}({21:function(e,t,n){e.exports=n("gg4z")},gg4z:function(e,t){$(document).ready((function(){"use strict";var e=$(".search-bar input"),t=$(".search-close");$("textarea").each((function(){this.setAttribute("style","height:50px;overflow-y:hidden;")})).on("input",(function(){this.style.height="auto",this.style.height=this.scrollHeight+"px"})),window.gullUtils={isMobile:function(){return window&&window.matchMedia("(max-width: 767px)").matches},changeCssLink:function(e,t){localStorage.setItem(e,t),location.reload()}};var n=$(".search-ui");e.on("focus",(function(){n.addClass("open")})),t.on("click",(function(){n.removeClass("open")}));var o=$(".dropdown-sidemenu");$(".submenu");o.find("> a").on("click",(function(e){e.preventDefault(),e.stopPropagation();var t=$(this).parent(".dropdown-sidemenu");o.not(t).removeClass("open"),$(this).parent(".dropdown-sidemenu").toggleClass("open")})),$(".perfect-scrollbar, [data-perfect-scrollbar]").each((function(e){var t=$(this);new PerfectScrollbar(this,{suppressScrollX:t.data("suppress-scroll-x"),suppressScrollY:t.data("suppress-scroll-y")})})),$("[data-fullscreen]").on("click",(function(){var e=document.body;return document.fullScreenElement&&null!==document.fullScreenElement||document.mozFullScreen||document.webkitIsFullScreen?function(e){var t=e.cancelFullScreen||e.webkitCancelFullScreen||e.mozCancelFullScreen||e.exitFullscreen;if(t)t.call(e);else if(void 0!==window.ActiveXObject){var n=new ActiveXObject("WScript.Shell");null!==n&&n.SendKeys("{F11}")}}(document):function(e){var t=e.requestFullScreen||e.webkitRequestFullScreen||e.mozRequestFullScreen||e.msRequestFullscreen;if(t)t.call(e);else if(void 0!==window.ActiveXObject){var n=new ActiveXObject("WScript.Shell");null!==n&&n.SendKeys("{F11}")}}(e),!1})),$("#status_block").length&&function(e){var t=0,n=0,o=0,l=0;document.getElementById(e.id+"header")?document.getElementById(e.id+"header").onmousedown=r:e.onmousedown=r;function r(e){(e=e||window.event).preventDefault(),o=e.clientX,l=e.clientY,document.onmouseup=c,document.onmousemove=u}function u(r){(r=r||window.event).preventDefault(),t=o-r.clientX,n=l-r.clientY,o=r.clientX,l=r.clientY,e.style.top=e.offsetTop-n+"px",e.style.left=e.offsetLeft-t+"px"}function c(){document.onmouseup=null,document.onmousemove=null}}(document.getElementById("status_block"))})),$(window).on("load",(function(){jQuery("#loader").fadeOut(),jQuery("#preloader").delay(500).fadeOut("slow")}))}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./resources/gull/assets/js/script.js":
+/*!********************************************!*\
+  !*** ./resources/gull/assets/js/script.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+$(document).ready(function () {
+  "use strict";
+
+  var $searchInput = $(".search-bar input");
+  var $searchCloseBtn = $(".search-close"); //for textarea automatic resize
+
+  $('textarea').each(function () {
+    this.setAttribute('style', 'height:50px;overflow-y:hidden;');
+  }).on('input', function () {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  }); // Reusable utilities
+
+  window.gullUtils = {
+    isMobile: function isMobile() {
+      return window && window.matchMedia("(max-width: 767px)").matches;
+    },
+    changeCssLink: function changeCssLink(storageKey, fileUrl) {
+      localStorage.setItem(storageKey, fileUrl);
+      location.reload();
+    }
+  }; // Search toggle
+
+  var $searchUI = $(".search-ui");
+  $searchInput.on("focus", function () {
+    $searchUI.addClass("open");
+  });
+  $searchCloseBtn.on("click", function () {
+    $searchUI.removeClass("open");
+  }); // Secondary sidebar dropdown menu
+
+  var $dropdown = $(".dropdown-sidemenu");
+  var $subMenu = $(".submenu");
+  $dropdown.find("> a").on("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $parent = $(this).parent(".dropdown-sidemenu");
+    $dropdown.not($parent).removeClass("open");
+    $(this).parent(".dropdown-sidemenu").toggleClass("open");
+  }); // Perfect scrollbar
+
+  $(".perfect-scrollbar, [data-perfect-scrollbar]").each(function (index) {
+    var $el = $(this);
+    var ps = new PerfectScrollbar(this, {
+      suppressScrollX: $el.data("suppress-scroll-x"),
+      suppressScrollY: $el.data("suppress-scroll-y")
+    });
+  }); // Full screen
+
+  function cancelFullScreen(el) {
+    var requestMethod = el.cancelFullScreen || el.webkitCancelFullScreen || el.mozCancelFullScreen || el.exitFullscreen;
+
+    if (requestMethod) {
+      // cancel full screen.
+      requestMethod.call(el);
+    } else if (typeof window.ActiveXObject !== "undefined") {
+      // Older IE.
+      var wscript = new ActiveXObject("WScript.Shell");
+
+      if (wscript !== null) {
+        wscript.SendKeys("{F11}");
+      }
+    }
+  }
+
+  function requestFullScreen(el) {
+    // Supports most browsers and their versions.
+    var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+
+    if (requestMethod) {
+      // Native full screen.
+      requestMethod.call(el);
+    } else if (typeof window.ActiveXObject !== "undefined") {
+      // Older IE.
+      var wscript = new ActiveXObject("WScript.Shell");
+
+      if (wscript !== null) {
+        wscript.SendKeys("{F11}");
+      }
+    }
+
+    return false;
+  }
+
+  function toggleFullscreen() {
+    var elem = document.body;
+    var isInFullScreen = document.fullScreenElement && document.fullScreenElement !== null || document.mozFullScreen || document.webkitIsFullScreen;
+
+    if (isInFullScreen) {
+      cancelFullScreen(document);
+    } else {
+      requestFullScreen(elem);
+    }
+
+    return false;
+  }
+
+  $("[data-fullscreen]").on("click", toggleFullscreen);
+
+  if ($("#status_block").length) {
+    dragElement(document.getElementById("status_block"));
+  }
+
+  function dragElement(elmnt) {
+    var pos1 = 0,
+        pos2 = 0,
+        pos3 = 0,
+        pos4 = 0;
+
+    if (document.getElementById(elmnt.id + "header")) {
+      /* if present, the header is where you move the DIV from:*/
+      document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+      /* otherwise, move the DIV from anywhere inside the DIV:*/
+      elmnt.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault(); // get the mouse cursor position at startup:
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement; // call a function whenever the cursor moves:
+
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault(); // calculate the new cursor position:
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY; // set the element's new position:
+
+      elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+      elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    }
+
+    function closeDragElement() {
+      /* stop moving when mouse button is released:*/
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+}); // PreLoader
+// $(window).load(function() {
+//     $('#preloader').fadeOut('slow', function() {
+//         $(this).remove();
+//     });
+// });
+// makes sure the whole site is loaded
+
+$(window).on("load", function () {
+  // will first fade out the loading animation
+  jQuery("#loader").fadeOut(); // will fade out the whole DIV that covers the website.
+
+  jQuery("#preloader").delay(500).fadeOut("slow");
+});
+
+/***/ }),
+
+/***/ 21:
+/*!**************************************************!*\
+  !*** multi ./resources/gull/assets/js/script.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! /home/ashwinim/public_html/rcaregit/resources/gull/assets/js/script.js */"./resources/gull/assets/js/script.js");
+
+
+/***/ })
+
+/******/ });

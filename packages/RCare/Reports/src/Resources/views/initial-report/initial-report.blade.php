@@ -8,7 +8,7 @@
 <div class="breadcrusmb">
     <div class="row">
         <div class="col-md-11">
-            <h4 class="card-title mb-3">Clinical-insight</h4>
+            <h4 class="card-title mb-3">Clinical-Insight</h4>
         </div>
     </div>
 </div>
@@ -64,13 +64,11 @@
             <div class="card-body">
                 @include('Theme::layouts.flash-message')
                 <div class="table-responsive">
-                    <table id="initial-list" class="display datatable table-striped table-bordered" style="width:100%">
-                    <thead>
-                        <tr>
+                    <!-- <table id="initial-list" class="display datatable table-striped table-bordered" style="width:100%"> -->
+                    <!-- <thead>
+                        <tr> 
                             <th width="15px">Sr No.</th>
-
                             <th>Month Year</th>                     
-
                             <th>CCM Enrolled</th>
                             <th>CCM Active Patients</th> 
                             <th>HTN</th>
@@ -107,16 +105,74 @@
                             <th>Called Office Patientbehalf</th>
                             <th>Referral Support</th>
                             <th>NO Other Services</th>
+                            <th colspan="20" style="text-align:center !important">Routine Response</th>
+                         
+                         
+                             
+                        </tr>
+                        <tr>
+                            <th width="15px"></th>
+                            <th></th>                     
+                            <th></th>
+                            <th></th> 
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th> 
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>Interaction with Office Staff</th>
+                            <th>Interaction with PCP</th>
+                            <th>PCP appointment scheduled</th>
+                            <th>Specialist appointment scheduled</th>
+                            <th>AWV appointment scheduled</th>
+                            <th>Vision or Dental appointment scheduled</th>
+                            <th>Prior Authorization for Labs or Diagnostics</th>
+                            <th>Medical Records Request</th>
+
+                           
+   
                         </tr>
                     </thead>
                     <tbody>
-                    </tbody>
-                </table>
+                    </tbody> -->
+                <!-- </table> -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
 
 
 <div id="app">
@@ -131,446 +187,101 @@
     <script type="text/javascript">        
         var table1="";
 
-        var getinitialList = function(practicesgrp=null,practices=null,provider=null,fromdate1=null,todate1=null,) {
-            var columns =  [
-                                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                                {data: null, mRender: function(data, type, full, meta){
-                                    month_year = full['month_year'];
-                                    if(full['month_year'] == null){
-                                        month_year = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return month_year; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-
-                                    ccm_enrolled = full['ccm_enrolled'];
-                                    if(full['ccm_enrolled'] == null){
-                                        ccm_enrolled = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return ccm_enrolled; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    ccm_active_patients = full['ccm_active_patients'];
-                                    if(full['ccm_active_patients'] == null){
-                                        ccm_active_patients = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return ccm_active_patients; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    htn = full['htn'];
-                                    if(full['htn'] == null){
-                                        htn = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return htn; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    diabetes = full['diabetes'];
-                                    if(full['diabetes'] == null){
-                                        diabetes = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return diabetes; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    chf = full['chf'];
-                                    if(full['chf'] == null){
-                                        chf = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return chf; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    ckd = full['ckd'];
-                                    if(full['ckd'] == null){
-                                        ckd = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return ckd; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    hyperlipidemia = full['hyperlipidemia'];
-                                    if(full['hyperlipidemia'] == null){
-                                        hyperlipidemia = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return hyperlipidemia; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    copd = full['copd'];
-                                    if(full['copd'] == null){
-                                        copd = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return copd; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    asthma = full['asthma'];
-                                    if(full['asthma'] == null){
-                                        asthma = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return asthma; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    depression = full['depression'];
-                                    if(full['depression'] == null){
-                                        depression = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return depression; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    anxiety = full['anxiety'];
-                                    if(full['anxiety'] == null){
-                                        anxiety = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return anxiety; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    dementia = full['dementia'];
-                                    if(full['dementia'] == null){
-                                        dementia = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return dementia; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    arthritis = full['arthritis'];
-                                    if(full['arthritis'] == null){
-                                        arthritis = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return arthritis; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    other_diagnosis = full['other_diagnosis'];
-                                    if(full['other_diagnosis'] == null){
-                                        other_diagnosis = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return other_diagnosis; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    female = full['female'];
-                                    if(full['female'] == null){
-                                        female = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return female; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    male = full['male'];
-                                    if(full['male'] == null){
-                                        male = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return male; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    younger = full['younger'];
-                                    if(full['younger'] == null){
-                                        younger = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return younger; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age40 = full['age_40to49'];
-                                    if(full['age_40to49'] == null){
-                                        age40 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age40; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age50 = full['age_50to59'];
-                                    if(full['age_50to59'] == null){
-                                        age50 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age50; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age60 = full['age_60to69'];
-                                    if(full['age_60to69'] == null){
-                                        age60 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age60; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age70 = full['age_70to79'];
-                                    if(full['age_70to79'] == null){
-                                        age70 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age70; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age80 = full['age_80to89'];
-                                    if(full['age_80to89'] == null){
-                                        age80 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age80; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    age90 = full['age_90to99'];
-                                    if(full['age_90to99'] == null){
-                                        age90 = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return age90; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    above = full['above'];
-                                    if(full['above'] == null){
-                                        above = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return above; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    hospitalization = full['hospitalization'];
-                                    if(full['hospitalization'] == null){
-                                        hospitalization = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return hospitalization; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    er_visit = full['er_visit'];
-                                    if(full['er_visit'] == null){
-                                        er_visit = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return er_visit; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    urgent_care = full['urgent_care'];
-                                    if(full['urgent_care'] == null){
-                                        urgent_care = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return urgent_care; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    social_needs = full['social_needs'];
-                                    if(full['social_needs'] == null){
-                                        social_needs = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return social_needs; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    medications_prescribed = full['medications_prescribed'];
-                                    if(full['medications_prescribed'] == null){
-                                        medications_prescribed = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return medications_prescribed; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    fallen = full['fallen'];
-                                    if(full['fallen'] == null){
-                                        fallen = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return fallen; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    office_appointment = full['office_appointment'];
-                                    if(full['office_appointment'] == null){
-                                        office_appointment = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return office_appointment; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    resource_medication = full['resource_medication'];
-                                    if(full['resource_medication'] == null){
-                                        resource_medication = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return resource_medication; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    medication_renewal = full['medication_renewal'];
-                                    if(full['medication_renewal'] == null){
-                                        medication_renewal = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return medication_renewal; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    called_office_patientbehalf = full['called_office_patientbehalf'];
-                                    if(full['called_office_patientbehalf'] == null){
-                                        called_office_patientbehalf = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-
-                                       // called_office_patientbehalf = full['called_office_patientbehalf'];
-        
-                                        //return patient_count + '   '+'<button type="button" id="patientdetails" onclick=patientdetailsmodal("'+prac_id+'") class="btn btn-primary" >Details</button>';
-                                         return called_office_patientbehalf; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    referral_support = full['referral_support'];
-                                    if(full['referral_support'] == null){
-                                        referral_support = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return referral_support; 
-                                    }
-                                },
-                                orderable: true
-                                },
-                                {data: null, mRender: function(data, type, full, meta){
-                                    no_other_services = full['no_other_services'];
-                                    if(full['no_other_services'] == null){
-                                        no_other_services = '';
-                                    }
-                                    if(data!='' && data!='NULL' && data!=undefined){
-                                            return no_other_services; 
-                                    }
-                                },
-                                orderable: true
-                                }
-
-                            ];
-             
-           // debugger;
-            if(practicesgrp=='')
-            { 
-                practicesgrp=null;
-            } 
-             if(practices=='')
-            { 
-                practices=null;
-            } 
-             if(provider=='')
-            { 
-                provider=null;
-            } 
-            if(fromdate1==''){ fromdate1=null; }
-            if(todate1=='')  { todate1=null; }
-            
-
-            var url = "/reports/innitalListSearch/"+practicesgrp+'/'+practices+'/'+provider+'/'+fromdate1+'/'+todate1;
-            console.log(url); 
-            table1 = util.renderDataTable('initial-list', url, columns, "{{ asset('') }}");
-              
+       
+        var getinitialList = function(practicesgrp=null,practices=null,provider=null,fromdate1=null,todate1=null)
+        {
+       
+        if(practicesgrp=='')    
+        {
+            practicesgrp=null;
         } 
+        if(practices=='')
+        {
+            practices=null;
+        }
+        if(provider=='')
+        {
+            provider=null;
+        }
+        if(fromdate1=='')
+        {
+            fromdate1=null;
+        }
+        if(todate1=='')
+        { 
+            todate1=null;
+        }
+
+   
+            var copy_img = "assets/images/copy_icon.png";
+            var excel_img = "assets/images/excel_icon.png";
+            var pdf_img = "assets/images/pdf_icon.png";
+            var csv_img = "assets/images/csv_icon.png";
+            var assetBaseUrl = "{{ asset('') }}";
+            var randomval = "{{ rand() }}";
+            $('.table-responsive').html("");
+            $('.table-responsive').html('<table id="initial-list-'+randomval+'" class="display table table-striped table-bordered"></table>');
+                    
+            $.ajax({
+            type: 'GET',
+            url: "/reports/clinicalreportsearch/"+practicesgrp+"/"+practices+"/"+provider+"/"+fromdate1+"/"+todate1,
+            //data: data,
+            success: function (datatest) {
+            // console.log(datatest);  
+            var dataObject = eval('[' +datatest+']');
+            var columns = [];
+            var tableHeaders;
+
+                    $.each(dataObject[0].columns, function(i, val){
+                        tableHeaders += "<th>" + val.title + "</th>";
+                    });
+                   
+                    
+            
+            $('#initial-list-'+randomval).dataTable({
+            "dom": '<"float-right"B><"float-right"f><"float-left"r><"clearfix">t<"float-left"i><"float-right"p><"clearfix">',
+            buttons: [
+            {
+                extend: 'copyHtml5',
+                text: '<img src="' + assetBaseUrl + copy_img + '" width="20" alt="" data-toggle="tooltip" data-placement="top" title="Copy">',
+            },
+            {
+                extend: 'excelHtml5',
+                text: '<img src="' + assetBaseUrl + excel_img + '" width="20" alt="" data-toggle="tooltip" data-placement="top" title="Excel">',
+                titleAttr: 'Excel'
+            },
+            {
+                extend: 'csvHtml5',
+                text: '<img src="' + assetBaseUrl + csv_img + '" width="20" alt="" data-toggle="tooltip" data-placement="top" title="CSV">',
+                titleAttr: 'CSV',
+                fieldSeparator: '\|',
+            },
+            {
+                extend: 'pdfHtml5',
+                text: '<img src="' + assetBaseUrl + pdf_img + '" width="20" alt="" data-toggle="tooltip" data-placement="top" title="PDF">',
+                titleAttr: 'PDF' 
+            }
+            ],
+            "processing": true,
+            "Language": { 
+            'loadingRecords': '&nbsp;',
+            'processing': 'Loading...',
+            search: "_INPUT_",
+            // "search":'<a class="btn searchBtn" id="searchBtn"><i class="i-Search-on-Cloud"></i></a>',
+            "searchPlaceholder": "Search records",
+            "EmptyTable": "No Data Found",
+            },
+            "destroy": true,
+            "data": dataObject[0].DATA,
+            "columns": dataObject[0].COLUMNS,
+            // "columns": dataObject[1].COLUMNS
+
+            });
+            // $('#load-monthly-billing-tbl').hide();
+
+            }
+            });
+}
 
 
     function formatDate() {
