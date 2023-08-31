@@ -36,6 +36,33 @@ var populateForm = function (data, url) {
         data,
         function (result) {
             for (var key in result) {
+
+                if(key == 'hippa_form'){
+                    if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) {
+                        var hippa_vf = result[key]['static']['verification'];
+                        alert(hippa_vf);
+                        if(hippa_vf = 1){
+                            $('#ccm-relationship-icon-tab').removeClass('disabled');
+                            $('#ccm-research-follow-up-icon-tab').removeClass('disabled');
+                            $('#ccm-general-questions-icon-tab').removeClass('disabled');
+                            $('#ccm-call-close-icon-tab').removeClass('disabled');
+                            // $('#ccm-call-wrapup-icon-tab').removeClass('disabled');
+                        }
+                    }else{
+                        $('#ccm-relationship-icon-tab').addClass('disabled');
+                        $('#ccm-research-follow-up-icon-tab').addClass('disabled');
+                        $('#ccm-general-questions-icon-tab').addClass('disabled');
+                        $('#ccm-call-close-icon-tab').addClass('disabled');
+                        // $('#ccm-call-wrapup-icon-tab').addClass('disabled');
+
+                        $("#ccm-relationship-icon-tab").css("background-color","#c0c0c047");
+                        $('#ccm-research-follow-up-icon-tab').css("background-color","#c0c0c047");
+                        $('#ccm-general-questions-icon-tab').css("background-color","#c0c0c047");
+                        $('#ccm-call-close-icon-tab').css("background-color","#c0c0c047");
+                        // $('#ccm-call-wrapup-icon-tab').css("background-color","#c0c0c047");
+                    }
+               }
+
                 if (key == 'callwrapup_form') {  
                     // debugger;
                    

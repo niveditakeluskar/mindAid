@@ -17,12 +17,14 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="ccm-verification-icon-tab" data-toggle="tab" href="#ccm-verification" role="tab" aria-controls="ccm-verification" aria-selected="false"><i class="nav-icon color-icon i-Gears mr-1"></i> Verification</a>
                                 </li>
+                               
                                 <!--li class="nav-item">
                                     <a class="nav-link" id="ccm-hippa-icon-tab" data-toggle="tab" href="#ccm-hippa" role="tab" aria-controls="ccm-hippa" aria-selected="false"><i class="nav-icon color-icon i-Gears mr-1"></i> HIPPA</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="ccm-home-services-icon-tab" data-toggle="tab" href="#ccm-home-services" role="tab" aria-controls="ccm-home-services" aria-selected="false"><i class="nav-icon color-icon i-Home1 mr-1"></i> Home Services</a>
                                 </li-->
+
                                 <li class="nav-item">
                                     <a class="nav-link" id="ccm-relationship-icon-tab" data-toggle="tab" href="#ccm-relationship" role="tab" aria-controls="ccm-relationship" aria-selected="false"><i class="nav-icon color-icon i-Affiliate mr-1"></i> Relationship</a>
                                 </li>
@@ -38,6 +40,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="ccm-call-wrapup-icon-tab" data-toggle="tab" href="#ccm-call-wrapup" role="tab" aria-controls="ccm-call-wrapup" aria-selected="false"><i class="nav-icon color-icon i-Folder-Zip mr-1"></i> Call Wrap up</a>
                                 </li>
+
                             </ul>
                             <div class="tab-content" id="myIconTabContent">
                                 <div class="tab-pane show active" id="ccm-call" role="tabpanel" aria-labelledby="call-icon-tab">
