@@ -40,7 +40,6 @@ var populateForm = function (data, url) {
                 if(key == 'hippa_form'){
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) {
                         var hippa_vf = result[key]['static']['verification'];
-                        alert(hippa_vf);
                         if(hippa_vf = 1){
                             $('#ccm-relationship-icon-tab').removeClass('disabled');
                             $('#ccm-research-follow-up-icon-tab').removeClass('disabled');

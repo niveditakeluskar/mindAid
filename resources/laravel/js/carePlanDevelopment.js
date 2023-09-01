@@ -443,7 +443,6 @@ var populateForm = function (id, url) {
 				if(key == 'hippa_form'){ 
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) { 
 						var hippa_vf = result[key]['static']['verification'];
-						alert(hippa_vf);
                         if(hippa_vf = 1){
 							$('#review-patient-tab').removeClass('disabled');
 							$('#call-close-tab').removeClass('disabled');
