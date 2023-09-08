@@ -84,7 +84,7 @@
                             <div class="col-md-6 form-group mb-3">
                                 <label>Step</label>
                            
-                            @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select"])
+                            @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select capital-first"])
                              </div>
                             <div class="col-md-2 form-group mt-2">
                                 <div class="custom-control custom-checkbox">
@@ -184,8 +184,9 @@
                     // if($data->template_type_id == 5) {  
                     $questionnaire = $queData->question->q;
                     ?>
+                <div class="abc" id="append_div">
                     @foreach($questionnaire as $value)
-                    <div class="question_div" id="question_div{{$number}}">
+                    <div class="appendedQuestion question_div" id="question_div{{$number}}">
                         <div class="form-group" id="question">
                             <div class="row">
                                 <label class="col-md-2">Question {{$number}} : <span class="error">*</span></label>
@@ -228,12 +229,18 @@
                                                                 echo 'selected';
                                                             } ?>>Textarea</option>
                                     </select>
-                                    <?php if($exist == 1 && ((isset($value->answerFormat) && ($value->answerFormat == 2)) || (isset($value->answerFormat) && ($value->answerFormat == 5)))){?>
-                                        <input type="textbox" required name="question[q][<?php echo $number; ?>][score][]"  
-                                        class="form-control col-md-1 sco" style= "margin-left:10px" value="<?php echo $value->score[0]; ?>" /> 
-                                    <?php } ?>
+                                    
                                     <div class="invalid-feedback"></div>
                                 </div>
+                                <?php if($exist == 1 && ((isset($value->answerFormat) && ($value->answerFormat == 2)) || (isset($value->answerFormat) && ($value->answerFormat == 5)))){?>
+                                    <div class="row sco">
+                                            <input type="text" name="question[q][<?php echo $number; ?>][placeholder][]" class="form-control offset-md-2 col-md-4 mt-2"  placeholder="placeholder" value="<?php if (isset($value->placeholder)){ echo $value->placeholder[0]; }?>" > 
+                                            <?php if($exist == 1){?>
+                                                <input type="textbox" required name="question[q][<?php echo $number; ?>][score][]"  
+                                                class="form-control col-md-1 mt-2" style= "margin-left:10px" value="<?php echo $value->score[0]; ?>" /> 
+                                            <?php } ?>
+                                    </div>
+                                <?php } ?>
                             </div>
                         <?php
                         } else {
@@ -288,11 +295,12 @@
                         <div class="separator-breadcrumb border-top"></div>
                     </div>
                     @endforeach
+                </div>
             
             <?php
             // } 
             ?>
-            <div class="abc" id="append_div"></div>
+            
             <input type="hidden" value="{{$number-1}}" id="counter">
             <br>
             <div class="col-md-4 mb-3"><button type="button" class="btn btn-success btn-sm " id="addQuestion" style="">Add Question</button></div>
@@ -304,7 +312,16 @@
 </div>
 @endsection
 @section('page-js')
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 <script>
+     $( init );
+    function init() {
+    $( ".abc" ).sortable({
+        connectWith: ".appendedQuestion",
+        stack: '.appendedQuestion div'
+        }).disableSelection();
+    }
+
     $(document).ready(function() {
         var module_id = {{$data->module_id}};
         var submodule_id = {{$data->component_id}};
@@ -313,13 +330,13 @@
         var template_type = {{$data->template_type_id}};
         //$('#template_type').val(template_type);
         $('#module').val(module_id);
-        $('#add_score').click(function(){
-            if($(this).is(':checked')){
-               $('.tx').hide();
-            } else {
-                $('.tx').show();
-            }
-        });
+        // $('#add_score').click(function(){
+        //     if($(this).is(':checked')){
+        //        $('.tx').hide();
+        //     } else {
+        //         $('.tx').show();
+        //     }
+        // });
         util.updateSubModuleList(parseInt(module_id), $("#sub_module"), parseInt(submodule_id));
         util.updateStageList(parseInt(submodule_id), $("#stages"), parseInt(stage_id));
         util.updateStageCodeList(parseInt(stage_id), $("#stage_code"), parseInt(stage_code));
@@ -518,11 +535,11 @@
                     $("#append_div").append('<div class="appendedQuestion question_div" id="question_div' + count + '"></div>')
                     $("#question_div" + count).append(template);
                     $('#removeButton').show();
-                    if($("#add_score").is(':checked')){
-                        $('.tx').hide();
-                    } else {
-                        $('.tx').show();
-                    }
+                    // if($("#add_score").is(':checked')){
+                    //     $('.tx').hide();
+                    // } else {
+                    //     $('.tx').show();
+                    // }
                 },
                 dataType: 'html'
             });
@@ -554,9 +571,14 @@
         var labelParent = $('#' + parentId).find('.labels_container').attr("id");
         var disabledAddLabel = $('#' + labelParent).find('.add').attr('id');
         var name = (obj.name).replace('[answerFormat]','[score][]');
+        var name_label = (obj.name).replace('[answerFormat]','[placeholder][]');
         if (obj.value == 2 || obj.value == 5) {
             $("#" + disabledAddLabel).addClass("disabled");
-            $(obj).after('<input type="textbox" name="'+ name + '" id="score" class="form-control col-md-1 sco"/>    ');
+            var sc = '';
+            if($('#add_score').is(":checked")){
+                sc = '<input type="textbox" name="'+ name + '" id="score" style="margin-left:10px" value="0" class="form-control col-md-1  mt-2"/>';
+            }
+            $(obj).after('<div class="row form-group sco" style="margin-left: 0px"><input type="text" name="'+name_label+'" class="form-control col-md-6 mt-2"  placeholder="placeholder">'+sc+'</div>    ');
         } else {
             $("#" + disabledAddLabel).removeClass("disabled");
             $(obj).next('.sco').remove();

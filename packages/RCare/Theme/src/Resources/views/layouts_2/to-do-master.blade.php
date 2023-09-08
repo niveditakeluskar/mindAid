@@ -50,12 +50,12 @@
          
     </head>
 
-<?php $themeMode = "";
-    if(session()->get('darkmode') == '1'){
+ <?php $themeMode = "";
+   $activemode = activeThemeMode(session()->get('userid'));
+   if(session()->get('darkmode') == '1' || $activemode == '1'){
         $themeMode = "dark-theme";
-    } ?>
-
-    <body class="layout_2 text-left {{$themeMode}}"> 
+    }?>
+      <body class="layout_2 text-left {{$themeMode}}"> 
     
         <!-- <div id="app">        -->
             @php
