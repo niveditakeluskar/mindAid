@@ -438,6 +438,27 @@ var populateForm = function (id, url) {
 			var component_id = $("form[name='part_of_research_study_form'] input[name='component_id']").val();
 		
 			for (var key in result) {
+
+				
+				if(key == 'hippa_form'){ 
+                    if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) { 
+						var hippa_vf = result[key]['static']['verification'];
+                        if(hippa_vf = 1){
+							$('#review-patient-tab').removeClass('disabled');
+							$('#call-close-tab').removeClass('disabled');
+							// $('#call-wrapup-tab').removeClass('disabled');
+                        }
+                    }else{ 
+							$('#review-patient-tab').addClass('disabled');
+							$('#call-close-tab').addClass('disabled');
+							// $('#call-wrapup-tab').addClass('disabled');
+
+							$('#review-patient-tab').css("background-color","#c0c0c047");
+							$('#call-close-tab').css("background-color","#c0c0c047");
+							// $('#call-wrapup-tab').css("background-color","#c0c0c047");
+                    }
+                }
+
 				form.dynamicFormPopulate(key, result[key]);
 				if ((key == 'diagnosis_code_form' || key == 'care_plan_form' || key == 'review_diagnosis_code_form') && result[key] != "") {
 					
