@@ -803,27 +803,27 @@ function getNetTime($start_time, $end_time) {
 
 function assingSessionUser($patientid){ 
     $module_name = \Request::segment(1);
-    $check_module_name = DB::connection('ren_core')->select("SELECT * FROM ren_core.modules WHERE LOWER(module) ='".strtolower($module_name)."'");
-    if($check_module_name != 8) 
+   // $check_module_name = DB::connection('ren_core')->select("SELECT id FROM ren_core.modules WHERE LOWER(module) ='".strtolower($module_name)."'");
+	//dd($module_name);
+    if($module_name == 'patients') 
     {
 
         $check_patient = RCare\TaskManagement\Models\UserPatients::where('patient_id', $patientid)->get();
-        // dd( count($check_patient));
-         
-
-        $check_patient_practice = DB::connection('patients')->select("SELECT * FROM patients.patient_providers
-                                  WHERE  patient_id = '".$patientid."'");
-
-       
-        if(count($check_patient_practice)>0){
-            $practiceid = $check_patient_practice[0]->practice_id;
-        }  
-        else{
-            $practiceid = 0;
-        }         
+        // dd( count($check_patient));                
 
         if(count($check_patient) == 0)
         {
+			//dd($check_patient);
+			$check_patient_practice = DB::connection('patients')->select("SELECT * FROM patients.patient_providers
+                                  WHERE  patient_id = '".$patientid."'");
+
+       
+			if(count($check_patient_practice)>0){
+				$practiceid = $check_patient_practice[0]->practice_id;
+			}  
+			else{
+				$practiceid = 0;
+			} 
             
                 $login_user =Session::get('userid');
                 $data = array(
@@ -839,8 +839,7 @@ function assingSessionUser($patientid){
 
             // dd( $data);  
 
-            $insert_query  = RCare\TaskManagement\Models\UserPatients::create($data);
-            
+            $insert_query  = RCare\TaskManagement\Models\UserPatients::create($data);           
 
 
         }  
@@ -848,7 +847,7 @@ function assingSessionUser($patientid){
 
 
 }	
-   
+ 
 
 function getPageModuleName() {
     $module_name = \Request::segment(1);
@@ -975,6 +974,11 @@ function assingCareManager($id){
    }else{
        return 'CM Not Assigned';
    }
+}
+
+function activeThemeMode($id){
+    $am = RCare\Org\OrgPackages\Users\src\Models\Users::where('id', $id)->get();
+    return $am[0]->theme;
 }
 
 function getVTreeData($id){
@@ -1215,7 +1219,7 @@ function getCallHistory($patient_id){
     return $call_history;
 }
 
-	function getRelationshipQ($patient_id, $stepid, $m, $sm, $s){
+function getRelationshipQ($patient_id, $stepid, $m, $sm, $s){
     $module_id = getPageModuleName();
     $submodule_id = getPageSubModuleName();
     $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
@@ -1306,12 +1310,16 @@ function getCallHistory($patient_id){
                 $scoreid = '';
                 $score_value = 0;
                 $onclick = '';
+                $placeholder = '';
+                if(property_exists($q, 'placeholder')){
+                    $placeholder = $q->placeholder[0];
+                }
                 if(property_exists($q, 'score') && $questionnaire->score == 1){
                     $exist = 1;
                     $score = $q->score;
                 }
                 
-                $content = $content . '<div class="form-row"> <div class="col-md-12 form-group"> <div class="mb-1"><strong class="mr-1">'.$j.': <span>'.$q->questionTitle.'</span> <span class="error">*</span></strong></div>';
+                $content = $content . '<div class="form-row"> <div class="col-md-12 form-group"> <div class="mb-1"><strong class="mr-1">'.$j.': <span>'.$q->questionTitle.'</span> <span class="error">*</span></strong><input type="hidden" name="qseq['.json_decode($questionnaire->id).']['.$j.']" value="'.$j.'"></div>';
                 if (property_exists($q, 'label') && $q->answerFormat == '1') {
 
                     $qid = $step_name_trimmed.''.$dropinc;
@@ -1345,7 +1353,7 @@ function getCallHistory($patient_id){
                             $score_value = $scoreid;
                         }
                     }
-                    $content = $content . '<input type="text" '.$onclick.' name="'.$step_name_trimmed.'[question]['.$questionTitle.']" class="form-control col-md-8"  value="'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'"><div class="invalid-feedback"></div><input  type="hidden" class="text-'.$step_name_trimmed.'" value="'.$score_value.'" id="text-score-'.$qid.'">';
+                    $content = $content . '<input type="text" '.$onclick.' name="'.$step_name_trimmed.'[question]['.$questionTitle.']" class="form-control col-md-8"  placeholder="'.$placeholder.'" value="'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'"><div class="invalid-feedback"></div><input  type="hidden" class="text-'.$step_name_trimmed.'" value="'.$score_value.'" id="text-score-'.$qid.'">';
                     $txtinc++;
                 } elseif(property_exists($q, 'label') && $q->answerFormat == '3') { 
                     $content = $content . '<div class="checkRadio forms-element">';
@@ -1364,7 +1372,7 @@ function getCallHistory($patient_id){
                                 $radioex = 1;
                             }
                         }
-                        $rdid = $questionTitle.''.$labels.''.json_decode($questionnaire->id);
+                        $rdid = $questionTitle.'_'.$labels.'_'.json_decode($questionnaire->id);
                         $content = $content . '<label class="radio radio-primary col-md-4 float-left" for="'.$rdid.'">
                                                     <input type="radio" '.$onclick.' name="'.$step_name_trimmed.'[question]['.$questionTitle.']" value="'.$labels.'" formControlName="radio" id="'.$rdid.'"  '.($radioex ? ($questionExist && $patient_questionnaire[$questionTitle]==$labels ? 'checked': ''):'').'>
                                                     <span>'.$labels.'</span>
@@ -1411,7 +1419,7 @@ function getCallHistory($patient_id){
                                 }
                             }
                         }
-                        $cbid = $questionTitle.''.$labelArray.''.json_decode($questionnaire->id);
+                        $cbid = $questionTitle.'_'.$labelArray.'_'.json_decode($questionnaire->id);
                         $content = $content . '<label class="checkbox checkbox-primary col-md-4 float-left" for="'.$cbid.'">
                                                     <input '.$onclick.' class="form-check-input" value="'.$labels.'" type="checkbox" name="'.$step_name_trimmed.'[question]['.$questionTitle.']['.$labelArray.']" id="'.$cbid.'"  '.($questionExist && $patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)]==$labelArray1 ? 'checked': '').'>
                                                     <span>'.$labels.'</span>
@@ -1430,7 +1438,7 @@ function getCallHistory($patient_id){
                             $score_value = $scoreid;
                         }
                     }
-                    $content = $content . '<textarea '.$onclick.' class="form-control col-md-8" name="'.$step_name_trimmed.'[question]['.$questionTitle.']" >'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'</textarea><div class="invalid-feedback"></div><input  type="hidden" class="textarea-'.$step_name_trimmed.'" value="'.$score_value.'" id="textarea-score-'.$qid.'">';
+                    $content = $content . '<textarea '.$onclick.' class="form-control col-md-8" placeholder="'.$placeholder.'" name="'.$step_name_trimmed.'[question]['.$questionTitle.']" >'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'</textarea><div class="invalid-feedback"></div><input  type="hidden" class="textarea-'.$step_name_trimmed.'" value="'.$score_value.'" id="textarea-score-'.$qid.'">';
                     $areainc++;
                 }
                 $content = $content . '</div></div>';   
@@ -1450,7 +1458,7 @@ function getCallHistory($patient_id){
             }
              $content = $content . '<div><label class="mr-3">Current Monthly Notes:</label><textarea class="form-control col-md-8" placeholder="Current Monthly Notes" name="'.$step_name_trimmed.'[current_monthly_notes]">'.$monthly_notes.'</textarea><div class="invalid-feedback"></div></div> <div class="mt-2">'.$sc.'</div>';
             if($exist == 1){
-                $content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[question][score]"  value="'.($scoreExit && $exist ? $patient_questionnaire['score'] : '0').'" id="score-'.$step_name_trimmed.'"><hr>'; 
+                $content = $content . '<input type="hidden" name="qseq['.json_decode($questionnaire->id).']['.$j.']" value="'.$j.'"><input type="hidden" name="'.$step_name_trimmed.'[question][score]"  value="'.($scoreExit && $exist ? $patient_questionnaire['score'] : '0').'" id="score-'.$step_name_trimmed.'"><hr>'; 
             }
             $i++;
         }
@@ -1464,6 +1472,7 @@ function getCallHistory($patient_id){
        
         echo $content;
 }
+
 
 function getRelationshipQuestionnaire($patient_id,$m,$sm) {
     $module_id = $m;

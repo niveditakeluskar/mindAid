@@ -81,7 +81,7 @@
                                 <div class="col-md-6 form-group mb-3">
                                     <label>Step</label>
                                         
-                                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select"])
+                                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select capital-first"])
                                     </div>
                             <div class="col-md-2 form-group mt-2">
                                 <div class="custom-control custom-checkbox">
@@ -238,18 +238,27 @@
     </div>             
 @endsection
 @section('page-js')
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <script>
+        $( init );
+
+        function init() {
+        $( ".abc" ).sortable({
+            connectWith: ".appendedQuestion",
+            stack: '.appendedQuestion div'
+            }).disableSelection();
+        }
        $(document).ready(function(){        
         var module_id    = '{{ getPageModuleName() }}';
         $("#module").val(module_id);
        
-        $('#add_score').click(function(){
-            if($(this).is(':checked')){
-               $('.tx').hide();
-            } else {
-                $('.tx').show();
-            }
-        });
+        // $('#add_score').click(function(){
+        //     if($(this).is(':checked')){
+        //        $('.tx').hide();
+        //     } else {
+        //         $('.tx').show();
+        //     }
+        // });
         util.updateSubModuleList(parseInt(module_id), $("#sub_module"));
         util.getToDoListData(0, {{getPageModuleName()}});
         //util.getToDoListCalendarData(0, {{getPageModuleName()}});
@@ -426,11 +435,11 @@
                     $("#append_div").append('<div class="appendedQuestion question_div" id="question_div'+count+'"></div>')
                     $("#question_div"+count).append(template);
                     $('#removeButton').show(); 
-                    if($("#add_score").is(':checked')){
-                        $('.tx').hide();
-                    } else {
-                        $('.tx').show();
-                    }
+                    // if($("#add_score").is(':checked')){
+                    //     $('.tx').hide();
+                    // } else {
+                    //     $('.tx').show();
+                    // }
                 },
                 dataType: 'html'
             });
@@ -464,9 +473,14 @@
         var labelParent = $('#'+parentId).find('.labels_container').attr("id");
         var disabledAddLabel = $('#'+labelParent).find('.add').attr('id');
         var name = (obj.name).replace('[answerFormat]','[score][]');
+        var name_label = (obj.name).replace('[answerFormat]','[placeholder][]');
         if(obj.value == 2 || obj.value == 5){
             $("#"+disabledAddLabel).addClass("disabled");
-            $(obj).after('<input type="textbox" name="'+ name + '" id="score" class="form-control col-md-1 sco"/>    ');
+            var sc = '';
+            if($('#add_score').is(":checked")){
+                sc = '<input type="textbox" name="'+ name + '" id="score" style="margin-left:10px" value="0" class="form-control col-md-1  mt-2"/>';
+            }
+            $(obj).after('<div class="row form-group sco" style="margin-left: 0px"><input type="text" name="'+name_label+'" class="form-control col-md-6 mt-2"  placeholder="placeholder">'+sc+'</div>    ');
             
         }else{
             $("#"+disabledAddLabel).removeClass("disabled");

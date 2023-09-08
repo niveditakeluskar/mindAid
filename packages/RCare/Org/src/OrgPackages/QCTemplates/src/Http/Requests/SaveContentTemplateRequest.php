@@ -30,7 +30,7 @@ class SaveContentTemplateRequest extends FormRequest
                 // 'stages'          => 'required',
                 'from'            => 'nullable|email:rfc,dns|regex:/^[a-zA-Z0-9_.-]+@[a-zA-Z.]+.[a-zA-Z]$/|required_if:template_type,1', 
                 'subject'         => 'nullable|required_if:template_type,1|min:3|regex:/^[a-zA-Z- . , ( )]*$/', 
-                'editorData'      => 'required|min:3]*$/|regex:/^[a-z0-9_\ \-\.\,\[\]]+$/i', 
+                //'editorData'      => 'required|min:3]*$/|regex:/^[a-z0-9_\ \-\.\,\[\]]+$/i', 
             ]
         );
 
