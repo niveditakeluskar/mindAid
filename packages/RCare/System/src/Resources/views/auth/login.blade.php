@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,7 +8,7 @@
 	<!-- <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
-<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> 
 <meta http-equiv="pragma" content="no-cache" /> -->
     <title>Renova HealthCare</title> 
     <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet"> -->
@@ -79,19 +80,20 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="form-group row" id="otp-btn-options" style="display: none">
+                                    <div class="form-group row" id="otp-btn-options" style="display:none">
                                         <div class="col-md-6 offset-md-4">
                                              <label for="mfa"><span class="error">*</span> Receive Verification Code : </label> <span class="invalid-feedback" id="mfa-valid"><strong>Please Choose one option</strong></span>
                                              
                                             <div class="forms-element d-inline-flex">
                                                 <label class=" checkbox checkbox-primary mr-3">
-                                                    <input type="checkbox"  id="mfa_status" name="otp_text" 
+                                                    <input type="checkbox"  id="mfa_status_text" name="otp_text" 
                                                     <?php (isset($DomainFeatures->otp_text)&& ($DomainFeatures->otp_text==1) )? print("checked") :'';?> value="1">
                                                     <span>SMS</span>
                                                     <span class="checkmark"></span>
                                                 </label>
                                                 <label class=" checkbox checkbox-primary mr-3">
-                                                    <input type="checkbox"  id="mfa_status" name="otp_email" <?php (isset($DomainFeatures->otp_email)&& ($DomainFeatures->otp_email==1) )? print("checked") :'';?> value="1">
+                                                    <input type="checkbox"  id="mfa_status_email" name="otp_email"
+                                                     <?php (isset($DomainFeatures->otp_email)&& ($DomainFeatures->otp_email==1) )? print("checked") :'';?> value="1">
                                                     <span>Email</span>
                                                     <span class="checkmark"></span>
                                                 </label>
@@ -167,6 +169,7 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                                 <input type="hidden"  class = "timezone"  id="timezone" name="timezone" value ="<?php echo config('app.timezone_US');?>">
                                 <input type="hidden" id="role" name="role" >
                                 <input type="hidden" id="page_name" name="page_name" value='login'>
+                                <input type="hidden" id="mfa_method" name="mfa_method">
                             </div>
                         </div>
                 </div>
@@ -175,8 +178,12 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                         <div class="row">
                             <div class="col-lg-12 text-center">
                             <button type="button" id="opt_save" class="btn btn-primary">Submit</button>
-                            <button type="button" id="back_login" class="btn btn-primary">Back</button>
-                            <a class="btn btn-link" id="resend_otp" href="">Resend Code?</a>
+                            <button type="button" id="resend_otp" class="btn btn-primary">Resend</button>
+                            <a class="btn btn-link change_method_email" id="change_method_email" href="" style="display: none">Sent MFA Code on Email.</a>
+                            <a class="btn btn-link change_method_sms"  id="change_method_sms" href="" style="display: none">Sent MFA Code on Text.</a>
+                            
+                            <!-- <button type="button" id="back_login" class="btn btn-primary">Back</button> -->
+                            <!-- <a class="btn btn-link" id="resend_otp" href="">Resend Code?</a> -->
                             </div>
                         </div>    
                     </div>
@@ -246,7 +253,7 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                 url: '/system/get-mfa-status/'+msg_id+'/mfa-msg-status',
                     success: function(data){//debugger;
                         // console.log(data[0].status+"DADASDATA");
-                        var msg_status = data[0].status;
+                        var msg_status = data[0].status; 
                         var msg_status_update = data[0].status_update; 
                         if((msg_status_update =='1' && msg_status =='sent')||msg_status =='accepted' ||msg_status =='queued' || msg_status =='sending'){
                             $('#mfa_msg_status').html('it is taking longer to deliver the authentication code, you can wait for sometime or use email authentication Method.');
@@ -401,7 +408,7 @@ $(function () {
                         $('#otp-btn-options').hide();
                         // $("#otp_code_btn").prop( "disabled", true);
                     }else if(response.data[0].success=='otp_screen'){
-                        $('#otp-btn-options').show();
+                        $('#otp-btn-options').hide();
                         // $("#otp_code_btn").prop( "disabled", false );
                         $("#login_btn").prop( "disabled", false );
 
@@ -429,76 +436,76 @@ $(function () {
         // }
     });
 
-    $("#otp_code_btn").click(function(event){
-        var options_checked = $('#mfa_status:checked').val(); 
-        // alert(options_checked);
-        if(options_checked!=undefined){
-            $('#mfa-valid').hide();
-            if($("form[name='login_form']").valid()){
-            var base_url = "<?php echo url('').'/'; ?>"; 
-            $('#code').val('');
-                $.ajax({
-                type: "POST",
-                url: "/rcare-login-with-otp",
-                dataType:"json",
-                data: $('#login_form').serialize(),
-                success: function(response) {
-                    success = response.data[0].success;
-                    url = response.data[0].url;
-                    error = response.data[0].error;
-                    if(success=='y'){
-                        var otp_verify=response.data[0].userid_otp;
-                        var role=response.data[0].role;
-                       if(url=="login-otp"){
-                            var mob=response.data[0].mob;
-                            var myArray = mob.split("/");
-                            var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
-                            if(myArray[0]!=''){
-                                var mob_res = myArray[0].substring(0, 10)+"****"+Number(String(myArray[0]).slice(-2));                        
-                            }else{
-                                mob_res='';
-                            }
-                            if(myArray[1]!=''){
-                                var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
-                            }else{
-                                email_res='';
-                            }
-
-                            var res_send = mob_res +' '+email_res;
-                            $('#hd_otp').show();
-                            $('#hd_login').hide();
-                            $('#number').val(mob);
-                            $('#userid').val(otp_verify);
-                            $('#timezone').val(timezone);
-                            $('#role').val(role);
-                            $('#otp_num').html(res_send); 
-                       }else{
-                            $('#hd_otp').hide();
-                            $('#hd_login').show();
-                            window.location.href=base_url+''+url;
-                       }
+    // $("#otp_code_btn").click(function(event){
+    //     var options_checked = $('#mfa_status:checked').val(); 
+    //     // alert(options_checked);
+    //     if(options_checked!=undefined){
+    //         $('#mfa-valid').hide();
+    //         if($("form[name='login_form']").valid()){
+    //         var base_url = "<?php echo url('').'/'; ?>"; 
+    //         $('#code').val('');
+    //             $.ajax({
+    //             type: "POST",
+    //             url: "/rcare-login-with-otp",
+    //             dataType:"json",
+    //             data: $('#login_form').serialize(),
+    //             success: function(response) {
+    //                 success = response.data[0].success;
+    //                 url = response.data[0].url;
+    //                 error = response.data[0].error;
+    //                 if(success=='y'){
+    //                     var otp_verify=response.data[0].userid_otp;
+    //                     var role=response.data[0].role;
+    //                    if(url=="login-otp"){
+    //                         var mob=response.data[0].mob;
+    //                         var myArray = mob.split("/");
+    //                         var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
+    //                         if(myArray[0]!=''){
+    //                             var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));              
+    //                         }else{
+    //                             mob_res='';
+    //                         }
+    //                         if(myArray[1]!=''){
+    //                             var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
+    //                         }else{
+    //                             email_res='';
+    //                         }
+    //                         var res_send = mob_res +' '+email_res;
+    //                         $('#hd_otp').show();
+    //                         $('#hd_login').hide();
+    //                         $('#number').val(mob);
+    //                         $('#userid').val(otp_verify);
+    //                         $('#timezone').val(timezone);
+    //                         $('#role').val(role);
+    //                         $('#otp_num').html(res_send); 
+    //                    }else{
+    //                         $('#hd_otp').hide();
+    //                         $('#hd_login').show();
+    //                         window.location.href=base_url+''+url;
+    //                    }
                        
-                    }
-                    else{
-                        // alert('eroror');
-                            $("#danger").show(0).delay(3000).hide(0);
-                            $("#success").html(error);
-                    }
-                },
-                error: function (request, status, error) {
-                    if(request.responseJSON.errors !== undefined) {
-                        if(request.responseJSON.errors.email) {
-                            $("#danger").html(request.responseJSON.errors.email);
-                            $("#danger").show(0).delay(150000).hide(0);
-                        }
-                    }
-                }
-                });
-            }
-        }else{
-            $('#mfa-valid').show();          
-        }
-    });
+    //                 }
+    //                 else{
+    //                     // alert('eroror');
+    //                         $("#danger").show(0).delay(3000).hide(0);
+    //                         $("#success").html(error);
+    //                 }
+    //             },
+    //             error: function (request, status, error) {
+    //                 if(request.responseJSON.errors !== undefined) {
+    //                     if(request.responseJSON.errors.email) {
+    //                         $("#danger").html(request.responseJSON.errors.email);
+    //                         $("#danger").show(0).delay(150000).hide(0);
+    //                     }
+    //                 }
+    //             }
+    //             });
+    //         }
+    //     }else{
+    //         $('#mfa-valid').show();          
+    //     }
+    // });
+
     $("#login_btn").click(function(event){
       event.preventDefault();
       if($("form[name='login_form']").valid()){
@@ -516,28 +523,39 @@ $(function () {
                 error = response.data[0].error;
                 msg_id = response.data[0].message_id;
                 // twillio_error = response.data[0].twillio_msg; 
-
                 if(success=='y'){
                     // alert('Y');
                     var otp_verify=response.data[0].userid_otp;
                     //var timezone=response.data[0].timezone;
                     var role=response.data[0].role;
-                   if(url=="login-otp"){ 
+                   if(url=="login-otp"){
                         var mob=response.data[0].mob;
-                        var myArray = mob.split("/");
+                        var myArray = mob.split("/"); 
                         var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
                         if(myArray[0]!=''){
-                            var mob_res = myArray[0].substring(0, 10)+"****"+Number(String(myArray[0]).slice(-2));                        
+                            var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));
+                            $('.change_method_email').show(); 
+                            $('.change_method_sms').hide();
+                            $('#mfa_method').val(2);                 
                         }else{
-                            mob_res='';
+                            mob_res=''; 
                         }
                         if(myArray[1]!=''){
                             var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
-                        }else{
+                            $('.change_method_email').hide();
+                            $('.change_method_sms').show();
+                            $('#mfa_method').val(1);
+                        }else{ 
                             email_res='';
                         }
+                        
+                        if(mob_res!='' && email_res!=''){
+                            $('.change_method_email').hide();
+                            $('.change_method_sms').hide();
+                            $('#mfa_method').val('');
+                        }
                         var res_send = mob_res +' '+email_res;
-                        check_mfa_status(msg_id);
+                        // check_mfa_status(msg_id);
                         $('#hd_otp').show();
                         $('#hd_login').hide();
                         $('#number').val(mob);
@@ -553,7 +571,6 @@ $(function () {
                    	 	window.location.href=base_url+''+url;
                         $('#login_btn').prop('disabled', false);
                    }
-                   
                 } 
                 else{
                     // alert('eroror');
@@ -579,8 +596,8 @@ $(function () {
                     var str2 = "SSL"; 
                     var str3 = "Unable to create Record:"; 
                     if(str1.indexOf(str2) != -1 ||str1.indexOf(str_mail_error)!= -1){
-                        // console.log(str2 + " found");
-                        $('#login_btn').prop('disabled', false);  
+                        // console.log(str2 + " found"); 
+                        $('#login_btn').prop('disabled', false); 
                         $("#danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
                         $("#danger").show(0).delay(30000).hide(0); 
                     }
@@ -618,7 +635,7 @@ $("#opt_save").click(function(event){
 
     }else if($.isNumeric($('#code').val()) == false){
         $('#otp_error_msg').html("Invalid code.");
-        $('#otp_feedback').show();
+        $('#otp_feedback').show(); 
     }
     else{
     	$('#otp_feedback').hide();
@@ -648,7 +665,7 @@ $("#opt_save").click(function(event){
     }
 });
 
-$("#resend_otp").click(function(event){
+$("#resend_otp").click(function(event){ 
     event.preventDefault();
     var userid=$('#userid').val();
     $.ajax({
@@ -657,12 +674,135 @@ $("#resend_otp").click(function(event){
             data:$('#2faotp').serialize(),
             success: function(response) {
                 $("#otp_danger").show(0).delay(3000).hide(0);
-                $("#otp_success").html("Multifactor Authentication code has been re-sent");
+                $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+            }
+        }); 
+})
+
+$("#change_method_email").click(function(event){  
+    event.preventDefault();
+    var userid=$('#userid').val();   
+    $.ajax({
+            type: "POST",
+            url: "/login-otp/resend-another-method",  
+            data:$('#2faotp').serialize(),
+            success: function(response) {
+                // $("#otp_success").html(response[0].msg);
+                        var mob=response[0].mob; 
+                            var myArray = mob.split("/");
+                            var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
+                            if(myArray[0]!=''){
+                                var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));                     
+                            }else{
+                                mob_res='';
+                            }
+                            if(myArray[1]!=''){
+                                var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
+                            }else{
+                                email_res='';
+                            }
+                            var res_send = mob_res +' '+email_res;
+                             $('#otp_num').html(res_send);
+                             $("#change_method_sms").show();
+                             $("#change_method_email").hide();
+                             $("#mfa_method").val(1); 
+            },
+            error: function (request, status, error) {
+                // debugger;
+                if(request.responseJSON.status == 419) {
+                        location.reload(); 
+                }else{
+                    message_error = request.responseJSON.message;
+                    console.log(message_error +"LOGIN change method OTP ISSUES");
+                    var str1 = message_error;
+                    var str_mail_error = "Server Error";
+                    var str2 = "SSL"; 
+                    var str3 = "Unable to create Record:"; 
+                    if(str1.indexOf(str2) != -1 ||str1.indexOf(str_mail_error)!= -1){
+                        // console.log(str2 + " found"); 
+                        $('#login_btn').prop('disabled', false); 
+                        $("#danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    }
+                    else if(str1.indexOf(str3) != -1){
+                        // console.log(str2 + " found"); 
+                        $('#login_btn').prop('disabled', false); 
+                        $("#danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    } 
+                    else{ 
+                        $('#login_btn').prop('disabled', false);  
+                        $("#danger").html('System Error. Please contact system administrator.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    }
+                }
             }
         });
 })
 
-function isNumber(evt) {
+$("#change_method_sms").click(function(event){ 
+    event.preventDefault();
+    var userid=$('#userid').val();
+    $.ajax({
+            type: "POST",
+            url: "/login-otp/resend-another-method",
+            data:$('#2faotp').serialize(),
+            success: function(response) {
+                alert(success+"Success111");
+                // $("#otp_success").html(response[0].msg);
+                        var mob=response[0].mob; 
+                            var myArray = mob.split("/");
+                            var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
+                            if(myArray[0]!=''){
+                                var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));                     
+                            }else{
+                                mob_res='';
+                            }
+                            if(myArray[1]!=''){
+                                var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
+                            }else{
+                                email_res='';
+                            }
+                            var res_send = mob_res +' '+email_res;
+                             $('#otp_num').html(res_send);
+                             $("#change_method_sms").hide();
+                             $("#change_method_email").show();
+                             $("#mfa_method").val(2); 
+            },
+            error: function (request, status, error) {
+                // debugger;
+                if(request.responseJSON.status == 419) {
+                        location.reload(); 
+                }else{
+                    message_error = request.responseJSON.message;
+                    console.log(message_error +"LOGIN change method OTP ISSUES");
+                    var str1 = message_error;
+                    var str_mail_error = "Server Error";
+                    var str2 = "SSL"; 
+                    var str3 = "Unable to create Record:"; 
+                    if(str1.indexOf(str2) != -1 ||str1.indexOf(str_mail_error)!= -1){
+                        // console.log(str2 + " found"); 
+                        $('#login_btn').prop('disabled', false); 
+                        $("#danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    }
+                    else if(str1.indexOf(str3) != -1){
+                        // console.log(str2 + " found"); 
+                        $('#login_btn').prop('disabled', false); 
+                        $("#danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    }
+                    else{ 
+                        $('#login_btn').prop('disabled', false);  
+                        $("#danger").html('System Error. Please contact system administrator.'); 
+                        $("#danger").show(0).delay(30000).hide(0); 
+                    }
+                }
+            }
+        });
+})
+
+function isNumber(evt) { 
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -670,9 +810,6 @@ function isNumber(evt) {
     }
     return true;
 }
-</script>
-   
-
-   
+</script>   
 </body>
 </html>
