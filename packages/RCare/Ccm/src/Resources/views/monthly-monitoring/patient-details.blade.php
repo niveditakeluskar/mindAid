@@ -762,8 +762,8 @@
                 
                 //$('#RenderGeneralQuestion0').click();
                 //$('#RenderGeneralQuestion1').click();
-                //$("#genquestionselection").find('option:contains("General Question")').attr('selected','selected').trigger('change');
-                $("#genquestionselection :nth(1)").prop("selected","selected").change();
+                $("#genquestionselection").find('option:contains("General Question")').attr('selected','selected').trigger('change');
+                //$("#genquestionselection :nth(1)").prop("selected","selected").change();
 				//alert("call form billable "+$("#callstatus_form input[name='billable']").val());
         });
         var assetBaseUrl = "{{ asset('') }}";
@@ -820,7 +820,7 @@
             }
         });
         
-        function ajaxRenderTree(obj, label, id, count, tree_key) {
+        function ajaxRenderTree(obj, label, id, count, tree_key, seq, tempid) {
             var tree = JSON.stringify(obj);
             var treeObj = JSON.parse(tree);
             var parentId = $("#" + id + '_' + tree_key + '_' +count).closest('.mb-4').attr('id');
@@ -854,7 +854,8 @@
                         var qtn = treeObj[count].qs[j].q;
                         var qtn_n = qtn.replace("'","&apos;");  
                         var qtn_n_val = qtn_n.replace( /[\r\n]+/gm, "" );   
-                        $("#question" + tkey).append('<div class="mb-4 '+cls+' '+treelength+'" id="'+tree_key+'general_question'+ids+'"><label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="'+question_label+'" value="'+qtn_n_val+'">'+qtn_n+'</label><div class="d-inline-flex mb-2 col-md-12" id="options'+optkey+'"></div><p class="message" style="color:red"></p><div id="question'+tkey2+'"></div></div>');
+                        seq = seq + 1;
+                        $("#question" + tkey).append('<div class="mb-4 '+cls+' '+treelength+'" id="'+tree_key+'general_question'+ids+'"><label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="'+question_label+'" value="'+qtn_n_val+'">'+qtn_n+'</label><input type="hidden" name="sq['+tempid+']['+seq+']" value="'+seq+'"><div class="d-inline-flex mb-2 col-md-12" id="options'+optkey+'"></div><p class="message" style="color:red"></p><div id="question'+tkey2+'"></div></div>');
                         if ((treeObj[count].qs[j]).hasOwnProperty('opt')) {
                             var obj1 = JSON.stringify(treeObj[count].qs[j].opt);
                             var optcount = Object.getOwnPropertyNames(treeObj[count].qs[j].opt).length;
@@ -871,12 +872,12 @@
                                     if (treeObj[count].qs[j].opt[i].val == 'default yes') {
                                         var treeobjvar = treeObj[count].qs[j].opt;
                                         $("#options" + optkey).append("<input type='text' class='form-control col-md-5' name='" + option_label + "' id='" + optlabelkey + "' value=''><label class='radio radio-primary mr-3'><input type='hidden' id='" + hidden_opt_id + "' value='" + option_label + "'></label><input type='radio' style='display:none' checked>");
-                                        ajaxRenderTree1(treeObj[count].qs[j].opt, ids, j, i, tree_key);
+                                        ajaxRenderTree1(treeObj[count].qs[j].opt, ids, j, i, tree_key, seq, tempid);
                                     } else {
                                         if(treeObj[count].qs[j].AF == '1'){
-                                            $("#options" + optkey).append("<label class='checkbox  checkbox-primary mr-3'><input type='hidden' id='" + hidden_opt_id + "' value='" + option_label + "'><input type='checkbox' name='" + option_label + "' id='" + optlabelkey + "' value='" + treeobj_i_val_mod + "' onchange='ajaxRenderTree1(" + obj1_n + "," + ids + "," + j + "," + i + "," + tree_key + ")' ><span>" + treeobj_i_val_mod + "</span><span class='checkmark'></span></label>");
+                                            $("#options" + optkey).append("<label class='checkbox  checkbox-primary mr-3'><input type='hidden' id='" + hidden_opt_id + "' value='" + option_label + "'><input type='checkbox' name='" + option_label + "' id='" + optlabelkey + "' value='" + treeobj_i_val_mod + "' onchange='ajaxRenderTree1(" + obj1_n + "," + ids + "," + j + "," + i + "," + tree_key + "," + seq + "," + tempid + ")' ><span>" + treeobj_i_val_mod + "</span><span class='checkmark'></span></label>");
                                         } else {
-                                            $("#options" + optkey).append("<label class='radio radio-primary mr-3'><input type='hidden' id='" + hidden_opt_id + "' value='" + option_label + "'><input type='radio' name='" + option_label + "' id='" + optlabelkey + "' value='" + treeobj_i_val_mod + "' onchange='ajaxRenderTree1(" + obj1_n + "," + ids + "," + j + "," + i + "," + tree_key + ")' ><span>" + treeobj_i_val_mod + "</span><span class='checkmark'></span></label>");
+                                            $("#options" + optkey).append("<label class='radio radio-primary mr-3'><input type='hidden' id='" + hidden_opt_id + "' value='" + option_label + "'><input type='radio' name='" + option_label + "' id='" + optlabelkey + "' value='" + treeobj_i_val_mod + "' onchange='ajaxRenderTree1(" + obj1_n + "," + ids + "," + j + "," + i + "," + tree_key + "," + seq + "," + tempid + ")' ><span>" + treeobj_i_val_mod + "</span><span class='checkmark'></span></label>");
                                         }
                                     }
                                 }
@@ -886,6 +887,7 @@
                 }
             }
         }
+
 
         function ajaxRenderTree1(obj, id, count, objCount, tree_key) {
             var label = $("#opt" + id + '' + objCount + '' + tree_key).val();

@@ -49,7 +49,9 @@ class CallWrap extends Model
         'rpm_observation_id',
         'topic_id',
         'topic_type',
-        'emr_monthly_summary_date'
+        'emr_monthly_summary_date',
+		'question_sequence',
+        'question_sub_sequence'
     ];
 	
     public static function latest($patientId)   //added by pranali 27Oct2020

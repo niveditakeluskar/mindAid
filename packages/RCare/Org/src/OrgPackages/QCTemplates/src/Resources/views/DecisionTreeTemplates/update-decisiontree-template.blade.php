@@ -442,7 +442,7 @@ Thanks :)*/
                     <label class="col-md-2">Stage</label>
                     @select("Stage", "stages", [], ["id" => "stages", "class"=>"col-md-3"])
                     <label class="col-md-2 offset-md-1" id="stage_label" >Step</label>
-                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select col-md-3"])    
+                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select col-md-3 capital-first"])    
                  </div>  
             </div>
             <div class="form-group">
