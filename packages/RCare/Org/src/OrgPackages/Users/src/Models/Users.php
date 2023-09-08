@@ -69,7 +69,8 @@ class Users extends Authenticatable
         'token', // add for 2fa forget pwd
         'mfa_status', //add for 2fa
         'created_by',
-        'updated_by'
+        'updated_by',
+		'theme'
     ];
 
     /**

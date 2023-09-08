@@ -434,11 +434,14 @@ class UserController extends Controller {
       
     }
 	
-	public function DarkTheme(Request $request){ 
-         $theme = $request->darkmode;
-         session()->put([ 
-            'darkmode'=>$theme//$checked        
-            ]);
+	public function DarkTheme(Request $request){  
+        $theme_mode =array('theme'=>$request->darkmode);
+        $id = session()->get('userid');
+        $update_query = Users::where('id',$id)->orderBy('id', 'desc')->update($theme_mode);
+        $theme = $request->darkmode;
+        session()->put([ 
+           'darkmode'=>$theme//$checked        
+           ]);
     }
    
 }  

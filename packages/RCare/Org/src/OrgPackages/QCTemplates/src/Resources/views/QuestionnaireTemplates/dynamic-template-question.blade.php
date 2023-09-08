@@ -11,15 +11,17 @@
             <label>Answer Type <span class="error">*</span></label>
         </div>
         <!-- @selectanswerformat("question[q][1][answerFormat]",["id" => "answerFormat", "class" => "form-control custom-select col-md-3"]) -->
-        <select class="custom-select col-md-4" name="question[q][1][answerFormat]" id="answerFormat" onchange="getChild(this)"> 
-            <option value="">Select Answer Format</option>
-            <option value="1">Dropdown</option>
-            <option value="2" class="tx">Textbox</option>
-            <option value="3">Radio</option>
-            <option value="4">Checkbox</option>
-            <option value="5" class="tx">Textarea</option>
-        </select>
-        <div class="invalid-feedback"></div>
+        <div class="col-md-4">
+            <select class="custom-select" name="question[q][1][answerFormat]" id="answerFormat" onchange="getChild(this)"> 
+                <option value="">Select Answer Format</option>
+                <option value="1">Dropdown</option>
+                <option value="2" class="tx">Textbox</option>
+                <option value="3">Radio</option>
+                <option value="4">Checkbox</option>
+                <option value="5" class="tx">Textarea</option>
+            </select>
+            <div class="invalid-feedback"></div>
+        </div>
     </div> 
 </div>
 

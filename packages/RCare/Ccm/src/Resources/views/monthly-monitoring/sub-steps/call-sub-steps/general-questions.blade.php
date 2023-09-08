@@ -4,7 +4,7 @@ $submodule_id = getPageSubModuleName();
 $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
 
 
-if($enrollinRPM > 1){
+if($enrollCount > 1){
 	$stage_id = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
 	$dmodule_id = $ccmModule;
 	$dsubmodule_id = $ccmSubModule;
@@ -24,7 +24,7 @@ foreach ($genQuestion as $key => $value) {
 	<?php
 	$off++;
 }
-function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet)
+function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid)
 {
 	$optCount = count((array) $treeObj);
 	$javaObj = json_encode($treeObj);
@@ -48,16 +48,16 @@ function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet)
 			if($answarFormet == '1'){
 			?>
 			<label class="checkbox  checkbox-primary mr-3">
-				<input type="checkbox" name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="<?php echo ($treeobjval ? $treeobjval : '' ); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>")'>
+				<input type="checkbox" name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="<?php echo ($treeobjval ? $treeobjval : '' ); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
 				<span><?php echo ($treeObj->$i->val ? $treeObj->$i->val : '' ); ?></span>
 				<span class="checkmark"></span>
 			</label>
 			<?php }else if($answarFormet == '2' || $answarFormet == '5'){ ?>
-				<input type="text" class='form-control col-md-5' name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="" onkeyup='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>")'>
-				<input type="hidden" class='form-control col-md-5 firsttbox'  style="display:none" onclick='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>")'>
+				<input type="text" class='form-control col-md-5' name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="" onkeyup='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
+				<input type="hidden" class='form-control col-md-5 firsttbox'  style="display:none" onclick='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
 			<?php }else{ ?>
 			<label class="radio radio-primary mr-3">
-				<input type="radio" name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="<?php echo ($treeobjval ? $treeobjval : '' ); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>")'>
+				<input type="radio" name="{{$label}}" id="<?php echo $id . '_' . $tree_key.'_'.$i; ?>" value="<?php echo ($treeobjval ? $treeobjval : '' ); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
 				<span><?php echo ($treeObj->$i->val ? $treeObj->$i->val : '' ); ?></span>
 				<span class="checkmark"></span>
 
@@ -67,8 +67,11 @@ function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet)
 		}
 	}
 }?>
-@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2"])	
-
+<div class="row" style="margin-bottom:5px;">
+<div class="col-lg-12 mb-3">
+@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2 capital-first" ])	
+</div>
+</div>
 <div class="alert alert-success general_success" id="success-alert" style="display: none;">
 	<button type="button" class="close" data-dismiss="alert">x</button>
 	<strong> General question data saved successfully! </strong><span id="text"></span>
@@ -119,10 +122,11 @@ foreach($stepWiseDecisionTree as $skey => $stepvalue){ ?>
 							
 							<?php $que_val = trim(preg_replace('/\s+/', ' ', $queData->question->qs->q)); ?>
 							<label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="DT{{$last_key}}[qs][q]" value="<?php echo $que_val; ?>"><?php echo $queData->question->qs->q; ?></label>
+							<input type="hidden" name="sq[{{$value['id']}}][0]" value="0">
 							<div class="d-inline-flex mb-2 col-md-12">
 								<?php
 								if(property_exists($queData->question->qs, 'opt')){ 
-									renderTree($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF); 
+									renderTree($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF, 0, $value['id']); 
 								}
 								?>
 								
@@ -161,6 +165,6 @@ foreach($stepWiseDecisionTree as $skey => $stepvalue){ ?>
 	<button type="button" class="close" data-dismiss="alert">x</button>
 	<strong> General question data saved successfully! </strong><span id="text"></span>
 </div>
-@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2 bottom"])						
+@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection1", "class" => "mb-3 bottom select2"])						
 <div style="padding-left: 20px; color:red; font-size:13px;"><b>Select additional applicable questions</b></div>
 <button type="button" class="btn  btn-primary m-1 nexttab" onclick="nexttab()" style='display:none;'>Next</button>

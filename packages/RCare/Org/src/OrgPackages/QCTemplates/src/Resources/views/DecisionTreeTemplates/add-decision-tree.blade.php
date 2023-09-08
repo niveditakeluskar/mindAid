@@ -181,7 +181,7 @@ The markup will be simple nested lists
             
                             </select>
                             <label class="col-md-2 offset-md-1">Step</label>
-                                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select col-md-3"])
+                                    @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select col-md-3 capital-first"])
                             
                         </div>
                     </div> 
