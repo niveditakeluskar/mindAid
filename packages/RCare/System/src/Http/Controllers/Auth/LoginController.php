@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 // use RCare\RCareAdmin\AdminPackages\Login\src\Http\Requests\Request;
 use Illuminate\Http\Request;
-// use App\UserLoginHistory;
+// use App\UserLoginHistory; 
 use App\Http\Requests\PasswordSetRequest;
 use Carbon\Carbon;
 // use Illuminate\Database\Eloquent\Model;
@@ -64,9 +64,10 @@ class LoginController extends Controller
             $this->setLogOutLog_renCore();
             Auth::logout();
         }      
-        $DomainFeatures= DomainFeatures::where('features','2FA')->first();
-       
-        $maxAttempts     = $DomainFeatures->password_attempts; //3
+        $base_url = URL::to('/').'/rcare-login'; 
+        $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
+    //    dd($DomainFeatures);
+        $maxAttempts     = isset($DomainFeatures)?$DomainFeatures->password_attempts:''; //3
         //$otp_max_attempts =$DomainFeatures->otp_max_attempts;
         return view('System::login',compact('DomainFeatures'));
     }
@@ -126,24 +127,25 @@ class LoginController extends Controller
 
     //CODE BY ANAND========================
     public function otpVerify(Request $request)
-    {    
-        // dd($request->input('page_name'));
+    {  
         $chk_attempts = Users::where('id',$request->userid)->first();   
         $roleId = $chk_attempts->role;
         $role_details = RolesTypes::userRoleType($roleId);   
         $role_type = $role_details[0]->role_type;
         $timezone    =   !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
-        $base_url = URL::to('/'); 
+        $base_url = URL::to('/').'/rcare-login'; 
         if(sanitizeVariable($request->input('page_name')=='login')){
             $request->validate([
-                'code'=>'required',
+                'code'=>'required', 
             ]);
-            $DomainFeatures= DomainFeatures::where('features','2FA')->first();
+            $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
+            // dd($DomainFeatures);
             // print_r($chk_attempts->max_attempts .'='. $DomainFeatures->otp_max_attempts);
             if($chk_attempts->max_attempts > $DomainFeatures->otp_max_attempts){//2
-                Users::where('id',sanitizeVariable($request->userid))->update(['block_unblock_status' =>1]);  
-               return response(['sucsses'=>2,'message'=>'You are temporary lock. Please contact to admin.']);
-            }else{
+                Users::where('id',sanitizeVariable($request->userid))->update(['temp_lock_time' => Carbon::now()]);  //'block_unblock_status' =>1,'blocked_via'=>'otp_attempt' 
+                $block_time = $DomainFeatures->block_time;
+                return response(['sucsses'=>2,'message'=>"You are temporary lock. Please contact to admin OR Try after $block_time minutes."]);
+            }else{ 
                 ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts == 0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
                 Users::where('id',$request->userid)->update(['max_attempts' =>$count_attempts]); 
                 $find = Users::where('id',$request->userid)
@@ -174,7 +176,7 @@ class LoginController extends Controller
             Users::where('id',sanitizeVariable($request->userid))->update(['token' =>Str::random(60)]); 
             $chk_attempts = Users::where('id',$request->userid)->first();
             
-            $DomainFeatures= DomainFeatures::where('features','2FA')->first();
+            $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
              // dd($DomainFeatures); 
             // ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts == 0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1; 
             if($chk_attempts->max_attempts > $DomainFeatures->otp_max_attempts){//2
@@ -206,25 +208,32 @@ class LoginController extends Controller
                            'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
                            'link'  =>  $base_url.'/rcare-login'
                     );
-                    Mail::send([], $data, function ($message) use($data) {
-                        $message->to($data['email'], $data['name'])
-                        ->subject('RCARE Password Reset')
-                        ->setBody('<h5>Hi  ' . $data["name"].', </h5>
-                        <p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. </p>
-                        <p> <a class="button" href ='.$data["url"].'>Reset Password</a></p>
-                        <!-- Callout Panel -->
-                        <a href='.$data["link"].' Team Renova</a>',  
-                        'text/html'); // for HTML rich messages
-                    });
-                    $response['message']='';
-                    if (Mail::failures()) {
+                    try{
+                        Mail::send([], $data, function ($message) use($data) {
+                            $message->to($data['email'], $data['name'])
+                            ->subject('RCARE Password Reset')
+                            ->setBody('<h5>Hi  ' . $data["name"].', </h5>
+                            <p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. </p>
+                            <p> <a class="button" href ='.$data["url"].'>Reset Password</a></p>
+                            <!-- Callout Panel -->
+                            <a href='.$data["link"].' Team Renova</a>',  
+                            'text/html'); // for HTML rich messages
+                        });
+                        $response['message']=''; 
+                        if (Mail::failures()) {
+                            $response['success']='n';
+                            $response['url']='password_reset';
+                            $response['message']='Sorry we are unable to sent an email, try again';
+                        } else{
+                            $response['success']='y';
+                            $response['url']='';
+                            $response['message']='Your Password Reset Request is Accepted, Please check your email.';
+                        }
+                    }catch(\Exception $e){
+                        // dd($e); 
                         $response['success']='n';
-                        $response['url']='password_reset';
+                        $response['message_id'] ='';
                         $response['message']='Sorry we are unable to sent an email, try again';
-                    } else{
-                        $response['success']='y';
-                        $response['url']='';
-                        $response['message']='Your Password Reset Request is Accepted, Please check your email.';
                     }
                     Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,'otp_date'=>Carbon::now()]);
                 // Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,]);
@@ -249,14 +258,8 @@ class LoginController extends Controller
             $otp_digit = $server_domain->digit_in_otp; 
             $otp_by_sms = $user_level_sms;//$server_domain->otp_text ;
             $otp_by_email = $user_level_email;//$server_domain->otp_email;
-            // dd($otp_by_email);
-            $digit_in_otp=1;
-            for($i=1;$i<=$otp_digit;$i++){
-                $digit_in_otp .= 0;
-            } 
-            // echo $mfa_status.'-'.$otp_by_sms. ''.$otp_by_email;die;
-            $code = rand(1,$digit_in_otp);
-            //$code = rand(100000,999999);
+    
+            $code = rand(pow(10, $otp_digit-1), pow(10, $otp_digit)-1); 
             $code_data =array('otp_code'=>$code,'created_by'=>$id, 'updated_by'=>$id);
             Users::where('id',$id)->update($code_data);
             $MobileNo = Users::select('number','country_code')->where('id',$id)->first();
@@ -285,17 +288,6 @@ class LoginController extends Controller
                             'body' => $text_message]);
                             $message_id = $message->sid;
                             $message1 = $client->messages($message_id)->fetch();
-                            // $record_messages  = CommonFunctionController::recordMessages($patient_id, $module_id, $stage_id, $sid, $sms_detail->phone, $phoneNumber, $message1->status, $text);
-                            // $messagestatus['sending'] = 'Message status is ';
-                            // $messagestatus['queued'] = 'Message has been ';
-                            // $messagestatus['sent'] = 'Message has been';
-                            // $messagestatus['accepted'] = 'Message has been ';
-                            // $messagestatus['failed'] = 'Message has been ';
-                            // $messagestatus['delivered'] = 'Message has been ';
-                            // $messagestatus['undelivered'] = 'Message is '; 
-                            // $messagestatus['receiving'] = 'Message status is ';
-                            // $messagestatus['received'] = 'Message has been ';
-                            // // // print_r($messagestatus[strtolower($message1->status)]."".$message1->status);
                             $msg_status = strtolower($message1->status);
                             $type = 'MFA';
                             $content = strip_tags($text_message); 
@@ -308,7 +300,7 @@ class LoginController extends Controller
                             return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>$response['success'],
                             'msg'=>$response['message'],'message_id'=>$response['message_id']]);
                         } catch (TwilioException $e) {
-                            // dd($e); 
+                            // dd($e);  
                             // dd($e->getCode() . ' : ' .$e->getMessage());
                             $response['message'] = "We are currently not able to deliver the text message, kindly use email for authentication method.";
                             return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>"N",'msg'=>$response['message']]);
@@ -329,33 +321,41 @@ class LoginController extends Controller
                         'otp' =>$emailID->otp_code, 
                         'link'=> $base_url.'/rcare-login'
                     );
-                    Mail::send([], $data, function ($message) use($data) {
-                        $message->to($data['email'], $data['name'] )
-                        ->subject('RCARE Multifactor Authentication Code') 
-                        ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
-                            <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
-                            <a>Team Renova</a>',  
-                        'text/html'); // for HTML rich messages
-                    });
-                    if (Mail::failures()) {
+                    try{
+                        Mail::send([], $data, function ($message) use($data) {
+                            $message->to($data['email'], $data['name'] )
+                            ->subject('RCARE Multifactor Authentication Code') 
+                            ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
+                                <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
+                                <a>Team Renova</a>',  
+                            'text/html'); // for HTML rich messages
+                        });
+                        if (Mail::failures()) {
+                            $response['success']='n';
+                            $response['url']='';//password_reset
+                            $response['message']='We are currently not able to deliver the email, kindly use text message for authentication method';
+                        } else{
+                            $type = 'MFA';
+                            $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
+                            <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
+                            <a>Team Renova</a>';
+                            $content = strip_tags($email_msg);
+                            $sent_type = 'email'; 
+                            $sent_to = $email;
+                            $message_id ='';
+                            $msg_status='';
+                            $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
+                            $response['success']='y';
+                            $response['url']='';
+                            $response['message']='OTP has sent on your email, Please check your email';
+                            $response['message_id'] = ''; 
+                        }
+                    }catch(\Exception $e){
+                        // dd($e); 
+                        $response['message_id'] = ''; 
                         $response['success']='n';
                         $response['url']='';//password_reset
-                        $response['message']='We are currently not able to deliver the email, kindly use text message for authentication method';
-                    } else{
-                        $type = 'MFA';
-                        $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
-                        <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
-                        <a>Team Renova</a>';
-                        $content = strip_tags($email_msg);
-                        $sent_type = 'email'; 
-                        $sent_to = $email;
-                        $message_id ='';
-                        $msg_status='';
-                        $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
-                        $response['success']='y';
-                        $response['url']='';
-                        $response['message']='OTP has sent on your email, Please check your email';
-                        $response['message_id'] = ''; 
+                        $response['message']='We are currently not able to deliver the email, kindly use only text message for authentication method';
                     }
                     // Users::where('id',$id)->update(['otp_date'=>Carbon::now()]); 
                  return array(['mob'=>'/'.$emailID->email,'userid_otp'=>$id,'sucsses'=>$response['success'],
@@ -364,7 +364,7 @@ class LoginController extends Controller
                 }
             }
             else if($otp_by_email==1 && $otp_by_sms== 1){ //otp sent in email & phn
-                if(($country_code=="" || $country_code==null) && ($mob=="" || $mob==null)){
+                if(($country_code=="" || $country_code==null) || ($mob=="" || $mob==null)){
                  return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your contact number for Multifactor authentication."]);
                 }else if($email=="" || $email==null){
                 return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your Email Id for Multifactor authentication."]);
@@ -408,31 +408,37 @@ class LoginController extends Controller
                             'otp' =>$emailID->otp_code, 
                             'link'=> $base_url.'/rcare-login'
                         );
-                        Mail::send([], $data, function ($message) use($data) {
-                            $message->to($data['email'], $data['name'] )
-                            ->subject('RCARE Multifactor Authentication Code') 
-                            ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
-                                 <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
-                                 <a>Team Renova</a>',  
-                            'text/html'); // for HTML rich messages
-                        });
-                        if (Mail::failures()) {
+                        try{
+                            Mail::send([], $data, function ($message) use($data) {
+                                $message->to($data['email'], $data['name'] )
+                                ->subject('RCARE Multifactor Authentication Code') 
+                                ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
+                                    <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
+                                    <a>Team Renova</a>',  
+                                'text/html'); // for HTML rich messages
+                            });
+                            if (Mail::failures()) {
+                                $response['email_otp']='n';
+                                $response['message_id'] ='';
+                            } else{
+                                $type = 'MFA';
+                                $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
+                                <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
+                                <a>Team Renova</a>';
+                                $content = strip_tags($email_msg);
+                                $sent_type = 'email'; 
+                                $sent_to = $email;
+                                $message_id ='';
+                                $msg_status='';
+                                $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
+                                $response['email_otp']='y';
+                                $response['message_id'] = $sid;
+
+                            }
+                        }catch(\Exception $e){
+                            // dd($e);
                             $response['email_otp']='n';
                             $response['message_id'] ='';
-                        } else{
-                            $type = 'MFA';
-                            $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
-                            <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
-                            <a>Team Renova</a>';
-                            $content = strip_tags($email_msg);
-                            $sent_type = 'email'; 
-                            $sent_to = $email;
-                            $message_id ='';
-                            $msg_status='';
-                            $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
-                            $response['email_otp']='y';
-                            $response['message_id'] = $sid;
-
                         }
                         if($response['mob_otp']=='n' && $response['email_otp']=='n'){
                             return array(['sucsses'=>'N','message_id'=>$response['message_id'],'msg'=>'We are not able to send the authentication code due to technical issues in text and email services. Please contact Admin to disable the Multifactor Authentication temporarily.']);
@@ -457,7 +463,7 @@ class LoginController extends Controller
            // info("Error: ". $e->getMessage()); 
            return array(['sucsses'=>"N",'msg'=>"Invalid number. Please ask administrator to add your contact details for multifactor authentication."]);
            
-        }
+        } 
     }
     public function checkMfaTextstatus($msg_id){   
         return MfaTextingLog::where('message_id',sanitizeVariable($msg_id))->get();
@@ -486,9 +492,328 @@ class LoginController extends Controller
         $user_level_sms = sanitizeVariable($request->input('otp_text'));
         $user_level_email = sanitizeVariable($request->input('otp_email'));
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
+        // dd($generateOtp);
       
     }
-    public function loginVerify(Request $request){
+
+
+    public function resendAnotherMethod(Request $request)
+    {
+        $id = sanitizeVariable($request->userid); 
+        $mfa_method =  sanitizeVariable($request->input('mfa_method'));
+        if($mfa_method==1){
+            $user_level_sms = 1;
+            $user_level_email ='';
+        }else if($mfa_method==2){
+            $user_level_email = 1;
+            $user_level_sms ='';
+        }
+        else{
+            $user_level_sms ='';
+            $user_level_email = '';
+        }
+
+        $generateOtp = $this->generateCode($id,$user_level_sms,$user_level_email);
+        if($generateOtp[0]['sucsses']=="N"){
+            // echo "string5.2";
+            $response['error']=$generateOtp[0]['msg'];
+        }else{ 
+            // echo "string5.3"; 
+            $response['success']='y';
+            $response['url'] = 'login-otp';
+            $response['mob'] = $generateOtp[0]['mob']; 
+        }
+
+        return $generateOtp; 
+        // echo '{ "data":[ '. json_encode( $response) .']}'; 
+      
+    }
+
+    public function login(Request $request)
+    {  //dd($password_attempts);  
+        $base_url = URL::to('/').'/rcare-login'; 
+        // dd($base_url);
+        $remember    =    sanitizeVariable($request->input('remember'));
+        $credentials =    sanitizeVariable($request->only('email', 'password')); 
+        $email       =    sanitizeVariable($request->input('email'));
+        $password    =    sanitizeVariable($request->input('password')); 
+        $role = 2; 
+        // $configTZ    = config('app.timezone');
+		// $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $timezone    =    !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
+        $response = array();
+        $DomainFeatures= DomainFeatures::where('features','2FA')
+        ->where('url',$base_url)
+        ->where('status',1) 
+        ->first(); 
+        // dd($DomainFeatures->password_attempts); 
+        $no_of_days  =  !empty($DomainFeatures) ? $DomainFeatures->no_of_days:''; 
+        $pwd_attempts = !empty($DomainFeatures) ? $DomainFeatures->password_attempts:'3';
+        $user_level_sms = sanitizeVariable($request->input('otp_text'));
+        $user_level_email = sanitizeVariable($request->input('otp_email'));
+            $eid_exists = Users::where('email',$email)->exists(); 
+            // dd($eid_exists); 
+            if($eid_exists == true){ 
+                $eid = Users::where('email',$email)->first();
+                $id = $eid['id'];
+                $chk_attempts = Users::where('id',$id)->first();
+                $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
+                $today = carbon::now();//date("m-d-Y");
+                if($userlockStatus->otp_date=='' || $userlockStatus->otp_date==null|| $userlockStatus->otp_date=='null'){
+                        $current_date='';
+                    }else{
+                       $current_date = Carbon::parse($userlockStatus->otp_date)->addDay($no_of_days); 
+                    }
+                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+                // dd(Auth::guard('renCore_user')->attempt($credentials,$remember));
+                if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
+                    if($DomainFeatures!=null){
+                        // dd('saaa');  
+                        $domainFeatures_status = DomainFeatures::where('features','2FA')->where('url',$base_url)->where('status',1)->first();
+                        if(isset($domainFeatures_status)){
+                            if($userlockStatus->status==0){
+                                $this->setLogInLog_renCore($id,$email);
+                                // echo "string1";
+                                $response['success']='n';
+                                $response['url']=''; 
+                                $response['error']='You are temparary deactivated. Please contact to admin.';
+                            }
+                            if($userlockStatus->block_unblock_status==1){ // block by otp
+                                $this->setLogInLog_renCore($id,$email);
+                                // echo "string1";
+                                $response['success']='n'; 
+                                $response['url']=''; 
+                                $response['error']='You are temparary block. Please contact to admin.';
+                            }
+                            else if($userlockStatus->status==2){ //to chk user block or not
+                                // echo "string2";
+                                $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+                                $this->setLogInLog_renCore($id,$email);
+                                $response['success']='n';
+                                $response['url']='';
+                                $response['error']='You are deactivated user. Please contact to admin.';
+                            }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
+                                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ?
+                                $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+                                // $userExist = Users::where('email',$email)->where('password', $password)->exists();
+                                // dd($userExist);  
+                                $h1=strtotime($userlockStatus->temp_lock_time);
+                                $h2=strtotime(Carbon::now());
+                                $h=$h2-$h1; 
+                                $m=$h/60;
+                                // $remaining_time= round(3-$m, 2);
+
+                                $block_time = $DomainFeatures->block_time;
+                                $remaining_time= round($block_time-$m, 2);
+
+                                $this->setLogInLog_renCore($id,$email);
+                                if($m>$remaining_time){  
+                                Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0,'blocked_via'=>'']);
+                                // if($userExist!=true){
+                                //     dd('adasdasdsa'); 
+                                //     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+                                //     $response['error']='Incorrect Username and Password';
+                                // }  
+                                }else{
+                                    $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+                                }
+                            // }
+                            // else if($userlockStatus->max_attempts > $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+                            //     echo "string4".$userlockStatus->max_attempts .'==='. $DomainFeatures->password_attempts;
+                            //     Users::where('email',$email)->where('id',$id )->update(['max_attempts' =>0,'temp_lock_time' => Carbon::now()]);
+                            //     $this->setLogInLog_renCore($id,$email);
+                            //     $response['error']="Too many login attempts. Please try again after 3 minutes.";
+                            }else if(($current_date=='')&& $pwd_attempts > $userlockStatus->max_attempts 
+                            && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') 
+                            && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){
+                                //otp date is empty....
+                                $this->setLogInLog_renCore($id,$email);
+                                        // $this->clearLoginAttempts($request);
+                                    Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+                                    // $generateOtp= $this->generateCode($id);
+                                    $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
+                                    // dd($generateOtp);
+                                        if($generateOtp[0]['sucsses']=="N"){
+                                            // echo "string5.2";
+                                            $response['error']=$generateOtp[0]['msg'];
+                                        }else{ 
+                                            // echo "string5.3";
+                                            $response['success']='y';
+                                            $response['url'] = 'login-otp';
+                                            $response['mob'] = $generateOtp[0]['mob'];
+                                            $response['userid_otp'] = $generateOtp[0]['userid_otp'];
+                                            $response['timezone'] = $timezone;
+                                            $response['role'] = $role;
+                                            $response['error']='';
+                                            $response['message_id']=$generateOtp[0]['message_id'];
+                                        } 
+                            }else if(($current_date->gt($today)==true) && $pwd_attempts > $userlockStatus->max_attempts 
+                            && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='')
+                            && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){
+                                //once login between 24 hrs not required pwd....
+                                // dd('haaa88888');
+                                $roleId = Auth::guard('renCore_user')->user()->role;
+                                $role_details = RolesTypes::userRoleType($roleId);   
+                                $role_type = $role_details[0]->role_type;
+                                    session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,
+                                    'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone, 'role_type'=>$role_type]);
+                                    $userStatus = Auth::guard('renCore_user')->user()->status;
+                                    $id=Auth::guard('renCore_user')->user()->id;
+                                    if($userStatus=='1'){
+                                        $this->setAfterLogInLog_renCore($id,$email);
+                                        // $this->clearLoginAttempts($request);
+                                        $response['success']='y';
+                                        $response['url'] = 'patients/worklist';
+                                        $response['error']='';
+                                        // return redirect()->route("org_users_list");
+                                    }else{
+                                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+                                        $this->setLogInLog_renCore($id,$email); 
+                                        if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+                                        //echo "string".$userlockStatus->max_attempts.'=='.$DomainFeatures->password_attempts;
+                                        $this->setLogInLog_renCore($id,$email);
+                                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+                                        $h1=strtotime($userlockStatus->temp_lock_time);
+                                        $h2=strtotime(Carbon::now());
+                                        $h=$h2-$h1; 
+                                        $m=$h/60;
+                                        $block_time = $DomainFeatures->block_time;
+                                        $remaining_time= round($block_time-$m, 2);
+                                        $response['error']="Too many login attempts. Please try again after $remaining_time minutes.";
+                                        } 
+                                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+                                        $response['error']='Incorrect username or password. Please try again.';
+                                    }
+                
+                            }else{ 
+                                $userStatus = Auth::guard('renCore_user')->user()->status;
+                                $id=Auth::guard('renCore_user')->user()->id;
+                                    if($userStatus=='1'){
+                                        $this->setLogInLog_renCore($id,$email);
+                                        // $this->clearLoginAttempts($request);
+                                    Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+                                    // $generateOtp= $this->generateCode($id);
+                                    $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
+                                    // dd($generateOtp);
+                                        if($generateOtp[0]['sucsses']=="N"){
+                                            // echo "string5.2";
+                                            $response['error']=$generateOtp[0]['msg'];
+                                        }else{ 
+                                            // echo "string5.3";
+                                            $response['success']='y'; 
+                                            $response['url'] = 'login-otp';
+                                            $response['mob'] = $generateOtp[0]['mob'];
+                                            $response['userid_otp'] = $generateOtp[0]['userid_otp'];
+                                            $response['timezone'] = $timezone;
+                                            $response['role'] = $role;
+                                            $response['error']='';
+                                            $response['message_id']=$generateOtp[0]['message_id']; 
+                                        }
+                                    }else{
+                                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+                                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+                                        $this->setLogInLog_renCore($id,$email); 
+                                        if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+                                        // echo "ssss".$userlockStatus->max_attempts.'='.$DomainFeatures->password_attempts;
+                                            Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+                                            $h1=strtotime($userlockStatus->temp_lock_time);
+                                            $h2=strtotime(Carbon::now());
+                                            $h=$h2-$h1; 
+                                            $m=$h/60;
+                                            $block_time = $DomainFeatures->block_time;
+                                            $remaining_time= round($block_time-$m, 2);
+                                            $response['error']="Too many login attempts. Please try again after $remaining_time minutes.";
+                                        } 
+                                            $response['success']='n';
+                                            $response['url']='';
+                                            $response['error']='Incorrect username or password. Please try again.';
+                                        // return redirect()->route('rcare-login')->with('message','Incorrect username or password. Please try again.');
+                                    }
+                            }
+                        }else{//without 2FA
+                                //  dd('saaa-else');
+                            $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+                                session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,
+                                'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone]);
+                                $userStatus = Auth::guard('renCore_user')->user()->status;
+                                // dd($userStatus)
+                                $id=Auth::guard('renCore_user')->user()->id;
+                                if($userStatus=='1'){
+                                    // dd('in userstatus');
+                                    $this->setAfterLogInLog_renCore($id,$email);
+                                    // $this->clearLoginAttempts($request);
+                                        $response['success']='y';
+                                        $response['url'] = 'patients/worklist';
+                                        $response['error']='';
+                                }else{
+                                    // dd('ELSE-else');
+                                    $this->setLogInLog_renCore($id,$email);
+                                    Auth::logout();
+                                    $response['success']='n';
+                                    $response['url']='';
+                                    $response['error']='You are temporary blocked. please contact to admin';
+                                } 
+                        }
+                    }else{
+                        $this->setLogInLog_renCore($id,$email);
+                        // Auth::logout();
+                       /* $response['success']='n';
+                        $response['url']='';
+                        $response['error']='Your URL Domain Not Valid';*/
+                        $response['success']='y';
+                        $response['url'] = 'patients/worklist';
+                        $response['error']='';
+                    }
+                }else{
+                    ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+                        $this->setLogInLog_renCore($id,$email);
+                        $this->setLogInLog($id,$email);
+                        // $this->incrementLoginAttempts($request);
+                        if($userlockStatus->max_attempts >= $pwd_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+                            Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+                            $h1=strtotime($userlockStatus->temp_lock_time);
+                            $h2=strtotime(Carbon::now());
+                            $h=$h2-$h1; 
+                            $m=$h/60;
+                            $block_time = $DomainFeatures->block_time;
+                            // dd($block_time);
+                            // $remaining_time= round($block_time-$m, 2);
+                            // dd($block_time-$m, 2);
+                            $response['error']="Too many login attempts. Please try again after $block_time minutes.";
+                        }else if($userlockStatus->max_attempts >= $pwd_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
+                            $h1=strtotime($userlockStatus->temp_lock_time);
+                            $h2=strtotime(Carbon::now());
+                            $h=$h2-$h1;
+                            $m=$h/60;
+                            // $remaining_time= round(3-$m, 2);
+                            // echo $m.'<=>'.$remaining_time;die;
+                            $block_time = $DomainFeatures->block_time;
+                            $remaining_time= round($block_time-$m, 2);
+
+                            if($m>$remaining_time){
+                             Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+                            }else{
+                              $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+                            }
+                        }else{ 
+                            Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+                            $response['error']='Incorrect username or password. Please try again.';
+                        }
+                }
+            }else{
+                $response['success']='n';
+                $response['url']='';
+                $response['error']='Incorrect Username.';
+            }
+
+        echo '{ "data":[ '. json_encode( $response) .']}';  
+    }
+
+
+
+
+
+    public function loginVerify(Request $request){ //not in use
         $remember    =    sanitizeVariable($request->input('remember'));
         $credentials =    sanitizeVariable($request->only('email', 'password')); 
         $email       =    sanitizeVariable($request->input('email'));
@@ -577,508 +902,273 @@ class LoginController extends Controller
 
     //     echo '{ "data":[ '. json_encode( $response) .']}';  
     // }
-    public function loginWithOtp(Request $request){
-        $remember    =    sanitizeVariable($request->input('remember'));
-        $credentials =    sanitizeVariable($request->only('email', 'password')); 
-        $email       =    sanitizeVariable($request->input('email'));
-        $password    =    sanitizeVariable($request->input('password')); 
-        $role = 2; 
-        $timezone    =    sanitizeVariable($request->input('timezone'));
-        $response = array();
-        $user_level_sms = sanitizeVariable($request->input('otp_text'));
-        $user_level_email = sanitizeVariable($request->input('otp_email'));
-        $DomainFeatures= DomainFeatures::where('features','2FA')->first();
-        $no_of_days  =  $DomainFeatures->no_of_days;
-        $pwd_attempts = $DomainFeatures->password_attempts;
-        $eid_exists = Users::where('email',$email)->exists();
-            if($eid_exists === true){
-                // echo "string";
-                $eid = Users::where('email',$email)->first();
-                $id = $eid['id'];
-                $chk_attempts = Users::where('id',$id)->first();
-                $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
-                $today = carbon::now();//date("m-d-Y");
-                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
-                    if($userlockStatus->status==0){ //chck user Inctive
-                        // echo "string1";
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']=''; 
-                        $response['error']='You are temparary deactivated. Please contact to admin.';
-                    }else if($userlockStatus->block_unblock_status==1){ // block by otp
-                        // echo "string2";
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']=''; 
-                        $response['error']='You are temparary block. Please contact to admin.';
-                    }else if($userlockStatus->status==2){ //to chk user permanent block or not
-                        // echo "string3";
-                        $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']='';
-                        $response['error']='You are deactivated user. Please contact to admin.';
-                    }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
-                    // echo "string4";
-                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                        $userExist = Users::where('email',$email)->where('password', $password)->exists();
-                        $h1=strtotime($userlockStatus->temp_lock_time);
-                        $h2=strtotime(Carbon::now());
-                        $h=$h2-$h1;
-                        $m=$h/60;
-                        $remaining_time= round(3-$m, 2);
-                        $this->setLogInLog_renCore($id,$email);
-                        if($m>3){
-                          Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                          if($userExist!=true){
-                            Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                             $response['error']='Incorrect Username and Password';
-                          }
-                        }else{
-                          $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                        }
-                    }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                        $this->setLogInLog_renCore($id,$email);
-                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                        $response['error']="Too many login attempts. Please try again after 3 minutes."; 
-                    }
-                    // else if($pwd_attempts > $userlockStatus->max_attempts && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){//otp date is empty....
-                    //     // echo "string5";
-                    //     $this->setLogInLog_renCore($id,$email);
-                    //     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                    //     $generateOtp= $this->generateCode($id,$mfa_status);
-                    //     if($generateOtp[0]['sucsses']=="N"){
-                    //         $response['error']=$generateOtp[0]['msg'];
-                    //     }else{
-                    //         $response['success']='y';
-                    //         $response['url'] = 'login-otp';
-                    //         $response['mob'] = $generateOtp[0]['mob'];
-                    //         $response['userid_otp'] = $generateOtp[0]['userid_otp'];
-                    //         $response['timezone'] = $timezone;
-                    //         $response['role'] = $role;
-                    //         $response['error']='';
-                    //     } 
-                    // }
-                    else{
-                        // echo "do something"; 
-                        $this->setLogInLog_renCore($id,$email);
-                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                        $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-                        if($generateOtp[0]['sucsses']=="N"){
-                            $response['error']=$generateOtp[0]['msg'];
-                        }else{
-                            $response['success']='y';
-                            $response['url'] = 'login-otp';
-                            $response['mob'] = $generateOtp[0]['mob'];
-                            $response['userid_otp'] = $generateOtp[0]['userid_otp'];
-                            $response['timezone'] = $timezone;
-                            $response['role'] = $role;
-                            $response['error']='';
-                            $response['message_id']=$generateOtp[0]['message_id'];
-                        }
-                    }
-                }else{
-                    ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                    $this->setLogInLog_renCore($id,$email);
-                    $this->setLogInLog($id,$email);
-                    // $this->incrementLoginAttempts($request);
-                    if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                        $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                    }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
-                        $h1=strtotime($userlockStatus->temp_lock_time);
-                        $h2=strtotime(Carbon::now());
-                        $h=$h2-$h1;
-                        $m=$h/60;
-                        $remaining_time= round(3-$m, 2);
-                        // echo $m.'<=>'.$remaining_time;die;
-                        if($m>3){
-                         Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                        }else{
-                          $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                        }
-                    }else{ 
-                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                        $response['error']='Incorrect username or password. Please try again.';
-                    }
-                }   
-            }else{
-                $response['success']='n';
-                $response['url']='';
-                $response['error']='Incorrect Username.';
-            } 
-        echo '{ "data":[ '. json_encode( $response) .']}';  
-    }
-    public function loginWithoutOtp(Request $request){
+    // public function loginWithOtp(Request $request){  //not in use
+    //     $remember    =    sanitizeVariable($request->input('remember'));
+    //     $credentials =    sanitizeVariable($request->only('email', 'password')); 
+    //     $email       =    sanitizeVariable($request->input('email'));
+    //     $password    =    sanitizeVariable($request->input('password')); 
+    //     $role = 2; 
+    //     $timezone    =    sanitizeVariable($request->input('timezone'));
+    //     $response = array();
+    //     $user_level_sms = sanitizeVariable($request->input('otp_text'));
+    //     $user_level_email = sanitizeVariable($request->input('otp_email'));
+    //     $DomainFeatures= DomainFeatures::where('features','2FA')->first();
+    //     $no_of_days  =  $DomainFeatures->no_of_days;
+    //     $pwd_attempts = $DomainFeatures->password_attempts;
+    //     $eid_exists = Users::where('email',$email)->exists();
+    //         if($eid_exists === true){
+    //             // echo "string";
+    //             $eid = Users::where('email',$email)->first();
+    //             $id = $eid['id'];
+    //             $chk_attempts = Users::where('id',$id)->first();
+    //             $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
+    //             $today = carbon::now();//date("m-d-Y");
+    //             ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //             if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
+    //                 if($userlockStatus->status==0){ //chck user Inctive
+    //                     // echo "string1";
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']=''; 
+    //                     $response['error']='You are temparary deactivated. Please contact to admin.';
+    //                 }else if($userlockStatus->block_unblock_status==1){ // block by otp
+    //                     // echo "string2";
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']=''; 
+    //                     $response['error']='You are temparary block. Please contact to admin.';
+    //                 }else if($userlockStatus->status==2){ //to chk user permanent block or not
+    //                     // echo "string3";
+    //                     $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']='';
+    //                     $response['error']='You are deactivated user. Please contact to admin.';
+    //                 }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
+    //                 // echo "string4";
+    //                     ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //                     $userExist = Users::where('email',$email)->where('password', $password)->exists();
+    //                     $h1=strtotime($userlockStatus->temp_lock_time);
+    //                     $h2=strtotime(Carbon::now());
+    //                     $h=$h2-$h1;
+    //                     $m=$h/60;
+    //                     $remaining_time= round(3-$m, 2);
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     if($m>3){
+    //                       Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+    //                       if($userExist!=true){
+    //                         Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+    //                          $response['error']='Incorrect Username and Password';
+    //                       }
+    //                     }else{
+    //                       $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+    //                     }
+    //                 }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+    //                     $response['error']="Too many login attempts. Please try again after 3 minutes."; 
+    //                 }
+    //                 // else if($pwd_attempts > $userlockStatus->max_attempts && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){//otp date is empty....
+    //                 //     // echo "string5";
+    //                 //     $this->setLogInLog_renCore($id,$email);
+    //                 //     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+    //                 //     $generateOtp= $this->generateCode($id,$mfa_status);
+    //                 //     if($generateOtp[0]['sucsses']=="N"){
+    //                 //         $response['error']=$generateOtp[0]['msg'];
+    //                 //     }else{
+    //                 //         $response['success']='y';
+    //                 //         $response['url'] = 'login-otp';
+    //                 //         $response['mob'] = $generateOtp[0]['mob'];
+    //                 //         $response['userid_otp'] = $generateOtp[0]['userid_otp'];
+    //                 //         $response['timezone'] = $timezone;
+    //                 //         $response['role'] = $role;
+    //                 //         $response['error']='';
+    //                 //     } 
+    //                 // }
+    //                 else{
+    //                     // echo "do something"; 
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+    //                     $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
+    //                     if($generateOtp[0]['sucsses']=="N"){
+    //                         $response['error']=$generateOtp[0]['msg'];
+    //                     }else{
+    //                         $response['success']='y';
+    //                         $response['url'] = 'login-otp';
+    //                         $response['mob'] = $generateOtp[0]['mob'];
+    //                         $response['userid_otp'] = $generateOtp[0]['userid_otp'];
+    //                         $response['timezone'] = $timezone;
+    //                         $response['role'] = $role;
+    //                         $response['error']='';
+    //                         $response['message_id']=$generateOtp[0]['message_id'];
+    //                     }
+    //                 }
+    //             }else{
+    //                 ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //                 $this->setLogInLog_renCore($id,$email);
+    //                 $this->setLogInLog($id,$email);
+    //                 // $this->incrementLoginAttempts($request);
+    //                 if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+    //                     Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+    //                     $response['error']="Too many login attempts. Please try again after 3 minutes.";
+    //                 }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
+    //                     $h1=strtotime($userlockStatus->temp_lock_time);
+    //                     $h2=strtotime(Carbon::now());
+    //                     $h=$h2-$h1;
+    //                     $m=$h/60;
+    //                     $remaining_time= round(3-$m, 2);
+    //                     // echo $m.'<=>'.$remaining_time;die;
+    //                     if($m>3){
+    //                      Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+    //                     }else{
+    //                       $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+    //                     }
+    //                 }else{ 
+    //                     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+    //                     $response['error']='Incorrect username or password. Please try again.';
+    //                 }
+    //             }   
+    //         }else{
+    //             $response['success']='n';
+    //             $response['url']='';
+    //             $response['error']='Incorrect Username.';
+    //         } 
+    //     echo '{ "data":[ '. json_encode( $response) .']}';  
+    // }
+    // public function loginWithoutOtp(Request $request){ //not in use
 
-        $remember    =    sanitizeVariable($request->input('remember'));
-        $credentials =    sanitizeVariable($request->only('email', 'password')); 
-        $email       =    sanitizeVariable($request->input('email'));
-        $password    =    sanitizeVariable($request->input('password')); 
-        $role = 2; 
-        $timezone    =    sanitizeVariable($request->input('timezone'));
-        $response = array();
-        $DomainFeatures= DomainFeatures::where('features','2FA')->first();
-        $no_of_days  =  $DomainFeatures->no_of_days;
-        $pwd_attempts = $DomainFeatures->password_attempts;
-        $eid_exists = Users::where('email',$email)->exists();
+    //     $remember    =    sanitizeVariable($request->input('remember'));
+    //     $credentials =    sanitizeVariable($request->only('email', 'password')); 
+    //     $email       =    sanitizeVariable($request->input('email'));
+    //     $password    =    sanitizeVariable($request->input('password')); 
+    //     $role = 2; 
+    //     $timezone    =    sanitizeVariable($request->input('timezone'));
+    //     $response = array();
+    //     $DomainFeatures= DomainFeatures::where('features','2FA')->first();
+    //     $no_of_days  =  $DomainFeatures->no_of_days;
+    //     $pwd_attempts = $DomainFeatures->password_attempts;
+    //     $eid_exists = Users::where('email',$email)->exists();
 
-            // dd($eid_exists);
-            if($eid_exists === true){
-                // echo "string";
-                $eid = Users::where('email',$email)->first();
-                $id = $eid['id'];
-                $chk_attempts = Users::where('id',$id)->first();
-                $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
-                $today = carbon::now();//date("m-d-Y");
-                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
-                    if($userlockStatus->status==0){ //chck user Inctive
-                        // echo "string1";
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']=''; 
-                        $response['error']='You are temparary deactivated. Please contact to admin.';
-                    }else if($userlockStatus->block_unblock_status==1){ // block by otp
-                        // echo "string2";
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']=''; 
-                        $response['error']='You are temparary block. Please contact to admin.';
-                    }else if($userlockStatus->status==2){ //to chk user permanent block or not
-                        // echo "string3";
-                        $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                        $this->setLogInLog_renCore($id,$email);
-                        $response['success']='n';
-                        $response['url']='';
-                        $response['error']='You are deactivated user. Please contact to admin.';
-                    }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
-                    // echo "string4";
-                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                        $userExist = Users::where('email',$email)->where('password', $password)->exists();
-                        $h1=strtotime($userlockStatus->temp_lock_time);
-                        $h2=strtotime(Carbon::now());
-                        $h=$h2-$h1;
-                        $m=$h/60;
-                        $remaining_time= round(3-$m, 2);
-                        $this->setLogInLog_renCore($id,$email);
-                        if($m>3){
-                          Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                          if($userExist!=true){
-                            Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                             $response['error']='Incorrect Username and Password';
-                          }
-                        }else{
-                          $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                        }
-                    }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                        $this->setLogInLog_renCore($id,$email);
-                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                        $response['error']="Too many login attempts. Please try again after 3 minutes."; 
-                    }else{
-                        $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                            session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone]);
-                            $userStatus = Auth::guard('renCore_user')->user()->status;
-                            // dd($userStatus)
-                            $id=Auth::guard('renCore_user')->user()->id;
-                            if($userStatus=='1'){
-                                // dd('in userstatus');
-                                $this->setAfterLogInLog_renCore($id,$email);
-                                // $this->clearLoginAttempts($request);
-                                 $response['success']='y';
-                                 $response['url'] = 'patients/worklist';
-                                 $response['error']='';
-                            }else{
-                                $this->setLogInLog_renCore($id,$email);
-                                Auth::logout();
-                                $response['success']='n';
-                                $response['url']='';
-                                $response['error']='You are temporary blocked. please contact to admin';
-                            } 
-                    }
-                }else{
-                    ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                    $this->setLogInLog_renCore($id,$email);
-                    $this->setLogInLog($id,$email);
-                    // $this->incrementLoginAttempts($request);
-                    if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                        $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                    }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
-                        $h1=strtotime($userlockStatus->temp_lock_time);
-                        $h2=strtotime(Carbon::now());
-                        $h=$h2-$h1;
-                        $m=$h/60;
-                        $remaining_time= round(3-$m, 2);
-                        // echo $m.'<=>'.$remaining_time;die;
-                        if($m>3){
-                         Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                        }else{
-                          $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                        }
-                    }else{ 
-                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                        $response['error']='Incorrect username or password. Please try again.';
-                    }
-                }   
-            }else{
-                $response['success']='n';
-                $response['url']='';
-                $response['error']='Incorrect Username.';
-            }
-        echo '{ "data":[ '. json_encode( $response) .']}';  
-    } 
-    public function login(Request $request)
-    {  // dd($password_attempts); 
-        $base_url = URL::to('/').'/rcare-login'; 
-        // dd($base_url);
-        $remember    =    sanitizeVariable($request->input('remember'));
-        $credentials =    sanitizeVariable($request->only('email', 'password')); 
-        $email       =    sanitizeVariable($request->input('email'));
-        $password    =    sanitizeVariable($request->input('password')); 
-        $role = 2; 
-        // $configTZ    = config('app.timezone');
-		// $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-        $timezone    =    !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
-        $response = array();
-        $DomainFeatures= DomainFeatures::where('features','2FA')
-        //->where('url',$base_url)
-        //->where('status',1)
-        ->first();
-        $no_of_days  =  !empty($DomainFeatures) ? $DomainFeatures->no_of_days:''; 
-        $pwd_attempts = !empty($DomainFeatures) ? $DomainFeatures->password_attempts:'3';
-        $user_level_sms = sanitizeVariable($request->input('otp_text'));
-        $user_level_email = sanitizeVariable($request->input('otp_email'));
-            $eid_exists = Users::where('email',$email)->exists(); 
-            // dd($eid_exists);
-            if($eid_exists == true){
-                $eid = Users::where('email',$email)->first();
-                $id = $eid['id'];
-                $chk_attempts = Users::where('id',$id)->first();
-                $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
-                $today = carbon::now();//date("m-d-Y");
-                if($userlockStatus->otp_date=='' || $userlockStatus->otp_date==null|| $userlockStatus->otp_date=='null'){
-                        $current_date='';
-                    }else{
-                       $current_date = Carbon::parse($userlockStatus->otp_date)->addDay($no_of_days); 
-                    }
-                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                // dd(Auth::guard('renCore_user')->attempt($credentials,$remember));
-                if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
-                    // dd($DomainFeatures);
-                    // if($DomainFeatures!='' || $DomainFeatures!=null || $DomainFeatures!='null'){ 
-                    if($DomainFeatures!=null){
-                        // dd('saaa'); 
-                        $domainFeatures_status = DomainFeatures::where('features','2FA')->where('url',$base_url)->where('status',1)->first();
-                        if(isset($domainFeatures_status)){
-                            if($userlockStatus->status==0){
-                                $this->setLogInLog_renCore($id,$email);
-                                // echo "string1";
-                                $response['success']='n';
-                                $response['url']=''; 
-                                $response['error']='You are temparary deactivated. Please contact to admin.';
-                            }if($userlockStatus->block_unblock_status==1){ // block by otp
-                                $this->setLogInLog_renCore($id,$email);
-                                // echo "string1";
-                                $response['success']='n';
-                                $response['url']=''; 
-                                $response['error']='You are temparary block. Please contact to admin.';
-                            }else if($userlockStatus->status==2){ //to chk user block or not
-                                // echo "string2";
-                                $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                                $this->setLogInLog_renCore($id,$email);
-                                $response['success']='n';
-                                $response['url']='';
-                                $response['error']='You are deactivated user. Please contact to admin.';
-                            }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
-                                ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                                $userExist = Users::where('email',$email)->where('password', $password)->exists();
-                                $h1=strtotime($userlockStatus->temp_lock_time);
-                                $h2=strtotime(Carbon::now());
-                                $h=$h2-$h1;
-                                $m=$h/60;
-                                $remaining_time= round(3-$m, 2);
-                                $this->setLogInLog_renCore($id,$email);
-                                if($m>3){
-                                Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                                if($userExist!=true){
-                                    Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                                    $response['error']='Incorrect Username and Password';
-                                }
-                                }else{
-                                $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                                }
-                            // }
-                            // else if($userlockStatus->max_attempts > $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                            //     echo "string4".$userlockStatus->max_attempts .'==='. $DomainFeatures->password_attempts;
-                            //     Users::where('email',$email)->where('id',$id )->update(['max_attempts' =>0,'temp_lock_time' => Carbon::now()]);
-                            //     $this->setLogInLog_renCore($id,$email);
-                            //     $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                            }else if(($current_date=='')&& $pwd_attempts > $userlockStatus->max_attempts && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){
-                                //otp date is empty....
-                                $this->setLogInLog_renCore($id,$email);
-                                        // $this->clearLoginAttempts($request);
-                                    Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                                    // $generateOtp= $this->generateCode($id);
-                                    $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-                                    // dd($generateOtp);
-                                        if($generateOtp[0]['sucsses']=="N"){
-                                            // echo "string5.2";
-                                            $response['error']=$generateOtp[0]['msg'];
-                                        }else{ 
-                                            // echo "string5.3";
-                                            $response['success']='y';
-                                            $response['url'] = 'login-otp';
-                                            $response['mob'] = $generateOtp[0]['mob'];
-                                            $response['userid_otp'] = $generateOtp[0]['userid_otp'];
-                                            $response['timezone'] = $timezone;
-                                            $response['role'] = $role;
-                                            $response['error']='';
-                                            $response['message_id']=$generateOtp[0]['message_id'];
-                                        } 
-                            }else if(($current_date->gt($today)==true)&& $pwd_attempts > $userlockStatus->max_attempts && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){
-                                //once login between 24 hrs not required pwd....
-                                // dd('haaa88888');
-                                $roleId = Auth::guard('renCore_user')->user()->role;
-                                $role_details = RolesTypes::userRoleType($roleId);   
-                                $role_type = $role_details[0]->role_type;
-                                    session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,
-                                    'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone, 'role_type'=>$role_type]);
-                                    $userStatus = Auth::guard('renCore_user')->user()->status;
-                                    // dd($userStatus)
-
-                                    // $userTZ       = Session::get('timezone');
-                                    // dd($userTZ);   
-
-
-                                    $id=Auth::guard('renCore_user')->user()->id;
-                                    if($userStatus=='1'){
-                                        $this->setAfterLogInLog_renCore($id,$email);
-                                        // $this->clearLoginAttempts($request);
-                                        $response['success']='y';
-                                        $response['url'] = 'patients/worklist';
-                                        $response['error']='';
-                                        // return redirect()->route("org_users_list");
-                                    }else{
-                                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                                        $this->setLogInLog_renCore($id,$email); 
-                                        if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                                        //echo "string".$userlockStatus->max_attempts.'=='.$DomainFeatures->password_attempts;
-                                        $this->setLogInLog_renCore($id,$email);
-                                        Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                                        $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                                        } 
-                                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                                        $response['error']='Incorrect username or password. Please try again.';
-                                    }
-                
-                            }else{ 
-                                $userStatus = Auth::guard('renCore_user')->user()->status;
-                                $id=Auth::guard('renCore_user')->user()->id;
-                                    if($userStatus=='1'){
-                                        $this->setLogInLog_renCore($id,$email);
-                                        // $this->clearLoginAttempts($request);
-                                    Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                                    // $generateOtp= $this->generateCode($id);
-                                    $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-                                    // dd($generateOtp);
-                                        if($generateOtp[0]['sucsses']=="N"){
-                                            // echo "string5.2";
-                                            $response['error']=$generateOtp[0]['msg'];
-                                        }else{ 
-                                            // echo "string5.3";
-                                            $response['success']='y';
-                                            $response['url'] = 'login-otp';
-                                            $response['mob'] = $generateOtp[0]['mob'];
-                                            $response['userid_otp'] = $generateOtp[0]['userid_otp'];
-                                            $response['timezone'] = $timezone;
-                                            $response['role'] = $role;
-                                            $response['error']='';
-                                            $response['message_id']=$generateOtp[0]['message_id']; 
-                                        }
-                                    }else{
-                                        ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                                        Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                                        $this->setLogInLog_renCore($id,$email); 
-                                        if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                                        // echo "ssss".$userlockStatus->max_attempts.'='.$DomainFeatures->password_attempts;
-                                            Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                                            $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                                        } 
-                                            $response['success']='n';
-                                            $response['url']='';
-                                            $response['error']='Incorrect username or password. Please try again.';
-                                        // return redirect()->route('rcare-login')->with('message','Incorrect username or password. Please try again.');
-                                    }
-                            }
-                        }else{//without 2FA
-                                //  dd('saaa-else');
-                            $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
-                                session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,
-                                'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone]);
-                                $userStatus = Auth::guard('renCore_user')->user()->status;
-                                // dd($userStatus)
-                                $id=Auth::guard('renCore_user')->user()->id;
-                                if($userStatus=='1'){
-                                    // dd('in userstatus');
-                                    $this->setAfterLogInLog_renCore($id,$email);
-                                    // $this->clearLoginAttempts($request);
-                                        $response['success']='y';
-                                        $response['url'] = 'patients/worklist';
-                                        $response['error']='';
-                                }else{
-                                    // dd('ELSE-else');
-                                    $this->setLogInLog_renCore($id,$email);
-                                    Auth::logout();
-                                    $response['success']='n';
-                                    $response['url']='';
-                                    $response['error']='You are temporary blocked. please contact to admin';
-                                } 
-                        }
-                    }else{
-                        $this->setLogInLog_renCore($id,$email);
-                        // Auth::logout();
-                       /* $response['success']='n';
-                        $response['url']='';
-                        $response['error']='Your URL Domain Not Valid';*/
-                        $response['success']='y';
-                        $response['url'] = 'patients/worklist';
-                        $response['error']='';
-                    }
-                }else{
-                    ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
-                        $this->setLogInLog_renCore($id,$email);
-                        $this->setLogInLog($id,$email);
-                        // $this->incrementLoginAttempts($request);
-                        if($userlockStatus->max_attempts >= $pwd_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                            Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
-                            $response['error']="Too many login attempts. Please try again after 3 minutes.";
-                        }else if($userlockStatus->max_attempts >= $pwd_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
-                            $h1=strtotime($userlockStatus->temp_lock_time);
-                            $h2=strtotime(Carbon::now());
-                            $h=$h2-$h1;
-                            $m=$h/60;
-                            $remaining_time= round(3-$m, 2);
-                            // echo $m.'<=>'.$remaining_time;die;
-                            if($m>3){
-                             Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
-                            }else{
-                              $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                            }
-                        }else{ 
-                            Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                            $response['error']='Incorrect username or password. Please try again.';
-                        }
-                }
-            }else{
-                $response['success']='n';
-                $response['url']='';
-                $response['error']='Incorrect Username.';
-            }
-
-        echo '{ "data":[ '. json_encode( $response) .']}';  
-    }
+    //         // dd($eid_exists);
+    //         if($eid_exists === true){
+    //             // echo "string";
+    //             $eid = Users::where('email',$email)->first();
+    //             $id = $eid['id'];
+    //             $chk_attempts = Users::where('id',$id)->first();
+    //             $userlockStatus = Users::where('email',$email)->where('id', $id )->first();
+    //             $today = carbon::now();//date("m-d-Y");
+    //             ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //             if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
+    //                 if($userlockStatus->status==0){ //chck user Inctive
+    //                     // echo "string1";
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']=''; 
+    //                     $response['error']='You are temparary deactivated. Please contact to admin.';
+    //                 }else if($userlockStatus->block_unblock_status==1){ // block by otp
+    //                     // echo "string2";
+    //                     $h1=strtotime($userlockStatus->temp_lock_time);
+    //                     $h2=strtotime(Carbon::now());
+    //                     $h=$h2-$h1;
+    //                     $m=$h/60; 
+    //                     $remaining_time= round(30-$m, 2);
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']=''; 
+    //                     if($m>30){
+    //                         Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+    //                         if($userExist!=true){
+    //                           Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+    //                            $response['error']='Incorrect Username and Password';
+    //                         }
+    //                       }else{
+    //                         $response['error']="Too many otp attempts. Please try again in $remaining_time minutes.";
+    //                       }
+    //                     //$response['error']="You are temparary block. Please contact to admin. OR Please try again in $remaining_time minutes.";
+    //                 }else if($userlockStatus->status==2){ //to chk user permanent block or not
+    //                     // echo "string3";
+    //                     $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     $response['success']='n';
+    //                     $response['url']='';
+    //                     $response['error']='You are deactivated user. Please contact to admin.';
+    //                 }else if($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null){ //if temp_lock_time
+    //                 // echo "string4";
+    //                     ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //                     $userExist = Users::where('email',$email)->where('password', $password)->exists();
+    //                     $h1=strtotime($userlockStatus->temp_lock_time);
+    //                     $h2=strtotime(Carbon::now());
+    //                     $h=$h2-$h1;
+    //                     $m=$h/60;
+    //                     $remaining_time= round(3-$m, 2);
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     if($m>3){
+    //                       Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+    //                       if($userExist!=true){
+    //                         Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+    //                          $response['error']='Incorrect Username and Password';
+    //                       }
+    //                     }else{
+    //                       $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+    //                     }
+    //                 }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+    //                     $this->setLogInLog_renCore($id,$email);
+    //                     Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]); 
+    //                     $response['error']="Too many login attempts. Please try again after 3 minutes."; 
+    //                 }else{
+    //                     $userlockStatus = Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
+    //                         session()->put(['email'=>Auth::guard('renCore_user')->user()->email,'userid'=>Auth::guard('renCore_user')->user()->id, 'status'=>Auth::guard('renCore_user')->user()->status,'role'=>Auth::guard('renCore_user')->user()->role,'f_name'=>Auth::guard('renCore_user')->user()->f_name,'l_name'=>Auth::guard('renCore_user')->user()->l_name,'profile_img'=>Auth::guard('renCore_user')->user()->profile_img,'user_type'=>$role,'org_id'=>Auth::guard('renCore_user')->user()->org_id, 'timezone'=>$timezone]);
+    //                         $userStatus = Auth::guard('renCore_user')->user()->status;
+    //                         // dd($userStatus)
+    //                         $id=Auth::guard('renCore_user')->user()->id;
+    //                         if($userStatus=='1'){
+    //                             // dd('in userstatus');
+    //                             $this->setAfterLogInLog_renCore($id,$email); 
+    //                             // $this->clearLoginAttempts($request);
+    //                              $response['success']='y';
+    //                              $response['url'] = 'patients/worklist';
+    //                              $response['error']='';
+    //                         }else{
+    //                             $this->setLogInLog_renCore($id,$email);
+    //                             Auth::logout();
+    //                             $response['success']='n';
+    //                             $response['url']='';
+    //                             $response['error']='You are temporary blocked. please contact to admin';
+    //                         } 
+    //                 }
+    //             }else{
+    //                 ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
+    //                 $this->setLogInLog_renCore($id,$email);
+    //                 $this->setLogInLog($id,$email);
+    //                 // $this->incrementLoginAttempts($request);
+    //                 if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
+    //                     Users::where('email',$email)->where('id',$id )->update(['temp_lock_time' => Carbon::now()]);
+    //                     $response['error']="Too many login attempts. Please try again after 3 minutes.";
+    //                 }else if($userlockStatus->max_attempts >= $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time!="" && $userlockStatus->temp_lock_time!=null ||$userlockStatus->temp_lock_time!='00:00:00') ){
+    //                     $h1=strtotime($userlockStatus->temp_lock_time);
+    //                     $h2=strtotime(Carbon::now());
+    //                     $h=$h2-$h1;
+    //                     $m=$h/60;
+    //                     $remaining_time= round(3-$m, 2);
+    //                     // echo $m.'<=>'.$remaining_time;die;
+    //                     if($m>3){
+    //                      Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0]);
+    //                     }else{
+    //                       $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
+    //                     }
+    //                 }else{ 
+    //                     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
+    //                     $response['error']='Incorrect username or password. Please try again.';
+    //                 }
+    //             }   
+    //         }else{
+    //             $response['success']='n';
+    //             $response['url']='';
+    //             $response['error']='Incorrect Username.';
+    //         }
+    //     echo '{ "data":[ '. json_encode( $response) .']}';  
+    // } 
+    
     // public function login25thnov22(Request $request)
     // {  // dd($password_attempts); 
     //     $remember    =    sanitizeVariable($request->input('remember'));
@@ -1308,21 +1398,35 @@ class LoginController extends Controller
 
     //     echo '{ "data":[ '. json_encode( $response) .']}';  
     // }
-    public function logout()// modified by ashvini 27 jan 2021
+    public function logout()// modified by ashvini 14 jan 2023
     {   
         $role  = session()->get('role'); 
-        if($role == '1')  
-        {
-            $this->setLogOutLog();
-        }
-        elseif($role == '2')
-        {
-            $this->setLogOutLog_renCore();
-        }      
-        // $this->setLogOutLog(); 
-        //$this->setLogOutLog_renCore();
+        // if($role == '1')  
+        // {
+        //     $this->setLogOutLog();
+        // }
+        // elseif($role == '2')
+        // {
+        //     $this->setLogOutLog_renCore();
+        // }      
+        
+        $this->setLogOutLog_renCore();
         Auth::logout();
         return redirect()->route("rcare-login");
+    }
+
+     // REN_CORE USERS//created by ashvini 27 january 2021
+     public function setLogOutLog_renCore(){
+        $id = session()->get('userid'); 
+        $email = session()->get('email');
+        $ipaddress = request()->getClientIp();
+        $latestuserdetails = RenUserLoginHistory::where('userid',$id)
+        ->where('user_email',$email)->where('ip_address',$ipaddress)->orderBy('id','desc')->first();   
+        if($latestuserdetails!=''){ //modify by priya 4thApril2021
+            RenUserLoginHistory::where('id',$latestuserdetails->id)
+            ->update([ 'logout_time' =>Carbon::now() ]);
+            Session::flush();
+        } 
     }
 
     //modified by ashvini 27 jan 2021
@@ -1377,19 +1481,7 @@ class LoginController extends Controller
         ]);  
     }
 
-    // REN_CORE USERS//created by ashvini 27 january 2021
-    public function setLogOutLog_renCore(){
-        $id = session()->get('userid'); 
-        $email = session()->get('email');
-        $ipaddress = request()->getClientIp();
-        $latestuserdetails = RenUserLoginHistory::where('userid',$id)
-        ->where('user_email',$email)->where('ip_address',$ipaddress)->orderBy('id','desc')->first();   
-        if($latestuserdetails!=''){ //modify by priya 4thApril2021
-            RenUserLoginHistory::where('id',$latestuserdetails->id)
-            ->update([ 'logout_time' =>Carbon::now() ]);
-            Session::flush();
-        } 
-    }
+   
 
     public function setLogInLog_renCore($id,$email){
     RenUserLoginHistory::create(
