@@ -441,6 +441,28 @@ var onCallHippa = function (formObj, fields, response) {
             setTimeout(function () { $('.alert').fadeOut('fast'); }, 5000);
             goToNextStep("ccm-relationship-icon-tab");
         }
+        //ccm
+        $('#ccm-relationship-icon-tab').removeClass('disabled');
+        $('#ccm-research-follow-up-icon-tab').removeClass('disabled');
+        $('#ccm-general-questions-icon-tab').removeClass('disabled');
+        $('#ccm-call-close-icon-tab').removeClass('disabled');
+        $('#ccm-call-wrapup-icon-tab').removeClass('disabled');
+
+        $('#ccm-relationship-icon-tab').removeAttr("style");
+        $('#ccm-research-follow-up-icon-tab').removeAttr("style");
+        $('#ccm-general-questions-icon-tab').removeAttr("style");
+        $('#ccm-call-close-icon-tab').removeAttr("style");
+        $('#ccm-call-wrapup-icon-tab').removeAttr("style");
+
+        //cpd
+        $('#review-patient-tab').removeClass('disabled');
+        $('#call-close-tab').removeClass('disabled');
+        $('#call-wrapup-tab').removeClass('disabled');
+
+        $('#review-patient-tab').removeAttr("style");
+        $('#call-close-tab').removeAttr("style");
+        $('#call-wrapup-tab').removeAttr("style");
+        
         var timer_paused = $("form[name='hippa_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
     }

@@ -34,10 +34,14 @@ Route::get('/time-logs-report', function(){
             // Route::get('/to-do-list-report', function(){
             //     return view('Reports::to-do-list-report.to-do-list-report');
             // })->name('to-do-list-report');
-			
+			//call additional services ashwini
+            Route::get('/call-and-additional-services-practicewise-count-report', function(){
+                return view('Reports::call-additional-ccm-note.call-additional-services-report');
+            })->name('call.additional.ccm.call.report'); 
+
 			 Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
 			 
-			Route::get('/Clinical-insight', function(){
+             Route::get('/Clinical-insight', function(){
                 return view('Reports::initial-report.initial-report');
             })->name('initial.report'); 
 
@@ -110,9 +114,9 @@ Route::get('/time-logs-report', function(){
 		
 		Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}','RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report'); 
 		
-		 //Clinical insight
-        Route::get('/innitalListSearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
-         'RCare\Reports\Http\Controllers\InitialReportController@initialReportSearch')->name('initial.search.report');
+	   //Clinical insight
+        Route::get('/clinicalreportsearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
+         'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalReportSearch')->name('initial.search.report');
 		 
 		Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
 		
@@ -217,6 +221,11 @@ Route::get('/time-logs-report', function(){
         Route::get('/totalbillablepatients/search/{practice}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@TotalBillablePatientsSearch')->name('patient.totalbillable');
         Route::get('/totalnonbillablepatients/search/{practice}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@TotalNonBillablePatientSearch')->name('patient.nontotalbillable'); 
         Route::get('/totalbillablepatientsrpm/search/{practice}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@TotalBillablePatientRPMSearch')->name('patient.nontotalbillablerpm'); 
+        
+
+        //ashwini mali call and additional service report
+        Route::get('/countcallAdditionalServiceListSearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
+         'RCare\Reports\Http\Controllers\CallActivityPractiseWiseCountReportController@CAPWCReportSearch')->name('call.Activity.Service.search.report');
         
         
         // Route::get('/non-enrolled/search/{practice}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getBillablePatientData')->name('billable.search');
