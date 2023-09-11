@@ -544,7 +544,7 @@ class LoginController extends Controller
         $response = array();
         $DomainFeatures= DomainFeatures::where('features','2FA')
         ->where('url',$base_url)
-        ->where('status',1) 
+        // ->where('status',1) 
         ->first(); 
         // dd($DomainFeatures->password_attempts); 
         $no_of_days  =  !empty($DomainFeatures) ? $DomainFeatures->no_of_days:''; 
