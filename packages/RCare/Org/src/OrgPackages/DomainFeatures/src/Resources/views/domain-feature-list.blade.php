@@ -43,6 +43,7 @@
                         <th>Session Timeout</th>
                         <th>Logout Popup Time</th>
                         <th>Redirect Idle time</th>
+                        <th>Block time</th>
                         <th>Last Modified By</th>
                         <th>Last Modified On</th>
                         <th width="100px">Action</th>
@@ -128,7 +129,10 @@
                                 @text("idle_time_redirect", ["id" => "idle_time_redirect", "class" => "form-control" ])  
                         </div>
 
-
+                        <div class="col-md-4 form-group mb-3">
+                                <label for="service_name">login Block Time(In Minute)<span class="error">*</span> </label>
+                                @text("block_time", ["id" => "block_time", "class" => "form-control" ])  
+                        </div>
 
                     </div>
                 </div>    
@@ -291,6 +295,7 @@ var domainfeatureslistData = function(){
                   {data: 'session_timeout', name: 'session_timeout'},  
                   {data: 'logoutpoptime', name: 'logoutpoptime'},
                   {data: 'idle_time_redirect', name: 'idle_time_redirect'},  
+                  {data: 'block_time', name: 'block_time'},  
                   {data: 'users', mRender: function(data, type, full, meta){
                     if(data!='' && data!='NULL' && data!=undefined){
                         if(data['l_name'] == null && data['f_name'] == null){
