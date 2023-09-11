@@ -4,7 +4,7 @@ use Auth;
 
 use Mail;
 use Hash;
-use DB;
+use DB; 
 use Validator;
 use Session;
 
@@ -15,7 +15,7 @@ use Twilio\TwiML\MessagingResponse;
 
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redirect; 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 // use RCare\RCareAdmin\AdminPackages\Login\src\Http\Requests\Request;
 use Illuminate\Http\Request;

@@ -48,7 +48,7 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                                 <p class="alert alert-danger" id="danger" style= "display:none"; >
                                     <span id= "success"></span>.
                                 </p>       
-                                    @csrf
+                                    @csrf 
                                     <div class="form-group row">
                                         <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
