@@ -135,56 +135,58 @@
                 });
 
             });
-            // $(document).ready(function () {
-            //     util.getSessionLogoutTimeWithPopupTime();
-            //     var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
-            //     $(this).mousemove(function(e) {
-            //         // idleTime = 0;
-            //         localStorage.setItem("idleTime", 0);
-            //     });
 
-            //     $(this).keypress(function(e){
-            //         // idleTime = 0;
-            //         localStorage.setItem("idleTime", 0);
-            //     });
-            // });
+            $(document).ready(function () {
+                util.getSessionLogoutTimeWithPopupTime();
+                var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
+                $(this).mousemove(function(e) {
+                    // idleTime = 0;
+                    localStorage.setItem("idleTime", 0);
+                });
 
-            // var checkTimeInterval = function timerIncrement() {
-            //     // idleTime = idleTime + 1; //Calls every 1 seconds
-            //     sessionIdleTime = localStorage.getItem("idleTime");
+                $(this).keypress(function(e){
+                    // idleTime = 0;
+                    localStorage.setItem("idleTime", 0);
+                });
+            });
 
-            //     // var showPopupTime = sessionStorage.getItem("showPopupTime");
-            //     // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
+            var checkTimeInterval = function timerIncrement() {
+                // idleTime = idleTime + 1; //Calls every 1 seconds
+                sessionIdleTime = localStorage.getItem("idleTime");
+
+                // var showPopupTime = sessionStorage.getItem("showPopupTime");
+                // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
 
                 
-            //     var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
-            //     var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
+                var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
+                var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
 
-            //     var systemDate= localStorage.getItem("systemDate");
-            //     var currentDate = new Date();
-            //     var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
-            //     var idleTime = parseInt(sessionIdleTime) + (res % 60);
-            //     // console.log("idleTime-"+idleTime);
-            //     // console.log("showPopupTime-"+showPopupTime);
-            //     // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
-            //     if(idleTime >= showPopupTime) {
-            //         $('#logout_modal').modal('show'); 
-            //     }
-            //     if(idleTime >= sessionTimeoutInSeconds) {
-            //         $('#logout_modal').modal('hide'); 
-            //         $( "#sign-out-btn" )[0].click();
-            //     }
-            //     localStorage.setItem("idleTime", idleTime);
-            //     localStorage.setItem("systemDate", currentDate);
-            // }
+                var systemDate= localStorage.getItem("systemDate");
+                var currentDate = new Date();
+                var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
+                var idleTime = parseInt(sessionIdleTime) + (res % 60);
+                // console.log("idleTime-"+idleTime);
+                // console.log("showPopupTime-"+showPopupTime);
+                // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
+                if(idleTime >= showPopupTime) {
+                    $('#logout_modal').modal('show'); 
+                }
+                if(idleTime >= sessionTimeoutInSeconds) {
+                    $('#logout_modal').modal('hide'); 
+                    $( "#sign-out-btn" )[0].click();
+                }
+                localStorage.setItem("idleTime", idleTime);
+                localStorage.setItem("systemDate", currentDate);
+            }
 
-            // $("#logout_yes").click(function (e) { 
-            //     $( "#sign-out-btn" )[0].click();
-            // }); 
+            $("#logout_yes").click(function (e) { 
+                $( "#sign-out-btn" )[0].click();
+            }); 
 
-            // $("#logout_no").click(function (e) {    
-            //     $('#logout_modal').modal('hide'); 
-            // }); 
+            $("#logout_no").click(function (e) {    
+                $('#logout_modal').modal('hide'); 
+            }); 
+
         </script>  
         @yield('page-js')
             <!-- form WIZARD -->
