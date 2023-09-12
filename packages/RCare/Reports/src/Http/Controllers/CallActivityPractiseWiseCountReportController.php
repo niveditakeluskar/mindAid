@@ -120,13 +120,14 @@ class CallActivityPractiseWiseCountReportController extends Controller
         $codedata;
         // if(count($data) != '' || count($data) != null){ 
             for($i=0;$i<count($data);$i++){  //dd($i);
+                $j = $i + 1;
                 if($data[$i]->patient_count!=""){
                     $headername="header".$i;
  
                     $patient_count_data = '<button type="button" id="patientdetails" onclick="patientdetailsmodal(\''.$data[$i]->prac_id.'\',\''.$provider.'\',\''.$provider.'\',\''.$fromdate11.'\',\''.$todate11.'\')" class="">'.$data[$i]->patient_count .'</button>';
                      
 
-                    $arrydata=array($i,$patient_count_data,$data[$i]->call_answered,$data[$i]->call_not_answered,
+                    $arrydata=array($j,$patient_count_data,$data[$i]->call_answered,$data[$i]->call_not_answered,
                     $data[$i]->pracname,
 
                     $data[$i]->no_additional_response,
@@ -351,6 +352,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
         $maxcount=0;
         $codedata;        // if(count($data) != '' || count($data) != null){ 
          for($i = 0; $i < (count($data)); $i++){
+            $j = $i + 1;
                 if($data[$i]->pid!=""){
     
                     $headername="header".$i;
@@ -1235,7 +1237,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
                     //     $veterans_response_eight1 = $veterans_response_eight;
                     // }
 
-                    $arrydata=array($i,$data[$i]->pdob,$data[$i]->patient_name,$data[$i]->practicename,$data[$i]->caremanager,
+                    $arrydata=array($j,$data[$i]->pdob,$data[$i]->patient_name,$data[$i]->practicename,$data[$i]->caremanager,
                     $data[$i]->call_record_date,$data[$i]->call_continue_status,
 
                     $no_additional_response1,
@@ -1284,7 +1286,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
               $columnheader=array("Sr.No.","DOB", "Patient Name", "Practice Name", "Caremanager Name" , "Call Record Date" , "Call Answered or Not Answered status","No Additional Services Provided"
             );
               // $columnheader=array("Patient First Name");  
-
+            
 
             for($m=0;$m<count($columnheader);$m++)
              { 
