@@ -227,9 +227,13 @@ Route::get('/time-logs-report', function(){
         Route::get('/countcallAdditionalServiceListSearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
          'RCare\Reports\Http\Controllers\CallActivityPractiseWiseCountReportController@CAPWCReportSearch')->name('call.Activity.Service.search.report');
         
+         Route::get("/callActivityServiceListSearch/{practices}/{provider}/{practicesgrp}/{patient}/{fromdate1}/{todate1}", 
+         "RCare\Reports\Http\Controllers\CallActivityPractiseWiseCountReportController@callActivityServiceListSearch")->name("callActivityServiceListSearch");
+
+
         
         // Route::get('/non-enrolled/search/{practice}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getBillablePatientData')->name('billable.search');
-        Route::get("/callActivityServiceListSearch/{practices}/{patient}/{fromdate}/{todate}", "RCare\Reports\Http\Controllers\CallActivityServicesReportController@callActivityServiceListSearch")->name("callActivityServiceListSearch");	
+        // Route::get("/callActivityServiceListSearch/{practices}/{patient}/{fromdate}/{todate}", "RCare\Reports\Http\Controllers\CallActivityServicesReportController@callActivityServiceListSearch")->name("callActivityServiceListSearch");	
 		
         Route::get('/non-enrolled/search/{practice}', 'RCare\Reports\Http\Controllers\EnrollmentReportController@getNonEnrolledPatientData')->name('non.enrolled.search');
         Route::get('/enrolled/search/{practice}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\EnrollmentReportController@getEnrolledPatientData')->name('enrolled.search');
