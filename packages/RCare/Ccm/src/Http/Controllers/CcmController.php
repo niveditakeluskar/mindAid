@@ -2244,7 +2244,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     }
 
 
-    public function  SaveCallClose(CallCloseAddRequest $request) {
+    public function  SaveCallClose(CallCloseAddRequest $request) { //dd($request);
         $next_month_date     = sanitizeVariable($request->q2_datetime);
         $start_time          = sanitizeVariable($request->start_time);
         $end_time            = sanitizeVariable($request->end_time);
@@ -3327,7 +3327,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $callp              = (CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "");
         $callstatus         = (CallStatus::latest($patientId) ? CallStatus::latest($patientId)->population() : "");
         $hippa              = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
-        $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        // $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        $callClose          = (CallClose::latest($patientId) ? CallClose::latest($patientId)->population() : "");
         $followUp           = (FollowUp::latest($patientId) ? FollowUp::latest($patientId)->population() : "");
         $patientContactTime = PatientContactTime::where('patient_id',$patientId)->first();
         $callWrapUp         = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");  //added by ashvini 28June2022
@@ -3336,6 +3337,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         if( CallHipaaVerification::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $result['hippa_form']['static']['verification'] = $hippa['static']['verification'];
         }
+        // dd($callClose);
         if(!empty($patientContactTime)){            
             $patientContactTime = $patientContactTime->population();
             if(!empty($callClose['static'])){ 
