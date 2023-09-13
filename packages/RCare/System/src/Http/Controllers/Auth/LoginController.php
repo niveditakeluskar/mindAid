@@ -452,7 +452,6 @@ class LoginController extends Controller
                         $response['message_id'] = '';
 
                     }
-
                         if($response['mob_otp']=='n' && $response['email_otp']=='n'){
                             return array(['sucsses'=>'n','message_id'=>$response['message_id'],'msg'=>'We are not able to send the authentication code due to technical issues in text and email services. Please contact Admin to disable the Multifactor Authentication temporarily.']);
                         }else if($response['mob_otp']=='n' && $response['email_otp']=='y'){
