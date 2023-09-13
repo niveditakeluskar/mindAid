@@ -522,7 +522,7 @@ class LoginController extends Controller
             $user_level_email = 1;
         }
 		
-		echo $user_level_sms; echo $user_level_email;
+		
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
         if($generateOtp[0]['sucsses']=='n'){
             // echo "string5.2";
