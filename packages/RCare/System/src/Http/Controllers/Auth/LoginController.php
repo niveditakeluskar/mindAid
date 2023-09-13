@@ -281,7 +281,7 @@ class LoginController extends Controller
 
             if($otp_by_sms==1 && ($otp_by_email== ''||$otp_by_email== 0 ||$otp_by_email==null ||$otp_by_email=='null')){//otp sent in phn 
                 if(($country_code=="" || $country_code==null) || ($mob=="" || $mob==null)){
-                    return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your contact number with country code for Multifactor authentication."]);
+                    return array(['sucsses'=>"n",'msg'=>"Please ask administrator to add your contact number with country code for Multifactor authentication."]);
                 }else{
                     $receiverNumber =$MobileNo->country_code.$MobileNo->number;
                     $text_message = "Multifactor Authentication login code is ". $code ." from RCARE ";
@@ -314,7 +314,7 @@ class LoginController extends Controller
                             // dd($e);  
                             // dd($e->getCode() . ' : ' .$e->getMessage());
                             $response['message'] = "We are currently not able to deliver the text, kindly use email for authentication method.";
-                            return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>"N",'msg'=>$response['message']]);
+                            return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>"n",'msg'=>$response['message']]);
                         }
                     }    
                 }
@@ -376,9 +376,9 @@ class LoginController extends Controller
             }
             else if($otp_by_email==1 && $otp_by_sms== 1){ //otp sent in email & phn
                 if(($country_code=="" || $country_code==null) || ($mob=="" || $mob==null)){
-                 return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your contact number for Multifactor authentication."]);
+                 return array(['sucsses'=>"n",'msg'=>"Please ask administrator to add your contact number for Multifactor authentication."]);
                 }else if($email=="" || $email==null){
-                return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your Email Id for Multifactor authentication."]);
+                return array(['sucsses'=>"n",'msg'=>"Please ask administrator to add your Email Id for Multifactor authentication."]);
                 }else{
                     $receiverNumber =$MobileNo->country_code.$MobileNo->number;
                     $text_message = "Multifactor Authentication login code is ". $code ." from RCARE ";
@@ -459,20 +459,27 @@ class LoginController extends Controller
                         }else if($response['mob_otp']=='y' && $response['email_otp']=='n'){
                             return array(['mob'=>$receiverNumber.'/',
                             'userid_otp'=>$id,'sucsses'=>'n','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your email but code has sent on phone']);
-                        }else{ 
+                        }
+                        else if($response['mob_otp']=='y' && $response['email_otp']=='y'){ 
                             return array(['mob'=>$receiverNumber.'/'.$emailID->email, 
                             'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
+                        }else{
+
                         }
+                        // else{ 
+                        //     return array(['mob'=>$receiverNumber.'/'.$emailID->email, 
+                        //     'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
+                        // }
                 }
             }
             //else{
-            //      return array(['sucsses'=>"N",'msg'=>"Please ask administrator to add your Contact Number 
+            //      return array(['sucsses'=>"n",'msg'=>"Please ask administrator to add your Contact Number 
             //      and  Email Id for Multifactor authentication."]);
             // }
         }//return redirect()->route('2fa.index');
         catch (Exception $e) { 
            // info("Error: ". $e->getMessage()); 
-           return array(['sucsses'=>"N",'msg'=>"Invalid number. Please ask administrator to add your contact details for multifactor authentication."]);
+           return array(['sucsses'=>"n",'msg'=>"Invalid number. Please ask administrator to add your contact details for multifactor authentication."]);
            
         } 
     }
@@ -513,7 +520,7 @@ class LoginController extends Controller
             $user_level_email = '';
         }
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-        if($generateOtp[0]['sucsses']=="N"){
+        if($generateOtp[0]['sucsses']=='n'){
             // echo "string5.2";
             $response['error']=$generateOtp[0]['msg'];
         }else{ 
@@ -545,12 +552,12 @@ class LoginController extends Controller
         }
 
         $generateOtp = $this->generateCode($id,$user_level_sms,$user_level_email);
-        if($generateOtp[0]['sucsses']=="N"){
+        if($generateOtp[0]['sucsses']=='n'){
             // echo "string5.2";
             $response['error']=$generateOtp[0]['msg'];
         }else{ 
             // echo "string5.3"; 
-            $response['success']='y';
+            $response['success']='y'; 
             $response['url'] = 'login-otp';
             $response['mob'] = $generateOtp[0]['mob']; 
         }
@@ -669,7 +676,7 @@ class LoginController extends Controller
                                     // $generateOtp= $this->generateCode($id);
                                     $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
                                     // dd($generateOtp);
-                                        if($generateOtp[0]['sucsses']=="N"){
+                                        if($generateOtp[0]['sucsses']=='n'){
                                             // echo "string5.2";
                                             $response['error']=$generateOtp[0]['msg'];
                                         }else{ 
@@ -731,7 +738,7 @@ class LoginController extends Controller
                                     // $generateOtp= $this->generateCode($id);
                                     $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
                                     // dd($generateOtp);
-                                        if($generateOtp[0]['sucsses']=="N"){
+                                        if($generateOtp[0]['sucsses']=='n'){
                                             // echo "string5.2";
                                             $response['error']=$generateOtp[0]['msg'];
                                         }else{ 
@@ -1009,7 +1016,7 @@ class LoginController extends Controller
     //                 //     $this->setLogInLog_renCore($id,$email);
     //                 //     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
     //                 //     $generateOtp= $this->generateCode($id,$mfa_status);
-    //                 //     if($generateOtp[0]['sucsses']=="N"){
+    //                 //     if($generateOtp[0]['sucsses']=='n'){
     //                 //         $response['error']=$generateOtp[0]['msg'];
     //                 //     }else{
     //                 //         $response['success']='y';
@@ -1026,7 +1033,7 @@ class LoginController extends Controller
     //                     $this->setLogInLog_renCore($id,$email);
     //                     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>0]);
     //                     $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-    //                     if($generateOtp[0]['sucsses']=="N"){
+    //                     if($generateOtp[0]['sucsses']=='n'){
     //                         $response['error']=$generateOtp[0]['msg'];
     //                     }else{
     //                         $response['success']='y';
@@ -1290,7 +1297,7 @@ class LoginController extends Controller
     //                                // $generateOtp= $this->generateCode($id);
     //                                $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
     //                                // dd($generateOtp);
-    //                                 if($generateOtp[0]['sucsses']=="N"){
+    //                                 if($generateOtp[0]['sucsses']=='n'){
     //                                     // echo "string5.2";
     //                                     $response['error']=$generateOtp[0]['msg'];
     //                                 }else{ 
@@ -1350,7 +1357,7 @@ class LoginController extends Controller
     //                                // $generateOtp= $this->generateCode($id);
     //                                $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
     //                                // dd($generateOtp);
-    //                                 if($generateOtp[0]['sucsses']=="N"){
+    //                                 if($generateOtp[0]['sucsses']=='n'){
     //                                     // echo "string5.2";
     //                                     $response['error']=$generateOtp[0]['msg'];
     //                                 }else{ 
