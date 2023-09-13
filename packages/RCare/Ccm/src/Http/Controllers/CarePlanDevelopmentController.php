@@ -519,7 +519,8 @@ class CarePlanDevelopmentController extends Controller
         $PatientReviewGrandchildren       = (PatientFamily::latest($patientId,'grandchildren') ? PatientFamily::latest($patientId,'grandchildren')->population() : "");
         $PatientReviewChildren            = (PatientFamily::latest($patientId,'children') ? PatientFamily::latest($patientId,'children')->population() : "");
         $PatientReviewSibling             = (PatientFamily::latest($patientId,'sibling') ? PatientFamily::latest($patientId,'sibling')->population() : "");
-        $callClose                        = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        // $callClose                        = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        $callClose                        = (CallClose::latest($patientId) ? CallClose::latest($patientId)->population() : "");
         $patientContactTime               = PatientContactTime::where('patient_id',$patientId)->first();
         
         $PatientPet = (PatientPet::latest($patientId) ? PatientPet::latest($patientId)->population():"");

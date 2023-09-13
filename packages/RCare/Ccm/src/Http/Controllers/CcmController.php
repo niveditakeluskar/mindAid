@@ -3371,7 +3371,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $callp              = (CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "");
         $callstatus         = (CallStatus::latest($patientId) ? CallStatus::latest($patientId)->population() : "");
         $hippa              = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
-        $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");     
+        // $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");     
+        $callClose          = (CallClose::latest($patientId) ? CallClose::latest($patientId)->population() : "");     
         $followUp           = (FollowUp::latest($patientId) ? FollowUp::latest($patientId)->population() : "");   
         $callWrapUp         = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");  //added by ashvini 28june2022
         $result['call_preparation_preparation_followup_form'] = $callp;
