@@ -681,7 +681,8 @@ $("#resend_otp").click(function(event){
                 }else{ 
                         $("#otp_success").show();
                         $("#otp_danger").hide(); 
-                        $("#otp_success").html(response[0].msg);    
+                        $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                        // $("#otp_success").html(response[0].msg);    
                 }
             }
         }); 
