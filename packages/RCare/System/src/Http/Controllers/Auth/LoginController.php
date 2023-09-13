@@ -313,7 +313,7 @@ class LoginController extends Controller
                         } catch (TwilioException $e) {
                             // dd($e);  
                             // dd($e->getCode() . ' : ' .$e->getMessage());
-                            $response['message'] = "We are currently not able to deliver the text message, kindly use email for authentication method.";
+                            $response['message'] = "We are currently not able to deliver the text, kindly use email for authentication method.";
                             return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>"N",'msg'=>$response['message']]);
                         }
                     }    
@@ -344,7 +344,7 @@ class LoginController extends Controller
                         if (Mail::failures()) {
                             $response['success']='n';
                             $response['url']='';//password_reset
-                            $response['message']='We are currently not able to deliver the email, kindly use text message for authentication method';
+                            $response['message']='We are currently not able to deliver the email, kindly use text for authentication method';
                         } else{
                             $type = 'MFA';
                             $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
@@ -366,7 +366,7 @@ class LoginController extends Controller
                         $response['message_id'] = ''; 
                         $response['success']='n';
                         $response['url']='';//password_reset
-                        $response['message']='We are currently not able to deliver the email, kindly use only text message for authentication method';
+                        $response['message']='We are currently not able to deliver the email, kindly use only text for authentication method';
                     }
                     // Users::where('id',$id)->update(['otp_date'=>Carbon::now()]); 
                  return array(['mob'=>'/'.$emailID->email,'userid_otp'=>$id,'sucsses'=>$response['success'],
@@ -513,7 +513,17 @@ class LoginController extends Controller
             $user_level_email = '';
         }
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-        // dd($mfa_method);
+        if($generateOtp[0]['sucsses']=="N"){
+            // echo "string5.2";
+            $response['error']=$generateOtp[0]['msg'];
+        }else{ 
+            // echo "string5.3"; 
+            $response['success']='y';
+            $response['url'] = 'login-otp';
+            $response['mob'] = $generateOtp[0]['mob']; 
+        }
+        return $generateOtp; 
+        // echo '{ "data":[ '. json_encode( $response) .']}'; 
       
     }
 
