@@ -247,8 +247,8 @@ var populateForm = function (data, url) {
                     }
                 } else {
                     form.dynamicFormPopulate(key, result[key]);
-                    if (key == 'call_close_form') {
-                        if (result[key] != '') {
+                    if (key == 'call_close_form') { 
+                        if (result[key] != '') { //debugger;
                             var date_enrolled = result[key].static['q2_datetime'];
                             if (date_enrolled != undefined) {
                                 var a = date_enrolled.split(" ")[0];
