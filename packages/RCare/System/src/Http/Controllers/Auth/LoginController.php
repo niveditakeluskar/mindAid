@@ -306,7 +306,7 @@ class LoginController extends Controller
                             $sent_to = $receiverNumber;
                             $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
                             $response['success']='y';
-                            $response['message']="OTP has Sent to your contact number.";
+                            $response['message']="OTP has been sent to your contact number.";
                             $response['message_id'] = $message_id;
                             return array(['mob'=>$receiverNumber.'/','userid_otp'=>$id,'sucsses'=>$response['success'],
                             'msg'=>$response['message'],'message_id'=>$response['message_id']]);
@@ -358,7 +358,7 @@ class LoginController extends Controller
                             $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
                             $response['success']='y';
                             $response['url']='';
-                            $response['message']='OTP has sent on your email, Please check your email';
+                            $response['message']='OTP has been sent on your email, Please check your email';
                             $response['message_id'] = ''; 
                         }
                     }catch(\Exception $e){
@@ -456,20 +456,20 @@ class LoginController extends Controller
                             return array(['sucsses'=>'n','message_id'=>$response['message_id'],'msg'=>'We are not able to send the authentication code due to technical issues in text and email services. Please contact Admin to disable the Multifactor Authentication temporarily.']);
                         }else if($response['mob_otp']=='n' && $response['email_otp']=='y'){
                             return array(['mob'=>'/'.$emailID->email,
-                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your phone but code has sent on your email.']);
+                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'We are not able to send code on your phone but code has been sent on your email.']);
                         }else if($response['mob_otp']=='y' && $response['email_otp']=='n'){
                             return array(['mob'=>$receiverNumber.'/',
-                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your email but code has sent on phone']);
+                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'We are not able to send code on your email but code has been sent on phone']);
                         }
                         else if($response['mob_otp']=='y' && $response['email_otp']=='y'){ 
                             return array(['mob'=>$receiverNumber.'/'.$emailID->email, 
-                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
+                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has been sent on your phone and on your email']);
                         }else{
 
                         }
                         // else{ 
                         //     return array(['mob'=>$receiverNumber.'/'.$emailID->email, 
-                        //     'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
+                        //     'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has been sent on your phone and on your email']);
                         // }
                 }
             }
@@ -509,6 +509,7 @@ class LoginController extends Controller
       //$generateOtp= $this->generateCode($request->userid);
         $id = sanitizeVariable($request->userid); 
         $mfa_method =  sanitizeVariable($request->input('mfa_method'));
+		//dd($mfa_method);
         if($mfa_method==1){
             $user_level_email = 1;
             $user_level_sms =''; 
@@ -517,9 +518,11 @@ class LoginController extends Controller
             $user_level_email ='';
         }
         else{
-            $user_level_sms ='';
-            $user_level_email = '';
+            $user_level_sms =1;
+            $user_level_email = 1;
         }
+		
+		echo $user_level_sms; echo $user_level_email;
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
         if($generateOtp[0]['sucsses']=='n'){
             // echo "string5.2";
