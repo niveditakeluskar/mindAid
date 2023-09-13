@@ -789,7 +789,7 @@ $("#change_method_sms").click(function(event){
                             //  $("#otp_danger").show(0).delay(3000).hide(0);
                             // $("#otp_success").html("Multifactor Authentication code has been Re-sent");
                             if(response[0].sucsses=='n'){
-                               $("#otp_danger").show();
+                               $("#otp_danger").show(); 
                                $("#otp_success").hide();
                                $("#otp_danger").html(response[0].msg);//.show(0).delay(3000).hide(0);
                             }else{ 

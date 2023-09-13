@@ -448,20 +448,20 @@ class LoginController extends Controller
                             }
                         }catch(\Exception $e){
                             // dd($e);
-                            $response['email_otp']='n';
-                            $response['message_id'] ='';
+                            $response['email_otp']='n'; 
+                            $response['message_id'] =''; 
                         }
                         if($response['mob_otp']=='n' && $response['email_otp']=='n'){
-                            return array(['sucsses'=>'N','message_id'=>$response['message_id'],'msg'=>'We are not able to send the authentication code due to technical issues in text and email services. Please contact Admin to disable the Multifactor Authentication temporarily.']);
+                            return array(['sucsses'=>'n','message_id'=>$response['message_id'],'msg'=>'We are not able to send the authentication code due to technical issues in text and email services. Please contact Admin to disable the Multifactor Authentication temporarily.']);
                         }else if($response['mob_otp']=='n' && $response['email_otp']=='y'){
                             return array(['mob'=>'/'.$emailID->email,
-                            'userid_otp'=>$id,'sucsses'=>'Y','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your phone but code has sent on your email.']);
+                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your phone but code has sent on your email.']);
                         }else if($response['mob_otp']=='y' && $response['email_otp']=='n'){
                             return array(['mob'=>$receiverNumber.'/',
-                            'userid_otp'=>$id,'sucsses'=>'Y','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your email but code has sent on phone']);
-                        }else{
+                            'userid_otp'=>$id,'sucsses'=>'n','message_id'=>$response['message_id'],'msg'=>'We are not able to sent code on your email but code has sent on phone']);
+                        }else{ 
                             return array(['mob'=>$receiverNumber.'/'.$emailID->email, 
-                            'userid_otp'=>$id,'sucsses'=>'Y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
+                            'userid_otp'=>$id,'sucsses'=>'y','message_id'=>$response['message_id'],'msg'=>'OTP has sent on your phone and on your email']);
                         }
                 }
             }
