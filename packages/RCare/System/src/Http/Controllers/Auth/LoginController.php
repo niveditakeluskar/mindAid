@@ -64,8 +64,10 @@ class LoginController extends Controller
             $this->setLogOutLog_renCore();
             Auth::logout();
         }      
-        $base_url = URL::to('/').'/rcare-login'; 
-        $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
+        $base_url = strtolower(URL::to('/').'/rcare-login'); 
+        $DomainFeatures=DomainFeatures::where('features','2FA')
+        ->where(DB::raw('lower(url)'), $base_url)
+        ->first();
     //    dd($DomainFeatures);
         $maxAttempts     = isset($DomainFeatures)?$DomainFeatures->password_attempts:''; //3
         //$otp_max_attempts =$DomainFeatures->otp_max_attempts;
@@ -133,12 +135,14 @@ class LoginController extends Controller
         $role_details = RolesTypes::userRoleType($roleId);   
         $role_type = $role_details[0]->role_type;
         $timezone    =   !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
-        $base_url = URL::to('/').'/rcare-login'; 
+        $base_url = strtolower(URL::to('/').'/rcare-login');  
         if(sanitizeVariable($request->input('page_name')=='login')){
             $request->validate([
                 'code'=>'required', 
             ]);
-            $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
+            $DomainFeatures = DomainFeatures::where('features','2FA')
+            ->where(DB::raw('lower(url)'), $base_url)
+            ->first();
             // dd($DomainFeatures);
             // print_r($chk_attempts->max_attempts .'='. $DomainFeatures->otp_max_attempts);
             if($chk_attempts->max_attempts > $DomainFeatures->otp_max_attempts){//2
@@ -176,7 +180,9 @@ class LoginController extends Controller
             Users::where('id',sanitizeVariable($request->userid))->update(['token' =>Str::random(60)]); 
             $chk_attempts = Users::where('id',$request->userid)->first();
             
-            $DomainFeatures= DomainFeatures::where('url',$base_url)->where('features','2FA')->first();
+            $DomainFeatures= DomainFeatures::where('features','2FA')
+            ->where(DB::raw('lower(url)'), $base_url)    
+            ->first();
              // dd($DomainFeatures); 
             // ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts == 0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1; 
             if($chk_attempts->max_attempts > $DomainFeatures->otp_max_attempts){//2
@@ -250,15 +256,20 @@ class LoginController extends Controller
 
     public function generateCode($id,$user_level_sms,$user_level_email){   
         try {
-            $base_url = URL::to('/');
+            $base_url = URL::to('/').'/rcare-login'; 
+            // dd($base_url);
+            //strtolower(URL::to('/').'/rcare-login');
             $userlevelmfa = Users::where('id',$id)->first();
             $user_level_sms = isset($user_level_sms)?$user_level_sms:0;
             $user_level_email =isset($user_level_email)?$user_level_email:0;
-            $server_domain = DomainFeatures::where('status',1)->first();
+            $server_domain = DomainFeatures::where('features','2FA')
+            ->where(DB::raw('lower(url)'), strtolower($base_url))
+            ->where('status',1)->first();
+            // dd($server_domain);
             $otp_digit = $server_domain->digit_in_otp; 
             $otp_by_sms = $user_level_sms;//$server_domain->otp_text ;
             $otp_by_email = $user_level_email;//$server_domain->otp_email;
-    
+            // dd($otp_by_email);
             $code = rand(pow(10, $otp_digit-1), pow(10, $otp_digit)-1); 
             $code_data =array('otp_code'=>$code,'created_by'=>$id, 'updated_by'=>$id);
             Users::where('id',$id)->update($code_data);
@@ -488,11 +499,21 @@ class LoginController extends Controller
     {
       //dd($request->userid);
       //$generateOtp= $this->generateCode($request->userid);
-        $id = sanitizeVariable($request->userid);
-        $user_level_sms = sanitizeVariable($request->input('otp_text'));
-        $user_level_email = sanitizeVariable($request->input('otp_email'));
+        $id = sanitizeVariable($request->userid); 
+        $mfa_method =  sanitizeVariable($request->input('mfa_method'));
+        if($mfa_method==1){
+            $user_level_email = 1;
+            $user_level_sms =''; 
+        }else if($mfa_method==2){
+            $user_level_sms = 1; 
+            $user_level_email ='';
+        }
+        else{
+            $user_level_sms ='';
+            $user_level_email = '';
+        }
         $generateOtp= $this->generateCode($id,$user_level_sms,$user_level_email);
-        // dd($generateOtp);
+        // dd($mfa_method);
       
     }
 
@@ -531,8 +552,8 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {  //dd($password_attempts);  
-        $base_url = URL::to('/').'/rcare-login'; 
-        // dd($base_url);
+        $base_url = strtolower(URL::to('/').'/rcare-login'); 
+        // dd($base_url); 
         $remember    =    sanitizeVariable($request->input('remember'));
         $credentials =    sanitizeVariable($request->only('email', 'password')); 
         $email       =    sanitizeVariable($request->input('email'));
@@ -543,9 +564,11 @@ class LoginController extends Controller
         $timezone    =    !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
         $response = array();
         $DomainFeatures= DomainFeatures::where('features','2FA')
-        ->where('url',$base_url)
+        ->where(DB::raw('lower(url)'), $base_url)
+        // ->where('url',$base_url) 
         // ->where('status',1) 
         ->first(); 
+        // dd($DomainFeatures);
         // dd($DomainFeatures->password_attempts); 
         $no_of_days  =  !empty($DomainFeatures) ? $DomainFeatures->no_of_days:''; 
         $pwd_attempts = !empty($DomainFeatures) ? $DomainFeatures->password_attempts:'3';
@@ -569,7 +592,10 @@ class LoginController extends Controller
                 if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
                     if($DomainFeatures!=null){
                         // dd('saaa');  
-                        $domainFeatures_status = DomainFeatures::where('features','2FA')->where('url',$base_url)->where('status',1)->first();
+                        $domainFeatures_status = DomainFeatures::where('features','2FA')
+                        ->where(DB::raw('lower(url)'), $base_url)
+                        //DomainFeatures::where('features','2FA')->where('url',$base_url)
+                        ->where('status',1)->first();
                         if(isset($domainFeatures_status)){
                             if($userlockStatus->status==0){
                                 $this->setLogInLog_renCore($id,$email);
