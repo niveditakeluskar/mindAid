@@ -150,11 +150,10 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                 <form id="2faotp">
                 @csrf
                 <div class="card-body"> 
-                	<p class="alert alert-danger" id="otp_danger" style= "display:none"; >
-                    <span id= "otp_success"></span>.
-                    </p>
+                	<p class="alert alert-danger" id="otp_danger" style= "display:none"; ></p>
+                    <p class="alert alert-success" id="otp_success" style= "display:none"; ></p> 
+                    <!-- <span id= "otp_success"></span> -->
                         <p class="text-center">We have sent authentication code to you on  : <b id="otp_num"></b> from RCARE system </p>
-  
                         <div class="form-group row">
                             <label for="code" class="col-md-4 col-form-label text-md-right">Security Code : </label>
                               <div class="col-md-6">
@@ -673,8 +672,17 @@ $("#resend_otp").click(function(event){
             url: "/login-otp/resend",
             data:$('#2faotp').serialize(),
             success: function(response) {
-                $("#otp_danger").show(0).delay(3000).hide(0);
-                $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                // $("#otp_danger").show(0).delay(3000).hide(0);
+                // $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                if(response[0].sucsses=='n'){  
+                        $("#otp_danger").show();
+                        $("#otp_success").hide();
+                        $("#otp_danger").html(response[0].msg);//.show(0).delay(3000).hide(0);
+                }else{ 
+                        $("#otp_success").show();
+                        $("#otp_danger").hide(); 
+                        $("#otp_success").html(response[0].msg);    
+                }
             }
         }); 
 })
@@ -687,25 +695,36 @@ $("#change_method_email").click(function(event){
             url: "/login-otp/resend-another-method",  
             data:$('#2faotp').serialize(),
             success: function(response) {
-                // $("#otp_success").html(response[0].msg);
-                        var mob=response[0].mob; 
-                            var myArray = mob.split("/");
-                            var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
-                            if(myArray[0]!=''){
-                                var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));                     
-                            }else{
-                                mob_res='';
-                            }
-                            if(myArray[1]!=''){
-                                var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
-                            }else{
-                                email_res='';
-                            }
-                            var res_send = mob_res +' '+email_res;
-                             $('#otp_num').html(res_send);
-                             $("#change_method_sms").show();
-                             $("#change_method_email").hide();
-                             $("#mfa_method").val(1); 
+                // alert(response[0].sucsses);
+                    var mob=response[0].mob; 
+                    var myArray = mob.split("/");
+                    var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
+                    if(myArray[0]!=''){
+                        var mob_res = myArray[0].substring(0,7)+"****"+Number(String(myArray[0]).slice(-2));                     
+                    }else{
+                        mob_res='';
+                    }
+                    if(myArray[1]!=''){
+                        var email_res = s1.substring(0, 2)+"****"+String(myArray[1]).slice(10);
+                    }else{
+                        email_res='';
+                    }
+                    var res_send = mob_res +' '+email_res;
+                    
+                        $('#otp_num').html(res_send);
+                        $("#change_method_sms").show();
+                        $("#change_method_email").hide();
+                        $("#mfa_method").val(1); 
+                if(response[0].sucsses=='n'){ 
+                        $("#otp_danger").show();
+                        $("#otp_success").hide();
+                        $("#otp_danger").html(response[0].msg);//.show(0).delay(3000).hide(0);
+                }else{ 
+                        $("#otp_success").show();
+                        $("#otp_danger").hide();
+                        $("#otp_success").html(response[0].msg);    
+                }
+                        
             },
             error: function (request, status, error) {
                 // debugger;
@@ -721,19 +740,19 @@ $("#change_method_email").click(function(event){
                     if(str1.indexOf(str2) != -1 ||str1.indexOf(str_mail_error)!= -1){
                         // console.log(str2 + " found"); 
                         $('#login_btn').prop('disabled', false); 
-                        $("#danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     }
                     else if(str1.indexOf(str3) != -1){
                         // console.log(str2 + " found"); 
                         $('#login_btn').prop('disabled', false); 
-                        $("#danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     } 
                     else{ 
                         $('#login_btn').prop('disabled', false);  
-                        $("#danger").html('System Error. Please contact system administrator.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('System Error. Please contact system administrator.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     }
                 }
             }
@@ -746,10 +765,9 @@ $("#change_method_sms").click(function(event){
     $.ajax({
             type: "POST",
             url: "/login-otp/resend-another-method",
-            data:$('#2faotp').serialize(),
+            data:$('#2faotp').serialize(), 
             success: function(response) {
-                alert(success+"Success111");
-                // $("#otp_success").html(response[0].msg);
+                // alert(response[0].sucsses);
                         var mob=response[0].mob; 
                             var myArray = mob.split("/");
                             var s1= myArray[1].substr(0, myArray[1].indexOf('@'));
@@ -768,6 +786,17 @@ $("#change_method_sms").click(function(event){
                              $("#change_method_sms").hide();
                              $("#change_method_email").show();
                              $("#mfa_method").val(2); 
+                            //  $("#otp_danger").show(0).delay(3000).hide(0);
+                            // $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                            if(response[0].sucsses=='n'){
+                               $("#otp_danger").show();
+                               $("#otp_success").hide();
+                               $("#otp_danger").html(response[0].msg);//.show(0).delay(3000).hide(0);
+                            }else{ 
+                              $("#otp_success").show();
+                              $("#otp_danger").hide();
+                              $("#otp_success").html(response[0].msg);    
+                            }
             },
             error: function (request, status, error) {
                 // debugger;
@@ -783,23 +812,23 @@ $("#change_method_sms").click(function(event){
                     if(str1.indexOf(str2) != -1 ||str1.indexOf(str_mail_error)!= -1){
                         // console.log(str2 + " found"); 
                         $('#login_btn').prop('disabled', false); 
-                        $("#danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('We are not able to send the authentication code due to technical issues in email services. Please choose only text message for Multifactor Authentication Code.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     }
                     else if(str1.indexOf(str3) != -1){
                         // console.log(str2 + " found"); 
                         $('#login_btn').prop('disabled', false); 
-                        $("#danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('We are not able to send the authentication code due to technical issues in text services. Please choose only email for Multifactor Authentication Code.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     }
                     else{ 
                         $('#login_btn').prop('disabled', false);  
-                        $("#danger").html('System Error. Please contact system administrator.'); 
-                        $("#danger").show(0).delay(30000).hide(0); 
+                        $("#otp_danger").html('System Error. Please contact system administrator.'); 
+                        $("#otp_danger").show(0).delay(30000).hide(0); 
                     }
                 }
             }
-        });
+        }); 
 })
 
 function isNumber(evt) { 
