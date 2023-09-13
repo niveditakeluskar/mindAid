@@ -54,10 +54,17 @@ class CallClose extends Model
         'component_id',       
     ];
 	
-	public static function latest($patientId,$cid)
-    {
+	public static function latestdata($patientId,$cid)
+    { 
         $currentMonth = date('m');
         $year = Carbon::now()->year;
         return self::where('patient_id', $patientId)->where('component_id',$cid)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->orderBy('created_at', 'desc')->first();
+    }
+
+    public static function latest($patientId)
+    { 
+        $currentMonth = date('m');
+        $year = Carbon::now()->year;
+        return self::where('patient_id', $patientId)->whereYear('created_at', $year)->whereMonth('created_at', $currentMonth)->orderBy('created_at', 'desc')->first();
     }
 }
