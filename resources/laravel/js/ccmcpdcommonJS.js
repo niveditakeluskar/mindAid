@@ -468,12 +468,10 @@ var onCallHippa = function (formObj, fields, response) {
         
         var timer_paused = $("form[name='hippa_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
-
     }
-    var timer_paused = $("form[name='hippa_form'] input[name='end_time']").val();
-    $("#timer_start").val(timer_paused);
-  }
-};
+    
+  };
+
 
 
 var onCallStatus = function (formObj, fields, response) {
