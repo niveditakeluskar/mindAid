@@ -1020,6 +1020,11 @@
             var valid = true;
             $('#generalQue'+code).attr("disabled", true);
             var check_singal_question = 0;
+
+            if ($("form[name='general_question_form_"+code+"'] .form_start_time").val() == "undefined" || ($("form[name='general_question_form_"+code+"'] .form_start_time").val() == '')) {
+                var form_start_time = $("#page_landing_times").val();
+                $("form[name='general_question_form_"+code+"'] .form_start_time").val(form_start_time);
+            }
             
             $("form[name='general_question_form_"+code+"'] div.radioVal ").each(function() {
                 check_singal_question = $('input:radio:checked, input:checkbox:checked', this).length;
@@ -1069,6 +1074,8 @@
                     data: $("form#general_question_form_"+code).serialize() + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&stage_id=' + stage_id,
                     success: function(response) {
                         $("#timer_start").val(timer_paused);
+                        console.log(response);
+                        $(".form_start_time").val(response.form_start_time);
                         $('.general_success').show();
                         util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
                         setTimeout(function(){ $('.general_success').fadeOut(); }, 3000);

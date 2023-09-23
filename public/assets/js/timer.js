@@ -146,7 +146,9 @@ var AppStopwatch = (function () {
 			}
 			
 			$("#start").hide();
+			$("#stop").show();
 			$("#pause").show();
+			
 		}        
         runClock = setInterval(displayTime, 1000);
     }
@@ -158,12 +160,13 @@ var AppStopwatch = (function () {
 			$("#pause_time").val(pausetime);
 			$("#start").show();
 			$("#pause").hide();
+			$("#stop").hide();
 			clearInterval(runClock);
 		}
     }
 
     function stopWatch() {
-        if (confirm('Are you sure you want to stop timer?')) {
+        //if (confirm('Are you sure you want to stop timer?')) {
             $("#display-val").html($stopwatch.container.innerHTML);
 			var pausetime = '0';
 			pausetime = moment();
@@ -172,8 +175,8 @@ var AppStopwatch = (function () {
             interval = 0;
             $("#start").show();
             $("#pause").hide();
-            $("#stop").show();
-        }
+            $("#stop").hide();
+       // }
     }
 
     function resetWatch() {

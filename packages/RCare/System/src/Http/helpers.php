@@ -1181,8 +1181,8 @@ function sendTextMessage($phoneNumber, $text, $patient_id, $module_id, $stage_id
 	$messagestatus['undelivered'] = 'Message is ';
 	$messagestatus['receiving'] = 'Message status is ';
 	$messagestatus['received'] = 'Message has been ';
-    print_r($messagestatus[strtolower($message1->status)]."".$message1->status);
-
+    //print_r($messagestatus[strtolower($message1->status)]."".$message1->status);
+    return $messagestatus[strtolower($message1->status)]."".$message1->status;
     } catch (TwilioException $e) {
         return  ($e->getCode() . ' : ' .$e->getMessage());
     }

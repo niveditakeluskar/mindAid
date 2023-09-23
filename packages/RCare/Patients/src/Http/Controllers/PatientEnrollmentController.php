@@ -314,6 +314,8 @@ class PatientEnrollmentController extends Controller
         $enrolled_service_id = sanitizeVariable($request->enrolled_service_id);
         $billable            = 1;
         $time_rec_module  = sanitizeVariable($request->time_rec_module);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
         DB::beginTransaction();
         try {
@@ -382,9 +384,10 @@ class PatientEnrollmentController extends Controller
                 // dd($to_do);
                 $insert = ToDoList::create($to_do);
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $enrollment = PatientEnrollment::where('id',$enroll_id)->update($data);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;
@@ -418,6 +421,8 @@ class PatientEnrollmentController extends Controller
         $time_rec_module             = sanitizeVariable($request->time_rec_module);
 		$currentMonth                  = date('m');
         $currentYear                   = date('Y');
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($fin_number);
 
         DB::beginTransaction();
@@ -491,12 +496,13 @@ class PatientEnrollmentController extends Controller
             }
 			}
 			
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
 
             $enrollment = PatientEnrollment::create($data);
             $enrollment_id = $enrollment->id;
             DB::commit();
-            return $enrollment_id;
+            //return $enrollment_id;
+            return response(['form_start_time' =>$form_save_time, 'enrollment_id' => $enrollment_id]);
         } 
         catch(\Exception $ex) {
             DB::rollBack();
@@ -683,7 +689,8 @@ class PatientEnrollmentController extends Controller
         $form_name                     = sanitizeVariable($request->form_name);
         $billable                      = 1;
         $time_rec_module             = sanitizeVariable($request->time_rec_module);
-
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             $template = array(
@@ -730,9 +737,10 @@ class PatientEnrollmentController extends Controller
                 $data['created_by'] = session()->get('userid');
                 $insert_query = PatientEnrollment::create($data);
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
-            return $history_id;
+            //return $history_id;
+            return response(['form_start_time' =>$form_save_time, 'history_id' => $history_id]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;
@@ -892,11 +900,14 @@ class PatientEnrollmentController extends Controller
             $step_id      = sanitizeVariable($request->step_id);
             $form_name    = sanitizeVariable($request->form_name);
             $billable     = 1; 
+            $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+            $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
             // $insert_query = PatientEnrollment::create($data);
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;

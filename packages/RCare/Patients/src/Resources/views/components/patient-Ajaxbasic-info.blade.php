@@ -99,17 +99,20 @@
                                         @hidden("timer_start",["id"=>"timer_start"])
                                         @hidden("timer_end",["id"=>"timer_end"])
                                         @hidden("page_landing_time",["id"=>"page_landing_time"])
+                                        <input type="hidden" id="page_landing_times" name="page_landing_times" value=''>
                                         @hidden("patient_time",["id"=>"patient_time"])
                                         @hidden("pause_time",["id"=>"pause_time", "value"=>"0"])
                                         @hidden("play_time",["id"=>"play_time", "value"=>"0"])
                                         @hidden("pauseplaydiff",["id"=>"pauseplaydiff", "value"=>"0"])
                                         <div class="stopwatch" id="stopwatch">
                                             <i class="text-muted i-Timer1"></i> :
-                                            <div id="time-container" class="container" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time"></div>
-                                            <button class="button" id="start" data-toggle="tooltip" data-placement="top" title="Start Timer" data-original-title="Start Timer"  ><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></button>
+                                            <div id="time-container" class="container" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time" style="display:none!important"></div>
+                                            <label for="Current Running Time" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time">
+                                            <span id="time-containers"></span></label>
+                                            <button class="button" id="start" data-toggle="tooltip" data-placement="top" title="Start Timer" data-original-title="Start Timer" onclick="util.logPauseTime($('.form_start_time').val(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></button>
                                             <button class="button" id="pause" data-toggle="tooltip" data-placement="top" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></button>
 											
-                                            <button class="button" id="stop" data-toggle="tooltip" data-placement="top" title="Stop Timer" data-original-title="Stop Timer" style=" display: <?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px; " /></button>
+                                            <button class="button" id="stop" data-toggle="tooltip" data-placement="top" title="Stop Timer" data-original-title="Stop Timer"  onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" style=" display: <?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px; " /></button>
 											
                                             <button class="button" id="reset" data-toggle="tooltip" data-placement="top" title="Reset Timer" data-original-title="Reset Timer" style="display:none;">Reset</button>
                                              <button class="button" id="resetTickingTime" data-toggle="tooltip" data-placement="top" title="resetTickingTime Timer" data-original-title="resetTickingTime Timer" style="display:none;">resetTickingTime</button>

@@ -71,7 +71,9 @@ Route::middleware("web")->group(function () {
         Route::get("/system/get-total-billable-nonbillable-time/{patientID}/{moduleId}/total-time", "RCare\System\Http\Controllers\CommonFunctionController@getTotalBillableAndNonBillableTime")->name("total-billable-non-billable-time");
         Route::get("/system/get-finalize-date/{patientID}/{moduleId}/finalize-date", "RCare\System\Http\Controllers\CommonFunctionController@finalizeDate")->name("finalize-date");
         Route::get("/system/get-session-logout-time-with-popup-time", "RCare\System\Http\Controllers\CommonFunctionController@getSessionLogoutTimeWithPopupTime")->name("session-logout-time-with-popup-time");
-        
+
+        Route::get("/system/get-total-time/{patientID}/{moduleId}/{startTime}/total-time", "RCare\System\Http\Controllers\CommonFunctionController@getTotalTime")->name("total-time");
+        Route::get("/system/get-landing-time", "RCare\System\Http\Controllers\CommonFunctionController@getLandingTime")->name("landing-time");
        
         Route::post("/system/log-timer-button-action/time", "RCare\System\Http\Controllers\CommonFunctionController@logTimerButtonAction")->name("log-timer-button-action"); //23Jan2022
         Route::middleware("roleAccess")->group(function () {
