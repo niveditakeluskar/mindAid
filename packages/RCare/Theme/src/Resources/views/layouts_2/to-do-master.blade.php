@@ -50,12 +50,12 @@
          
     </head>
 
-<?php $themeMode = "";
-    if(session()->get('darkmode') == '1'){
+ <?php $themeMode = "";
+   $activemode = activeThemeMode(session()->get('userid'));
+   if(session()->get('darkmode') == '1' || $activemode == '1'){
         $themeMode = "dark-theme";
-    } ?>
-
-    <body class="layout_2 text-left {{$themeMode}}"> 
+    }?>
+      <body class="layout_2 text-left {{$themeMode}}"> 
     
         <!-- <div id="app">        -->
             @php
@@ -123,6 +123,27 @@
              
         <!-- </div> -->
         <!-- ============ Horizontal Layout End ============= -->
+
+             <!-- LAModel Started here -->
+             <div class="modal fade" id="logout_modal" aria-hidden="true">  
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Logout Alert</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- <label>Do you want to logout?</label> -->
+                        <label>You are inactive on screen since few minutes. Do you really want to logout?</label>
+                    </div> 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary float-right" id="logout_yes" data-dismiss="modal">Yes</button>
+                        <button type="button" class="btn btn-default float-left" id="logout_no" data-dismiss="modal" >No</button>
+                    </div>
+                </div>
+            </div> 
+        </div> 
+        <!-- LAModel Ended here -->
 
 <div id="patient-finnumber" class="modal fade" role="dialog">  
     <div class="modal-dialog">
@@ -985,6 +1006,20 @@
                 }
 
             $(document).ready(function () {
+                localStorage.setItem("idleTime", 0);
+                util.getSessionLogoutTimeWithPopupTime();
+                var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
+                $(this).mousemove(function(e) {
+                    // idleTime = 0;
+                    localStorage.setItem("idleTime", 0);
+                });
+
+                $(this).keypress(function(e){
+                    // idleTime = 0;
+                    localStorage.setItem("idleTime", 0);
+                });
+
+
 				
 				var $body = $("body");
                 
@@ -1069,7 +1104,79 @@
 
 
 /*********************************************************************************************************************************************** */
-            
+        
+
+var checkTimeInterval = function timerIncrement() {   
+                // idleTime = idleTime + 1; //Calls every 1 seconds
+                sessionIdleTime = localStorage.getItem("idleTime");
+
+                // var showPopupTime = sessionStorage.getItem("showPopupTime");
+                // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
+
+                
+                var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
+                var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
+
+                var systemDate= localStorage.getItem("systemDate");
+                var currentDate = new Date();
+                var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
+                var idleTime = parseInt(sessionIdleTime) + (res % 60);
+               
+
+                console.log("idleTime-"+idleTime);
+                // console.log("showPopupTime-"+showPopupTime);
+                // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
+
+
+                if(idleTime >= showPopupTime) {
+                    
+                    console.log('idleTime in if loop idleTime >= showPopupTime'); 
+    
+                    // $('#logout_modal').modal('show');   
+                    var visiblemodal = $('#logout_modal').is(':visible');  
+                    if(visiblemodal){
+                        console.log('visiblemodal');  
+                    }else{
+                        $('#logout_modal').modal('show'); 
+                    }
+
+                    if(idleTime >= sessionTimeoutInSeconds) {  
+
+                        console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
+                        var visiblemodal = $('#logout_modal').is(':visible');  
+
+                        if(visiblemodal){
+                            console.log('visiblemodal in sessiontimeout');
+                            // $('#logout_modal').modal('hide');   
+                            $( "#sign-out-btn" )[0].click();
+                            var base_url = window.location.origin; 
+                            // alert(base_url);  
+                            window.location.href = base_url+'/rcare-login';   
+                            window.location.reload();   
+                        
+                        }
+
+                    }
+
+
+
+                }
+               
+                localStorage.setItem("idleTime", idleTime);
+                // localStorage.setItem("idleTime", 0);
+                localStorage.setItem("systemDate", currentDate);
+            }
+
+            $("#logout_yes").click(function (e) { 
+                $( "#sign-out-btn" )[0].click();
+            }); 
+
+            $("#logout_no").click(function (e) {    
+                $('#logout_modal').modal('hide'); 
+            });  
+
+
+
                 var patient_id = $("#patient_id").val();                 
                 var module_id = $("input[name='module_id']").val();               
                 util.getPatientPreviousMonthCalender(patient_id,module_id);

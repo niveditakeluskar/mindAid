@@ -27,9 +27,9 @@ return [
     | applications. A default option is provided that is compatible with
     | the Mailgun mail service which will provide reliable deliveries.
     |
-    */
+    */ 
 
-    'host' => env('MAIL_HOST', 'a2plcpnl0893.prod.iad2.secureserver.net'),//smtp.googlemail.com
+    'host' => env('MAIL_HOST', 'smtp.office365.com'),//'a2plcpnl0893.prod.iad2.secureserver.net'),//smtp.googlemail.com
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 465),
+    'port' => env('MAIL_PORT',587),//465
 
     /*
     |--------------------------------------------------------------------------
@@ -56,9 +56,9 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'renova@d-insights.global'),
+        'address' => env('MAIL_FROM_ADDRESS',  'RCareNoReply@renovahealth.care'), // 'renova@d-insights.global'), //developer@renovahealth.care
         'name' => env('MAIL_FROM_NAME', 'RCARE'),
-    ],
+    ], 
  
     /* 
     |--------------------------------------------------------------------------
@@ -70,9 +70,9 @@ return [
     | transport layer security protocol should provide great security.
     |
     */
-
-    'encryption' => env('MAIL_ENCRYPTION', 'ssl'),
-
+ 
+    'encryption' => env('MAIL_ENCRYPTION', 'tls'),//'ssl'),
+ 
     /*
     |--------------------------------------------------------------------------
     | SMTP Server Username
@@ -84,10 +84,12 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME','renova@d-insights.global'),
+    'username' => env('MAIL_USERNAME','RCareNoReply@renovahealth.care'),//'renova@d-insights.global'),//'' //developer@renovahealth.care
 
-    'password' => env('MAIL_PASSWORD', 'RENova@2021'),
+    'password' => env('MAIL_PASSWORD', 'Dak97733'),//RENova@2021//'DevN@2022' 
 
+
+ 
     /*
     |--------------------------------------------------------------------------
     | Sendmail System Path
@@ -119,7 +121,7 @@ return [
             resource_path('views/vendor/mail'),
         ],
     ],
-
+ 
     /*
     |--------------------------------------------------------------------------
     | Log Channel
@@ -131,6 +133,6 @@ return [
     |
     */
 
-    'log_channel' => env('MAIL_LOG_CHANNEL'),
+    'log_channel' => env('MAIL_LOG_CHANNEL'), 
 
 ];

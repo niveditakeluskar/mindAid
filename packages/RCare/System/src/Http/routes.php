@@ -43,6 +43,7 @@ Route::middleware("web")->group(function () {
 	
     Route::post('/login-otp/2fapost',"RCare\System\Http\Controllers\Auth\LoginController@otpVerify")->name('2fapost');
     Route::post('/login-otp/resend',"RCare\System\Http\Controllers\Auth\LoginController@resend")->name('resend');
+    Route::post('/login-otp/resend-another-method',"RCare\System\Http\Controllers\Auth\LoginController@resendAnotherMethod")->name('resend-another-method');
 
 
     Route::get("rcare-login", "RCare\System\Http\Controllers\Auth\LoginController@index")->name("rcare-login");

@@ -34,7 +34,8 @@ class DomainFeatures extends Model
         'created_by',
         'updated_by',
         'logoutpoptime',
-        'idle_time_redirect'
+        'idle_time_redirect',
+        'block_time'
     ];
     
     public function users()
@@ -49,7 +50,9 @@ class DomainFeatures extends Model
 
     public static function getSessionLogoutTimeWithPopupTime() 
     {
-        return self::select('session_timeout', 'logoutpoptime')->where('status',1)->first();
+        $url = url('/');
+        // return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->first();  
+        return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->where('url', 'like', '%' . $url . '%')->first();  
     }
 
 }

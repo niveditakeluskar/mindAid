@@ -51,12 +51,17 @@
                                                                 echo 'selected';
                                                             } ?>>Textarea</option>
                                     </select>
-                                    <?php if($exist == 1 && ((isset($value->answerFormat) && ($value->answerFormat == 2)) || (isset($value->answerFormat) && ($value->answerFormat == 5)))){?>
-                                        <input type="textbox" required name="question[q][<?php echo $number; ?>][score][]"  
-                                        class="form-control col-md-1 sco" style= "margin-left:10px" value="<?php echo $value->score[0]; ?>" /> 
-                                    <?php } ?>
                                     <div class="invalid-feedback"></div>
                                 </div>
+                                <?php if($exist == 1 && ((isset($value->answerFormat) && ($value->answerFormat == 2)) || (isset($value->answerFormat) && ($value->answerFormat == 5)))){?>
+                                    <div class="row sco">
+                                            <input type="text" name="question[q][<?php echo $number; ?>][placeholder][]" class="form-control offset-md-2 col-md-4 mt-2"  placeholder="placeholder" value="<?php if (isset($value->placeholder)){ echo $value->placeholder[0]; }?>" > 
+                                            <?php if($exist == 1){?>
+                                                <input type="textbox" required name="question[q][<?php echo $number; ?>][score][]"  
+                                                class="form-control col-md-1 mt-2" style= "margin-left:10px" value="<?php echo $value->score[0]; ?>" /> 
+                                            <?php } ?>
+                                    </div>
+                                <?php } ?>
                             </div>
                         <?php
                         } else {

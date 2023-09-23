@@ -669,7 +669,7 @@ class CcmController extends Controller {
                 $enrollinRPM = 2;
         }
 
-
+		$enrollCount = PatientServices::where('patient_id', $patient_id)->where('status', 1)->count();
         $ccmModule = Module::where('module','CCM')->where('status',1)->get('id');
         $ccmModule = $ccmModule[0]->id;
         $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',$ccmModule)->where('status',1)->get('id');
@@ -746,7 +746,7 @@ class CcmController extends Controller {
                     'genQuestion',
                     'stepWiseDecisionTree',
                     'dtsteps',
-                    'PatientDevices','patient_assign_device','patient_assign_deviceid','ccmModule','ccmSubModule','enrollinRPM'
+                    'PatientDevices','patient_assign_device','patient_assign_deviceid','ccmModule','ccmSubModule','enrollinRPM', 'enrollCount'
                 )
         );        
     }
@@ -1014,8 +1014,19 @@ class CcmController extends Controller {
             
         //     "     
         //  )  ); 
+		
+		$data  = DB::select(DB::raw( "(select id as \"DT_RowId\", id, topic, ct.notes , sequence , sub_sequence, question_sequence, question_sub_sequence
+from ccm.ccm_topics ct
+where patient_id = '".$id."'  and status = 1 
+and EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."'  and id in (select max(id)
+        FROM ccm.ccm_topics
+        WHERE patient_id='".$id."' 
+        AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
+        group by topic)
+order by sequence , sub_sequence, question_sequence, question_sub_sequence)
+"));
         
-        $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
+       /* $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
         from ccm.ccm_topics
         where id in (select max(id)
         FROM ccm.ccm_topics
@@ -1025,16 +1036,27 @@ class CcmController extends Controller {
         group by topic) order by sequence, sub_sequence ASC)
         union 
         (select id as \"DT_RowId\", topic, notes, status, created_at, id, sequence, sub_sequence 
-         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic NOT LIKE 'EMR Monthly Summary%'
+         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic LIKE 'EMR Monthly Summary%'
          AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
          union
          (select id as \"DT_RowId\", topic, notes, status, created_at, id, sequence, sub_sequence 
-         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic NOT LIKE 'Summary notes added on%'
+         from ccm.ccm_topics WHERE patient_id='".$id."' And status = 1 And topic  LIKE 'Summary notes added on%'
          AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)  
+         union
+            (select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
+            from ccm.ccm_topics
+            where id in (select max(id)
+            FROM ccm.ccm_topics
+            WHERE patient_id='".$id."'  
+            And topic LIKE 'Additional Services :%' And status = 1
+            AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
+            group by topic) order by sequence, sub_sequence ASC)
      
         
         "     
-     )  ); 
+     )  ); */
+
+       
 
 
         return Datatables::of($data)  
@@ -1046,7 +1068,8 @@ class CcmController extends Controller {
             ->rawColumns(['action'])
             ->make(true);  
     }
-    public function downloadAbleFile($id){
+ 
+	public function downloadAbleFile($id){
         $id  = sanitizeVariable($id);
         $year  = date('Y');
         $month = date('m');
@@ -2242,7 +2265,7 @@ class CcmController extends Controller {
     }
 
 
-    public function  SaveCallClose(CallCloseAddRequest $request) {
+    public function  SaveCallClose(CallCloseAddRequest $request) { //dd($request);
         $next_month_date     = sanitizeVariable($request->q2_datetime);
         $start_time          = sanitizeVariable($request->start_time);
         $end_time            = sanitizeVariable($request->end_time);
@@ -3335,7 +3358,8 @@ class CcmController extends Controller {
         $callp              = (CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "");
         $callstatus         = (CallStatus::latest($patientId) ? CallStatus::latest($patientId)->population() : "");
         $hippa              = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
-        $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        // $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");
+        $callClose          = (CallClose::latest($patientId) ? CallClose::latest($patientId)->population() : "");
         $followUp           = (FollowUp::latest($patientId) ? FollowUp::latest($patientId)->population() : "");
         $patientContactTime = PatientContactTime::where('patient_id',$patientId)->first();
         $callWrapUp         = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");  //added by ashvini 28June2022
@@ -3344,6 +3368,7 @@ class CcmController extends Controller {
         if( CallHipaaVerification::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $result['hippa_form']['static']['verification'] = $hippa['static']['verification'];
         }
+        // dd($callClose);
         if(!empty($patientContactTime)){            
             $patientContactTime = $patientContactTime->population();
             if(!empty($callClose['static'])){ 
@@ -3377,7 +3402,8 @@ class CcmController extends Controller {
         $callp              = (CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "");
         $callstatus         = (CallStatus::latest($patientId) ? CallStatus::latest($patientId)->population() : "");
         $hippa              = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
-        $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");     
+        // $callClose          = (CallClose::latest($patientId,$component_id[0]->id) ? CallClose::latest($patientId,$component_id[0]->id)->population() : "");     
+        $callClose          = (CallClose::latest($patientId) ? CallClose::latest($patientId)->population() : "");     
         $followUp           = (FollowUp::latest($patientId) ? FollowUp::latest($patientId)->population() : "");   
         $callWrapUp         = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");  //added by ashvini 28june2022
         $result['call_preparation_preparation_followup_form'] = $callp;
@@ -3617,6 +3643,7 @@ class CcmController extends Controller {
                     $last_sub_sequence = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
                     $new_sub_sequence = $last_sub_sequence + 1;
                     $score = 0;
+                    $seqindex = 1;
                     //dd($request_step_data['question']);
                     foreach($request_step_data['question'] as $key => $value){
                         $checkboxVal = '';
@@ -3646,17 +3673,20 @@ class CcmController extends Controller {
                             'patient_id'          => $patient_id,
                             'template_type'       => 'qs'.$qtemplate_id,
                             'sequence'            => $sequence,
-                            'sub_sequence'        => $new_sub_sequence
+                            'sub_sequence'        => $new_sub_sequence,
+                            'question_sequence'   => $qtemplate_id,
+                            'question_sub_sequence' => sanitizeVariable($request->qseq[$qtemplate_id][$seqindex])
                         );
                         if($value != ""){
                             CallWrap::create($notes);
                         }
                         $new_sub_sequence++;
+                        $seqindex++;
                     }
                     $notes1 = array(
                         'uid'                 => $uid,
                         'record_date'         => Carbon::now(),
-                        'topic'               => $step_name." Notes",
+                        'topic'               => $content_title." Notes",
                         'notes'               => $current_monthly_notes,
                         'created_by'          => session()->get('userid') ,
                         'patient_id'          => $patient_id,
@@ -3775,6 +3805,7 @@ class CcmController extends Controller {
                     }           
                     $i++;
                 }
+                $sqind = 0;
                 foreach($DT_topics0 as $inkey => $invalue){
                     $new_sub_sequence = $new_sub_sequence + 1;
                     $notes = array(
@@ -3786,11 +3817,15 @@ class CcmController extends Controller {
                         'patient_id'          => $patient_id,
                         'template_type'       => 'dt'.$value,
                         'sequence'            => $sequence,
-                        'sub_sequence'        => $new_sub_sequence
+                        'sub_sequence'        => $new_sub_sequence,
+                        'question_sequence'   => $value,
+                        'question_sub_sequence' => sanitizeVariable($request->sq[$value][$sqind])
                     );
+                    //print_r($notes);
                     if($invalue != ''){
                         CallWrap::create($notes);
                     }
+                    $sqind++;
                 }
                 $data = array(
                     'contact_via'   => 'decisiontree',
@@ -3857,5 +3892,4 @@ class CcmController extends Controller {
             // return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
         }*/
     }
-
 }

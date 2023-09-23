@@ -61,7 +61,8 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::QuestionnaireTemplates.add-questionnaire-template', compact('data','components','devices', 'module')); 
     }
 
-    public function getTemplate($moduleid, $stepid, $type){		
+    public function getTemplate($moduleid, $stepid, $type){
+
         $template = QuestionnaireTemplate::where('module_id', $moduleid)->where('template_type_id',$type)->where('stage_code', $stepid)->where('status', 1)->get();
         return response()->json($template); 
     }
@@ -317,7 +318,7 @@ class QuestionnaireTemplateController extends Controller
         return view('QCTemplates::DecisionTreeTemplates.copy-decisiontree');
     }
 
-    public function copyQTemplate(){		
+    public function copyQTemplate(){
         return view('QCTemplates::QuestionnaireTemplates.copy-questionnaire-template');
     }
 
@@ -515,7 +516,7 @@ class QuestionnaireTemplateController extends Controller
         {
             $template = QuestionnaireTemplate::where('id',$key)->get();
             $data = array(
-            'content_title' => $step_name.' '.$template[0]->content_title,
+            'content_title' => $request->content_title,
             'template_type_id' => $template[0]->template_type_id,
             'module_id' => $module_id,
             'stage_id' => $template[0]->stage_id,
