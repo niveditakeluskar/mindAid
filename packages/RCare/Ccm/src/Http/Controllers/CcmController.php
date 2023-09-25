@@ -833,6 +833,8 @@ class CcmController extends Controller {
         $step_id      = 0; 
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if($status_flag==1){
@@ -865,7 +867,7 @@ class CcmController extends Controller {
                         'updated_by' => session()->get('userid')
                         );
                 ToDoList::where('id',$id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
 
             }else{
                     $check = CallWrap::where('task_id',$task_id)->exists();
@@ -884,9 +886,10 @@ class CcmController extends Controller {
                         'updated_by' => session()->get('userid')
                         );
                 ToDoList::where('id',$id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1200,6 +1203,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $step_id      = $step_id;
         $billable     = sanitizeVariable($request->billable);
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction(); 
         try {
             if ($call_status == '1') {
@@ -1275,7 +1280,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'component_id'             => $component_id
             );
            
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             if(isset($call_followup_date) && ($call_followup_date != "")) {
                 $follow_up_date =$call_followup_date;
                 $to_do = array(
@@ -1377,7 +1382,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 PatientContactTime::create($patient_contact_time_data);
             }
             DB::commit();
-            return $errormsg;
+            return response(['form_start_time' =>$form_save_time, 'errormsg'=>$errormsg]);
+           // return $errormsg;
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1424,6 +1430,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
         $end_time                      = sanitizeVariable($request->end_time);
+       // dd($request->timearr['form_start_time']);
+        $form_start_time               = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+       // dd($form_save_time);
         $module_id                     = sanitizeVariable($request->module_id);
         $component_id                  = sanitizeVariable($request->component_id);
         $stage_id                      = sanitizeVariable($request->stage_id);
@@ -1625,7 +1635,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         // DB::beginTransaction(); 
         // try {
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             if(CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->exists()) {
                 $note_0['updated_by'] = session()->get('userid');
                 CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->update($note_0);
@@ -1696,6 +1706,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } else {
                 PatientQuestionnaire::create($patient_questionnaire_data);
             }
+
+            return response(['form_start_time' =>$form_save_time]);
         //     DB::commit();
         // } catch(\Exception $ex) {
         //     DB::rollBack();
@@ -1734,6 +1746,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id                      = sanitizeVariable($request->stage_id);
         $step_id                       = sanitizeVariable($request->step_id);
         $form_name                     = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $billable                      = 1;
         $currentMonth                  = date('m');
         $currentYear                   = date('Y');
@@ -1938,7 +1952,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         DB::beginTransaction(); 
         try {
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             $chk1_exist = CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->exists();
                 if($cr!='' && $chk1_exist==false){
                     $note_0['sequence'] = "1";
@@ -2023,6 +2037,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
 
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2062,6 +2077,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $check_id     = CallHipaaVerification::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
         DB::beginTransaction();
         try {
@@ -2075,7 +2092,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'component_id' => $component_id
             );  
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
 
             if ($check_id == true) {
                 $data['updated_by']= session()->get('userid');
@@ -2085,6 +2102,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $insert_query = CallHipaaVerification::create($data);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;
@@ -2102,6 +2120,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $component_id = sanitizeVariable($request->component_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = 1;
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $taken_stage_id = sanitizeVariable($request->stage_id);
         if($taken_stage_id == 0){
             $stage_id = sanitizeVariable($request->hid_stage_id);
@@ -2235,8 +2255,9 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
                 //$record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2287,6 +2308,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $fri_3               = sanitizeVariable($request->fri_3);
         $fri_any             = sanitizeVariable($request->fri_any);
         $billable            = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $current_month_date  = date('Y-m-d'); 
         DB::beginTransaction();
         try {
@@ -2306,7 +2329,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'patient_id'   => $patient_id,
             );
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $request->patient_id,$step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $request->patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             if(isset($q2_datetime) && ($q2_datetime != "")) {
                 $to_do = array(
                     'uid'                         => $uid,
@@ -2374,6 +2397,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 PatientContactTime::create($patient_contact_time_data);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2490,7 +2514,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $stage_id            = sanitizeVariable($request->stage_id);
             $step_id             = sanitizeVariable($request->step_id);
             $form_name           = sanitizeVariable($request->form_name);
-
+            $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+            $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
             // $schedule_office_appointment = sanitizeVariable($request->schedule_office_appointment);
             // $resources_for_medication = sanitizeVariable($request->resources_for_medication);
             // $medical_renewal = sanitizeVariable($request->medical_renewal);
@@ -2881,7 +2906,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         ->update(['status'=>0]);
                  CallWrap::create($additional_services_data);  
                  $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, 
-                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                  if($additionalservices6!=''){ 
                     $form_name= $form_name.'_additional_services'; 
                     $check =  PatientTimeRecords::where('patient_id',$patient_id)
@@ -2894,10 +2919,11 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
                         $end_time = date("H:i:s",strtotime($start_time)+$secs); 
                         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
-                        $billable, $uid,$step_id,$form_name);
+                        $billable, $uid,$step_id,$form_name, $form_start_time, $form_save_time);
                     } 
                 }
                 DB::commit();
+                return response(['form_start_time' =>$form_save_time]);
             } catch(\Exception $ex) {
                 DB::rollBack();
                 return $ex;
@@ -2923,6 +2949,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id              = sanitizeVariable($request->stage_id);
         $step_id               = sanitizeVariable($request->step_id);
         $form_name             = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $notes                 = sanitizeVariable($request->notes);
         $billable              = 1;
         $sequence              = 7;
@@ -2997,7 +3025,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     $insert_query = FollowUp::create($data); 
                 }  
                 //record time 
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             }else if($followupmaster_task[0]!='' || $emr_complete =='1'){
                 if($followupmaster_task[0]!='') {
                     foreach ($followupmaster_task as $i => $value) { 
@@ -3065,7 +3093,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $insert_query = FollowUp::create($data);
                     }
                     //record time 
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                 }else{
                     $data = array(
                         'uid'                 => $patient_id,
@@ -3083,12 +3111,13 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $insert_query = FollowUp::create($data);
                     }
                     //record time 
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                 }
             }else{
             return 'blank form';
             }//end else
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) { 
             DB::rollBack(); 
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3142,6 +3171,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id           = sanitizeVariable($request->stage_id);
         $step_id            = sanitizeVariable($request->step_id);
         $form_name          = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $billable           = 1;
         DB::beginTransaction();
         try {
@@ -3167,7 +3198,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $history_id = $insert_content->id;
             $text_temp  = array('template_id' => $template_id, 'history_id' => $history_id);
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             $data = array(
                 'uid'          => $uid,
                 'rec_date'     => Carbon::now(),
@@ -3198,7 +3229,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 CallWrap::create($text_note);
             }
             DB::commit();
-            return $msg;
+            return response(['form_start_time' =>$form_save_time,'msg'=>$msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3556,6 +3587,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         //$template_id  = sanitizeVariable($request->template_id);
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $patient_id   = sanitizeVariable($request->patient_id);
         if(isset($request->template_id)){
             $template_id  = sanitizeVariable($request->template_id);
@@ -3831,7 +3864,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid,$step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid,$step_id, $form_name, $form_start_time, $form_save_time);
             foreach($t as $k => $v) {
                 $new_sub_sequence = $new_sub_sequence + 1;
                 $note2 = array(
@@ -3851,7 +3884,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     CallWrap::create($note2);
                 }
             }
-            return response()->json(['success' => "Added successfully."]);
+            //return response()->json(['success' => "Added successfully."]);
+            return response(['form_start_time' =>$form_save_time]);
           /*  DB::commit();
         } catch(\Exception $ex) {
             DB::rollBack();

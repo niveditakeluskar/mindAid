@@ -106,7 +106,7 @@ var onSaveCallSatus = function (formObj, fields, response) {
     if (response.status == 200) {
         util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
         util.totalTimeSpentByCM();
-        var enrollment_id = response.data;
+        var enrollment_id = response.data.enrollment_id;
         $(".enrollment_id").val(enrollment_id);
         //var stepid=val(enrollment_id);
         $("form[name='call_status_form'] .alert").show();
@@ -144,6 +144,7 @@ var onSaveCallSatus = function (formObj, fields, response) {
         }, 3000);
         var timer_paused = $("form[name='call_status_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
         // $("#timer_end").val(timer_paused);
 
     } else {
@@ -169,6 +170,7 @@ var onSaveCallSatusFinal = function (formObj, fields, response) {
         util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
         var timer_paused = $("form[name='call_status_form_final'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
         // $("#timer_end").val(timer_paused);
     } else {
         // var text = '<button type="button" class="close" data-dismiss="alert">x</button><strong>Please Fill All Mandatory Fields! </strong><span id="text"></span>';
@@ -233,7 +235,7 @@ var onSaveChecklist = function (formObj, fields, response) {
         util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
         util.totalTimeSpentByCM();
         $("#error_msg1").html('');
-        $('#check_hidden').val(response.data);
+        $('#check_hidden').val(response.data.history_id);
         // var text = '<button type="button" class="close" data-dismiss="alert">x</button><strong>Enrollment checklist saved successfully! </strong><span id="text"></span>';
         // showSubmitMsg('checklist_form', text, 'success');
         $("form[name='checklist_form'] .alert").show();
@@ -244,6 +246,7 @@ var onSaveChecklist = function (formObj, fields, response) {
         }
         var timer_paused = $("form[name='checklist_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
         // $("#timer_end").val(timer_paused);
     } else {
         var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please Fill All Mandatory Fields!</strong></div>';
@@ -273,6 +276,7 @@ var onSaveFinalizationChecklistStatus = function (formObj, fields, response) {
         }, 3000);
         var timer_paused = $("form[name='finalization_checklist_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
         // $("#timer_end").val(timer_paused);
     } else {
 
@@ -376,6 +380,7 @@ var onFinNumber = function(formObj, fields, response) {
         
         var timer_paused = $("form[name='fin_number_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
         var patient_id = $("input[name='patient_id']").val();
         var module_id = $("input[name='module_id']").val();
         util.totalTimeSpentByCM();        
@@ -409,6 +414,7 @@ var onPersonalNotes = function (formObj, fields, response) {
         util.getPatientStatus(patient_id, module_id);
         var timer_paused = $("form[name='personal_notes_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
     } else {
         var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please fill mandatory fields!</strong></div>';
         $("#success").html(txt);
@@ -441,6 +447,7 @@ var onPartOfResearchStudy = function (formObj, fields, response) {
         util.getPatientStatus(patient_id, module_id);
         var timer_paused = $("form[name='part_of_research_study_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
     } else {
         var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please fill mandatory fields!</strong></div>';
         $("#success").html(txt);
@@ -473,6 +480,7 @@ var onPatientThreshold = function (formObj, fields, response) {
         util.getPatientStatus(patient_id, module_id);
         var timer_paused = $("form[name='patient_threshold_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
+        $('.form_start_time').val(response.data.form_start_time);
     } else {
         var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please fill mandatory fields!</strong></div>';
         $("#success").html(txt);
@@ -515,13 +523,20 @@ var enrollModule = function (patient_id, module_id) {
 
 
 var init = function () {
-
+    $("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");
+    util.setLandingTime();
 	util.redirectToWorklistPage();
     util.stepWizard('tsf-wizard-1');
     util.getPatientDetails($("#hidden_id").val(), $("#page_module_id").val());
     util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
     util.gatCaretoolData($("#hidden_id").val(), $("#page_module_id").val());
     util.getPatientStatus($("#hidden_id").val(), $("#page_module_id").val());
+    if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+		var start_time = null;
+	}else{
+        var start_time = $(".form_start_time").val();
+    }
+    util.updateTimeEveryMinutes(patient_id, module_id, start_time);
 
     $("#main-text-btn").click(function () {
         $("#text_step_div").show();
