@@ -18,7 +18,13 @@ use Illuminate\Support\Facades\Log;
 use RCare\Messaging\Models\MessageLog;
 use RCare\System\Models\MfaTextingLog;
 use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
+use RCare\Patients\Models\Patients; 
+use RCare\Patients\Models\PatientDevices;
+use RCare\Rpm\Models\Devices;
+use RCare\Patients\Models\PatientProvider;
+use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
 use Carbon\Carbon;
+use Session;
 use Illuminate\Support\Facades\DB;
 
 class CommonFunctionController extends Controller
@@ -856,6 +862,56 @@ class CommonFunctionController extends Controller
             return $data;
         } else {
             return "";
+        }
+    }
+
+    public static function sentSchedulMessage($module_id,$uid,$stage_id){
+        $scripts = ContentTemplate::where('stage_id', $stage_id)->where('status', 1)->get();
+        $patient_providers = PatientProvider::where('patient_id', $uid)->where('is_active',1)
+        ->with('practice')->with('provider')->with('users')->where('provider_type_id',1)->orderby('id','desc')->first();
+        $patient = Patients::where('id', $uid)->get();
+        $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status',1)->latest()->first();
+        $nin = array();
+        if(isset($PatientDevices->vital_devices)){
+            $dv = $PatientDevices->vital_devices;
+            $js = json_decode($dv);
+            foreach($js as $val){
+                if(isset($val->vid)){
+                    array_push($nin,$val->vid);
+                }
+            }
+        }
+        $device = Devices::whereIn('id',$nin)->pluck('device_name')->implode(', ');
+        if(isset($PatientDevices->device_code)){
+            $devicecode = $PatientDevices->device_code;
+        }else{
+            $devicecode = "";
+        }
+        $intro = get_object_vars(json_decode($scripts[0]->content));
+        $provider_data = (array)$patient_providers; 
+        $provider_name = empty($patient_providers->provider['name']) ? '[provider]' : $patient_providers->provider['name'];
+        $practice_name = empty($patient_providers['practice']['name']) ? '' : $patient_providers['practice']['name'];
+        $replace_provider = str_replace("[provider]", $provider_name, $intro['message']);
+        $replace_practice_name = str_replace("[practice_name]", $practice_name, $replace_provider);
+    
+        $replace_user = str_replace("[users_name]", Session::get('f_name')." ".Session::get('l_name'), $replace_practice_name);
+        $replace_pt = str_replace("[patient_name]",$patient[0]->fname.' '.$patient[0]->lname, $replace_user);
+        $replace_id = str_replace("[patientid]",$patient[0]->id, $replace_pt);
+        $replace_primary = str_replace("[primary_contact_number]",$patient[0]->mob, $replace_id);
+        $data_emr = str_replace("[EMR]",$patient_providers['practice_emr'],$replace_primary);
+        $replace_secondary = str_replace("[secondary_contact_number]",$patient[0]->home_number, $data_emr);
+        $replace_devicelist = str_replace("[device_list]",$device, $replace_secondary);
+        $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
+        $replace_final = strip_tags($replace_final);
+
+        if($patient[0]->consent_to_text == 1){ 
+            if($patient[0]->primary_cell_phone == 1){
+                $phn = $patient[0]->country_code.''.$patient[0]->mob;
+                $errormsg = sendTextMessage($phn, $replace_final, $uid, $module_id, $stage_id);
+            }else{
+                $phn = $patient[0]->secondary_country_code.''.$patient[0]->home_number;
+                $errormsg = sendTextMessage($phn, $replace_final, $uid, $module_id, $stage_id);
+            }
         }
     }
 

@@ -21,6 +21,11 @@
         })->name('order.form');
 
         Route::get('/test', 'RCare\API\Http\Controllers\APIController@test')->name('test');
+        Route::post('/data_from_device', 'RCare\API\Http\Controllers\MioDeviceController@test_mio_webhook_observation')->name('test_mio_webhook_data_from_device'); 
+        Route::post('/data_from_device/{id}', 'RCare\API\Http\Controllers\MioDeviceController@mio_webhook_observation')->name('mio_webhook_data_from_device'); 
+        Route::post('/process_mio_webhook_observation', 'RCare\API\Http\Controllers\MioDeviceController@process_mio_webhook_observation')->name('process_mio_webhook_observation'); 
+        Route::post('/savethresholdreadingofmioWebhook', 'RCare\API\Http\Controllers\MioDeviceController@saveThresholdReadingOfMioWebhook')->name('save_threshold_reading_of_miowebhook'); 
+		
 		Route::put('/order', 'RCare\API\Http\Controllers\APIController@updateOrder');
 		Route::get('/patient-order-list', 'RCare\API\Http\Controllers\APIController@OrderList');
 		Route::get('/order_list', 'RCare\API\Http\Controllers\APIController@getOrderList')->name('order_list');
