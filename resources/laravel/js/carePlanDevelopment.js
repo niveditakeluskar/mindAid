@@ -3361,6 +3361,7 @@ var getSectionHTML = function (url, section, functionToCall, form = 'all') {
 			$.when(
 				$('#' + section).html(response.data)
 			).then(function () {
+				$('#'+ section).find("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");;
 				if (form != 'all') {
 					populateForm(patient_id, formpopulateurl);
 				}

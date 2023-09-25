@@ -3091,6 +3091,7 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
     }).then(function (response) {
         $('.form_start_time').val(response.data.form_start_time);
         $("form").find(":submit").attr("disabled", false);
+        $("form").find(":button").attr("disabled", false);
         pause_next_stop_flag = 0;
         setTimeout(function () {
             pause_stop_flag = 0;
@@ -3130,6 +3131,7 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             $("#timer_end").val(response.data.end_time);
             updateTimer(patientId, billable, moduleId);
             $("form").find(":submit").attr("disabled", true);
+            $("form").find(":button").attr("disabled", true);
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
             alert("Timer paused and Time Logged successfully.");

@@ -996,7 +996,7 @@ function getVTreeData($id){
         $veteranQuestion = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('status',1)->where('stage_id',$SID)->where('template_type_id', 5)->latest()->first();
     }
    
-    
+    if($veteranQuestion != null){
     $queData = json_decode($veteranQuestion['question']);
     if(isset($queData->question->q)){
     $questionnaire = $queData->question->q;
@@ -1036,6 +1036,7 @@ function getVTreeData($id){
     }else{
         return '';
     }
+}
 }
     
 }
