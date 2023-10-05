@@ -199,7 +199,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('tellihealth:telliHealthRpmObservation')->everyFiveMinutes();
 		$schedule->command('MFA:message')->everyMinute();
 		$schedule->command('RPMReadingReminder:noReadings')->dailyAt('07:35');
-		$schdule->command('miowebhook:miowebhookRpmObservation')->everyMinute();
+		$schedule->command('miowebhook:miowebhookRpmObservation')->everyMinute();
 		//$schedule->command('patient:generatescore')->monthlyOn(1,'08:00'); --//3.00 am CST and utc ka 8 am
     }
 
