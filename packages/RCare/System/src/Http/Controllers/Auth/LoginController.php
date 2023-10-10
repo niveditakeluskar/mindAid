@@ -614,13 +614,13 @@ class LoginController extends Controller
                     if($DomainFeatures!=null){
                         // dd('saaa');  
                         $domainFeatures_status = DomainFeatures::where('features','2FA')
-                        ->where(DB::raw('lower(url)'), $base_url)
+                        ->whereRaw('LOWER(url) like ?', [$base_url])
                         //DomainFeatures::where('features','2FA')->where('url',$base_url)
                         ->where('status',1)->first();
                         if(isset($domainFeatures_status)){
                             if($userlockStatus->status==0){
                                 $this->setLogInLog_renCore($id,$email);
-                                // echo "string1";
+                                 echo "string1";
                                 $response['success']='n';
                                 $response['url']=''; 
                                 $response['error']='You are temparary deactivated. Please contact to admin.';
