@@ -25,9 +25,9 @@ class DiagnosisController extends Controller {
 
     public function populateDiagnosisData($patientId){
       $patientId = sanitizeVariable($patientId);
-      $diagnosis_data=DB::select( DB::raw("select d.id,d.condition,upper(dc.code) as code,d.status,d.qualified 
+      $diagnosis_data=DB::select("select d.id,d.condition,upper(dc.code) as code,d.status,d.qualified 
       from ren_core.diagnosis as d left join ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id  
-      where d.id='$patientId' and dc.status=1 order by d.created_at desc"));        
+      where d.id='$patientId' and dc.status=1 order by d.created_at desc");        
       $result['main_diagnosis_form'] = $diagnosis_data;
       return $result;
     }
@@ -35,8 +35,7 @@ class DiagnosisController extends Controller {
     // created by ashwini 26april2022
     public function  getDiagnoDataCount($patientid){
       $patientid = sanitizeVariable($patientid);
-      $data=DB::select( DB::raw("
-      select *  from patients.patient_diagnosis_codes where patient_id='$patientid' and status = 1  "));  
+      $data=DB::select("select *  from patients.patient_diagnosis_codes where patient_id='$patientid' and status = 1  ");  
       $count = count($data);
       // dd( $count);
       return $count;  
@@ -65,7 +64,7 @@ class DiagnosisController extends Controller {
       //           "));             
 
               
-      $data  = DB::select( DB::raw("
+      $data  = DB::select("
       SELECT                 
       ((select count(distinct pd.diagnosis) 
       from patients.patient_diagnosis_codes pd               
@@ -81,7 +80,7 @@ class DiagnosisController extends Controller {
       where  pr.patient_id='$patientId' and pr.status = 1 and pr.review_date < '".$previoussixmonths."'))
       AS count;            
                          
-      "));      
+      ");      
       //this query adds count from patient_diagnosis_codes and count from patient_careplan_last_update_n_review
 
       return $data; 
@@ -93,11 +92,11 @@ class DiagnosisController extends Controller {
      public function getDisableDataofDiagnosis($id){
       $id = sanitizeVariable($id);
       $patientid = sanitizeVariable($patientid);
-      $data=DB::select( DB::raw("
+      $data=DB::select("
               select id,upper(code) as code,condition,symptoms,goals,tasks,comments,created_at,updated_at,patient_id,
               uid,diagnosis,created_at,updated_at,review,status where  id='$id'
               from patients.patient_diagnosis_codes
-              "));
+              ");
 
 
       $diagnosisconditionid = $data[0]->diagnosis;
@@ -121,12 +120,12 @@ class DiagnosisController extends Controller {
       $month     = date('m');
       $year      = date("Y");
 
-      $data=DB::select( DB::raw(" select id,upper(code) as code,condition,symptoms,goals,tasks,comments,created_at,updated_at,patient_id,
+      $data=DB::select(" select id,upper(code) as code,condition,symptoms,goals,tasks,comments,created_at,updated_at,patient_id,
               uid,diagnosis,created_at,updated_at,review,status 
               from patients.patient_diagnosis_codes where patient_id='".$patientid."' and
                EXTRACT(Month from created_at) = '".$month."' AND EXTRACT(YEAR from created_at) = '".$year."' 
                and condition = '".$condition_name."' and code = '".$code."'
-              "));
+              ");
               // dd($data);
      $count=         count($data);
       // $diagnosisconditionid = $data[0]->diagnosis;
@@ -162,7 +161,7 @@ class DiagnosisController extends Controller {
       if($id==''){
         //$existcondition=Diagnosis::where('condition',$condition)->exists(); 
         //$existcode=Diagnosis::where(UPPER(code),$u_code)->where(UPPER(condition),$u_condition)->exists(); 
-       $existcondition = DB::select( DB::raw("select * from ren_core.diagnosis d  where  upper(d.condition) = '".$u_condition."'"));
+       $existcondition = DB::select("select * from ren_core.diagnosis d  where  upper(d.condition) = '".$u_condition."'");
        //dd($existcondition); 
        if($existcondition  == '' || $existcondition == null ){ //dd("if");
           //$data['created_by']= session()->get('userid');
@@ -173,9 +172,9 @@ class DiagnosisController extends Controller {
             for($i=0;$i<count($code);$i++)
             {
                 $u_code = strtoupper($code[$i]);
-                $existcode = DB::select( DB::raw("select * from ren_core.diagnosis_codes dc  
+                $existcode = DB::select("select * from ren_core.diagnosis_codes dc  
                                                   inner join ren_core.diagnosis d on d.id = dc.diagnosis_id  
-                                                  where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."'"));
+                                                  where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."'");
                 if($existcode == '' || $existcode == null) {  
                   $datacode     = array(
                     'code'      => $u_code,
@@ -200,7 +199,7 @@ class DiagnosisController extends Controller {
         }
       } else {
        // $existcondition=Diagnosis::where('condition',$condition)->where('id','!=',$id)->exists();
-       $existcondition = DB::select( DB::raw("select * from ren_core.diagnosis d  where  upper(d.condition) = '".$u_condition."' and id != '".$id."' "));
+       $existcondition = DB::select("select * from ren_core.diagnosis d  where  upper(d.condition) = '".$u_condition."' and id != '".$id."' ");
        if($existcondition  == '' || $existcondition == null ){ //dd("if");
           $update_query = Diagnosis::where('id',$id)->orderBy('id', 'desc')->update($data);
           $statusdeactive=array("status"=>0);
@@ -209,9 +208,9 @@ class DiagnosisController extends Controller {
           if(!empty($code)) {
             for($i=0;$i<count($code);$i++){
               $u_code = strtoupper($code[$i]);
-              $existcode = DB::select( DB::raw("select * from ren_core.diagnosis_codes dc  
+              $existcode = DB::select("select * from ren_core.diagnosis_codes dc  
                                                 inner join ren_core.diagnosis d on d.id = dc.diagnosis_id  
-                                                where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."' and dc.status = 1"));
+                                                where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."' and dc.status = 1");
               if($existcode == '' || $existcode == null) {  
                 $datacode=[];
                 $datacode     = array(
@@ -269,13 +268,13 @@ class DiagnosisController extends Controller {
            $configTZ = config('app.timezone'); 
            $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
           // dd($userTZ);
-           $data=DB::select( DB::raw("select d.id,d.condition,
+           $data=DB::select("select d.id,d.condition,
            rtrim(array_to_string(array_agg(upper(concat(dc.code , '#' , dc.valid_invalid))), ','),'#') as code, d.status, to_char(d.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at,
                u.f_name, u.l_name,d.qualified from ren_core.diagnosis as d 
               FULL OUTER JOIN  ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id and dc.status=1 and dc.code is not null 
               left join ren_core.users as u on d.created_by=u.id  
               where d.condition is not null
-              group by d.id,u.f_name,u.l_name,d.qualified order by d.created_at desc"));
+              group by d.id,u.f_name,u.l_name,d.qualified order by d.created_at desc");
           
             return Datatables::of($data)
             ->addIndexColumn()
