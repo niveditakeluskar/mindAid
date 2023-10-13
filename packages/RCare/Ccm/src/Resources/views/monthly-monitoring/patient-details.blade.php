@@ -436,6 +436,18 @@
     }); 
     }  
 
+    function saveEMR(){
+        $.ajax({
+            url: '/ccm/saveEmrSummary',
+            type: 'POST',
+            data: $("#callwrapup_form").serialize(),
+            success: function (data) {
+            var table = $('#callwrap-list');
+            table.DataTable().ajax.reload();
+            }
+        });
+    }
+
     $('#searchbutton').click(function(){       
         var ref_this = $("ul#patientdevicetab li a.active").attr('id');
         var res = ref_this.split("_");
