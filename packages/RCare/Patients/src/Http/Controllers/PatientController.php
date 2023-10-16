@@ -217,7 +217,8 @@ class PatientController extends Controller
         $state = empty($PatientAddress)?'':$PatientAddress->state;
         $zipcode = empty($PatientAddress)?'':$PatientAddress->zipcode;
         $services = Module::where('patients_service',1)->get();
-        $UserPatients = UserPatients::with('users_assign_to')->where('patient_id',$uid)->latest()->first();
+        $UserPatients = UserPatients::with('users_assign_to')->where('patient_id',$uid)->where('status',1)->latest()->first();
+		
         $caremanager_name = empty($UserPatients['users_assign_to']) ? '' : $UserPatients['users_assign_to']->f_name .' '. $UserPatients['users_assign_to']->l_name;
         $patient_providers = PatientProvider::where('patient_id', $uid)
                              ->with('practice')->with('provider')->with('users')
