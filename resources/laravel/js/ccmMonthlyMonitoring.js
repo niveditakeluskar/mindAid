@@ -68,7 +68,11 @@ var populateForm = function (data, url) {
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) {
                         var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
                         var summarys = result[key].static['summary'];
-						var summaryslength = result[key].static['summary'].length;
+                        if(summary === null || summary === undefined || summary === ''){
+						    var summaryslength = 0;
+                        }else{
+						    var summaryslength = result[key].static['summary'].length;  
+                        }
                         var checklist_data = result[key].static['checklist_data'];
 						
 						if(result[key].static['additional_services'] != null && typeof(result[key].static['additional_services'])!= "undefined" && result[key].static['additional_services'] != ""){

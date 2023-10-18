@@ -416,6 +416,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
        
        
        ";
+	   dd( $query);
        $data = DB::select( DB::raw($query) );
       //  dd($query);
       //  dd($data);
