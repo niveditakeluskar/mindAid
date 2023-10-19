@@ -71,7 +71,7 @@ class PatientWorklistController extends Controller {
                    group by patient_id,created_by) pt2 ON  pt2.patient_id = pt1.patient_id
                   where  1=1 ) ptr where ptr.created_by=$cid";
             //  dd($query);
-          $data = DB::select( DB::raw($query)); 
+          $data = DB::select($query); 
          $patientcount=$data[0]->totalpatients;
           
           if($patientcount!="" || $patientcount!=0 || $patientcount!=null)
@@ -819,12 +819,12 @@ class PatientWorklistController extends Controller {
               // $data = DB::select( DB::raw($query) );  
               if($roleid  == 2) {
                   if($module!="null" || $p!="null" || $pt!="null"){   
-                      $data = DB::select(DB::raw($query));
+                      $data = DB::select($query);
                   } else {
                       $data = [];  
                   }
               } else{
-                  $data = DB::select(DB::raw($query));    
+                  $data = DB::select($query);    
               } 
   
   
@@ -838,7 +838,7 @@ class PatientWorklistController extends Controller {
              
             
               $query2 = "select * from patients.generate_patient_score()";   
-              $data2 = DB::select( DB::raw($query2) );
+              $data2 = DB::select($query2);
               
               $run_score_procedure = 0;    
              }
@@ -1028,7 +1028,7 @@ class PatientWorklistController extends Controller {
                     group by patient_id) cc" ;  
                     
         // dd($query);   
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
          
         
 
@@ -1075,14 +1075,14 @@ public function reschdule_tasks_sp()
     $monthEndDate = $lastday;
     $nearing_20mins = "select * from patients.reschdule_tasks( timestamp '".$monthStartDate."' , timestamp '".$monthEndDate."')";
 
-    $nearing_20minsResults = DB::select(DB::raw($nearing_20mins));  
+    $nearing_20minsResults = DB::select($nearing_20mins);  
     if(count($nearing_20minsResults)>0){
         foreach($nearing_20minsResults as $res){
         $user_id = $res->created_by;
         // $patient_id = $res->patient_id;
         $patient_id = $res->pid;
         $getuseravailableschedule = "select * from patients.reschedule_tasks_date($userid,timestamp '".$monthStartDate."', timestamp '".$monthEndDate."')";
-                $scheduleSQLresult = DB::select( DB::raw($user_available_schedule));
+                $scheduleSQLresult = DB::select($user_available_schedule);
             $data = array();
             if(count($scheduleSQLresult)>0){
                 $schedule_day_pref = 0;
@@ -1128,7 +1128,7 @@ public function reschdule_tasks_sp()
                         and extract(year from task_date) = extract(year from now())
                         and patient_id not in 
 (select distinct patient_id from task_management.to_do_list tdl where date(task_date)> date(now()) and date(task_date) < '".$monthEndDate."') order by score desc";
-        $pendingtasksResults = DB::select( DB::raw($pendingtasks));
+        $pendingtasksResults = DB::select($pendingtasks);
         if(count($pendingtasksResults)>0){	
             foreach($pendingtasksResults as $r){
                 $score = $r->score;
@@ -1137,7 +1137,7 @@ public function reschdule_tasks_sp()
                 
                 $getuseravailableschedule = "select * from patients.reschedule_tasks_date($user_id,timestamp '".$monthStartDate."', timestamp '".$monthEndDate."')";
 
-            $scheduleSQLresult = DB::select( DB::raw($getuseravailableschedule));
+            $scheduleSQLresult = DB::select($getuseravailableschedule);
             $data = array();
             if(count($scheduleSQLresult)>0){
                 $schedule_day_pref = 0;
@@ -1209,7 +1209,7 @@ public function createTaskList_sp_bkup(){
 
 echo $patientspreferrenceSQL;
     
-    $patientspreferrenceResults = DB::select( DB::raw($patientspreferrenceSQL));
+    $patientspreferrenceResults = DB::select($patientspreferrenceSQL);
     $timearr = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'];	
     
     $resarr = array();
@@ -1231,7 +1231,7 @@ echo $patientspreferrenceSQL;
 
         $patient_pref = "select * from patients.createlist_patientpreference($patient_id, timestamp '".$monthStartDate."', timestamp '".$monthEndDate."','1 hour','hour',$user_id)";
 
-        $prefSQLresult = DB::select( DB::raw($patient_pref));
+        $prefSQLresult = DB::select($patient_pref);
         
         $prefcounter = 0;
         if(count($prefSQLresult)>0){
@@ -1356,7 +1356,7 @@ echo $patientspreferrenceSQL;
 
         
     $sql = "select * from patients.createtasklist(timestamp '".$monthStartDate."', timestamp '".$monthEndDate."')";	
-    $results = DB::select( DB::raw($sql));
+    $results = DB::select($sql);
     //$date = Carbon::now();
     //$date->modify('first day of next month');
     //echo $date->format('Y-m-d');
@@ -1371,7 +1371,7 @@ echo $patientspreferrenceSQL;
         $patient_id = $r->pid;
         $score = $r->call_score;
         $user_available_schedule = "select * from task_management.get_user_available_slot($user_id , $monthStartDate,  $monthEndDate , '1' , 'hour' )";
-            $scheduleSQLresult = DB::select( DB::raw($user_available_schedule));
+            $scheduleSQLresult = DB::select($user_available_schedule);
             $data = array();
             if(count($scheduleSQLresult)>0){
                 $schedule_day_pref = 0;
@@ -1410,7 +1410,7 @@ echo $patientspreferrenceSQL;
                     echo "slots not available. schedule made at 30 min interval for patients without preference";
 
          $user_available_schedule = "select * from task_management.get_user_available_slot($user_id , $monthStartDate,  $monthEndDate , '30' , 'min' )";
-            $scheduleSQLresult = DB::select( DB::raw($user_available_schedule));
+            $scheduleSQLresult = DB::select($user_available_schedule);
             $data = array();
             if(count($scheduleSQLresult)>0){
                 $schedule_day_pref = 0;
@@ -1488,7 +1488,7 @@ public function createTaskList_sp(){
 
                 echo $patientspreferrenceSQL;
                 
-                $patientspreferrenceResults = DB::select( DB::raw($patientspreferrenceSQL));
+                $patientspreferrenceResults = DB::select($patientspreferrenceSQL);
                 $timearr = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'];	
                 
                 $resarr = array();
@@ -1511,7 +1511,7 @@ public function createTaskList_sp(){
                     $score = $r1->call_score;        
                     $patient_pref = "select * from task_management.createlist_patientpreference($patient_id, timestamp '".$monthStartDate."', timestamp '".$monthEndDate."','1 hour','hour',$user_id)";
 
-                    $prefSQLresult = DB::select( DB::raw($patient_pref));
+                    $prefSQLresult = DB::select($patient_pref);
                     
                     $prefcounter = 0;
                     if(count($prefSQLresult)>0){
@@ -1672,7 +1672,7 @@ public function createTaskList_sp(){
                 // $sql = "select * from task_management.createtasklist(timestamp '".$monthStartDate."', timestamp '".$monthEndDate."')"; changed and modified on 20th feb 2023 ashvini bharti
                 $sql = "select * from task_management.get_patients_withoutpreference(timestamp '".$monthStartDate."', timestamp '".$monthEndDate."')";
                     
-                $results = DB::select( DB::raw($sql));
+                $results = DB::select($sql);
                 //$date = Carbon::now();
                 //$date->modify('first day of next month');
                 //echo $date->format('Y-m-d');
@@ -1689,7 +1689,7 @@ public function createTaskList_sp(){
                     $patient_id = $r->pid;
                     $score = $r->call_score;
                     $user_available_schedule = "select * from task_management.get_user_available_slot($user_id , '".$monthStartDate."',  '".$monthEndDate."' , '1' , 'hour' )";
-                        $scheduleSQLresult = DB::select( DB::raw($user_available_schedule));
+                        $scheduleSQLresult = DB::select($user_available_schedule);
                         $data = array();
                         if(count($scheduleSQLresult)>0){  
                             $schedule_day_pref = 0;
@@ -1746,7 +1746,7 @@ public function createTaskList_sp(){
                             echo "slots not available. schedule made at 30 min interval for patients without preference";
 
                             $user_available_schedule = "select * from task_management.get_user_available_slot($user_id , '".$monthStartDate."',  '".$monthEndDate."' , '30' , 'min' )";
-                            $scheduleSQLresult = DB::select( DB::raw($user_available_schedule));
+                            $scheduleSQLresult = DB::select($user_available_schedule);
                             $data = array();
                             if(count($scheduleSQLresult)>0){
                                 $schedule_day_pref = 0;
@@ -1879,7 +1879,7 @@ public function patientCompletedTasks(){
             " ;   
   
 
-    $results = DB::select( DB::raw($sql));
+    $results = DB::select($sql);
     
     if(count($results) >= 1){
         foreach($results as $r){

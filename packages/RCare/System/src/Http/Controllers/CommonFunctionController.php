@@ -39,7 +39,7 @@ class CommonFunctionController extends Controller
        
 
         $query = "select * from patients.sp_monthly_get_patient_net_time(".$patient_id.", ".$module_id.", 0, '".$month."', '".$year."');"; 
-        $data  = DB::select(DB::raw($query));
+        $data  = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -83,7 +83,7 @@ class CommonFunctionController extends Controller
        
 
         $query = "select * from patients.sp_non_billabel_net_time(".$patient_id.", ".$module_id.", 0, '".$month."', '".$year."');"; 
-        $data  = DB::select(DB::raw($query));
+        $data  = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -118,7 +118,7 @@ class CommonFunctionController extends Controller
         // and pt.patient_id = $patient_id";
 
         $query = "select * from patients.sp_get_patient_net_time(".$patient_id.", ".$module_id.", 0, '".$month."', '".$year."');"; 
-        $data  = DB::select(DB::raw($query));
+        $data  = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -158,7 +158,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8)
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(".$patient_id.", ".$module_id.", 0, '".$month."', '".$year."');"; 
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -194,7 +194,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8)
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(".$patient_id.", ".$module_id.", 0, '".$month."', '".$year."');"; 
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -231,7 +231,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8) and component_id =".$component_id." 
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(".$patient_id.", ".$module_id.", ".$component_id.", '".$month."', '".$year."');"; 
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if(empty($data)) {
             $last_time_spend = "00:00:00";
         } else {

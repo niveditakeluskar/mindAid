@@ -124,7 +124,7 @@ class CcmController extends Controller {
         // dd($month ,$year, date('m'), date('Y') );  
 
 
-                        $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                        $prev_topics = DB::select("(select topic,notes from ccm.ccm_topics
                             where id in (select max(id)
                             FROM ccm.ccm_topics
                             WHERE patient_id='".$patient_id."'
@@ -133,15 +133,15 @@ class CcmController extends Controller {
                             AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
                             group by topic)
                             order by sequence, sub_sequence ASC) 
-                            ") );
+                            ");
                         
                         if($month == date('m') && $year == date('Y')){
                             
                             
-                            $emr_table = DB::select(DB::raw("(select topic, notes
+                            $emr_table = DB::select("(select topic, notes
                             from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
                             AND EXTRACT(Month from record_date) = '".$month."' 
-                            AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)"));
+                            AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)");
 
                             foreach($emr_table as $e){
                                 if($e!=''){
@@ -151,7 +151,7 @@ class CcmController extends Controller {
                             }
 
                             if(count($emr_table)==0){
-                                $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
                                 where id in (select max(id)
                                 FROM ccm.ccm_topics
                                 WHERE patient_id='".$patient_id."'
@@ -159,7 +159,7 @@ class CcmController extends Controller {
                                 AND EXTRACT(Month from record_date) = '".$month."'  
                                 AND EXTRACT(YEAR from record_date) = '".$year."' 
                                 group by topic)
-                                order by sequence, sub_sequence ASC)"));
+                                order by sequence, sub_sequence ASC)");
 
                                 foreach($emr_table as $e){
                                     if($e!=''){
@@ -168,14 +168,14 @@ class CcmController extends Controller {
                                    
                                 }
 
-                                $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                                $emr_table_summary_notes =  DB::select("(select topic,notes
                                 from ccm.ccm_topics
                                 WHERE patient_id='".$patient_id."'
                                 AND topic LIKE 'Summary notes added on%'  
                                 AND EXTRACT(Month from record_date) = '".$month."'  
                                 AND EXTRACT(YEAR from record_date) = '".$year."'
                                 AND status = 1
-                                order by sequence, sub_sequence ASC)"));
+                                order by sequence, sub_sequence ASC)");
 
                                 foreach($emr_table_summary_notes as $n){
                                     if($n!=''){
@@ -188,16 +188,16 @@ class CcmController extends Controller {
                             }
                             
                         }else{
-                            $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_emr_monthly_summary
+                            $emr_table = DB::select("(select topic,notes from ccm.ccm_emr_monthly_summary
                                              WHERE patient_id='".$patient_id."'
                                              AND topic LIKE 'EMR Monthly Summary%'  
                                              AND EXTRACT(Month from record_date) = '".$month."'  
                                              AND EXTRACT(YEAR from record_date) = '".$year."'
                                              And status = 1
-                                             order by sequence, sub_sequence ASC)"));
+                                             order by sequence, sub_sequence ASC)");
 
                             if(count($emr_table)==0){
-                                $emr_table = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+                                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
                                 where id in (select max(id)
                                 FROM ccm.ccm_topics
                                 WHERE patient_id='".$patient_id."'
@@ -205,7 +205,7 @@ class CcmController extends Controller {
                                 AND EXTRACT(Month from record_date) = '".$month."'  
                                 AND EXTRACT(YEAR from record_date) = '".$year."' 
                                 group by topic)
-                                order by sequence, sub_sequence ASC)"));
+                                order by sequence, sub_sequence ASC)");
 
                             }
                             if(count($emr_table)>0){
@@ -216,23 +216,23 @@ class CcmController extends Controller {
                             }
                             
 
-                            $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                            $emr_table_summary_notes =  DB::select("(select topic,notes
                             from ccm.ccm_emr_monthly_summary
                             WHERE patient_id='".$patient_id."'
                             AND topic LIKE 'Summary notes added on%'  
                             AND EXTRACT(Month from record_date) = '".$month."'  
                             AND EXTRACT(YEAR from record_date) = '".$year."' 
                             AND status = 1
-                            order by sequence, sub_sequence ASC)"));
+                            order by sequence, sub_sequence ASC)");
 
                             if(count($emr_table_summary_notes)==0){
-                            $emr_table_summary_notes =  DB::select(DB::raw("(select topic,notes
+                            $emr_table_summary_notes =  DB::select("(select topic,notes
                             from ccm.ccm_topics
                             WHERE patient_id='".$patient_id."'
                             AND topic LIKE 'Summary notes added on%'  
                             AND EXTRACT(Month from record_date) = '".$month."'  
                             AND EXTRACT(YEAR from record_date) = '".$year."' 
-                            order by sequence, sub_sequence ASC)"));
+                            order by sequence, sub_sequence ASC)");
                             }
 
                             if(count($emr_table_summary_notes) > 0){
@@ -358,7 +358,7 @@ class CcmController extends Controller {
                                             ->with('users')
                                             ->orderBy('condition','asc')
                                             ->get(['code','condition','updated_at as date']);
-        $PatientDiag      = DB::select(DB::raw(
+        $PatientDiag      = DB::select(
                                 "select distinct code,condition,jsonb(goals) as goals,jsonb(symptoms) as symptoms ,jsonb(tasks) as tasks,
                                 to_char(max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') 
                                 as date
@@ -369,8 +369,8 @@ class CcmController extends Controller {
                                 AND status = 1
                                 group  by code,condition,jsonb(patient_diagnosis_codes.goals),jsonb(patient_diagnosis_codes.symptoms),jsonb(patient_diagnosis_codes.tasks)
                                 order by date desc"
-                            ));
-        $patient_cmnt     = PatientDiagnosis::select(DB::raw("distinct comments, updated_at, to_char(max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date"))
+                            );
+        $patient_cmnt     = PatientDiagnosis::select("distinct comments, updated_at, to_char(max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date")
                                             ->where("patient_id", $uid)
                                             ->where('status',1)
                                             ->whereMonth('updated_at', '>=', date('m'))
@@ -382,7 +382,7 @@ class CcmController extends Controller {
                         ->whereMonth('updated_at','>=',Carbon::now())//->subMonth()->month
                         ->whereYear('updated_at','>=',Carbon::now())            
                         ->where('status','=',1) //add by priya on 13th may 2021
-                        ->select(DB::raw('DATE(updated_at)date'))->distinct()
+                        ->select('DATE(updated_at)date')->distinct()
                         ->get()->toArray();
         foreach($PatientAllergy1 as $key=>$value) {
             $d = $value['date'];
@@ -390,13 +390,13 @@ class CcmController extends Controller {
             $PatientAllergy = PatientAllergy::where('patient_id', $uid)
                             ->where('status',1)
                             ->whereDate('created_at','=',$value['date']) 
-                            ->select(DB::raw('DATE(created_at)date'),'allergy_type','specify','type_of_reactions','severity','course_of_treatment','allergy_status')
+                            ->select('DATE(created_at)date','allergy_type','specify','type_of_reactions','severity','course_of_treatment','allergy_status')
                             ->get()->toArray();
             $PatientAllergy1[$key]['date'] =  $PatientAllergy;
             $PatientAllergy1[$key]['displaydate'] = $d;
             $i++;
         }
-        $PatientMedication1     = DB::select(DB::raw("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no, 
+        $PatientMedication1     = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no, 
                                         rm.description as name,pm1.updated_at as date
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
@@ -405,7 +405,7 @@ class CcmController extends Controller {
                                             AND pm.created_at >= date_trunc('month', current_date)
                                             AND pm.created_at >= date_trunc('month', current_date) 
                                             group by pm.med_id) 
-                                        order by rm.description asc"));
+                                        order by rm.description asc");
         $last_time_spend        = CommonFunctionController::getCcmNetTime($uid, $module_id);
         $patient_demographics   = PatientDemographics::where('patient_id', $uid)->get();
         $patient_providers      = PatientProvider::where('patient_id', $uid)->with('practice')->with('provider')->with('users')->where('provider_type_id',1)->where('is_active',1)->orderby('id','desc')->get(); 
@@ -428,20 +428,20 @@ class CcmController extends Controller {
                                 ->groupBy('updated_at')
                                 ->get(['height', 'weight', 'bmi', 'bp', 'o2', 'pulse_rate', 'diastolic', 'oxygen', 'notes', 'updated_at as date','pain_level']);
         $patient_healthdata     = PatientHealthData::where('patient_id', $uid)
-                                ->select(DB::raw("distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date"))//,max(updated_at) as updated_at
+                                ->select("distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date")//,max(updated_at) as updated_at
                                 ->whereMonth('updated_at','=', date('m'))
                                 ->whereYear('updated_at','=', date('Y'))
                                 ->groupBy('health_data','health_date')
                                 ->orderBy('health_date','desc')->get();
         $patient_imaging        = PatientImaging::where('patient_id', $uid)
-                                ->select(DB::raw("distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date"))//,max(updated_at) as updated_at
+                                ->select("distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date")//,max(updated_at) as updated_at
                                 ->whereMonth('created_at','=', date('m'))
                                 ->whereYear('created_at','=', date('Y'))
                                 ->groupBy('imaging_details','imaging_date')
                                 ->orderBy('imaging_date','desc')->get();
-        $patient_lab1        = PatientLabRecs::select(DB::raw("distinct to_char( max(created_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date,
+        $patient_lab1        = PatientLabRecs::select("distinct to_char( max(created_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date,
                                                                 lab_test_id, (case when lab_date is null then rec_date else lab_date end) as lab_date, lab_test_parameter_id, reading, high_val,
-                                                                (case when lab_date is null then '0' else '1' end) as lab_date_exist, notes"))
+                                                                (case when lab_date is null then '0' else '1' end) as lab_date_exist, notes")
                                                 ->where('patient_id', $uid)
                                                 ->with(['labTest','labsParameters'])
                                                 ->whereMonth('created_at','=', date('m'))
@@ -475,20 +475,20 @@ class CcmController extends Controller {
                                 
                                 ->whereMonth('updated_at','>=',Carbon::now())//->subMonth()->month)
                                 ->whereYear('updated_at','>=',Carbon::now())
-                                ->select(DB::raw('DATE(updated_at)date'),'type','specify','purpose','brand','frequency','service_start_date','service_end_date','notes')
+                                ->select('DATE(updated_at)date','type','specify','purpose','brand','frequency','service_start_date','service_end_date','notes')
                                 ->get();
         $patient_services1   = PatientHealthServices::where("patient_id",$uid)
                                 ->whereMonth('updated_at','>=',Carbon::now())//->subMonth()->month)
                                 ->whereYear('updated_at','>=',Carbon::now())
-                                ->select(DB::raw('DATE(updated_at) dateval'))->distinct() 
+                                ->select('DATE(updated_at) dateval')->distinct() 
                                 ->get();
         foreach($patient_services1 as $key=>$value) {
             $d        = $value->dateval;
             $i        = 0;
             $patient_services = PatientHealthServices::leftjoin('ren_core.health_services as rhs','patients.patient_healthcare_services.hid', '=', 'rhs.id')
-                                ->select(DB::raw("DATE(patients.patient_healthcare_services.updated_at) as newdate,                             
+                                ->select("DATE(patients.patient_healthcare_services.updated_at) as newdate,                             
                                 to_char(patients.patient_healthcare_services.service_start_date at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY') as service_start_dt,
-                                to_char(patients.patient_healthcare_services.service_end_date at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY') as service_end_dt"), 
+                                to_char(patients.patient_healthcare_services.service_end_date at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY') as service_end_dt", 
                                 'patients.patient_healthcare_services.type as type', 'patients.patient_healthcare_services.specify', 'patients.patient_healthcare_services.purpose', 
                                 'patients.patient_healthcare_services.brand', 'patients.patient_healthcare_services.frequency', 'patients.patient_healthcare_services.notes')                                
                                 ->where("patients.patient_healthcare_services.patient_id",$uid)
@@ -777,7 +777,7 @@ class CcmController extends Controller {
             ) )
             order by todo.status_flag ASC,todo.task_date ASC";
 			
-        $data =DB::select( DB::raw($query) );
+        $data =DB::select($query);
         return Datatables::of($data)
         ->addIndexColumn()
         ->addColumn('action', function($row){
@@ -1012,7 +1012,7 @@ class CcmController extends Controller {
         //     "     
         //  )  ); 
 		
-		$data  = DB::select(DB::raw( "(select id as \"DT_RowId\", id, topic, ct.notes , sequence , sub_sequence, question_sequence, question_sub_sequence
+		$data  = DB::select("(select id as \"DT_RowId\", id, topic, ct.notes , sequence , sub_sequence, question_sequence, question_sub_sequence
 from ccm.ccm_topics ct
 where patient_id = '".$id."'  and status = 1 
 and EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."'  and id in (select max(id)
@@ -1021,7 +1021,7 @@ and EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_
         AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
         group by topic)
 order by sequence , sub_sequence, question_sequence, question_sub_sequence)
-"));
+");
         
        /* $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence 
         from ccm.ccm_topics
@@ -1082,7 +1082,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         //     order by sequence, sub_sequence ASC 
         //     "));
 
-            $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes, action_taken, status, created_at, id, sequence, sub_sequence 
+            $data  = DB::select("(select id as \"DT_RowId\", topic, notes, action_taken, status, created_at, id, sequence, sub_sequence 
             from ccm.ccm_topics
             where id in (select max(id)
             FROM ccm.ccm_topics
@@ -1110,7 +1110,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
          
             
             "     
-         )  ); 
+         ); 
 
 
         $headers = array(
@@ -1390,13 +1390,13 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id          = sanitizeVariable($stage_id);
         $year       = sanitizeVariable(date('Y', strtotime(Carbon::now())));
         $month      = sanitizeVariable(date('m', strtotime(Carbon::now())));
-        $query = DB::select(DB::raw("select sum(net_time) as net_time from patients.patient_time_records
+        $query = DB::select("select sum(net_time) as net_time from patients.patient_time_records
                         WHERE patient_id='".$patient_id."'
                         AND module_id in (2,3,8)
                         AND stage_id ='".$stage_id."'
                         AND EXTRACT(Month from record_date) = '".$month."'  
                         AND EXTRACT(YEAR from record_date) = '".$year."'
-                        "));
+                        ");
        return $query;
     }
 
@@ -3393,7 +3393,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
                                     ->where('emr_type',1)
-                                    ->select(DB::raw("notes,topic,record_date"))
+                                    ->select("notes,topic,record_date")
                                     ->get();
 
                                  
@@ -3405,7 +3405,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
                                     ->where('topic', 'like', 'EMR Monthly Summary%')
-                                    ->select(DB::raw("topic,notes,emr_entry_completed,record_date"))
+                                    ->select("topic,notes,emr_entry_completed,record_date")
                                     ->get();
             }                        
 
@@ -3416,7 +3416,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                                     ->whereYear('created_at', date('Y'))
                                     ->where('status',1)
                                     ->where('emr_type',2)
-                                    ->select(DB::raw("topic,notes,record_date"))
+                                    ->select("topic,notes,record_date")
                                     ->get();
 
             if(count($Summary)==0){
@@ -3426,7 +3426,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                                 ->whereYear('created_at', date('Y'))
                                 ->where('status',1)
                                 ->where('topic', 'like', 'Summary notes added on%')
-                                ->select(DB::raw("topic,notes,record_date,emr_entry_completed"))
+                                ->select("topic,notes,record_date,emr_entry_completed")
                                 ->get();  
             }
 
@@ -3461,7 +3461,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
              $callwrapupchecklistdata = CallWrapupChecklist::where('patient_id', $patientId)->latest()->first();
             $result['callwrapup_form']['static']['checklist_data'] = $callwrapupchecklistdata;
 
-            $callwrapupadditionalservices = DB::select(DB::raw("select id,topic, notes, action_taken, status, created_at, 
+            $callwrapupadditionalservices = DB::select("select id,topic, notes, action_taken, status, created_at, 
                                             sequence, sub_sequence 
                                             from ccm.ccm_topics
                                             where id in (select max(id)
@@ -3469,25 +3469,25 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                                             WHERE patient_id='".$patientId."' And topic LIKE 'Additional Services%'
                                             AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
                                             ) 
-                                            ")); 
+                                            "); 
             $result['callwrapup_form']['static']['additional_services'] = $callwrapupadditionalservices;
         }
 		
 		if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
-            $CallWrap =DB::select(DB::raw("select ct.topic,ct.notes from ccm.ccm_topics ct  
+            $CallWrap =DB::select("select ct.topic,ct.notes from ccm.ccm_topics ct  
                                         inner join ren_core.followup_tasks rft on ct.topic = rft.task 
                                          WHERE ct.patient_id ='".$patientId."' 
                                          AND ct.created_at >= date_trunc('month', current_date)
                                          AND ct.created_at >= date_trunc('year', current_date)
                                          AND ct.sequence =5
-                                        ")); 
+                                        "); 
             $result['callwrapdata_form']['static']['call_wrap_followup_task'] = $CallWrap;
         }
         $PatientVitalsNumberTracking =(PatientVitalsData::latest($patientId) ? PatientVitalsData::latest($patientId)->population() : "");//added by priya 12Nov 2020
         $result['number_tracking_vitals_form']=$PatientVitalsNumberTracking;
         if(PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $PatientImaging =PatientImaging::where('patient_id', $patientId)
-                                            ->select(DB::raw("distinct imaging_details, date(imaging_date)"))
+                                            ->select("distinct imaging_details, date(imaging_date)")
                                             ->whereMonth('created_at', date('m'))
                                             ->whereYear('created_at', date('Y'))
                                             ->groupBy('imaging_details','imaging_date')->get('imaging_details')->toArray();
@@ -3496,7 +3496,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         }
         if( PatientHealthData::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $PatientHealthData =PatientHealthData::where('patient_id', $patientId)
-                                            ->select(DB::raw("distinct health_data, date(health_date)"))
+                                            ->select("distinct health_data, date(health_date)")
                                             ->whereMonth('updated_at', date('m'))
                                             ->whereYear('updated_at', date('Y'))
                                             ->groupBy('health_data','health_date')->get('health_data')->toArray();

@@ -52,11 +52,11 @@ class RolesTypes extends Model
     */
     public static function userRoleType($roleId)
     {
-        $roledetails = DB::select(DB::raw("select r.role_name , rt.role_type
+        $roledetails = DB::select("select r.role_name , rt.role_type
                                 from ren_core.roles r 
                                 left join ren_core.role_types rt on r.role_type = rt.id
 								where r.id = $roleId
-                                "));
+                                ");
 		return $roledetails;	
 								
     }
