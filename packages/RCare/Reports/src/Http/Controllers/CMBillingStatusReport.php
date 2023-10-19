@@ -152,7 +152,7 @@ class CMBillingStatusReport extends Controller
        
         $query = "select pid , pfname , plname , pmname , pdob date, pprofileimg , pppracticeemr , pracpracticename , prprovidername ,  to_char(ccsrecdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as ccsrecdate  , pbstatus , f_name , l_name , pstatus , ptrtotaltime  from patients.caremanager_billing_status_report($c,$p,$pr,$module_id, timestamp '".$dt1."', timestamp '".$dt2."',$timeoption,'".$totime."',$practicesgrp,$activedeactivestatus)"; 
         // dd($query);   
-        $data = DB::select( DB::raw($query) );  
+        $data = DB::select($query);  
        
             return Datatables::of($data) 
             ->addIndexColumn()            

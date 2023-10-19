@@ -243,7 +243,7 @@ class TaskStatusReportController extends Controller
        
 // dd($query);                        
 
-    $data = \DB::select( \DB::raw($query) ); 
+    $data = DB::select($query); 
     // dd($data);  
 
     

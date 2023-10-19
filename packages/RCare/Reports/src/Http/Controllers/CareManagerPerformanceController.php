@@ -76,7 +76,7 @@ class CareManagerPerformanceController extends Controller{
         $query = "select userid,caremanagername,assignedpatient,mon,yr,contacted,completed,bill
         from patients.cm_monthly_perform($user_id,timestamp '".$dt1."',timestamp '".$dt2."',$activedeactivestatus,'".$configTZ ."','".$userTZ."')";
         // dd($query); 
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
         //  dd($data);
             return Datatables::of($data) 
             ->addIndexColumn()             

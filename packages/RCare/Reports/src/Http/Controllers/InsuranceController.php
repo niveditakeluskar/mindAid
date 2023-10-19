@@ -46,7 +46,7 @@ where
 (pi3.ins_provider ilike '".$insurance."' or pi3.ins_provider ilike '".$insurance."%') or 
 (pi2.ins_provider ilike '".$insurance."' or pi2.ins_provider ilike '".$insurance."%')";
      
-     $data = DB::select( DB::raw($query) );     
+     $data = DB::select($query);     
                 return Datatables::of($data) 
                 ->addIndexColumn()            
                 ->make(true);
