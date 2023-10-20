@@ -81,7 +81,7 @@ class SchedulerController extends Controller {
           and pp.practice_id = '".$p."'
           group by pp.patient_id,ps.patient_id having count(*) = 2";
 
-          $data = \DB::select( \DB::raw($query) );
+          $data = \DB::select(($query) );
           $patientscount = $data[0]->count;
           $newmodule_id = 3;
         }
@@ -129,7 +129,7 @@ class SchedulerController extends Controller {
         
          //changes made by ashvini arumugam 5th dec 2022
          $query = "select * from patients.sp_newarrayscheduleradditionaltime('".$finalmodules."',$practicegrp,$p,$componentid,'".$practicetime."','".$comments."',$schedulerId,$activityid,$schedulerlogrunid,$convertedoperation)";                                
-         $insert =   DB::select( DB::raw($query) );
+         $insert =   DB::select($query);
            
          
          \Log::info("scheduler procedure called patients.sp_newarrayscheduleradditionaltime"); 
@@ -543,7 +543,7 @@ class SchedulerController extends Controller {
 
              $query = "select * from patients.patient_details($practid)";  
            
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
          
            return Datatables::of($data)
            ->addIndexColumn()            
@@ -560,7 +560,7 @@ class SchedulerController extends Controller {
 
            $query = "select * from patients.sp_total_patient_deatils_of_assign_patient($practid)";  
            
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
          
            return Datatables::of($data)
            ->addIndexColumn()            
@@ -577,7 +577,7 @@ class SchedulerController extends Controller {
 
              $query = "select * from patients.sp_assignedtask_activepatient($practid)";  
            
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
          
            return Datatables::of($data)
            ->addIndexColumn()            
@@ -594,7 +594,7 @@ class SchedulerController extends Controller {
 
              $query = "select * from patients.sp_nonassigntask_activepatient($practid)";  
            
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
          
            return Datatables::of($data)
            ->addIndexColumn()            

@@ -98,7 +98,7 @@ class EnrollmentReportController extends Controller
       $query = "select pid, pfname, plname, pmname, pprofileimg, pdob , practicename ,address, mmodule, prprovidername, userfname, userlname, to_char(pscreatedat at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as pscreatedat , tptotalpatient, pralocation, pracpracticeemr, pstatus
       from patients.SP_ENROLLMENT_REPORT($c,$p,timestamp '".$dt1."',timestamp '".$dt2."',$module_id,$practicesgrp,$provider_id,$activedeactivestatus)";  
      
-      $data = DB::select( DB::raw($query) );
+      $data = DB::select(($query) );
      
       return Datatables::of($data) 
       ->addIndexColumn()            
@@ -284,46 +284,46 @@ class EnrollmentReportController extends Controller
       // end
 
       $querytotalcount="select * from patients.active_patient_count()"; 
-      $totalPatient=DB::select( DB::raw($querytotalcount));
+      $totalPatient=DB::select(($querytotalcount));
 
 
       $queryActivepatientenrolledcount = "select * from patients.sp_enrolled_active_patients_count()";
       $querySuspendedpatientenrolledcount ="select * from patients.sp_enrolled_suspended_patients_count()";
-      $totalActiveEnreolledPatient=DB::select( DB::raw($queryActivepatientenrolledcount) );
-      $totalSuspendedEnrolledPatient = DB::select( DB::raw($querySuspendedpatientenrolledcount) );
+      $totalActiveEnreolledPatient=DB::select(($queryActivepatientenrolledcount) );
+      $totalSuspendedEnrolledPatient = DB::select(($querySuspendedpatientenrolledcount) );
  
       $queryActiveCcm ="select * from patients.sp_enrolled_in_ccm_active_detailscount()";
       $querySuspendedCcm ="select * from patients.sp_enrolled_in_ccm_suspended_detailscount()";
-      $totalActiveCCMPatient =DB::select( DB::raw($queryActiveCcm) );
-      $totalSuspendedEnrolledInCCM =DB::select( DB::raw($querySuspendedCcm) );
+      $totalActiveCCMPatient =DB::select(($queryActiveCcm) );
+      $totalSuspendedEnrolledInCCM =DB::select(($querySuspendedCcm) );
 
       $queryActiveRpm ="select * from patients.sp_enrolled_in_rpm_active_detailscount()";
       $querySuspendedRpm ="select * from patients.sp_enrolled_in_rpm_suspended_detailscount()";
    
-      $totalActiveRPMPatient=DB::select( DB::raw($queryActiveRpm) ); 
-      $totalSuspendedRPMPatient=DB::select( DB::raw($querySuspendedRpm) );
+      $totalActiveRPMPatient=DB::select(($queryActiveRpm) ); 
+      $totalSuspendedRPMPatient=DB::select(($querySuspendedRpm) );
       
       $query4 = "select * from patients.sp_nonenrolled_patientscount()";
-      $totalUnEnrolledPatient=DB::select( DB::raw($query4) );  
+      $totalUnEnrolledPatient=DB::select(($query4) );  
       
        $query5 = " select count(distinct up.patient_id) from task_management.user_patients up
          inner join patients.patient p on  up.patient_id=p.id 
          inner join patients.patient_providers pp on pp.patient_id =p.id
          inner join ren_core.practices p2 on p2.id=pp.practice_id 
          where up.status=1  and pp.provider_type_id =1 and pp.is_active=1 and p2.is_active =1 and p.status=1";
-        $totalAssignedPatient=DB::select( DB::raw($query5) );
+        $totalAssignedPatient=DB::select(($query5) );
        
        //added by radha 18nov20
           $query6="select count(distinct p.id) from patients.patient p
            inner join patients.patient_providers pp on pp.patient_id =p.id
            inner join ren_core.practices p2 on p2.id=pp.practice_id 
           where pp.provider_type_id =1 and pp.is_active=1 and p2.is_active =1 and p.status=1";
-        $totalPatientActive=DB::select( DB::raw($query6) );
+        $totalPatientActive=DB::select(($query6) );
 
       // $query6 = "select count(*) from ren_core.users where role=5 ";
       //Updated by -pranali on 22Oct2020
       $query6 = "select count(*) from ren_core.users where role=5 and status = 1";
-      $totalCareManeger=DB::select( DB::raw($query6) );
+      $totalCareManeger=DB::select(($query6) );
 
 
 
@@ -331,15 +331,15 @@ class EnrollmentReportController extends Controller
       from patients.patient_services ps 
       where ps.status=1 and  ps.patient_id in (select id from patients.patient p where p.status=1)
       and ps.created_at between '".$fromdate."' and '".$todate." 23:59:59' ";
-      $totalnewenroll=DB::select( DB::raw($querynewenroll) );
+      $totalnewenroll=DB::select(($querynewenroll) );
 
 
       //added by ashwinimali
       $queryallpatientcount ="select * from patients.patient_count()";
-      $totalallPatient=DB::select( DB::raw($queryallpatientcount));
+      $totalallPatient=DB::select(($queryallpatientcount));
 
       $totalPatientAssignTask = "select * from patients.active_assign_patient_count()";
-        $totalPatientAssignTask=DB::select( DB::raw($query5) );
+        $totalPatientAssignTask=DB::select(($query5) );
 
        $data=array('Totalpatient'=>$totalPatient, 
         'Totalallpatient'=>$totalallPatient,

@@ -166,7 +166,7 @@ public static function InactivePcpPractices()
     }
 
      public static function groupedPractices() {
-        $query = \DB::select(\DB::raw("select p.id, p.name || ' (' || p.location || ')' as name,
+        $query = \DB::select(("select p.id, p.name || ' (' || p.location || ')' as name,
                 case
                     when p.is_active = 1 and p.practice_type='pcp' then 'Active'
                     when p.is_active = 0 and p.practice_type='pcp' then 'Inactive'

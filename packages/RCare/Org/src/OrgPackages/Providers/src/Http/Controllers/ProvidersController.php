@@ -116,7 +116,7 @@ class ProvidersController extends Controller {
            //      b.name as practices,provider_type,sub_provider_type,sp.speciality,f_name, l_name')
            // ->get();
            // echo"<pre>";print_r($data);
-            $data = DB::select(DB::raw("select a.id,a.name,a.phone,a.address,a.email,a.is_active,
+            $data = DB::select("select a.id,a.name,a.phone,a.address,a.email,a.is_active,
                 b.name as practices,provider_type,a.provider_subtype_id as provider_subtype_id,d.sub_provider_type as sub_provider_type,sp.speciality,f_name, l_name,
                 to_char(a.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                 FROM ren_core.providers as a
@@ -124,7 +124,7 @@ class ProvidersController extends Controller {
                 left join ren_core.provider_types as c on a.provider_type_id = c.id 
                 left join ren_core.provider_subtype as d on a.provider_subtype_id = d.id 
                 left join ren_core.speciality as sp on sp.id=a.speciality_id 
-                left join ren_core.users as u on a.created_by=u.id"));
+                left join ren_core.users as u on a.created_by=u.id");
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
@@ -199,11 +199,11 @@ class ProvidersController extends Controller {
     $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         if ($request->ajax()) {
             // $data = ProviderSubtype::all();  to_char(a.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at,
-            $data = DB::select(DB::raw("select a.id,a.provider_type_id,a.sub_provider_type,a.phone_no,a.address,a.is_active,
+            $data = DB::select("select a.id,a.provider_type_id,a.sub_provider_type,a.phone_no,a.address,a.is_active,
                 b.provider_type,f_name,l_name,
                 to_char(a.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                 FROM ren_core.provider_subtype as a 
-                left join ren_core.provider_types as b on a.provider_type_id=b.id left join ren_core.users as u on a.created_by=u.id"));
+                left join ren_core.provider_types as b on a.provider_type_id=b.id left join ren_core.users as u on a.created_by=u.id");
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
