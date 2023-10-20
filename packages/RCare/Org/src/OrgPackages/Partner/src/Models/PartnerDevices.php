@@ -11,7 +11,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 class PartnerDevices extends Model
 {
     use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='ren_core.partner_devices';
+    protected $table ='ren_core.partner_devices_listing';
 
     /**
     * The attributes that are mass assignable.

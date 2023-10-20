@@ -70,7 +70,7 @@
                                 <label class="col-md-12">EMR Monthly Summary</label>
                                 <!-- <textarea class="form-control" id="emr_monthly_summary1"></textarea> -->
                                 <!-- @text("emr_monthly_summary", ["id"=>"emr_monthly_summary"]) aria-label="With textarea"-->
-                                <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary"></textarea>
+                                <textarea  class="form-control emrsummary" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" onfocusout="saveEMR()"></textarea>
                                 <div class="invalid-feedback"></div>  
                             </div>
                         </div> 

@@ -436,6 +436,18 @@
     }); 
     }  
 
+    function saveEMR(){
+        $.ajax({
+            url: '/ccm/saveEmrSummary',
+            type: 'POST',
+            data: $("#callwrapup_form").serialize(),
+            success: function (data) {
+            var table = $('#callwrap-list');
+            table.DataTable().ajax.reload();
+            }
+        });
+    }
+
     $('#searchbutton').click(function(){       
         var ref_this = $("ul#patientdevicetab li a.active").attr('id');
         var res = ref_this.split("_");
@@ -889,9 +901,9 @@
         }
 
 
-        function ajaxRenderTree1(obj, id, count, objCount, tree_key) {
+        function ajaxRenderTree1(obj, id, count, objCount, tree_key, seq, tempid) {
             var label = $("#opt" + id + '' + objCount + '' + tree_key).val();
-            ajaxRenderTree(obj, label, id, objCount, tree_key);
+            ajaxRenderTree(obj, label, id, objCount, tree_key, seq, tempid);
         }
 
         function checkQuestion(obj, i) { 
