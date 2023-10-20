@@ -118,36 +118,38 @@ var AppStopwatch = (function () {
 	
     function startWatch() {
 		if($("#pause").is(":hidden")){
-		var pausetime = $("#pause_time").val();
+			var pausetime = $("#pause_time").val();
+				
+			var playtime = "0";
+			var pauseplaydiff = $("#pauseplaydiff").val();
 			
-		var playtime = "0";
-		var pauseplaydiff = $("#pauseplaydiff").val();
-		
-		//pauseplaydiffmin = moment.duration(pauseplaydiff.format("HH:mm:ss")).asMinutes();
-		
-		if(pausetime!='0'){
-			console.log("pausetime1 "+pausetime);
-			pausetime = moment(pausetime);
-			playtime = moment();
-			console.log("pausetime2 "+pausetime);
-			//console.log("pausetime"+pausetime+" playtime "+playtime);
-			pauseplaydiff_new = getTimeDiff( pausetime, playtime);
-			$("#play_time").val(playtime);
-			console.log("pausetime"+pausetime+" playtime "+playtime+ " pauseplaydiff_new "+pauseplaydiff_new+ " pauseplaydiff "+pauseplaydiff);
-			pauseplaydiffsum = getTimeSum(parseInt(pauseplaydiff_new), parseInt(pauseplaydiff));
-			console.log("pausetime"+pausetime+" playtime "+playtime+ " pauseplaydiff_new "+pauseplaydiff_new+ " pauseplaydiff "+pauseplaydiff+" pauseplaydiffsum "+pauseplaydiffsum );
-			$("#pauseplaydiff").val(pauseplaydiffsum);
+			//pauseplaydiffmin = moment.duration(pauseplaydiff.format("HH:mm:ss")).asMinutes();
 			
-			/*
-			var hour = (`${pauseplaydiff.hours()}`<10? `0`+`${pauseplaydiff.hours()}`:`${pauseplaydiff.hours()}`);
-			var mins = (`${pauseplaydiff.minutes()}`<10? `0`+`${pauseplaydiff.minutes()}`:`${pauseplaydiff.minutes()}`);
-			var secs = (`${pauseplaydiff.seconds()}`<10? `0`+`${pauseplaydiff.seconds()}`:`${pauseplaydiff.seconds()}`);			
-			*/
-		}
-		
-        $("#start").hide();
-        $("#pause").show();    
-		}		
+			if(pausetime!='0'){
+				console.log("pausetime1 "+pausetime);
+				pausetime = moment(pausetime);
+				playtime = moment();
+				console.log("pausetime2 "+pausetime);
+				//console.log("pausetime"+pausetime+" playtime "+playtime);
+				pauseplaydiff_new = getTimeDiff( pausetime, playtime);
+				$("#play_time").val(playtime);
+				console.log("pausetime"+pausetime+" playtime "+playtime+ " pauseplaydiff_new "+pauseplaydiff_new+ " pauseplaydiff "+pauseplaydiff);
+				pauseplaydiffsum = getTimeSum(parseInt(pauseplaydiff_new), parseInt(pauseplaydiff));
+				console.log("pausetime"+pausetime+" playtime "+playtime+ " pauseplaydiff_new "+pauseplaydiff_new+ " pauseplaydiff "+pauseplaydiff+" pauseplaydiffsum "+pauseplaydiffsum );
+				$("#pauseplaydiff").val(pauseplaydiffsum);
+				
+				/*
+				var hour = (`${pauseplaydiff.hours()}`<10? `0`+`${pauseplaydiff.hours()}`:`${pauseplaydiff.hours()}`);
+				var mins = (`${pauseplaydiff.minutes()}`<10? `0`+`${pauseplaydiff.minutes()}`:`${pauseplaydiff.minutes()}`);
+				var secs = (`${pauseplaydiff.seconds()}`<10? `0`+`${pauseplaydiff.seconds()}`:`${pauseplaydiff.seconds()}`);			
+				*/
+			}
+			
+			$("#start").hide();
+			$("#stop").show();
+			$("#pause").show();
+			
+		}        
         runClock = setInterval(displayTime, 1000);
     }
 
@@ -158,12 +160,13 @@ var AppStopwatch = (function () {
 			$("#pause_time").val(pausetime);
 			$("#start").show();
 			$("#pause").hide();
+			$("#stop").hide();
 			clearInterval(runClock);
 		}
     }
 
     function stopWatch() {
-       // if (confirm('Are you sure you want to stop timer?')) {
+        //if (confirm('Are you sure you want to stop timer?')) {
             $("#display-val").html($stopwatch.container.innerHTML);
 			var pausetime = '0';
 			pausetime = moment();
