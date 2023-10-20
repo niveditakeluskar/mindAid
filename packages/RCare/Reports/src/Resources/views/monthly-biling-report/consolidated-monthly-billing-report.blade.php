@@ -220,7 +220,7 @@ buttons: [
 "processing": true,
 "Language": { 
    'loadingRecords': '&nbsp;',
-   'processing': 'Loading...',
+   'processing': 'Consolidated Billing Report is a processing-intensive Report and might take some time to load. Please wait...',
    search: "_INPUT_",
    // "search":'<a class="btn searchBtn" id="searchBtn"><i class="i-Search-on-Cloud"></i></a>',
    "searchPlaceholder": "Search records",
@@ -260,7 +260,7 @@ $('#load-monthly-billing-tbl').hide();
 
         $(document).ready(function() {  
             var practice = $('#practices').val();
-            getMonthlyBillingPatientList();
+           // getMonthlyBillingPatientList();
             // function getMonth(date) {
             // var month = date.getMonth() + 1;
             // return month < 10 ? '0' + month : '' + month; // ('' + month) for string result

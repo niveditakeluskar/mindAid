@@ -61,6 +61,7 @@ class TellihealthAPIController extends Controller {
     public function process_webhook_observation(){
       $getTellihealthData = ApiTellihealth::where('status',0)->orderBy('id', 'DESC')->get();
       $d = count($getTellihealthData);
+	  //dd($d);
       $i=1;
       foreach($getTellihealthData as $value){
         $datajson = json_decode($value->content, true);
@@ -74,7 +75,7 @@ class TellihealthAPIController extends Controller {
         $checkDeviceExist= PatientDevices::where('device_code',$device_id)->where ('status', 1)->exists();
         $get_checkDeviceExist= PatientDevices::where('device_code',$device_id)->where ('status', 1)->select('patient_id')->get();
         if(isset($get_checkDeviceExist[0])){
-          // echo "Me yha pr hu?";
+           //echo "Me yha pr hu?";
             $patient_id = $get_checkDeviceExist[0]->patient_id;
             $partner_id = $get_checkDeviceExist[0]->partner_id;
             $observationid = $patient_id.'-'.$time; 
@@ -132,6 +133,7 @@ class TellihealthAPIController extends Controller {
                         if($update_threshold!=''){
                           $this->saveThresholdReadings($deviceName,$recorddate,$patient_id,$partner_id,$device_id,$observationid);
                           // ApiTellihealth::where('id',$id)->update(['status'=>1]);
+						  echo "update status section ";
                           \DB::select(\DB::raw("update api.tellihealth t set status=1
                           where  id= '".$id."' and content->>'deviceId'='".$device_id."' "));
                         }

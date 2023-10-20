@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Partner_Devices extends Model
 {
     //
-     protected $table ='ren_core.partner_devices';
+     protected $table ='ren_core.partner_devices_listing';
 
 
       /**
