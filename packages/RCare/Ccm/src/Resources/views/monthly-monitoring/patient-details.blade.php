@@ -901,9 +901,9 @@
         }
 
 
-        function ajaxRenderTree1(obj, id, count, objCount, tree_key) {
+        function ajaxRenderTree1(obj, id, count, objCount, tree_key, seq, tempid) {
             var label = $("#opt" + id + '' + objCount + '' + tree_key).val();
-            ajaxRenderTree(obj, label, id, objCount, tree_key);
+            ajaxRenderTree(obj, label, id, objCount, tree_key, seq, tempid);
         }
 
         function checkQuestion(obj, i) { 

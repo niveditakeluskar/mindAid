@@ -2971,7 +2971,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata5 = $servicesdata5.$s5.", ";
                         }
                     }
-                    $additionalservices5 = "Verbal Education/Review with Patient :".$servicesdata5.";";
+                    $additionalservices5 = "Verbal Education/Review with Patient:".$servicesdata5.";";
     
                 }
                 if($mailed_documents == true){
@@ -2981,7 +2981,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata6 = $servicesdata6.$s6.", ";
                         } 
                     }
-                    $additionalservices6 = "Mailed Documents :".$servicesdata6.";";
+                    $additionalservices6 = "Mailed Documents:".$servicesdata6.";";
     
                 }
                 if($resource_support == true){
@@ -2991,7 +2991,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata7 = $servicesdata7.$s7.", ";
                         }
                     }
-                    $additionalservices7 = "Resource Support :".$servicesdata7.";";
+                    $additionalservices7 = "Resource Support:".$servicesdata7.";";
     
                 }
 
@@ -3005,7 +3005,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         }
                     }
                      
-                    $additionalservices8 = "Veterans Services :".$servicesdata8.";";  
+                    $additionalservices8 = "Veterans Services:".$servicesdata8.";";  
                    
                 } 
 
@@ -3017,12 +3017,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $servicesdata9 = $servicesdata9.$s9.", ";  
                     } 
                 }
-                $additionalservices9 = "Authorized CM Only :".$servicesdata9.";";  
+                $additionalservices9 = "Authorized CM Only:".$servicesdata9.";";  
             } 
 
 
                 if($no_additional_services_provided == true){  
-                    $additionalservices10 = "No Additional Services Provided ";
+                    $additionalservices10 = "No Additional Services Provided";
                     $servicedata =   $additionalservices10;
                 }else{
                     $servicedata = $additionalservices1." ".$additionalservices2." ".$additionalservices3." ".$additionalservices4." ".$additionalservices5." ".$additionalservices6." ".$additionalservices7." ".$additionalservices8." ".$additionalservices9;      
@@ -3033,7 +3033,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $additional_services_data = array(  
                     'uid'                       => $uid,
                     'record_date'               => Carbon::now(),
-                    'topic'                     => 'Additional Services :',  
+                    'topic'                     => 'Additional Services:',  
                     'notes'                     => $servicedata ,
                     'created_by'                => session()->get('userid') , 
                     'patient_id'                => $patient_id,

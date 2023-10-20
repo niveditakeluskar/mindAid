@@ -217,7 +217,8 @@ class PatientController extends Controller
         $state = empty($PatientAddress)?'':$PatientAddress->state;
         $zipcode = empty($PatientAddress)?'':$PatientAddress->zipcode;
         $services = Module::where('patients_service',1)->get();
-        $UserPatients = UserPatients::with('users_assign_to')->where('patient_id',$uid)->latest()->first();
+        $UserPatients = UserPatients::with('users_assign_to')->where('patient_id',$uid)->where('status',1)->latest()->first();
+		
         $caremanager_name = empty($UserPatients['users_assign_to']) ? '' : $UserPatients['users_assign_to']->f_name .' '. $UserPatients['users_assign_to']->l_name;
         $patient_providers = PatientProvider::where('patient_id', $uid)
                              ->with('practice')->with('provider')->with('users')
@@ -1277,6 +1278,7 @@ class PatientController extends Controller
         $partnerid = sanitizeVariable($partnerid);
          // $physicians = Providers::all()->where("practice_id", $practice);
          $partnerid1 = PartnerDevices::where('partner_id',$partnerid)->get();
+		 
         return response()->json($partnerid1);
         // return $partnerid;
     }
@@ -1339,6 +1341,7 @@ class PatientController extends Controller
         $pdevices[]         = array('vid'=>$device_id,'pid'=>$partners,'pdid'=>$partner_device_id);
         $vital_devices      = json_encode($pdevices);
        // dd($pdevices);
+
         $data = array(
             'patient_id'     => $patient_id,
             //partner_device_id
@@ -1402,12 +1405,12 @@ class PatientController extends Controller
             from patients.patient_devices pd 
             left join ren_core.users as u on pd.created_by = u.id 
             inner join ren_core.partners as p on p.id = pd.partner_id
-            inner join ren_core.partner_devices as pdd on pdd.id = pd.partner_device_id
+            inner join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
             where pd.id  = '".$id."'" ));  
        // dd($data);  inner join ren_core.devices as d  on d.id = pd.device_id
         $result['devices_form'] = $data;
         return $result;
-    }
+    } 
 
 	public function getdeviceslist($id){ //dd("working");
         $id           = sanitizeVariable($id);
@@ -1420,7 +1423,7 @@ class PatientController extends Controller
             from patients.patient_devices pd 
             left join ren_core.users as u on pd.updated_by=u.id
             inner join ren_core.partners as p on p.id = pd.partner_id
-            left join ren_core.partner_devices as pdd on pdd.id = pd.partner_device_id
+            left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
             where patient_id  = '".$id."'";  
         //dd($query);
         $data = DB::select( DB::raw($query) );
