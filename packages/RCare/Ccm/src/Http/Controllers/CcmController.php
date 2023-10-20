@@ -3565,7 +3565,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $result['number_tracking_vitals_form']=$PatientVitalsNumberTracking;
         if(PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $PatientImaging =PatientImaging::where('patient_id', $patientId)
-                                            ->select("distinct imaging_details, date(imaging_date)")
+                                            // ->select("distinct imaging_details, date(imaging_date)")
                                             ->whereMonth('created_at', date('m'))
                                             ->whereYear('created_at', date('Y'))
                                             ->groupBy('imaging_details','imaging_date')->get('imaging_details')->toArray();
@@ -3574,9 +3574,9 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         }
         if( PatientHealthData::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
             $PatientHealthData =PatientHealthData::where('patient_id', $patientId)
-                                            ->select("distinct health_data, date(health_date)")
+                                            // ->select("distinct health_data, date(health_date)")
                                             ->whereMonth('updated_at', date('m'))
-                                            ->whereYear('updated_at', date('Y'))
+                                            ->whereYear('updated_at', date('Y')) 
                                             ->groupBy('health_data','health_date')->get('health_data')->toArray();
             $result['number_tracking_healthdata_form']['static']['healthdata'] = '["'.implode('","',array_column($PatientHealthData, 'health_data')).'"]';
             $result['number_tracking_healthdata_form']['static']['health_date'] = '["'.implode('","',array_column($PatientHealthData, 'date')).'"]';
