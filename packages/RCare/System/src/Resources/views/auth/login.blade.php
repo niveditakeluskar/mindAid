@@ -67,7 +67,7 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                                         <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                                         <div class="col-md-6">
-                                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" autocomplete="off">
+                                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  autocomplete="off">
 											<input type="hidden" name="timezone" class = "timezone" id="timezone" value ="<?php echo config('app.timezone_US');?>">
                                             
                                             
@@ -157,7 +157,8 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
                         <div class="form-group row">
                             <label for="code" class="col-md-4 col-form-label text-md-right">Security Code : </label>
                               <div class="col-md-6">
-                                <input type="text" id="code" name="code" minlength="1" class="form-control " onkeypress="return isNumber(event)"  required> 
+                                <input type="text" id="code" name="code" minlength="1" class="form-control"> 
+                                <!-- " onkeypress="return isNumber(event)"  required>  -->
                                 <!-- autocomplete="code" autofocus -->
                                 <span class="invalid-feedback" id="otp_feedback" role="alert">
                                         <strong id="otp_error_msg"></strong>
@@ -236,13 +237,24 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
     </div>
 </div>
 
- <!-- JQUERY  -->
+ <!-- JQUERY  --> 
     
 <script src="{{asset('assets/js/common-bundle-script.js')}}"></script>
 <script src="{{asset('assets/js/script.js')}}"></script>
 <script src="{{asset('assets/js/jquery.validate.min.js')}}"></script> 
 <script src="{{asset('assets/js/moment.min.js')}}"></script> 
     <script type="text/javascript">
+         $("#password").keypress(function (event) {
+            if (event.keyCode === 13) {
+                $("#login_btn").click();
+            } 
+        });
+        // $("#code").keypress(function (event) {
+        //     if (event.keyCode === 13) {
+        //         $("#login_btn").click();
+        //     } 
+        // });
+        
         function check_mfa_status(msg_id){
             // alert(msg_id);
             if(msg_id!=''){ 
@@ -284,17 +296,26 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
         // }, 30000);
         
 
-        $(document).keypress(
-          function(event){
-            if (event.which == '13') {
-                $("#login_btn").click();
-              //event.preventDefault();
-            }
-        });
+        // $(document).keypress(
+        //   function(event){
+        //     if (event.which == '13') {
+        //         $("#login_btn").click();
+        //       //event.preventDefault();
+        //     }
+        // });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
+        });
+
+        $("#code").keypress(function (event) {
+            debugger;
+            if (event.keyCode === 13) {
+                $("#opt_save").click();
+            // $('form#2faotp').submit();
+            return false;    //<---- Add this line
+            } 
         });
 
         $(document).ready(function(){
