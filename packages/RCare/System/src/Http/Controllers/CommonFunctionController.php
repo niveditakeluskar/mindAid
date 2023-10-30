@@ -603,11 +603,11 @@ class CommonFunctionController extends Controller
             // $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
             // $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
             // $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
-            $user_id = session()->get('userid');
+            /*$user_id = session()->get('userid');
             $current_timestamp = Carbon::now();
             $lastMonthPatientVitalsDataQuery = 'INSERT INTO patients.patient_vitals ( "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", "created_by", "created_at", "updated_at" )
             ( SELECT \''.$current_timestamp.'\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
-            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);
+            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);*/
             // $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->get()->last();
             // if($lastMonthPatientVitalsData) {
             //     $insert_vital   = array(
@@ -668,7 +668,7 @@ class CommonFunctionController extends Controller
 
                   PatientLabRecs::create($insert_lab);
                 }
-             }          
+             }         
         }
     }
 
