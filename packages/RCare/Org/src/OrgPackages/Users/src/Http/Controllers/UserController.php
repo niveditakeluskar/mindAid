@@ -140,10 +140,17 @@ class UserController extends Controller {
        
 
         if ($request->ajax()) {
-            dd("working");
+            // dd("working");
             // $data = Users::latesanitizeVariable(st()->with('reportTo')->with('roleName')->with('rcareOrgs')->get();
-            $data = Users::with('reportto','roleName','rcareOrgs','users','office','users_responsibility','users_responsibility.responsibility')->orderby('updated_at','desc')->get();       
-            dd($data);
+            // $data = Users::with('reportto','roleName','rcareOrgs','users','office','users_responsibility','users_responsibility.responsibility')->orderby('updated_at','desc')->get();
+            
+            $data = Users::with('reportto','roleName','rcareOrgs','users','office','users_responsibility','users_responsibility.responsibility')->orderby('updated_at','desc')->get();
+                 
+    //         $data = Users::with('reportto', 'roleName', 'rcareOrgs', 'users', 'office', 'users_responsibility', 'users_responsibility.responsibility')
+    // ->orderBy('updated_at', 'desc') // Change 'orderby' to 'orderBy'
+    // ->get();
+  
+            // dd($data);
            return Datatables::of($data)  
             ->addIndexColumn() 
             ->addColumn('action', function($row){ 

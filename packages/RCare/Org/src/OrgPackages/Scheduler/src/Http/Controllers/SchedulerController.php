@@ -541,7 +541,7 @@ class SchedulerController extends Controller {
        {            
            $practid = sanitizeVariable($request->practice);
 
-             $query = "select * from patients.patient_details($practid)";  
+             $query = "select * from patients.sp_totalpatients($practid)";  
            
            $data = DB::select($query);
          
@@ -558,7 +558,9 @@ class SchedulerController extends Controller {
        {            
            $practid = sanitizeVariable($request->practice);
 
-           $query = "select * from patients.sp_total_patient_deatils_of_assign_patient($practid)";  
+         //   $query = "select * from patients.sp_total_patient_deatils_of_assign_patient($practid)";  
+         
+         $query = "select * from patients.patient_details($practid)";  
            
            $data = DB::select($query);
          
@@ -575,7 +577,8 @@ class SchedulerController extends Controller {
        {            
            $practid = sanitizeVariable($request->practice);
 
-             $query = "select * from patients.sp_assignedtask_activepatient($practid)";  
+            //  $query = "select * from patients.sp_assignedtask_activepatient($practid)";
+             $query = "select * from patients.sp_assigned_patients_details($practid)";    
            
            $data = DB::select($query);
          
@@ -592,7 +595,9 @@ class SchedulerController extends Controller {
        {            
            $practid = sanitizeVariable($request->practice);
 
-             $query = "select * from patients.sp_nonassigntask_activepatient($practid)";  
+            //  $query = "select * from patients.sp_nonassigntask_activepatient($practid)"; 
+            $query = "select * from patients.sp_non_assigned_patients_details($practid)";  
+ 
            
            $data = DB::select($query);
          

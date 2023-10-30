@@ -2179,7 +2179,7 @@ function stepWizardHorizontal(cl) {
  * @param {jQuery Object} selectElement
  * @param {Integer}       selectedSubModules
  */
-var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) {
+var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) { 
     $(selectElement)
         .empty()
         .append('<option value="">Select Modules</option> <option value="0">None</option>');
@@ -2542,7 +2542,7 @@ var getPatientDetails = function (patientId, moduleId) {
             $('.enrolledservice_modules').html('');
             enr = response.data.patient_services.length;
             // alert(response.data.patient_services[0].module.module); 
-			
+			// console.log(response.data);
 			
             for(i= 0; i < enr; i++){
                 // alert(i); 
@@ -2907,12 +2907,13 @@ var getPatientDetails = function (patientId, moduleId) {
             }
         }
         
-        if(response.data.patient_enroll_date[0].finalize_cpd == 0 && response.data.billable == 0 && response.data.enroll_in_rpm == 0 && module == 'care-plan-development'){
-            $('input[name="billable"]').val(0);
-        } else {
-            $('input[name="billable"]').val(1);
-        }
-
+        if(response.data.patient_enroll_date.length > 0){
+            if(response.data.patient_enroll_date[0].finalize_cpd == 0 && response.data.billable == 0 && response.data.enroll_in_rpm == 0 && module == 'care-plan-development'){
+                $('input[name="billable"]').val(0);
+            } else {
+                $('input[name="billable"]').val(1);
+            }
+        }   
     }).catch(function (error) {
         console.error(error, error.response);
     });

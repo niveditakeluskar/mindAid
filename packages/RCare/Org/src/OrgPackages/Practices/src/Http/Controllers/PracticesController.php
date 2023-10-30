@@ -547,7 +547,7 @@ class PracticesController extends Controller {
                 
                 $id = $p->id ; 
                 
-                $pat = \DB::select(\DB::raw("select count(distinct p.id) from patients.patient p 
+                $pat = \DB::select(("select count(distinct p.id) from patients.patient p 
                 left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                 from patients.patient_providers pp1  
                 inner join (select patient_id, max(id) as max_pat_practice 
@@ -573,7 +573,7 @@ class PracticesController extends Controller {
             
             $id = $p->id ; 
             
-            $pat = \DB::select(\DB::raw("select count(distinct p.id) from patients.patient p 
+            $pat = \DB::select(("select count(distinct p.id) from patients.patient p 
             left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
             from patients.patient_providers pp1  
             inner join (select patient_id, max(id) as max_pat_practice 
@@ -789,7 +789,7 @@ class PracticesController extends Controller {
                         foreach($practice as $p) 
                         {
                             $id = $p->id;
-                            $pro= \DB::select(\DB::raw("select  count(distinct p.id) from patients.patient p 
+                            $pro= \DB::select(("select  count(distinct p.id) from patients.patient p 
                             left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                             from patients.patient_providers pp1  
                             inner join (select patient_id, max(id) as max_pat_practice 
@@ -808,7 +808,7 @@ class PracticesController extends Controller {
                             foreach($practice as $p) 
                             {
                                 $id = $p->id;
-                                $pro= \DB::select(\DB::raw("select  count(distinct p.id) from patients.patient p 
+                                $pro= \DB::select(("select  count(distinct p.id) from patients.patient p 
                                 left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                                 from patients.patient_providers pp1  
                                 inner join (select patient_id, max(id) as max_pat_practice 
@@ -832,7 +832,7 @@ class PracticesController extends Controller {
                         foreach($practice as $p) 
                         {
                             $id = $p->id;
-                            $pro= \DB::select(\DB::raw("select  count(distinct p.id) from patients.patient p 
+                            $pro= \DB::select(("select  count(distinct p.id) from patients.patient p 
                             left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                             from patients.patient_providers pp1  
                             inner join (select patient_id, max(id) as max_pat_practice 
@@ -863,7 +863,7 @@ class PracticesController extends Controller {
                             foreach($practice as $p) 
                             {
                                 $id = $p->id;
-                                $pro= \DB::select(\DB::raw("select  count(distinct p.id) from patients.patient p 
+                                $pro= \DB::select(("select  count(distinct p.id) from patients.patient p 
                                 left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                                 from patients.patient_providers pp1  
                                 inner join (select patient_id, max(id) as max_pat_practice 
