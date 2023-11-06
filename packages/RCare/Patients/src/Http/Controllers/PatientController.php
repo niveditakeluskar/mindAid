@@ -1402,7 +1402,7 @@ class PatientController extends Controller
             from patients.patient_devices pd 
             left join ren_core.users as u on pd.created_by = u.id 
             inner join ren_core.partners as p on p.id = pd.partner_id
-            inner join ren_core.partner_devices as pdd on pdd.id = pd.partner_device_id
+            inner join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
             where pd.id  = '".$id."'" ));  
        // dd($data);  inner join ren_core.devices as d  on d.id = pd.device_id
         $result['devices_form'] = $data;
@@ -1420,7 +1420,7 @@ class PatientController extends Controller
             from patients.patient_devices pd 
             left join ren_core.users as u on pd.updated_by=u.id
             inner join ren_core.partners as p on p.id = pd.partner_id
-            left join ren_core.partner_devices as pdd on pdd.id = pd.partner_device_id
+            left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
             where patient_id  = '".$id."'";  
         //dd($query);
         $data = DB::select( DB::raw($query) );
