@@ -1,5 +1,6 @@
 @extends('Theme::layouts.master')
 @section('page-css')
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.css">
 <script src="https://cdn.ckeditor.com/4.8.0/full-all/ckeditor.js"></script>
 <style>
 /*Now the CSS Created by R.S*/
@@ -393,7 +394,18 @@ tr.selected {
 .tree li a {
     background: #c8e4f8;
 }
+.badtag {
+  border: solid 1px red !important;
+  background-color: #d24a4a !important;
+  color: white !important;
+}
 
+.badtag a {
+  color: #ad2b2b !important;
+}
+.badtag span{
+    background:none!important;
+}
 /*Thats all. I hope you enjoyed it.
 Thanks :)*/
 </style>
@@ -520,6 +532,16 @@ Thanks :)*/
                             </div>   
                 </div>
             </div>          
+            <div class="form-group">  
+                        <div class="row">
+                            <div class="col-md-6 form-group mt-2 team-invite">
+                                <label for="tags" class="">Enter Tags</label>
+                                <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30" value="<?php echo $data->tags ?>">
+                                <br>
+                                <p id='subtext'>You can enter multiple tags with comma</p>
+                            </div>
+                        </div>
+                    </div>  
             <?php
             
             function renderTree($treeObj,$lab,$val,$tree_id){
@@ -736,6 +758,7 @@ Thanks :)*/
 <script src="{{asset('assets/js/html2canvas.js')}}"></script>
 <script src="{{asset('assets/js/base64js.min.js')}}"></script>
 <script src="{{asset('assets/js/canvas2image.js')}}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
 <script>
 
 function getChild(id){
@@ -1094,8 +1117,36 @@ $(document).ready(function(){
    
   
 }, 1000);
+
+$('#tags').tagsInput({
+        'width': 'auto',
+        'delimiter': ',',
+        'defaultText': 'Enter Tag',
+        onAddTag: function(item) {
+            $($(".tagsinput").get(0)).find(".tag").each(function() {
+            if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+                $(this).addClass("badtag");
+            }
+            });
+        },
+        'onChange': function(item) {
+                $($(".tagsinput").get(0)).find(".tag").each(function() {
+            if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+                $(this).addClass("badtag");
+            }
+            });
+        }
+
+        });
+
 });   
 
+function ValidateEmail(mail) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return (true)
+  }
+  return (false)
+}
  //Multiple Dropdown Select
  $('.multiDrop').on('click', function (event) { 
         event.stopPropagation();
