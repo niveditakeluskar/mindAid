@@ -269,12 +269,13 @@ $('#load-monthly-billing-tbl').hide();
             // var c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
             // var c_year = new Date().getFullYear();
             // var current_MonthYear = c_year+'-'+c_month;
-            $("#monthly").val(firstDayWithSlashes);
-            $("#monthlyto").val(currentdate);
-      
+            var monthly = $("#monthly").val(firstDayWithSlashes);
+            var monthlyto = $("#monthlyto").val(currentdate);
+            
+           getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
             util.getToDoListData(0, {{getPageModuleName()}});
             // $(".patient-div").hide(); // to hide patient search select
-
+            
             $("[name='practicesgrp']").on("change", function () { 
                 var practicegrp_id = $(this).val(); 
                 if(practicegrp_id==0){
