@@ -554,7 +554,6 @@ var callMonthllyMonitoringInitFunctions = function callMonthllyMonitoringInitFun
 var onCallHippa = function onCallHippa(formObj, fields, response) {
   if (response.status == 200) {
     util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
-    $(".form_start_time").val(response.data.form_start_time);
     $("form[name='hippa_form'] .alert").show();
     util.totalTimeSpentByCM();
     var scrollPos = $(".main-content").offset().top;
@@ -570,8 +569,26 @@ var onCallHippa = function onCallHippa(formObj, fields, response) {
         $('.alert').fadeOut('fast');
       }, 5000);
       goToNextStep("ccm-relationship-icon-tab");
-    }
+    } //ccm
 
+
+    $('#ccm-relationship-icon-tab').removeClass('disabled');
+    $('#ccm-research-follow-up-icon-tab').removeClass('disabled');
+    $('#ccm-general-questions-icon-tab').removeClass('disabled');
+    $('#ccm-call-close-icon-tab').removeClass('disabled');
+    $('#ccm-call-wrapup-icon-tab').removeClass('disabled');
+    $('#ccm-relationship-icon-tab').removeAttr("style");
+    $('#ccm-research-follow-up-icon-tab').removeAttr("style");
+    $('#ccm-general-questions-icon-tab').removeAttr("style");
+    $('#ccm-call-close-icon-tab').removeAttr("style");
+    $('#ccm-call-wrapup-icon-tab').removeAttr("style"); //cpd
+
+    $('#review-patient-tab').removeClass('disabled');
+    $('#call-close-tab').removeClass('disabled');
+    $('#call-wrapup-tab').removeClass('disabled');
+    $('#review-patient-tab').removeAttr("style");
+    $('#call-close-tab').removeAttr("style");
+    $('#call-wrapup-tab').removeAttr("style");
     var timer_paused = $("form[name='hippa_form'] input[name='end_time']").val();
     $("#timer_start").val(timer_paused);
   }
@@ -1265,7 +1282,7 @@ window.ccmcpdcommonJS = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/laravel/js/ccmcpdcommonJS.js */"./resources/laravel/js/ccmcpdcommonJS.js");
+module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/ccmcpdcommonJS.js */"./resources/laravel/js/ccmcpdcommonJS.js");
 
 
 /***/ })

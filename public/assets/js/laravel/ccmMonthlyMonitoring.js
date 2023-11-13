@@ -158,6 +158,29 @@ var summarycount = 0;
 var populateForm = function populateForm(data, url) {
   $.get(url, data, function (result) {
     for (var key in result) {
+      if (key == 'hippa_form') {
+        if (result[key] != null && typeof result[key] != "undefined" && result[key] != "") {
+          var hippa_vf = result[key]['static']['verification'];
+
+          if (hippa_vf = 1) {
+            $('#ccm-relationship-icon-tab').removeClass('disabled');
+            $('#ccm-research-follow-up-icon-tab').removeClass('disabled');
+            $('#ccm-general-questions-icon-tab').removeClass('disabled');
+            $('#ccm-call-close-icon-tab').removeClass('disabled'); // $('#ccm-call-wrapup-icon-tab').removeClass('disabled');
+          }
+        } else {
+          $('#ccm-relationship-icon-tab').addClass('disabled');
+          $('#ccm-research-follow-up-icon-tab').addClass('disabled');
+          $('#ccm-general-questions-icon-tab').addClass('disabled');
+          $('#ccm-call-close-icon-tab').addClass('disabled'); // $('#ccm-call-wrapup-icon-tab').addClass('disabled');
+
+          $("#ccm-relationship-icon-tab").css("background-color", "#c0c0c047");
+          $('#ccm-research-follow-up-icon-tab').css("background-color", "#c0c0c047");
+          $('#ccm-general-questions-icon-tab').css("background-color", "#c0c0c047");
+          $('#ccm-call-close-icon-tab').css("background-color", "#c0c0c047"); // $('#ccm-call-wrapup-icon-tab').css("background-color","#c0c0c047");
+        }
+      }
+
       if (key == 'callwrapup_form') {
         // debugger;
         if (result[key] != null && typeof result[key] != "undefined" && result[key] != "") {
@@ -241,7 +264,7 @@ var populateForm = function populateForm(data, url) {
               var e_set_date = echange_date_format[2] + '-' + echange_date_format[0] + '-' + echange_date_format[1];
               console.log(e_set_date); // alert(e_set_date);  
 
-              $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" >' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+              $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" onfocusout="saveEMR()">' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
               $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date);
               inc_notes++;
             }
@@ -328,6 +351,7 @@ var populateForm = function populateForm(data, url) {
 
         if (key == 'call_close_form') {
           if (result[key] != '') {
+            //debugger;
             var date_enrolled = result[key]["static"]['q2_datetime'];
 
             if (date_enrolled != undefined) {
@@ -2145,7 +2169,7 @@ $(document).on('click', 'i.removenotes', function (e) {
 $("#addnotes").click(function () {
   summarycount++;
   var childrenlength = $("div#additional_monthly_notes").children().length;
-  $('#additional_monthly_notes').append('<div class="additionalfeilds row"  style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;"><div class="col-md-4"><input type="date" class="form-control emr_monthly_summary_date" id="emr_monthly_summary_date_' + childrenlength + '"  name="emr_monthly_summary_date[]"><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90"  name="emr_monthly_summary[]" ></textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+  $('#additional_monthly_notes').append('<div class="additionalfeilds row"  style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;"><div class="col-md-4"><input type="date" class="form-control emr_monthly_summary_date" id="emr_monthly_summary_date_' + childrenlength + '"  name="emr_monthly_summary_date[]"><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control emrsummary" cols="90"  name="emr_monthly_summary[]" onfocusout="saveEMR()"></textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
   var date = new Date();
   var day = date.getDate();
   var month = date.getMonth() + 1;
@@ -2181,7 +2205,7 @@ window.ccmMonthlyMonitoring = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/laravel/js/ccmMonthlyMonitoring.js */"./resources/laravel/js/ccmMonthlyMonitoring.js");
+module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/ccmMonthlyMonitoring.js */"./resources/laravel/js/ccmMonthlyMonitoring.js");
 
 
 /***/ })

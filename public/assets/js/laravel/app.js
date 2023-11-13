@@ -111664,11 +111664,11 @@ window.worklist = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/laravel/js/app.js */"./resources/laravel/js/app.js");
-__webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/gull/assets/styles/sass/themes/lite-purple.scss */"./resources/gull/assets/styles/sass/themes/lite-purple.scss");
-__webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/gull/assets/styles/sass/themes/lite-blue.scss */"./resources/gull/assets/styles/sass/themes/lite-blue.scss");
-__webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/gull/assets/styles/sass/themes/dark-purple.scss */"./resources/gull/assets/styles/sass/themes/dark-purple.scss");
-module.exports = __webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/laravel/sass/app.scss */"./resources/laravel/sass/app.scss");
+__webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/app.js */"./resources/laravel/js/app.js");
+__webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/gull/assets/styles/sass/themes/lite-purple.scss */"./resources/gull/assets/styles/sass/themes/lite-purple.scss");
+__webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/gull/assets/styles/sass/themes/lite-blue.scss */"./resources/gull/assets/styles/sass/themes/lite-blue.scss");
+__webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/gull/assets/styles/sass/themes/dark-purple.scss */"./resources/gull/assets/styles/sass/themes/dark-purple.scss");
+module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/sass/app.scss */"./resources/laravel/sass/app.scss");
 
 
 /***/ })

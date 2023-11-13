@@ -269,7 +269,7 @@ $(document).ready(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/gull/assets/js/customizer.script.js */"./resources/gull/assets/js/customizer.script.js");
+module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/gull/assets/js/customizer.script.js */"./resources/gull/assets/js/customizer.script.js");
 
 
 /***/ })

@@ -701,6 +701,23 @@ var populateForm = function populateForm(id, url) {
     var component_id = $("form[name='part_of_research_study_form'] input[name='component_id']").val();
 
     for (var key in result) {
+      if (key == 'hippa_form') {
+        if (result[key] != null && typeof result[key] != "undefined" && result[key] != "") {
+          var hippa_vf = result[key]['static']['verification'];
+
+          if (hippa_vf = 1) {
+            $('#review-patient-tab').removeClass('disabled');
+            $('#call-close-tab').removeClass('disabled'); // $('#call-wrapup-tab').removeClass('disabled');
+          }
+        } else {
+          $('#review-patient-tab').addClass('disabled');
+          $('#call-close-tab').addClass('disabled'); // $('#call-wrapup-tab').addClass('disabled');
+
+          $('#review-patient-tab').css("background-color", "#c0c0c047");
+          $('#call-close-tab').css("background-color", "#c0c0c047"); // $('#call-wrapup-tab').css("background-color","#c0c0c047");
+        }
+      }
+
       form.dynamicFormPopulate(key, result[key]);
 
       if ((key == 'diagnosis_code_form' || key == 'care_plan_form' || key == 'review_diagnosis_code_form') && result[key] != "") {
@@ -3700,6 +3717,9 @@ var getSectionHTML = function getSectionHTML(url, section, functionToCall) {
     }).then(function (response) {
       var formpopulateurl = URL_POPULATE + "/" + patient_id + "/" + form;
       $.when($('#' + section).html(response.data)).then(function () {
+        $('#' + section).find("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");
+        ;
+
         if (form != 'all') {
           populateForm(patient_id, formpopulateurl);
         }
@@ -4827,7 +4847,7 @@ window.carePlanDevelopment = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/nivedita/public_html/rcaregit/resources/laravel/js/carePlanDevelopment.js */"./resources/laravel/js/carePlanDevelopment.js");
+module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/carePlanDevelopment.js */"./resources/laravel/js/carePlanDevelopment.js");
 
 
 /***/ })
