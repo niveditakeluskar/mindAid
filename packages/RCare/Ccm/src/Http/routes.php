@@ -99,7 +99,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/get-delete-family_patient-by-id/{id}/familypatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientFamilyById')->name('get.delete.family.patient.by.id');
         Route::get('care-plan-development-siblinglist/{id}/{tab_name}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getSiblingList')->name('care.plan.development.review.siblinglist');
         Route::post('/care-plan-development-review-relation', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientrelativeData')->name('care.plan.development.review.relation');
-        
+        Route::post('/saveEmrSummary', 'RCare\Ccm\Http\Controllers\CcmController@emrSummary')->name('saveEmrSummary');
        
         //Services Data
         // Route::post('/care-plan-development-service-dme', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@saveHealthServices')->name('care.plan.development.service.dme');
