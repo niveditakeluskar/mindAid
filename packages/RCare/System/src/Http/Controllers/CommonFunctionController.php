@@ -55,10 +55,24 @@ class CommonFunctionController extends Controller
         $patient_id = sanitizeVariable($patientID);
         $module_id  = sanitizeVariable($moduleId);
         $billable   = sanitizeVariable($billable);
+        $timeArray                      = [];
+
+        $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
+	    $checkBillableTime              = (isset($billableTime) && ($billableTime!='0')) ? $billableTime : '00:00:00';
+
+	    $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+	    $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime!='0')) ? $nonBillableTime : '00:00:00';
+	    
+        $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+        $returnTotalTime                = (isset($totalTime) && ($totalTime!='0')) ? $totalTime : '00:00:00';
+    	$timeArray['total_time']        = $returnTotalTime;
+
         if($billable == 1){
-            return $this->getCcmMonthlyNetTime($patientID, $moduleId);
+            $timeArray['billable_time']     = $checkBillableTime;
+            return $timeArray;
         }else{
-            return $this->getNonBillabelTime($patientID, $moduleId);
+            $timeArray['non_billable_time'] = $checkNonBillableTime;
+            return $timeArray;
         }
     }
 
@@ -276,10 +290,12 @@ class CommonFunctionController extends Controller
     }
     
     //record time  
-    public static function recordTimeSpent($start_time = null, $end_time = null, $patient_id = null, $module_id = null, $component_id = null, $stage_id = null, $billable = null, $uid = null, $step_id = null, $form_name = null,$callwrap_id=null,$activity=null,$activity_id=null,$comment=null)
+    public static function recordTimeSpent($start_time = null, $end_time = null, $patient_id = null, $module_id = null, $component_id = null, $stage_id = null, $billable = null, $uid = null, $step_id = null, $form_name = null, $form_start_time = null, $form_save_time = null, $callwrap_id=null,$activity=null,$activity_id=null,$comment=null)
     {
 
-        // dd($stage_id,$step_id);   
+        
+        $form_start_time = sanitizeVariable($form_start_time);
+        $form_save_time = sanitizeVariable($form_save_time);   
         $start_time   = sanitizeVariable($start_time);
         $end_time     = sanitizeVariable($end_time);
         $patient_id   = sanitizeVariable($patient_id); 
@@ -297,6 +313,11 @@ class CommonFunctionController extends Controller
         if($start_time == null || $start_time == "" || $start_time == 'undefined') { $start_time = '00:00:00'; }
         if($end_time == null || $end_time == "" || $end_time == 'undefined') { $end_time = '00:00:00'; }
 
+        $splitStartTime = explode(" ",$form_start_time);
+        $splitEndTime = explode(" ",$form_save_time);
+
+        $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+        
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time));
         $timer_data = array(
             'uid'          => $patient_id,
@@ -306,10 +327,13 @@ class CommonFunctionController extends Controller
             'component_id' => $component_id,
             'timer_on'     => $start_time,
             'timer_off'    => $end_time,
-            'net_time'     => $net_time,
+            'net_time'     => $form_net_time,
             'billable'     => $billable,
             'stage_code'   => $step_id,
             'form_name'    => $form_name,
+            'form_start_time' => $form_start_time,
+            "form_save_time" => $form_save_time,
+            "old_net_time" =>  $net_time,
             'created_by'   => session()->get('userid'),
             // 'status'       => 1,
             'stage_id'     => $stage_id,
@@ -318,6 +342,7 @@ class CommonFunctionController extends Controller
             'activity_id' => $activityid,
             'comment'=>$comments
         );
+       // dd($timer_data);  
         $insert_query = PatientTimeRecords::create($timer_data);  
         $assignpatient = assingSessionUser($patient_id);
         
@@ -337,7 +362,22 @@ class CommonFunctionController extends Controller
         $patient_id   = sanitizeVariable($request->patientId); 
         $step_id      = sanitizeVariable($request->stepId);
         $form_name    = sanitizeVariable($request->formName);
-
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $pause_start_time = null;
+        $pause_save_time = null;
+        if(sanitizeVariable($request->pause_start_time)){
+            //$form_save_time = null;
+            //$form_start_time = null;
+            $form_net_time = '00:00:00';
+            $pause_start_time = sanitizeVariable($request->pause_start_time);
+            $pause_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        }else{
+            $splitStartTime = explode(" ",$form_start_time);
+            $splitEndTime = explode(" ",$form_save_time);
+            $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+        }
+    
         if($start_time == null || $start_time == "" || $start_time == 'undefined') { $start_time = '00:00:00'; }
         if($end_time == null || $end_time == "" || $end_time == 'undefined') { $end_time = '00:00:00'; }
 
@@ -351,10 +391,15 @@ class CommonFunctionController extends Controller
             'component_id' => $component_id,
             'timer_on'     => $start_time,
             'timer_off'    => $end_time,
-            'net_time'     => $net_time,
+            'net_time'     => $form_net_time,
             'billable'     => $billable,
             'stage_code'   => $step_id,
             'form_name'    => $form_name,
+            'form_start_time' => $form_start_time,
+            "form_save_time" => $form_save_time,
+            "old_net_time" =>  $net_time,
+            "pause_start_time" => $pause_start_time,
+            "pause_save_time" => $pause_save_time,
             'created_by'   => session()->get('userid'),
             // 'status'       => 1,
             'stage_id'     => $stage_id
@@ -362,7 +407,7 @@ class CommonFunctionController extends Controller
         $insert_query = PatientTimeRecords::create($timer_data);
   
         if($insert_query) {
-            return $end_time;
+            return response(['form_start_time' =>$form_save_time, 'end_time'=>$end_time]); //$end_time;
         } else {
             return "";
         }
@@ -558,11 +603,11 @@ class CommonFunctionController extends Controller
             // $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
             // $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
             // $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
-            $user_id = session()->get('userid');
+            /*$user_id = session()->get('userid');
             $current_timestamp = Carbon::now();
             $lastMonthPatientVitalsDataQuery = 'INSERT INTO patients.patient_vitals ( "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", "created_by", "created_at", "updated_at" )
             ( SELECT \''.$current_timestamp.'\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
-            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);
+            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);*/
             // $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->get()->last();
             // if($lastMonthPatientVitalsData) {
             //     $insert_vital   = array(
@@ -623,7 +668,7 @@ class CommonFunctionController extends Controller
 
                   PatientLabRecs::create($insert_lab);
                 }
-             }          
+             }         
         }
     }
 
@@ -799,6 +844,46 @@ class CommonFunctionController extends Controller
     //         }
     //     }
     // }
+
+    public function getLandingTime(){
+        $timeArray['landing_time'] = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        return $timeArray;
+    }
+
+    public function getTotalTime($patientID, $moduleId, $startTime){
+        $patient_id                     = sanitizeVariable($patientID);
+        $module_id                      = sanitizeVariable($moduleId);
+        $timeArray                      = [];
+
+        $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
+        if($patientID == 'null'){
+            $totalTime = '00:00:00';
+            if($startTime != 'null'){
+                $StartTime = explode(" ",$startTime);
+                $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($StartTime[1]));
+            }
+        }else{
+            $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
+            $checkBillableTime              = (isset($billableTime) && ($billableTime!='0')) ? $billableTime : '00:00:00';
+            $timeArray['billable_time']     = $checkBillableTime;
+
+            $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+            $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime!='0')) ? $nonBillableTime : '00:00:00';
+            $timeArray['non_billable_time'] = $checkNonBillableTime;
+ 
+            if($startTime == 'null'){
+                $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+            }else{
+                $StartTime = explode(" ",$startTime);
+                $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($StartTime[1])+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+            }
+        }
+        
+        $returnTotalTime                = (isset($totalTime) && ($totalTime!='0')) ? $totalTime : '00:00:00';
+        $timeArray['total_time']        = $returnTotalTime;
+
+        return $timeArray;
+    }
 
     public function getTotalBillableAndNonBillableTime($patientID, $moduleId){
         $patient_id                     = sanitizeVariable($patientID);

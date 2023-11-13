@@ -227,7 +227,7 @@ var vitalColumns = [
 			}
 		},
 		orderable: true
-	}, 
+	},
 	{
 		data: null, mRender: function (data, type, full, meta) {
 			if (data != '' && data != 'NULL' && data != undefined) {
@@ -436,7 +436,7 @@ var populateForm = function (id, url) {
 		function (result) {
 			var module_id = $("form[name='part_of_research_study_form'] input[name='module_id']").val();
 			var component_id = $("form[name='part_of_research_study_form'] input[name='component_id']").val();
-		
+
 			for (var key in result) {
 
 				
@@ -461,25 +461,25 @@ var populateForm = function (id, url) {
 
 				form.dynamicFormPopulate(key, result[key]);
 				if ((key == 'diagnosis_code_form' || key == 'care_plan_form' || key == 'review_diagnosis_code_form') && result[key] != "") {
-					
+
 					// console.log("key",key);
 					// console.log("result[key]",result[key]);
-					
+
 					if (result[key].static.hasOwnProperty('patient_id')) {
 						var is_disable = true;
 						var new_id = result[key].static['id'];
-					}else{
-						var is_disable = false;   
+					} else {
+						var is_disable = false;
 					}
-					
-					
 
-					
-					    
+
+
+
+
 					if (result[key].static.hasOwnProperty('diagnosis')) {
 						var code = result[key].static['code'];
 						var diagnosis = result[key].static['diagnosis'];
-						
+
 
 						$("form[name='" + key + "'] #diagnosis_condition").val(diagnosis);
 						$("form[name='" + key + "'] #diagnosis_code option:selected").val(code);
@@ -511,23 +511,23 @@ var populateForm = function (id, url) {
 									if (inc_symptoms == 0) {
 										$("form[name='" + key + "'] #symptoms_0").val(symptoms[symptom]);
 										// $("form[name='" + key + "'] #symptoms_0").prop("disabled", true);
-										
-										 
-										
+
+
+
 									} else {
 										$("form[name='" + key + "'] #append_symptoms").append('<div class=" row btn_remove removesymptoms" id="btn_removesymptoms_' + inc_symptoms + '"><input type="text" class="form-control col-md-10 symptoms"  name ="symptoms[]" id ="symptoms_' + inc_symptoms + '" value="' + symptoms[symptom] + '" placeholder ="Enter Symptoms"><div class="invalid-feedback"></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_symptoms_' + inc_symptoms + '" title="Remove Symptom" style="display:none"></i></div>');
 										$("form[name='" + key + "'] #symptoms_" + inc_symptoms).val(symptoms[symptom]);
-										
+
 										// if(editid == ''){
 										// 	$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display","block");
 										// }else{
 										// 	$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display","none");
 										// }
 
-										if(is_disable == true){
-											$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display","none");
-										}else{
-											$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display","block");
+										if (is_disable == true) {
+											$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display", "none");
+										} else {
+											$("form[name='" + key + "'] #remove_symptoms_" + inc_symptoms).css("display", "block");
 										}
 									}
 									inc_symptoms++;
@@ -538,7 +538,7 @@ var populateForm = function (id, url) {
 
 							$("form[name='" + key + "'] #symptoms_0").val(symptoms[symptom]);
 							// $("form[name='" + key + "'] #symptoms_0").prop("disabled", true);
-							
+
 						}
 					}
 					if (result[key].static['goals'] != null && result[key].static['goals'] != "null") {
@@ -553,17 +553,17 @@ var populateForm = function (id, url) {
 										$("form[name='" + key + "'] #goals_0").val(goals[goal]);
 										// $("form[name='" + key + "'] #goals_0").prop("disabled", "disabled");
 
-										
 
-										
+
+
 									} else {
 										$("form[name='" + key + "'] #append_goals").append('<div class="row btn_remove removegoals" id="btn_removegoals_' + inc_goals + '"><input type="text" class="form-control col-md-10 goals" name ="goals[]" id ="goals_' + inc_goals + '" value="' + goals[goal] + '" placeholder ="Enter Goals" ><div class="invalid-feedback"></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_goals_' + inc_goals + '" title="Remove Goals" style="display:none"></i></div>');
 										// $("form[name='" + key + "'] #goals_" + inc_goals).val(goals[goal]);
 
-										if(is_disable == true){
-											$("form[name='" + key + "'] #remove_goals_" + inc_goals ).css("display","none");
-										}else{
-											$("form[name='" + key + "'] #remove_goals_" + inc_goals ).css("display","block");
+										if (is_disable == true) {
+											$("form[name='" + key + "'] #remove_goals_" + inc_goals).css("display", "none");
+										} else {
+											$("form[name='" + key + "'] #remove_goals_" + inc_goals).css("display", "block");
 										}
 
 
@@ -574,8 +574,8 @@ var populateForm = function (id, url) {
 						} else {
 							$("form[name='" + key + "'] #goals_0").val(goals[goal]);
 							// $("form[name='" + key + "'] #goals_0").prop("disabled", "disabled");
-							
-							
+
+
 						}
 					}
 					if (result[key].static['tasks'] != null && result[key].static['tasks'] != "null") {
@@ -601,10 +601,10 @@ var populateForm = function (id, url) {
 										});
 
 
-										if(is_disable == true){
-											$("form[name='" + key + "'] #remove_tasks_" + inc_tasks).css("display","none");
-										}else{
-											$("form[name='" + key + "'] #remove_tasks_" + inc_tasks ).css("display","block");
+										if (is_disable == true) {
+											$("form[name='" + key + "'] #remove_tasks_" + inc_tasks).css("display", "none");
+										} else {
+											$("form[name='" + key + "'] #remove_tasks_" + inc_tasks).css("display", "block");
 										}
 									}
 									inc_tasks++;
@@ -626,12 +626,12 @@ var populateForm = function (id, url) {
 						$("form[name='" + key + "'] #diagnosis_comments").val(comments);
 					}
 
-					   
 
-					if(is_disable == true){
+
+					if (is_disable == true) {
 						$("form[name='" + key + "'] #symptoms_0").prop("disabled", true);
 						$("form[name='" + key + "'] #goals_0").prop("disabled", true);
-						$("form[name='" + key + "'] #tasks_0").prop("disabled", true); 
+						$("form[name='" + key + "'] #tasks_0").prop("disabled", true);
 						$("form[name='" + key + "']  .symptoms ").prop("disabled", true);
 						$("form[name='" + key + "']  .goals ").prop("disabled", true);
 						$("form[name='" + key + "']  .tasks  ").prop("disabled", true);
@@ -643,14 +643,14 @@ var populateForm = function (id, url) {
 						$("form[name='" + key + "']  #append_goals_icons  ").hide();
 						$("form[name='" + key + "']  #append_tasks_icons  ").hide();
 						$("form[name='" + key + "']  #hiddenenablebutton").val(0);
-						$("form[name='" + key + "']  #editdiagnoid").val(new_id); 
+						$("form[name='" + key + "']  #editdiagnoid").val(new_id);
 
 
 
-					}else{
+					} else {
 						$("form[name='" + key + "'] #symptoms_0").prop("disabled", false);
 						$("form[name='" + key + "'] #goals_0").prop("disabled", false);
-						$("form[name='" + key + "'] #tasks_0").prop("disabled", false); 
+						$("form[name='" + key + "'] #tasks_0").prop("disabled", false);
 						$("form[name='" + key + "']  .symptoms ").prop("disabled", false);
 						$("form[name='" + key + "']  .goals ").prop("disabled", false);
 						$("form[name='" + key + "']  .tasks  ").prop("disabled", false);
@@ -660,14 +660,14 @@ var populateForm = function (id, url) {
 
 						$("form[name='" + key + "']  #append_symptoms_icons  ").show();
 						$("form[name='" + key + "']  #append_goals_icons  ").show();
-						$("form[name='" + key + "']  #append_tasks_icons  ").show();  
+						$("form[name='" + key + "']  #append_tasks_icons  ").show();
 
 					}
 
-					
+
 				}
 
-				
+
 
 
 
@@ -1101,11 +1101,13 @@ var onFamilyData = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
 	}
-	$("#preloader").css('display','none');	
+	$("#preloader").css('display', 'none');
 };
 
 // Allergies
@@ -1175,6 +1177,8 @@ var onAllergy = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
@@ -1238,6 +1242,8 @@ var onServices = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
@@ -1282,6 +1288,8 @@ var onProvider = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 		if (form_name == 'provider_specialists_form' || form_name == 'review_provider_specialists_form') {
 			renderOtherProviderSpecialistTable();
 		}
@@ -1296,7 +1304,7 @@ var onProvider = function (formObj, fields, response) {
 
 // numberTracking
 var onNumberTrackingVital = function (formObj, fields, response) {
-	if (response.status == 200 && ($.trim(response.data) == '' || $.trim(response.data) == 'null')) {
+	if (response.status == 200 && (response.data != 'false' )) {
 		var patient_id = $("input[name='patient_id']").val();
 		var module_id = $("input[name='module_id']").val();
 		util.getPatientCareplanNotes(patient_id, module_id);
@@ -1323,6 +1331,8 @@ var onNumberTrackingVital = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='number_tracking_vitals_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else if (response.status == 200 && ($.trim(response.data) == 'false')) {
 		$("form[name='number_tracking_vitals_form'] .alert-success").hide();
 		var txt = '<div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Please fill atleast 1 field!</strong></div>';
@@ -1368,6 +1378,8 @@ var onNumberTrackingLab = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='number_tracking_labs_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='number_tracking_labs_form'] .alert-success").hide();
 		$("form[name='number_tracking_labs_form'] .alert-danger").show();
@@ -1400,6 +1412,8 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='number_tracking_imaging_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='number_tracking_imaging_form'] .alert-success").hide();
 		$("form[name='number_tracking_imaging_form'] .alert-danger").show();
@@ -1433,6 +1447,8 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='number_tracking_healthdata_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='number_tracking_healthdata_form'] .alert-success").hide();
 		$("form[name='number_tracking_healthdata_form'] .alert-danger").show();
@@ -1479,6 +1495,8 @@ var onPatientRelationshipData = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
@@ -1511,6 +1529,8 @@ var onMedication = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
@@ -1520,7 +1540,7 @@ var onMedication = function (formObj, fields, response) {
 //diagnosis
 var onDiagnosis = function (formObj, fields, response) {
 	var form_name = fields.values.form_name;
-	
+
 	if (response.status == 200) {
 		util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
 		var module_id = $("input[name='module_id']").val();
@@ -1554,12 +1574,14 @@ var onDiagnosis = function (formObj, fields, response) {
 		}, 5000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
 	}
 
-	 
+
 };
 
 //review-pet
@@ -1594,6 +1616,8 @@ var onOtherPersonalData = function (formObj, fields, response) {
 		}, 3000);
 		var timer_paused = $("form[name='" + form_name + "'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	} else {
 		$("form[name='" + form_name + "'] .alert-success").hide();
 		$("form[name='" + form_name + "'] .alert-danger").show();
@@ -1609,6 +1633,8 @@ var onFirstReview = function (formObj, fields, response) {
 		setTimeout(function () { $("form[name='patient_first_review'] .alert").fadeOut(); }, 3000);
 		var timer_paused = $("form[name='patient_first_review'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
+		$(".form_start_time").val(response.data.form_start_time);
+		
 	}
 };
 
@@ -2022,16 +2048,16 @@ function editPatientDignosis(id, formsObj) {
 	$("form[name='" + formName + "']  #append_tasks_icons  ").hide();
 	var sPageURL = window.location.pathname;
 	parts = sPageURL.split("/"),
-	patientId = parts[parts.length - 1];
+		patientId = parts[parts.length - 1];
 	patientDignosisFormPopulateURL = '/ccm/diagnosis-select/' + id + '/' + patientId;
 	populateForm(patientId, patientDignosisFormPopulateURL);
 	$("form[name='" + formName + "'] #save_care_plan_form").prop("disabled", false);
-	$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", false); 
+	$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", false);
 }
 
 function enableDiagnosisbutton(formsObj) {
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	$("form[name='" + formName + "'] #hiddenenablebutton").val(1);  
+	$("form[name='" + formName + "'] #hiddenenablebutton").val(1);
 	$("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
 	$("form[name='" + formName + "'] #goals_0").prop("disabled", false);
 	$("form[name='" + formName + "'] #tasks_0").prop("disabled", false);
@@ -2046,21 +2072,21 @@ function enableDiagnosisbutton(formsObj) {
 	$("form[name='" + formName + "']  #append_tasks").find('i').css('display', 'block');
 }
 
-function disableDiagnosisbutton(formsObj){
+function disableDiagnosisbutton(formsObj) {
 
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	var id= $("form[name='" + formName + "']  #editdiagnoid").val();
-	$("form[name='" + formName + "'] #hiddenenablebutton").val(0);  
-	$("form[name='"+ formName +"'] #append_symptoms_icons").hide();
-	$("form[name='"+ formName +"'] #append_goals_icons").hide();
-	$("form[name='"+ formName +"'] #append_tasks_icons").hide();
+	var id = $("form[name='" + formName + "']  #editdiagnoid").val();
+	$("form[name='" + formName + "'] #hiddenenablebutton").val(0);
+	$("form[name='" + formName + "'] #append_symptoms_icons").hide();
+	$("form[name='" + formName + "'] #append_goals_icons").hide();
+	$("form[name='" + formName + "'] #append_tasks_icons").hide();
 
 	$("form[name='" + formName + "'] #append_symptoms").empty();
 	$("form[name='" + formName + "'] #append_goals").empty();
-	$("form[name='" + formName + "'] #append_tasks").empty();  
+	$("form[name='" + formName + "'] #append_tasks").empty();
 	var sPageURL = window.location.pathname;
 	parts = sPageURL.split("/"),
-	patientId = parts[parts.length - 1];
+		patientId = parts[parts.length - 1];
 	patientDignosisFormPopulateURL = '/ccm/diagnosis-select/' + id + '/' + patientId;
 	populateForm(patientId, patientDignosisFormPopulateURL);
 }
@@ -2963,7 +2989,7 @@ var getLabParamsOnLabChange = function (selectObject) {
 	$("#oldlab").val("");
 	$("#labdateexist").val("");
 	$("#labdate").val("");
-	var lab = selectObject.value; 
+	var lab = selectObject.value;
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -3030,13 +3056,13 @@ function clearConditionForm(formsObj) {
 	$("form[name='" + formName + "'] #support").val("");
 	$("form[name='" + formName + "'] textarea[name='comments']").val("");
 	$("form[name='" + formName + "'] textarea[name='comments']").text('');
-	$("form[name='" + formName + "'] #editdiagnoid").val("");  
+	$("form[name='" + formName + "'] #editdiagnoid").val("");
 }
 
 function changeCondition(formsObj) {
-	
+
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	
+
 
 	inc_tasks = 0;
 	inc_symptoms = 0;
@@ -3057,10 +3083,10 @@ function changeCondition(formsObj) {
 	var id = $("form[name='" + formName + "'] #diagnosis_condition option:selected").val();
 	var condition_name = $("form[name='" + formName + "'] #diagnosis_condition option:selected").text();
 	var code = $("form[name='" + formName + "'] #diagnosis_code").val();
-	util.getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code,formsObj, patientId);
+	util.getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formsObj, patientId);
 	$("form[name='" + formName + "'] input[name='condition']").val(condition_name);
 	$("form[name='" + formName + "'] #diagnosis_code").val("");
-	$("form[name='" + formName + "'] #append_symptoms").html("");  
+	$("form[name='" + formName + "'] #append_symptoms").html("");
 	$("form[name='" + formName + "'] #append_goals").html("");
 	$("form[name='" + formName + "'] #append_tasks").html("");
 	$("form[name='" + formName + "'] #symptoms_0").val("");
@@ -3069,22 +3095,22 @@ function changeCondition(formsObj) {
 	$("form[name='" + formName + "'] #support").val("");
 	$("form[name='" + formName + "'] textarea[name='comments']").val("");
 	$("form[name='" + formName + "'] textarea[name='comments']").text('');
-	 
-	$("form[name='" + formName + "'] #symptoms_0").prop("disabled", false); 
+
+	$("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
 	$("form[name='" + formName + "'] #goals_0").prop("disabled", false);
 	$("form[name='" + formName + "'] #tasks_0").prop("disabled", false);
 	$("form[name='" + formName + "']  .symptoms ").prop("disabled", false);
 	$("form[name='" + formName + "']  .goals ").prop("disabled", false);
 	$("form[name='" + formName + "']  .tasks  ").prop("disabled", false);
-	
+
 	DiagnosisFormPopulateURL = '/ccm/get-all-code-by-id/' + id + '/' + patientId + '/diagnosis';
 	populateForm(patientId, DiagnosisFormPopulateURL);
 	if (id == null || id == '' || id == "") {
-		$("form[name='" + formName + "'] #save_care_plan_form").prop("disabled", true); 
-		$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", true); 
+		$("form[name='" + formName + "'] #save_care_plan_form").prop("disabled", true);
+		$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", true);
 	} else {
 		$("form[name='" + formName + "'] #save_care_plan_form").prop("disabled", false);
-		$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", false); 
+		$("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", false);
 	}
 }
 
@@ -3156,9 +3182,9 @@ var onChangeNumberTrackingVitalsWeightOrHeight = function () {
 
 function onProviderChange(formsObj) {
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	var provider_id = $("form[name='" + formName + "'] #provider_id").val(); 
-	
-	if(provider_id == 0){
+	var provider_id = $("form[name='" + formName + "'] #provider_id").val();
+
+	if (provider_id == 0) {
 		$("form[name='" + formName + "'] #providers_div").removeClass("col-md-6").addClass("col-md-3");
 		$("form[name='" + formName + "'] #providers_name").show();
 	} else {
@@ -3194,7 +3220,7 @@ var renderDiagnosisTableData = function () {
 				$code = full['code'];
 				$uppercode = $code.toUpperCase();
 				return $uppercode;
-			},orderable: true
+			}, orderable: true
 		},
 		{ data: 'condition', name: 'condition' },
 		{
@@ -3236,7 +3262,7 @@ var renderDiagnosisTableData = function () {
 		// 		return full['review_date'];
 		// 	},orderable: true
 		// },
-		
+
 		// {
 		// 	data: null,
 		// 	mRender: function (data, type, full, meta) {
@@ -3256,7 +3282,7 @@ var renderDiagnosisTableData = function () {
 				if (value === null || value == undefined || value == "") return "";
 				return moment(value).format('MM-DD-YYYY');
 			}
-		},  
+		},
 
 
 		{ data: 'action', name: 'action', orderable: false, searchable: false },
@@ -3324,21 +3350,22 @@ $('#myIconTab li a').on('click', function () {
 //     });
 // }
 
-var getSectionHTML = function(url, section, functionToCall, form='all'){
+var getSectionHTML = function (url, section, functionToCall, form = 'all') {
 	//alert("section"+section+": " +$('#'+section).find('#preloader').length);
-	if($('#'+section).find('#preloader').length){
+	if ($('#' + section).find('#preloader').length) {
 		axios({
 			method: "GET",
 			url: url,
 		}).then(function (response) {
 			var formpopulateurl = URL_POPULATE + "/" + patient_id + "/" + form;
 			$.when(
-				$('#'+section).html(response.data)
-			).then(function() {
-				if(form != 'all'){
+				$('#' + section).html(response.data)
+			).then(function () {
+				$('#'+ section).find("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");;
+				if (form != 'all') {
 					populateForm(patient_id, formpopulateurl);
 				}
-				if(functionToCall != '' || functionToCall != null) {
+				if (functionToCall != '' || functionToCall != null) {
 					functionToCall();
 				}
 			});
@@ -3351,12 +3378,24 @@ var getSectionHTML = function(url, section, functionToCall, form='all'){
 
 
 
-var updateTimerFieldsOnForm = function(formName) {
+var updateTimerFieldsOnForm = function (formName) {
+
 	$("#time-container").val(AppStopwatch.pauseClock);
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
-	$("form[name='"+ formName +"'] input[name='start_time']").val(timer_start);
-	$("form[name='"+ formName +"'] input[name='end_time']").val(timer_paused);
+	$("form[name='" + formName + "'] input[name='start_time']").val(timer_start);
+	$("form[name='" + formName + "'] input[name='end_time']").val(timer_paused);
+	if ($("form[name='" + formName + "'] .form_start_time").val() == "undefined" || ($("form[name='" + formName + "'] .form_start_time").val() == '')) {
+		var form_start_time = $("#page_landing_times").val();
+		$("form[name='" + formName + "'] .form_start_time").val(form_start_time);
+	}
+	/*
+	$("form[name='"+ formName +"']").append(($("form[name='"+ formName +"'] input[name=timearr['landing_time']]").length > 0) ? '' : "<input type='text' name=timearr['landing_time'] id = 'landing_time' value=''>");
+	$("form[name='"+ formName +"'] #landing_time").val($("#page_landing_time").val());
+	$("form[name='"+ formName +"']").append(($("form[name='"+ formName +"'] input[name=timearr['actual_end_datetime']]").length > 0) ? '' : "<input type='text' name=timearr['actual_end_datetime'] id = 'actual_end_datetime' value=''>");
+	$("form[name='"+ formName +"'] #actual_end_datetime").val(moment(Date.now()).format('HH:mm:ss'));*/
+
+
 	$("#timer_end").val(timer_paused);
 	$("#time-container").val(AppStopwatch.startClock);
 }
@@ -3366,7 +3405,7 @@ var updateTimerFieldsOnForm = function(formName) {
 // 	util.selectDiagnosisCode(parseInt(id), $("form[name='review_diagnosis_code_form'] #diagnosis_code"));
 // }
 
-var getServicesDatatables = function() {
+var getServicesDatatables = function () {
 	// renderDMEServicesTable();
 	var servicetype = $('form[name="review_service_dme_form"] .hid').val();
 	var url = baseURL + "ccm/care-plan-development-services-list/" + patient_id + '/' + servicetype;
@@ -3403,7 +3442,7 @@ var getServicesDatatables = function() {
 	util.renderDataTable('therapy-review-services-list', url, homeDialysisTherapySosialServicesColumns, baseURL);
 }
 
-var getAllergiesDatatables = function() {
+var getAllergiesDatatables = function () {
 	// renderdrugTable();
 	var allergytype = $('form[name="review_allergy_drug_form"] input[name="allergy_type"]').val();
 	var url = baseURL + "ccm/allergies/" + patient_id + "/" + allergytype;
@@ -3413,7 +3452,7 @@ var getAllergiesDatatables = function() {
 	var allergytype = $('form[name="review_allergy_enviromental_form"] input[name="allergy_type"]').val();
 	var url = baseURL + "ccm/allergies/" + patient_id + "/" + allergytype;
 	util.renderDataTable('review-enviromental-list', url, allergiesColumns, baseURL);
-		
+
 	// renderFoodTable();
 	var allergytype = $('form[name="review_allergy_food_form"] input[name="allergy_type"]').val();
 	var url = baseURL + "ccm/allergies/" + patient_id + "/" + allergytype;
@@ -3444,11 +3483,11 @@ $(document).on('hide.bs.modal','#review_data_2', function () {
 	$('#review-content').html("<div class='loadscreen' id='preloader'><div class='loader'><img src='/images/loading.gif' width='150' height='150'></div></div>")
 });*/
 
-$(document).on('click', '.specialists_data#click_id', function() {
+$(document).on('click', '.specialists_data#click_id', function () {
 	renderOtherProviderSpecialistTable();
 });
 
-$(document).on('click', '#click_allergies_id', function() {
+$(document).on('click', '#click_allergies_id', function () {
 	var review_allergy_type = $('form[name="review_allergy_drug_form"] input[name="allergy_type"]').val();
 	util.refreshAllergyCountCheckbox(patient_id, review_allergy_type, 'review_allergy_drug_form');
 	renderdrugTable();
@@ -3460,11 +3499,11 @@ $(document).on('click', '#click_allergies_id', function() {
 	renderAllergyOtherTable();
 });
 
-$(document).on('click', '.medications#click_id', function() {
+$(document).on('click', '.medications#click_id', function () {
 	renderMedicationsTable();
 });
 
-$(document).on('click', '#click_services_id', function() {
+$(document).on('click', '#click_services_id', function () {
 	renderDMEServicesTable();
 	renderDialysiServicesTable();
 	renderHomeHealthServicesTable();
@@ -3474,23 +3513,23 @@ $(document).on('click', '#click_services_id', function() {
 	renderTherapyServicesTable();
 });
 
-$(document).on('click', '.vitals_and_health_data#click_id', function() {
+$(document).on('click', '.vitals_and_health_data#click_id', function () {
 	renderLabsTable();
 	renderVitalTable();
 });
 
 var init = function () {
-	
+
 	// var d = $('form[name="diagnosis_code_form"] #hiddenenablebutton').val();
 	// alert(d);
-	if(window.location.hash) {
+	if (window.location.hash) {
 		var hash = window.location.hash.substring(1);
-		if(hash=='3'){
-		goToNextStep("followup-step");
+		if (hash == '3') {
+			goToNextStep("followup-step");
 		}
 	}
-	
-	ccmcpdcommonJS.copyPreviousMonthDataToThisMonth($("#hidden_id").val(),$("#page_module_id").val());
+	util.setLandingTime();
+	ccmcpdcommonJS.copyPreviousMonthDataToThisMonth($("#hidden_id").val(), $("#page_module_id").val());
 	var patient_id = $("input[name='patient_id']").val();
 	var module_id = $("input[name='module_id']").val();
 	var component_id = $("input[name='component_id']").val();
@@ -3498,7 +3537,7 @@ var init = function () {
 	var month = (new Date).getMonth() + 1; //add +1 for current mnth
 	var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]').val();
 	var id = $("#patient_id").val();
-	
+
 	util.getPatientDetails(patient_id, module_id);
 	util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
 	util.refreshAllergyCountCheckbox(id, allergy_type, 'allergy_drug_form');
@@ -3509,23 +3548,29 @@ var init = function () {
 	util.gatCaretoolData(patient_id, module_id);
 	CompletedCheck();
 	populateformdata();
+	if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+		var start_time = null;
+	} else {
+		var start_time = $(".form_start_time").val();
+	}
+	util.updateTimeEveryMinutes(patient_id, module_id, start_time);
 	$("#home_service_yes_div").hide();
 	$("#next_month_call_div").hide();
 	$("#parentdiv").hide();
 	$("form[name='callstatus_form'] #notAnswer").hide();
 	$("form[name='callstatus_form'] #callAnswer").hide();
 	$("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn  btn-primary m-1">Next</button>');
-	
+
 	$('form[name="devices_form"] .submit-add-patient-devices').on('click', function (e) {
-        carePlanDevelopment.updateTimerFieldsOnForm('devices_form');
-        form.ajaxSubmit('devices_form', patientEnrollment.onMasterDevices);
-    });
-	
+		carePlanDevelopment.updateTimerFieldsOnForm('devices_form');
+		form.ajaxSubmit('devices_form', patientEnrollment.onMasterDevices);
+	});
+
 	$('form[name="fin_number_form"] .submit-add-patient-fin-number').on('click', function (e) {
-        carePlanDevelopment.updateTimerFieldsOnForm('fin_number_form');
-        form.ajaxSubmit('fin_number_form', patientEnrollment.onFinNumber);
-    });
-	
+		carePlanDevelopment.updateTimerFieldsOnForm('fin_number_form');
+		form.ajaxSubmit('fin_number_form', patientEnrollment.onFinNumber);
+	});
+
 	$('form[name="personal_notes_form"] .submit-personal-notes').on('click', function (e) {
 		updateTimerFieldsOnForm('personal_notes_form');
 		form.ajaxSubmit('personal_notes_form', patientEnrollment.onPersonalNotes);
@@ -3568,7 +3613,7 @@ var init = function () {
 	});
 
 	form.ajaxForm("allergy_drug_form", onAllergy, function () {
-		
+
 		updateTimerFieldsOnForm('allergy_drug_form');
 		return true;
 	});
@@ -3739,16 +3784,16 @@ var init = function () {
 	});
 
 	//Review Allergies  
-	 form.ajaxForm("review_allergy_drug_form", onAllergy, function () {
-	 	updateTimerFieldsOnForm('review_allergy_drug_form');
-	 	return true;
-	 }); 
-	
+	form.ajaxForm("review_allergy_drug_form", onAllergy, function () {
+		updateTimerFieldsOnForm('review_allergy_drug_form');
+		return true;
+	});
+
 	form.ajaxForm("review_allergy_food_form", onAllergy, function () {
 		updateTimerFieldsOnForm('review_allergy_food_form');
 		return true;
 	});
-   
+
 	form.ajaxForm("review_allergy_enviromental_form", onAllergy, function () {
 		updateTimerFieldsOnForm('review_allergy_enviromental_form');
 		return true;
@@ -4142,8 +4187,8 @@ var init = function () {
 		inc_tasks = 0;
 		review_inc_tasks = 0;
 		$("form[name='diagnosis_code_form'] #symptoms_0").prop("disabled", false);
-	    $("form[name='diagnosis_code_form'] #goals_0").prop("disabled", false);
-	    $("form[name='diagnosis_code_form'] #tasks_0").prop("disabled", false);
+		$("form[name='diagnosis_code_form'] #goals_0").prop("disabled", false);
+		$("form[name='diagnosis_code_form'] #tasks_0").prop("disabled", false);
 
 
 		$("form[name='diagnosis_code_form'] #diagnosis_hiden_id").val("");
@@ -4157,7 +4202,7 @@ var init = function () {
 		$("form[name='diagnosis_code_form'] #goals_0").val('');
 		$("form[name='diagnosis_code_form'] #tasks_0").val('');
 
-		
+
 
 		$("form[name='diagnosis_code_form'] textarea[name='comments']").val('');
 		$("form[name='diagnosis_code_form'] #support").val('');
@@ -4167,15 +4212,15 @@ var init = function () {
 		util.selectDiagnosisCode(parseInt(id), $("form[name='diagnosis_code_form'] #diagnosis_code"));
 	});
 
-	$('body').on('click', '#open_doctors_information', function() {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/provider';
+	$('body').on('click', '#open_doctors_information', function () {
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/provider';
 		var reviewModalSectionId = 'doctors-information';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderOtherProviderSpecialistTable, "provider_info");
 	});
 
 	$('body').on('click', '#open_codes_info_for_medical', function () {
 		// alert("calling");
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/diagnosis-code';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/diagnosis-code';
 		var reviewModalSectionId = 'codes-info-for-medical';
 		// debugger;
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderDiagnosisTable);
@@ -4199,13 +4244,13 @@ var init = function () {
 	});
 
 	$('body').on('click', '#open_health_services', function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/services';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/services';
 		var reviewModalSectionId = 'review_healthcare_services';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, getServicesDatatables);
 	});
 
 	$('body').on('click', '#open_allergies', function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/allergies';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/allergies';
 		var reviewModalSectionId = 'review_allergy_information';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, getAllergiesDatatables);
 	});
@@ -4215,15 +4260,15 @@ var init = function () {
 		var form = $(target).find("form").attr('name');
 		var allergy_type = $("form[name=" + form + "] input[name='allergy_type']").val();
 		var tbl = $(target).find('table').attr('id');
-		var pagination_info = $("#"+tbl+"_info").text();
+		var pagination_info = $("#" + tbl + "_info").text();
 		var splitString = pagination_info.split(' ')
 		var allergy_count = splitString[splitString.length - 2]
 		$('form[name="' + form + '"] #' + allergy_type + 'count').val(allergy_count);
-        if (allergy_count == 0) {
-            $('form[name="' + form + '"] .noallergiescheckbox').prop("disabled", false);
-        } else {
-            $('form[name="' + form + '"] .noallergiescheckbox').prop("disabled", true);
-        }
+		if (allergy_count == 0) {
+			$('form[name="' + form + '"] .noallergiescheckbox').prop("disabled", false);
+		} else {
+			$('form[name="' + form + '"] .noallergiescheckbox').prop("disabled", true);
+		}
 	});
 
 	// $('.review_data_allergy_tab').click(function (e) {
@@ -4406,61 +4451,61 @@ var init = function () {
 	// });
 
 	$("#open_family_info").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/family-info';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/family-info';
 		var reviewModalSectionId = 'family-info';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, null, "family_info");
 	});
 
 	$("#open_live_info").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/live-with-info';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/live-with-info';
 		var reviewModalSectionId = 'live-info-for-anyone';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderLiveWithTable);
 	});
 
 	$("#open_sibiling_info").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/sibiling-info';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/sibiling-info';
 		var reviewModalSectionId = 'sibiling-info';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderSiblingTable);
 		populateformdata();
 	});
 
 	$("#open_children_info").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/children-info';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/children-info';
 		var reviewModalSectionId = 'children-info';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderChildrenTable);
 		populateformdata();
 	});
 
 	$("#open_grandchildren_info").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/grandchildren-info';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/grandchildren-info';
 		var reviewModalSectionId = 'grandchildren-info';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderGrandchildrenTable);
 		populateformdata();
 	});
 
 	$("#open_pets").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/pets';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/pets';
 		var reviewModalSectionId = 'review_pets_data';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderPetTable);
 		populateformdata();
 	});
 
 	$("#open_hobbies").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/hobbies';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/hobbies';
 		var reviewModalSectionId = 'review_hobbies';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderHobbiesTable);
 		populateformdata();
 	});
 
 	$("#open_travel").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/travel';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/travel';
 		var reviewModalSectionId = 'review_travel';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderTravelTable);
 		populateformdata();
 	});
 
 	$("#open_medications").click(function () {
-		var reviewModalHTMLurl = baseURL+'ccm/review-data-modal-view/'+patient_id+'/'+module_id+'/'+component_id+'/'+billable+'/medications';
+		var reviewModalHTMLurl = baseURL + 'ccm/review-data-modal-view/' + patient_id + '/' + module_id + '/' + component_id + '/' + billable + '/medications';
 		var reviewModalSectionId = 'review_Medications';
 		getSectionHTML(reviewModalHTMLurl, reviewModalSectionId, renderMedicationsTable);
 	});
@@ -4532,7 +4577,7 @@ window.carePlanDevelopment = {
 	editTravelData: editTravelData,
 	deleteTraveltData: deleteTraveltData,
 	enableDiagnosisbutton: enableDiagnosisbutton,
-	disableDiagnosisbutton:disableDiagnosisbutton,
+	disableDiagnosisbutton: disableDiagnosisbutton,
 	clearConditionForm: clearConditionForm,
 	updateTimerFieldsOnForm: updateTimerFieldsOnForm
 };

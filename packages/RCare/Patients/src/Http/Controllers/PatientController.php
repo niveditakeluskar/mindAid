@@ -89,7 +89,8 @@ class PatientController extends Controller
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
         $step_id      = 0; 
-
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $check_fn = Patients::where('id',$patient_id)->exists();
 
         $data = array(
@@ -117,7 +118,8 @@ class PatientController extends Controller
             $patientfin['created_by']= session()->get('userid');
             $insert_query = PatientFinNumber::create($patientfin);
         }
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' =>$form_save_time]);
     }
 	
 	public function populateFinNumberData($id){        
@@ -1252,6 +1254,8 @@ class PatientController extends Controller
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
         $step_id      = 0; 
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
         $data = array(
             'patient_id' => $patient_id,
@@ -1270,7 +1274,8 @@ class PatientController extends Controller
             $data['created_by']= session()->get('userid');
             $insert_query = PatientPartResearchStudy::create($data);
         }
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' =>$form_save_time]);
     }
 	
 	public function getPartnerdevicedId($partnerid)
@@ -1298,6 +1303,8 @@ class PatientController extends Controller
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
         $step_id      = 0; 
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
 
         $data = array(
@@ -1316,7 +1323,8 @@ class PatientController extends Controller
             $data['created_by'] = session()->get('userid');
             $insert_query = PatientPersonalNotes::create($data);
         }
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' =>$form_save_time]);
     }
 	
 	public function savepatientdevices(MasterDevicesRequest $request){ //dd($request);
@@ -1332,6 +1340,8 @@ class PatientController extends Controller
         //$device_id          = sanitizeVariable($request->devices);
         $partners  = sanitizeVariable($request->partner_id);
         $partner_device_id           = sanitizeVariable($request->partner_devices_id);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
         $query =PartnerDevices::where('id',$partner_device_id)->select('device_id')->get(); 
         foreach ($query as $row) {
@@ -1525,7 +1535,8 @@ class PatientController extends Controller
         $stage_id     = sanitizeVariable($request->stage_id);
         $step_id      = 0;
         $billable     = 1;
-
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 //         $count = PatientThreshold::select('bpmhigh','bpmlow','diastolichigh','diastoliclow','systolichigh','systoliclow','oxsathigh','oxsatlow','temperaturehigh','temperaturelow','glucosehigh','glucoselow')
 //                  ->where('patient_id',$patient_id)->whereRaw("bpmhigh > 0 or bpmlow > 0 or glucosehigh > 0 or glucoselow > 0 or oxsathigh > 0 or oxsatlow > 0 or diastolichigh > 0 or diastoliclow > 0 or temperaturehigh > 0 or temperaturelow > 0 or systolichigh > 0 or systoliclow > 0")->get();
 // dd($count);
@@ -1625,7 +1636,8 @@ class PatientController extends Controller
             $data['created_by'] = session()->get('userid');
             $insert_query = PatientThreshold::create($data);
         }
-        $record_time = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+        $record_time = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' =>$form_save_time]);
     }
 
 
@@ -2232,7 +2244,8 @@ public function practicePatientsAssignDevice($practice,$moduleId){
 		$entrollment_form            = sanitizeVariable($request->entrollment_from);
         $currentMonth       = date('m');
         $currentYear        = date('Y');
-		
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 		
         if($military_status == '0'){
             $vtemplate = sanitizeVariable(json_encode($request->question['question']));
@@ -2545,7 +2558,7 @@ public function practicePatientsAssignDevice($practice,$moduleId){
             $step_id            = 0;
             $form_name          = sanitizeVariable($request->form_name);
             $billable           = 1;
-            $record_time        = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $submodule, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time        = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $submodule, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             
             DB::commit();
             return $patient_id;
@@ -2974,7 +2987,9 @@ public function practicePatientsAssignDevice($practice,$moduleId){
             $stage_id     = empty(sanitizeVariable($request->stage_id))?0:sanitizeVariable($request->stage_id);
             $step_id      = empty(sanitizeVariable($request->step_id))?0:sanitizeVariable($request->step_id);
             $form_name    = sanitizeVariable($request->form_name);
-            $record_time = CommonFunctionController::recordTimeSpent($start_time, $end_time, $request->patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+            $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+            $record_time = CommonFunctionController::recordTimeSpent($start_time, $end_time, $request->patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name,  $form_start_time, $form_save_time);
 
             $module_query = DB::select("SELECT module from ren_core.modules where id = ".$module_id);
             $module       = strtolower($module_query[0]->module);
