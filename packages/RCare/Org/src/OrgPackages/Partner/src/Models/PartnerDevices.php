@@ -1,5 +1,4 @@
 <?php
-
 namespace RCare\Org\OrgPackages\Partner\src\Models; 
 use Illuminate\Database\Eloquent\Model;   
 use RCare\System\Support\DashboardFetchable;

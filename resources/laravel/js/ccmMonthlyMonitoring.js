@@ -177,7 +177,6 @@ var populateForm = function (data, url) {
                                 // alert(e_set_date);  
 
 
-
                                 $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" onfocusout="saveEMR()">' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
                                 $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date); 
                             
@@ -2165,6 +2164,7 @@ $("#addnotes").click(function () {
     summarycount++;
     var childrenlength = $("div#additional_monthly_notes").children().length;
     $('#additional_monthly_notes').append('<div class="additionalfeilds row"  style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;"><div class="col-md-4"><input type="date" class="form-control emr_monthly_summary_date" id="emr_monthly_summary_date_' + childrenlength + '"  name="emr_monthly_summary_date[]"><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control emrsummary" cols="90"  name="emr_monthly_summary[]" onfocusout="saveEMR()"></textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+
     var date = new Date();
     var day = date.getDate();
     var month = date.getMonth() + 1;
