@@ -41,7 +41,8 @@ class QuestionnaireTemplate extends Model
         'add_to_patient_status',
         'one_time_entry',
         'display_months',
-        'score'
+        'score',
+        'tags'
     ];
 
     public function template(){

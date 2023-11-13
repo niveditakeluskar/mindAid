@@ -2475,6 +2475,172 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     // }
 
     //please donot remove this function = created and modified ashwini 19th sept 2022     
+    public function emrSummary(Request $request){
+        $uid                 = sanitizeVariable($request->uid);
+            $patient_id          = sanitizeVariable($request->patient_id);
+            $sequence            = 5;
+            $emr_entry_completed = empty(sanitizeVariable($request->emr_entry_completed)) ?'0' : sanitizeVariable($request->emr_entry_completed);
+            $emr_monthly_summary = sanitizeVariable($request->emr_monthly_summary);
+            $emr_monthly_summary_date = sanitizeVariable($request->emr_monthly_summary_date);
+            //record time
+            $start_time          = sanitizeVariable($request->start_time);
+            $end_time            = sanitizeVariable($request->end_time);
+            $module_id           = sanitizeVariable($request->module_id);
+            $component_id        = sanitizeVariable($request->component_id);
+            $stage_id            = sanitizeVariable($request->stage_id);
+            $step_id             = sanitizeVariable($request->step_id);
+            $form_name           = sanitizeVariable($request->form_name);
+
+            $currentmonth = date('m'); 
+            $currentyear  = date('Y');
+            $record_date  = Carbon::now();
+            $billable            = 1;
+            $last_sub_sequence   = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+            $new_sub_sequence    = $last_sub_sequence + 1;
+
+            $routine_response = sanitizeVariable($request->routine_response);
+            $urgent_emergent_response = sanitizeVariable($request->urgent_emergent_response);
+            $referral_order_support = sanitizeVariable($request->referral_order_support);
+            $medication_support = sanitizeVariable($request->medication_support);
+            $verbal_education_review_with_patient = sanitizeVariable($request->verbal_education_review_with_patient);
+            $mailed_documents = sanitizeVariable($request->mailed_documents);
+            $resource_support = sanitizeVariable($request->resource_support);
+            $veterans_services = sanitizeVariable($request->veterans_services);
+            $authorized_cm_only = sanitizeVariable($request->authorized_cm_only);
+            $no_additional_services_provided = sanitizeVariable($request->no_additional_services_provided); 
+
+            $routineresponse = sanitizeVariable($request->routineresponse);
+            $urgentemergentresponse = sanitizeVariable($request->urgentemergentresponse);
+            $referralordersupport = sanitizeVariable($request->referralordersupport);
+            $medicationsupport = sanitizeVariable($request->medicationsupport);
+            $verbaleducationreviewwithpatient = sanitizeVariable($request->verbaleducationreviewwithpatient);
+            $maileddocuments = sanitizeVariable($request->maileddocuments);
+            $resourcesupport = sanitizeVariable($request->resourcesupport);
+            $veteransservices = sanitizeVariable($request->veteransservices);
+            $authorizedcmonly = sanitizeVariable($request->authorizedcmonly);
+    
+            $servicesdata1 = '';
+            $servicesdata2 = '';
+            $servicesdata3 = '';
+            $servicesdata4 = '';
+            $servicesdata5 = '';
+            $servicesdata6 = '';
+            $servicesdata7 = '';
+            $servicesdata8 = '';
+            $servicesdata9 = '';
+            $servicesdata10 = '';
+    
+            $additionalservices1 = '';
+            $additionalservices2 = '';
+            $additionalservices3 = '';
+            $additionalservices4 = '';
+            $additionalservices5 = '';
+            $additionalservices6 = '';
+            $additionalservices7 = '';
+            $additionalservices8 = '';
+            $additionalservices9 = '';
+            $additionalservices10 = '';
+
+            DB::beginTransaction();
+            try {
+    
+                
+               $v = 'Summary notes added on';
+
+               $c= CallWrap::where('patient_id', $patient_id)
+                    ->whereMonth('created_at',  date('m'))
+                    ->whereYear('created_at',  date('Y'))
+                    ->where(function ($query) use ($v){
+                        $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%'); 
+                    })->update([
+                        'status' => 0,
+                        'updated_at' =>Carbon::now()
+                    ]);
+
+                $e =    EmrMonthlySummary::where('patient_id', $patient_id)
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at',  date('Y'))
+                        ->where(function ($query) use ($v){
+                            $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%');
+                        })->update([
+                            'status' => 0,
+                            'updated_at' =>Carbon::now()
+                        ]); 
+                        foreach($emr_monthly_summary as $key => $emr_monthly_summary_notes)
+                        {
+                            if($key==0){
+                                $emr_monthly_summary_data = array(  
+                                    'uid'                       => $uid,
+                                    'record_date'               => Carbon::now(),
+                                    'topic'                     => 'EMR Monthly Summary',
+                                    'notes'                     => $emr_monthly_summary_notes,
+                                    'emr_entry_completed'       => $emr_entry_completed, 
+                                    'created_by'                => session()->get('userid') , 
+                                    'patient_id'                => $patient_id,
+                                    'sequence'                  => $sequence,
+                                    'sub_sequence'              => $new_sub_sequence
+            
+                                );
+                                $monthlydate =  Carbon::now();  
+                                $emr_type = 1;
+                                // $is_old_emr = 1;
+                              
+                            }else{
+                                $d= explode("-",$emr_monthly_summary_date[$key-1]);
+                                $summary='Summary notes added on '.$d[1]."-".$d[2]."-".$d[0];
+                                $emr_monthly_summary_data = array(  
+                                    'uid'                       => $uid,
+                                    'record_date'               => Carbon::now(),
+                                    'topic'                     => $summary,
+                                    'notes'                     => $emr_monthly_summary_notes,
+                                    'emr_entry_completed'       => $emr_entry_completed, 
+                                    'created_by'                => session()->get('userid'), 
+                                    'patient_id'                => $patient_id,
+                                    'sequence'                  => $sequence,
+                                    'sub_sequence'              => $new_sub_sequence
+                                   
+                                );
+        
+                                $currentdatetime =  Carbon::now();  
+                                $dt1 = DatesTimezoneConversion::userTimeStamp($currentdatetime);  
+                                $datetimearray = explode(" ", $dt1);
+                                $currenttime = $datetimearray[1];
+                                $monthlydate = $emr_monthly_summary_date[$key-1]." ".$currenttime;    
+                                $emr_type = 2;  
+        
+                            }
+            
+                             /*******ccm-emr-monthly-summarytable-start************/
+            
+                             $emr_monthly_summary_data['record_date'] = $monthlydate; 
+                             $emr_monthly_summary_data['status'] = 1;
+                             $emr_monthly_summary_data['emr_type'] = $emr_type;  
+                            
+                             $e = EmrMonthlySummary::create($emr_monthly_summary_data);  
+                         
+             
+                              /*******ccm-emr-monthly-summarytable-end************/ 
+            
+            
+                            $emr_monthly_summary_data['uid']     = $uid; 
+                            $emr_monthly_summary_data['emr_monthly_summary'] = $emr_monthly_summary_notes;
+                            $emr_monthly_summary_data['emr_monthly_summary_date']     = $monthlydate;     
+            
+                            //some fields are added seperately bcz these fields are not present in ccm_emr_monthly_summary
+                          
+                            CallWrap::create($emr_monthly_summary_data);
+            
+                        }
+
+                        DB::commit();
+                    } catch(\Exception $ex) {
+                        DB::rollBack();
+                        return $ex;
+                        return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+                    }
+
+    }
+
     public function SaveCallWrapUp(CallwrapAddRequest $request) {
             $uid                 = sanitizeVariable($request->uid);
             $patient_id          = sanitizeVariable($request->patient_id);
@@ -2805,7 +2971,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata5 = $servicesdata5.$s5.", ";
                         }
                     }
-                    $additionalservices5 = "Verbal Education/Review with Patient :".$servicesdata5.";";
+                    $additionalservices5 = "Verbal Education/Review with Patient:".$servicesdata5.";";
     
                 }
                 if($mailed_documents == true){
@@ -2815,7 +2981,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata6 = $servicesdata6.$s6.", ";
                         } 
                     }
-                    $additionalservices6 = "Mailed Documents :".$servicesdata6.";";
+                    $additionalservices6 = "Mailed Documents:".$servicesdata6.";";
     
                 }
                 if($resource_support == true){
@@ -2825,7 +2991,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                             $servicesdata7 = $servicesdata7.$s7.", ";
                         }
                     }
-                    $additionalservices7 = "Resource Support :".$servicesdata7.";";
+                    $additionalservices7 = "Resource Support:".$servicesdata7.";";
     
                 }
 
@@ -2839,7 +3005,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         }
                     }
                      
-                    $additionalservices8 = "Veterans Services :".$servicesdata8.";";  
+                    $additionalservices8 = "Veterans Services:".$servicesdata8.";";  
                    
                 } 
 
@@ -2851,12 +3017,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $servicesdata9 = $servicesdata9.$s9.", ";  
                     } 
                 }
-                $additionalservices9 = "Authorized CM Only :".$servicesdata9.";";  
+                $additionalservices9 = "Authorized CM Only:".$servicesdata9.";";  
             } 
 
 
                 if($no_additional_services_provided == true){  
-                    $additionalservices10 = "No Additional Services Provided ";
+                    $additionalservices10 = "No Additional Services Provided";
                     $servicedata =   $additionalservices10;
                 }else{
                     $servicedata = $additionalservices1." ".$additionalservices2." ".$additionalservices3." ".$additionalservices4." ".$additionalservices5." ".$additionalservices6." ".$additionalservices7." ".$additionalservices8." ".$additionalservices9;      
@@ -2867,7 +3033,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $additional_services_data = array(  
                     'uid'                       => $uid,
                     'record_date'               => Carbon::now(),
-                    'topic'                     => 'Additional Services :',  
+                    'topic'                     => 'Additional Services:',  
                     'notes'                     => $servicedata ,
                     'created_by'                => session()->get('userid') , 
                     'patient_id'                => $patient_id,

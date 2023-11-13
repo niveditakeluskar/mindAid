@@ -419,6 +419,18 @@
         var table1=util.renderDataTable('patient-alert-history-list_'+deviceid, url, columns, "{{ asset('') }}"); 
     } 
 
+    function saveEMR(){
+        $.ajax({
+            url: '/ccm/saveEmrSummary',
+            type: 'POST',
+            data: $("#callwrapup_form").serialize(),
+            success: function (data) {
+            var table = $('#callwrap-list');
+            table.DataTable().ajax.reload();
+            }
+        });
+    }
+
     function setdata(){
         var ddl_days = $("#ddl_days").val();
         var patient_id = $("#patient_id").val();
@@ -889,9 +901,9 @@
         }
 
 
-        function ajaxRenderTree1(obj, id, count, objCount, tree_key) {
+        function ajaxRenderTree1(obj, id, count, objCount, tree_key, seq, tempid) {
             var label = $("#opt" + id + '' + objCount + '' + tree_key).val();
-            ajaxRenderTree(obj, label, id, objCount, tree_key);
+            ajaxRenderTree(obj, label, id, objCount, tree_key, seq, tempid);
         }
 
         function checkQuestion(obj, i) { 

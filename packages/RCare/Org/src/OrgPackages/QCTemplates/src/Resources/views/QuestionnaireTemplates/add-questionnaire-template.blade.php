@@ -1,9 +1,22 @@
 @extends('Theme::layouts.master')
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.css">
 <style>
     .disabled {
     pointer-events: none;
     cursor: default;
     display: none;
+}
+.badtag {
+  border: solid 1px red !important;
+  background-color: #d24a4a !important;
+  color: white !important;
+}
+
+.badtag a {
+  color: #ad2b2b !important;
+}
+.badtag span{
+    background:none!important;
 }
     </style>
 @section('main-content')
@@ -168,6 +181,13 @@
                             </div>
                             <label class="col-md-1 mt-2" >Sequence</label>
                             <input type="number" class="form-control col-md-2" name="sequence" id="sequence"> 
+            
+                            <div class="col-md-6 form-group mt-2 team-invite">
+                                <label for="tags" class="">Enter Tags</label>
+                                <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30">
+                                <br>
+                                <p id='subtext'>You can enter multiple tags with comma</p>
+                            </div>
                             </div>
                             
                         </div>
@@ -238,6 +258,9 @@
     </div>             
 @endsection
 @section('page-js')
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <script>
         $( init );
@@ -444,7 +467,35 @@
                 dataType: 'html'
             });
         });
+        $('#tags').tagsInput({
+  'width': 'auto',
+  'delimiter': ',',
+  'defaultText': 'Enter Tag',
+  onAddTag: function(item) {
+    $($(".tagsinput").get(0)).find(".tag").each(function() {
+      if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+        $(this).addClass("badtag");
+      }
     });
+  },
+  'onChange': function(item) {
+		$($(".tagsinput").get(0)).find(".tag").each(function() {
+      if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+        $(this).addClass("badtag");
+      }
+    });
+  }
+
+});
+    });
+
+    function ValidateEmail(mail) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return (true)
+  }
+  return (false)
+}
+
 
     function addLabels(obj){   
 
