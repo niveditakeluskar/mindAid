@@ -3089,6 +3089,7 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
             pause_start_time: timerStart
         }
     }).then(function (response) {
+        $("#timer_runing_status").val(0);
         $('.form_start_time').val(response.data.form_start_time);
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
@@ -3109,6 +3110,7 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
     var form_start_time = $('.form_start_time').val();
     pause_stop_flag = 1;
     pause_next_stop_flag = 1;
+    $("#timer_runing_status").val(1);
     axios({
         method: "POST",
         url: `/system/log-time/time`,
@@ -4316,19 +4318,32 @@ var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
         method: "GET",
         url: `/system/get-total-time/${patientID}/${moduleId}/${starttime}/total-time`,
     }).then(function (response) {
-        if (pause_stop_flag == 0) {
+        if (patientID != 0 ) {
+            if(pause_stop_flag == 0){
+                var data = response.data;
+                var fial_time = data['total_time'];
+                $("#time-containers").html(fial_time);
+                $(".message-notification").html('');
+                $(".message-notification").append(data['count']);
+                $("#ajax-message-history").html('');
+                $("#ajax-message-history").append(data['history']);
+                var now = new Date();
+                var timeToNextTick = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+                setTimeout(function () {
+                    if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+                        var start_time = $("#page_landing_times").val();
+                    } else {
+                        var start_time = $(".form_start_time").val();
+                    }
+                    updateTimeEveryMinutes(patientID, moduleId, start_time);
+                }, 60000);
+            }
+        }else{
             var data = response.data;
-            var fial_time = data['total_time'];
-            $("#time-containers").html(fial_time);
-            var now = new Date();
-            var timeToNextTick = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+            $(".message-notification").html('');
+            $(".message-notification").append(data['count']);
             setTimeout(function () {
-                if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
-                    var start_time = $("#page_landing_times").val();
-                } else {
-                    var start_time = $(".form_start_time").val();
-                }
-                updateTimeEveryMinutes(patientID, moduleId, start_time);
+                updateTimeEveryMinutes(0, 0, 0);
             }, 60000);
         }
     }).catch(function (error) {

@@ -433,6 +433,7 @@ var onCallHippa = function (formObj, fields, response) {
 
     if (response.status == 200) {
         util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+        $(".form_start_time").val(response.data.form_start_time);
         $("form[name='hippa_form'] .alert").show();
         util.totalTimeSpentByCM();
         var scrollPos = $(".main-content").offset().top;

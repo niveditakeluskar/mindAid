@@ -560,7 +560,7 @@ var onRelationship = function (formObj, fields, response) {
 
 
 var onFollowUpForm = function (formObj, fields, response) {
-    if (response.status == 200 && $.trim(response.data) == '') {
+    if (response.status == 200 && $.trim(response.data) != 'blank form') {
         util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
         util.totalTimeSpentByCM();
         $(".form_start_time").val(response.data.form_start_time);
@@ -1678,14 +1678,16 @@ var init = function () {
         var step_id = $("form[name='followup_form'] input[name='step_id']").val();
         var timer_start = $("#timer_start").val();
         var timer_paused = $("#time-container").text();
+        var startTime = $("form[name='followup_form'] .form_start_time").val();
         if (confirm("Are you sure you want to change the Status")) {
             $.ajax({
                 type: 'post',
                 url: '/ccm/completeIncompleteTask',
-                data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name,
+                data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name + '&startTime=' + startTime,
                 success: function (response) {
                     util.getToDoListData($("#patient_id").val(), $("form[name='followup_form'] input[name='module_id']").val());
                     //util.getDataCalender($("#patient_id").val(), $("form[name='followup_form'] input[name='module_id']").val());
+                    $(".form_start_time").val(response.form_start_time);
                     var table = $('#callwrap-list');
                     table.DataTable().ajax.reload();
                     var table1 = $('#task-list');
@@ -2124,35 +2126,23 @@ var init = function () {
         return true;
     });
 
-    function setIntervalFunctionAgain() {
-        var id = $("input[name='patient_id']").val();
-        $.ajax({
-            url: "/ccm/get-message-history/" + id,
-            type: 'GET',
-            success: function (res) {
-                $("#ajax-message-history").html('');
-                $("#ajax-message-history").append(res);
-                setTimeout(function () { setIntervalFunction(); }, 10000);
-            }
-        });
-    }
 
-    function setIntervalFunction() {
-        var id = $("input[name='patient_id']").val();
-        $.ajax({
-            url: "/ccm/get-message-history/" + id,
-            type: 'GET',
-            success: function (res) {
-                $("#ajax-message-history").html('');
-                $("#ajax-message-history").append(res);
-                setTimeout(function () { setIntervalFunctionAgain(); }, 10000);
-            }
-        });
-    }
+    // function setIntervalFunction() {
+    //     var id = $("input[name='patient_id']").val();
+    //     $.ajax({
+    //         url: "/ccm/get-message-history/" + id,
+    //         type: 'GET',
+    //         success: function (res) {
+    //             $("#ajax-message-history").html('');
+    //             $("#ajax-message-history").append(res);
+    //             setTimeout(function () { setIntervalFunction(); }, 10000);
+    //         }
+    //     });
+    // }
 
-    $(document).ready(function () {
-        setIntervalFunction();
-    });
+    // $(document).ready(function () {
+    //     setIntervalFunction();
+    // });
 };
 
 $(document).on('click', 'i.removenotes', function (e) {

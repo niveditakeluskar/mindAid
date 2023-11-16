@@ -975,9 +975,12 @@ class CcmController extends Controller {
                 $component_id = sanitizeVariable($request->component_id); //sanitizeVariable(getPageSubModuleName());
                 $stage_id     = sanitizeVariable($request->stage_id); //$request->stage_id
                 $step_id      = sanitizeVariable($request->step_id);
+                $form_start_time = sanitizeVariable($request->startTime);
+                $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
                 $billable     = 1;
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, 'follow-up-mark-as-completed-task');
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, 'follow-up-mark-as-completed-task', $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3248,10 +3251,14 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         // print_r($start_time .'====='. $end_time); die;
                         $start_time = "00:00:00";
                         $time2 = "00:04:00"; 
+                        $st = strtotime("00-00-0000 00:00:00");
+                        $et = strtotime("00-00-0000 00:04:00");
+                        $form_start_time1 =  date("m-d-Y H:i:s", $st);
+                        $form_save_time1 =  date("m-d-Y H:i:s", $et);
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
                         $end_time = date("H:i:s",strtotime($start_time)+$secs); 
                         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
-                        $billable, $uid,$step_id,$form_name, $form_start_time, $form_save_time);
+                        $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);
                     } 
                 }
                 DB::commit();

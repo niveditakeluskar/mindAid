@@ -7,7 +7,8 @@
                     <input type="hidden" name="hidden_id" id="hidden_id" value="{{$patient_id}}">
                     <input type="hidden" name="page_module_id" id="page_module_id" value="{{ getPageModuleName() }}">
                     <input type="hidden" name="page_component_id" id="page_component_id" value="{{ getPageSubModuleName() }}">         
-                    <input type="hidden" name="service_status" id="service_status" value="{{isset($patient_enroll_date[0]->status)?$patient_enroll_date[0]->status:''}}">                    
+                    <input type="hidden" name="service_status" id="service_status" value="{{isset($patient_enroll_date[0]->status)?$patient_enroll_date[0]->status:''}}">          
+                    <input type="hidden" id="timer_runing_status" value="0">          
                     <div class="col-md-1 patient_img" id="patient_img">  
                         <?php
                         $m_id           = getPageModuleName();
