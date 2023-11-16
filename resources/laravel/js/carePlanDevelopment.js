@@ -4,7 +4,6 @@ var patient_id = $("input[name='patient_id']").val();
 var sPageURL = window.location.pathname;
 parts = sPageURL.split("/"),
 	module = parts[parts.length - 2];
-
 var imagingcount = 0;
 var inc_symptoms = 0;
 var review_inc_symptoms = 0;
@@ -3361,7 +3360,11 @@ var getSectionHTML = function (url, section, functionToCall, form = 'all') {
 			$.when(
 				$('#' + section).html(response.data)
 			).then(function () {
-				$('#'+ section).find("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");;
+				if($("#timer_runing_status").val() == '1'){
+					$('#'+ section).find("form").find(":submit").attr("disabled", true);
+				}
+				var val = $(".form_start_time").val();
+				$('#'+ section).find("form").append("<input type='hidden' value='"+val+"' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");;
 				if (form != 'all') {
 					populateForm(patient_id, formpopulateurl);
 				}

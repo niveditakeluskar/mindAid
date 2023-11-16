@@ -1627,8 +1627,9 @@ class CarePlanDevelopmentController extends Controller
         $billable          = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        DB::beginTransaction();
-        try {
+       
+         DB::beginTransaction();
+         try {
             foreach ($fname as $key => $value) {
                 if ($tab_name =='sibling' || $tab_name =='children' || $tab_name =='grandchildren') {
                     $relationship =  sanitizeVariable($request->relationship);
@@ -1640,23 +1641,32 @@ class CarePlanDevelopmentController extends Controller
                         $relationship = sanitizeVariable($request->relationship[$key]);
                     } 
                 }
-                if($age[$key]=='') {
-                    $age=null;
+                if($age == null){
+                    $age[$key]=null;
                 }
+                else if($age[$key]=='') {
+                    $age[$key]=null;
+                }
+
+                if($address == null){
+                    $address[$key]=null;
+                }
+                else if($address[$key]=='') {
+                    $address[$key]=null;
+                }
+                
                 $insert_familyData = array(
                     'relational_status' => $relational_status,
                     'patient_id'       => $patient_id, 
                     'fname'            => $fname[$key],
                     'lname'            => $lname[$key],
-                    'mobile'           => $mobile[$key],
-                    'phone_2'          => $phone_2[$key], 
-                    'email'            => $email[$key],
                     'address'          => $address[$key],
                     'relationship'     => $relationship,
                     'age'              => $age[$key],
                     'tab_name'         => $tab_name,
                     'additional_notes' => $additional_notes[$key],
                 );
+
                 if ($tab == 'review-patient') {
                     $insert_familyData['review'] = 1;
                 }
@@ -1674,12 +1684,12 @@ class CarePlanDevelopmentController extends Controller
                 }
             }
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
-            DB::commit(); 
+             DB::commit(); 
             return response(['form_start_time' =>$form_save_time]);
-        } catch(\Exception $ex) {
-            DB::rollBack();
-            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
-        }  
+         } catch(\Exception $ex) {
+             DB::rollBack();
+             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+         }  
     }
 
     public function savePatientprovidersData(PatientsProvidersAddRequest $request) {    
