@@ -566,6 +566,8 @@ class PatientController extends Controller
         $form_name      = sanitizeVariable($request->form_name);
         $billable       = 1;
         $patient_status = sanitizeVariable($request->status);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $activedataInsert   = array(            
             'patient_id'        => $patient_id,
             'from_date'         => $fromdate, 
@@ -681,7 +683,8 @@ class PatientController extends Controller
             }
         }//end else
 
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' =>$form_save_time]);
     }
 	
     public function getPatientActiveDeactive(Request $request)

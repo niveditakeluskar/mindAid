@@ -3717,7 +3717,12 @@ var getSectionHTML = function getSectionHTML(url, section, functionToCall) {
     }).then(function (response) {
       var formpopulateurl = URL_POPULATE + "/" + patient_id + "/" + form;
       $.when($('#' + section).html(response.data)).then(function () {
-        $('#' + section).find("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");
+        if ($("#timer_runing_status").val() == '1') {
+          $('#' + section).find("form").find(":submit").attr("disabled", true);
+        }
+
+        var val = $(".form_start_time").val();
+        $('#' + section).find("form").append("<input type='hidden' value='" + val + "' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");
         ;
 
         if (form != 'all') {
@@ -4847,7 +4852,7 @@ window.carePlanDevelopment = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/carePlanDevelopment.js */"./resources/laravel/js/carePlanDevelopment.js");
+module.exports = __webpack_require__(/*! /var/www/html/mnt1/rcaregit/resources/laravel/js/carePlanDevelopment.js */"./resources/laravel/js/carePlanDevelopment.js");
 
 
 /***/ })

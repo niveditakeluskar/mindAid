@@ -259,6 +259,8 @@ var populateForm = function populateForm(data, url) {
 
 var onSaveActiveDeactive = function onSaveActiveDeactive(formObj, fields, response) {
   if (response.status == 200) {
+    util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
     var varworklist = $("form[name='active_deactive_form'] #worklistclick").val();
     var status = $("form[name='active_deactive_form'] input[name ='status']:checked").val();
 
@@ -554,6 +556,7 @@ var callMonthllyMonitoringInitFunctions = function callMonthllyMonitoringInitFun
 var onCallHippa = function onCallHippa(formObj, fields, response) {
   if (response.status == 200) {
     util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
     $("form[name='hippa_form'] .alert").show();
     util.totalTimeSpentByCM();
     var scrollPos = $(".main-content").offset().top;
@@ -1282,7 +1285,7 @@ window.ccmcpdcommonJS = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/ccmcpdcommonJS.js */"./resources/laravel/js/ccmcpdcommonJS.js");
+module.exports = __webpack_require__(/*! /var/www/html/mnt1/rcaregit/resources/laravel/js/ccmcpdcommonJS.js */"./resources/laravel/js/ccmcpdcommonJS.js");
 
 
 /***/ })

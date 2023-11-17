@@ -439,7 +439,7 @@ window.deviceOrder = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /var/www/html/rcaregit_staging/rcaregit/resources/laravel/js/deviceOrder.js */"./resources/laravel/js/deviceOrder.js");
+module.exports = __webpack_require__(/*! /var/www/html/mnt1/rcaregit/resources/laravel/js/deviceOrder.js */"./resources/laravel/js/deviceOrder.js");
 
 
 /***/ })
