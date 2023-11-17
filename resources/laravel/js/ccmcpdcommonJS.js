@@ -135,6 +135,8 @@ var populateForm = function (data, url) {
 
 var onSaveActiveDeactive = function (formObj, fields, response) {
   if (response.status == 200) {
+    util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
     var varworklist = $("form[name='active_deactive_form'] #worklistclick").val();
     var status = $("form[name='active_deactive_form'] input[name ='status']:checked").val();
     if (status == 0) {
