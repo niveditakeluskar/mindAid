@@ -31,42 +31,52 @@ class RpmBulkuploadDevices implements ToCollection
         $practice = collect([$practice_get]);
         $fname = collect([$fname_get]);
         $lname = collect([$lname_get]);
-        $dateString = collect([$dob_get]);
+        $dob_dateString = collect([$dob_get]);
+        
+        // $dob = collect([$dob_get]);
         $device_code = collect([$device_code_get]); 
         $device = collect([$device_get]);
-        $expectedFormat = 'y-m-d';
-
-            if (!is_string($dateString)) {
+        $expectedFormat = "Y-m-d";
+    
+            if (isset($dob_dateString)) {
+                $newDate = date("Y-m-d", strtotime($dob_dateString));  
+                echo "New date format is: ".$newDate. " (YYYY-MM-DD)";   
+            //     echo $dob_dateString .'jjjjj';
               
-               $date = $dateString->format("Y-m-d"); 
+            //    $date = $dob_dateString->format("Y-m-d"); 
 
-               // $date = $dateString->format($expectedFormat);
-                $dob = $date;
-                //return 'Invalid date format for'  .' '.  $fname .' '. $lname;
-            } else {
-                $date = DateTime::createFromFormat($expectedFormat, $dateString);
-                if ($date === false) {
-                    // return 'Invalid date for'  .' '.  $fname .' '. $lname;
-                    $dob = $date->format('Y-m-d'); 
-                } else {
-                    // echo 'Date format is valid';
-                    $dob = $excelData[$i]['dob'];
-                }
+            //    // $date = $dateString->format($expectedFormat);
+            //     $dob = $date;
+            //     //return 'Invalid date format for'  .' '.  $fname .' '. $lname;
+            // } else {
+            //     $date = DateTime::createFromFormat($expectedFormat, $dateString);
+            //     if ($date === false) {
+            //         // return 'Invalid date for'  .' '.  $fname .' '. $lname;
+            //         $dob = $date->format('Y-m-d'); 
+            //     } else {
+            //         // echo 'Date format is valid';
+            //         $dob = $excelData[$i]['dob'];
+            //     }
             }
 
         if($partner->filter()->isNotEmpty()){
 
             // you logic can go here
-              $data = "select distinct(p.id) from patients.patient p 
-              where LOWER(p.fname) like '%".$fname."%' and LOWER(p.lname) like '%".$lname."%'
-              and p.dob = TO_DATE('".$dob."', 'YYYY-MM-DD')";
+            print_r($fname);echo"<pre>";
+            print_r($lname);echo"<pre>"; 
+            print_r($dob_dateString);echo"<pre>"; 
+              $data = "select distinct(p.id) from patients.patient p
+              where LOWER(p.fname) like '%".$fname."%' ";
+            //   and LOWER(p.lname) like '%".$lname."%'
+            //   and p.dob = TO_DATE('".$dob."', 'YYYY-MM-DD')";
                 $data_exist_query = DB::select($data);
             
                 if($data_exist_query!=''){
-                    //print_r($data_exist_query);
+                    // print_r($data_exist_query);
+                    echo "Yes";
                 }else{
                     echo "Nothing";
-                }
+                } 
 
             // $user = Content::create([
             // 'partner' => $collection[0],
@@ -94,6 +104,8 @@ class RpmBulkuploadDevices implements ToCollection
         //     // Add more columns as needed 
         // ]);
         }
+        
+        die;
     } 
 }
  

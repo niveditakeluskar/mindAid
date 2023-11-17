@@ -155,10 +155,10 @@ class BulkUploadDeviceController extends Controller {
         // Get the uploaded file
         $file = $request->file('file'); 
         $arr = array();
-        $sub_arr = array();
+        $sub_arr = array(); 
         // Process the Excel 
         // echo "hello";
-        $excelData = Excel::import(new RpmBulkuploadDevices, $request->file('file'));
+        $excelData = Excel::import(new RpmBulkuploadDevices,$file);
         // $ExcelData = Excel::toArray(new RpmBulkuploadDevices, $file);
         // $countExcelData = count($ExcelData[0]);
         // for($i=0; $i<$countExcelData; $i++){
