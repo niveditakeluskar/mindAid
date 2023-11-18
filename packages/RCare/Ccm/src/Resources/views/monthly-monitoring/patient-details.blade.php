@@ -122,7 +122,7 @@
             $('.tooltipevent').remove();
         },
         timezone: "local",
-        events:'/rpm/calender-data/'+patient_id+'/'+deviceid,
+        events:'/rpm/calender-data/'+patient_id+'/'+1, //deviceid
         selectable: true, 
         selectHelper: true,       
     });

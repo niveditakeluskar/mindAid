@@ -65,7 +65,7 @@ var populateForm = function (data, url) {
                 if (key == 'callwrapup_form') {  
                     // debugger;
                    
-                    if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) { 
+                    if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) { console.log(result[key]);
                         var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
                         var summarys = result[key].static['summary'];
                         if(summarys != null || summarys != "undefined" || summarys != ""){
