@@ -68,11 +68,12 @@ var populateForm = function (data, url) {
                     if (result[key] != null && typeof(result[key]) != "undefined" && result[key] != "" ) { console.log(result[key]);
                         var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
                         var summarys = result[key].static['summary'];
-                        if(summarys != null || summarys != "undefined" || summarys != ""){
-						    var summaryslength = "";
-                        }else{
-						    var summaryslength = result[key].static['summary'].length;
+                        if (summarys != null && summarys != undefined && summarys != "") {
+                            var summaryslength = result[key].static['summary'].length;
+                        } else {
+                            var summaryslength = "";
                         }
+                        
                         var checklist_data = result[key].static['checklist_data'];
 						
 						if(result[key].static['additional_services'] != null && typeof(result[key].static['additional_services'])!= "undefined" && result[key].static['additional_services'] != ""){
@@ -163,26 +164,27 @@ var populateForm = function (data, url) {
                       
 						 var newwwchildrenlength = $("div#additional_monthly_notes").children().length;
                         var inc_notes = 0;
-						  if(newwwchildrenlength == summaryslength ){
+						if(newwwchildrenlength == summaryslength ){
                         
                         }else{
                         for (var summary in summarys) {
-                           
-                              
-                                var e_date = summarys[summary]['record_date'];
-                                edate = e_date.split(' ');
-                                // console.log(edate);
-                                var enew_date = edate[0];
-                                var echange_date_format = enew_date.split('-');
-                                var e_set_date = echange_date_format[2] + '-' + echange_date_format[0] + '-' + echange_date_format[1];
-                                console.log(e_set_date); 
-                                // alert(e_set_date);  
-                                
+                            var summarys1 =  summarys[summary]['record_date'];
+                            if (summarys1 != null && summarys1 != undefined && summarys1 != "") {
+                                    var e_date = summarys[summary]['record_date'];
+                                    edate = e_date.split(' ');
+                                    // console.log(edate);
+                                    var enew_date = edate[0];
+                                    var echange_date_format = enew_date.split('-');
+                                    var e_set_date = echange_date_format[2] + '-' + echange_date_format[0] + '-' + echange_date_format[1];
+                                    console.log(e_set_date); 
+                                    // alert(e_set_date);  
+                                    
 
-                                $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" onfocusout="saveEMR()">' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
-                                $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date); 
-                            
-                            inc_notes++;  
+                                    $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" onfocusout="saveEMR()">' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
+                                    $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date); 
+                                
+                                inc_notes++;  
+                            }
                         }
 						}
                         if (checklist_data && checklist_data['emr_entry_completed'] != null) {
