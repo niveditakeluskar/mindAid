@@ -24,7 +24,7 @@ Route::prefix('messaging')->group(function () {
         Route::post('/get-message', 'RCare\Messaging\Http\Controllers\MessageLogController@getMessage')->name('get.message');
         Route::post('/get-message-history', 'RCare\Messaging\Http\Controllers\MessageLogController@getMessageHistory')->name('get.message.history');
         Route::post('/send-message', 'RCare\Messaging\Http\Controllers\MessageLogController@sendMessage')->name('send.message');
-        Route::get('/get-message-count', 'RCare\Messaging\Http\Controllers\MessageLogController@getMessageCount')->name('get.message.count');
+        Route::get('/get-message-count/{id}', 'RCare\Messaging\Http\Controllers\MessageLogController@getMessageCount')->name('get.message.count');
         Route::get('/get-user-list/{val}/{id}', 'RCare\Messaging\Http\Controllers\MessageLogController@getUserList')->name('get.user.list');
         Route::get('/get-user-concent/{val}', 'RCare\Messaging\Http\Controllers\MessageLogController@getContactDetail')->name('get.user.concent');
         Route::post('/update-concent-data', 'RCare\Messaging\Http\Controllers\MessageLogController@updateDetalis')->name('update.concent.data');

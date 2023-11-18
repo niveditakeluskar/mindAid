@@ -39,7 +39,12 @@ class PatientTimeRecords extends Model
         'callwrap_id',
         'activity',
         'activity_id',
-        'scheduler_id' 
+        'scheduler_id',
+        'form_start_time',
+        'form_save_time',
+        'old_net_time',
+        'pause_start_time',
+        'pause_save_time'
     ];
     
     public function users()

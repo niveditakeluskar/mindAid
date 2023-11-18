@@ -61,6 +61,8 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/monthly-monitoring-update-callwrap-up/{id}', 'RCare\Ccm\Http\Controllers\CcmController@UpdateCallWrapUpInline')->name('update.call.wrap.up.inline');
         Route::get('/get-call-scripts-by-id/{id}/{uid}/call-script', 'RCare\Ccm\Http\Controllers\CcmController@getCallScriptsById')->name('get.call.scripts.by.id');
         Route::post('/saveGeneralQuestion', 'RCare\Ccm\Http\Controllers\CcmController@generalQuestion')->name('saveGeneralQuestion');
+        Route::post('/saveEmrSummary', 'RCare\Ccm\Http\Controllers\CcmController@emrSummary')->name('saveEmrSummary');
+        
         // Route::post('/selectFollowUp', 'RCare\Ccm\Http\Controllers\CcmController@selectFollowUp')->name('selectFollowUp'); 
         //Route::get('/getFollowUpTaskNotes/{patientId}/{moduleId}/{emrSelectId}/tasknotes', 'RCare\Ccm\Http\Controllers\CcmController@getFollowupTaskNotes')->name('getFollowUpTaskNotes'); 
         Route::get("/patient-followup-task/{patientId}/{moduleId}/followuplist", "RCare\Ccm\Http\Controllers\CcmController@getFollowupTaskListData")->name("ajax.followup.task.list"); 
