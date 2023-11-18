@@ -23,6 +23,7 @@
             <input type="hidden" name="end_time" value="00:00:00" />
             <input type="hidden" name="module_id" value="{{ $enroll_module_id }}" />
             <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
+            <input type="hidden" name="billable" value="1" />
 
             <input type="hidden" name="stage_id" value="{{ $stage_id }}" />
             <input type="hidden" name="template_type_id" value="2" />

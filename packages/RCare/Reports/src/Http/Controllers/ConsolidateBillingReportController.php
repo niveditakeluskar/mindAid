@@ -164,6 +164,16 @@ class ConsolidateBillingReportController extends Controller
                         if(is_null($data[$i]->prprovidername)){
                           $data[$i]->prprovidername='';
                         }
+                        if(is_null($data[$i]->partner_name)){
+                          $partner_name='';  
+                        }else{
+                          if(($data[$i]->devicestatus) == 1){
+                            $partner_name = $data[$i]->partner_name;
+                          } else{
+                            $partner_name='';  
+                          }
+                          
+                        }
                         if(is_null($data[$i]->pppracticeemr)){
                           $data[$i]->pppracticeemr='';
                         }
@@ -302,7 +312,7 @@ class ConsolidateBillingReportController extends Controller
                             }
                         }
 
-                      $arrydata=array($data[$i]->prprovidername,$data[$i]->pppracticeemr,
+                      $arrydata=array($data[$i]->prprovidername,$partner_name,$data[$i]->pppracticeemr,
                       ucwords(strtolower($data[$i]->pfname)),ucwords(strtolower($data[$i]->plname)),
                       $data[$i]->pfin_number,$data[$i]->pdob,
                       $enrolled_modules,$data[$i]->ccsrecdate,$billingcode,$unit,$status,$assign_cm,
@@ -551,7 +561,7 @@ class ConsolidateBillingReportController extends Controller
                
     
                   $dynamicheader=array();
-                  $columnheader=array("Provider","EMR","Patient First Name","Patient Last Name","Patient FIN Number","DOB","Enrolled Services","CCM(DOS)","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status",
+                  $columnheader=array("Provider","Vendor","EMR","Patient First Name","Patient Last Name","Patient FIN Number","DOB","Enrolled Services","CCM(DOS)","CPT Code","Units","Status","Assigned Care Manager","Call Status","CPD Status",
                   "Number of days readings","Days of the month of readings","Number of unique readings","RPM(DOS)","Billing threshold # days",
                   "Billing threshold met","Device Education Date",
                   "Billable","Qualifying Conditions");

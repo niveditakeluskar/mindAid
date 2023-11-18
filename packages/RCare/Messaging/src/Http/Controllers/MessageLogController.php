@@ -23,7 +23,28 @@ class MessageLogController extends Controller
 {
 
 
-  public function getMessageCount(Request $request){
+  public function getMessageCount($id){
+    $mh = '';
+    $messagearray = [];
+    if($id != 0){
+      $dateS = Carbon::now()->startOfMonth()->subMonth(1);
+        $dateE = Carbon::now(); 
+        $call_history = MessageLog::select('patient_id','status','created_at','module_id','message_date','status','message_date','id','message')
+                        ->where('patient_id', $id)
+                        ->whereBetween('created_at',[$dateS,$dateE])
+                        ->orderBy('created_at', 'desc')->get();
+                        foreach($call_history as $callhistory){  
+                            $mh.="<li>" ;
+                                    if($callhistory->status == "received"){
+                                      $mh.="<h5> Incoming Response (".$callhistory->created_at.")</h5>";
+                                      $mh.="<b>SMS: </b>".$callhistory->message;
+                                    } else{
+                                      $mh.="<h5> Sent Messages (".$callhistory->created_at.")</h5>";
+                                      $mh.="<b>SMS: </b>".$callhistory->message;
+                                    }
+                                    $mh.="</li>" ;
+                        }
+    }
     $role = session()->get('role_type');
     $role_id = session()->get('role');
 
@@ -52,7 +73,9 @@ class MessageLogController extends Controller
       $count = MessageLog::where('read_status',1)->distinct('patient_id')->count('patient_id');
     }
     
-    print($count);
+    $messagearray['count'] = $count;
+    $messagearray['history'] = $mh;
+    return $messagearray;
   }
 
   public function  getMessageHistory(Request $request){

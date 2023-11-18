@@ -12,6 +12,7 @@
                             $submodule_id = getPageSubModuleName();
 						 	$stage_id =  getFormStageId($module_id , $submodule_id, 'Verification');
 						 	// $step_id =  getFormStepId($module_id , $submodule_id, $stage_id,'Hippa');
+							//echo  date("m/d/Y H:i:s", $_SERVER['REQUEST_TIME']) ;
 						?>
 						<input type="hidden" name="uid" value="{{$patient_id}}" />
 						<input type="hidden" name="patient_id" value="{{$patient_id}}" />

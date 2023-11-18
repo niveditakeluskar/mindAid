@@ -163,7 +163,7 @@ var AppStopwatch = (function () {
     }
 
     function stopWatch() {
-        if (confirm('Are you sure you want to stop timer?')) {
+       // if (confirm('Are you sure you want to stop timer?')) {
             $("#display-val").html($stopwatch.container.innerHTML);
 			var pausetime = '0';
 			pausetime = moment();
@@ -172,8 +172,8 @@ var AppStopwatch = (function () {
             interval = 0;
             $("#start").show();
             $("#pause").hide();
-            $("#stop").show();
-        }
+            $("#stop").hide();
+       // }
     }
 
     function resetWatch() {

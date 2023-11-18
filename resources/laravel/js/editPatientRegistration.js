@@ -274,6 +274,7 @@ $("#physician").on("change", function () {
 });
 
 var init = function () {
+	util.setLandingTime();
 	util.redirectToWorklistPage();
 	//form.ajaxForm("patient_registration_form", onPatientRegisteration, function(){});
 	// $("#age").val(util.age($("#dob").val()));
@@ -297,6 +298,13 @@ var init = function () {
 	$("#submodule_id").val(parts[parts.length - 2]);
 	$("#enroll_service").val(parts[parts.length - 1]);
 
+	if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+		var start_time = null;
+	}else{
+        var start_time = $(".form_start_time").val();
+    }
+
+    util.updateTimeEveryMinutes(patientId, module_id, start_time);
 	var data = "";
 	var formpopulateurl = URL_POPULATE + "/" + patientId;
 	populateForm(data, formpopulateurl);
