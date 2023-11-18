@@ -856,7 +856,7 @@ class CommonFunctionController extends Controller
         $module_id                      = sanitizeVariable($moduleId);
         $timeArray                      = [];
 
-        if($patient_id != 0){
+        if($patient_id != '0'){
             $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
             if($patientID == 'null'){
                 $totalTime = '00:00:00';
