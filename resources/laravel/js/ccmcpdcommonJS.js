@@ -11,8 +11,8 @@ var baseURL = window.location.origin + '/';
 var patient_id = $("#hidden_id").val();
 var sPageURL = window.location.pathname;
 parts = sPageURL.split("/"),
-module = parts[parts.length - 3],
-sub_module = parts[parts.length - 2];
+  module = parts[parts.length - 3],
+  sub_module = parts[parts.length - 2];
 
 
 
@@ -71,17 +71,19 @@ var devicesColumns = [
   { data: 'device_code', name: 'device_code' },
   { data: 'name', name: 'name' },
   { data: 'device_name', name: 'device_name' },
-  {data: 'f_name', name: 'f_name',render: 
-    function(data, type, full, meta){
-      if(data!='' && data!='NULL' && data!=undefined){
+  {
+    data: 'f_name', name: 'f_name', render:
+      function (data, type, full, meta) {
+        if (data != '' && data != 'NULL' && data != undefined) {
           return data + ' ' + full.l_name;
-      } else { 
+        } else {
           return '';
+        }
       }
-    }
-  },     
-  {data: 'updated_at',type: 'date-dd-mm-yyyy h:i:s', name: 'updated_at',"render":function (value) {
-    if (value === null) return "";
+  },
+  {
+    data: 'updated_at', type: 'date-dd-mm-yyyy h:i:s', name: 'updated_at', "render": function (value) {
+      if (value === null) return "";
       return util.viewsDateFormatWithTime(value);
     }
   },
@@ -110,8 +112,8 @@ var populateForm = function (data, url) {
     function (result) {
       for (var key in result) {
 
-      
-       
+
+
         // if((result[key][0] != null || result[key][0] != 'undefined'  ||  result[key][0] != ''  )  ){
         //   var date_enrolled = result[key][0]['date_enrolled'];
         //   var a = date_enrolled.split(" ")[0];
@@ -133,6 +135,8 @@ var populateForm = function (data, url) {
 
 var onSaveActiveDeactive = function (formObj, fields, response) {
   if (response.status == 200) {
+    util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
     var varworklist = $("form[name='active_deactive_form'] #worklistclick").val();
     var status = $("form[name='active_deactive_form'] input[name ='status']:checked").val();
     if (status == 0) {
@@ -166,9 +170,9 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
-var onActiveDeactiveClick = function ($pid,$status) {
+var onActiveDeactiveClick = function ($pid, $status) {
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"), 
+  parts = sPageURL.split("/"),
     patientId = parts[parts.length - 1];
   if ($.isNumeric(patientId) == true) {
     //patient list
@@ -180,40 +184,40 @@ var onActiveDeactiveClick = function ($pid,$status) {
     // util.getPatientDetails(patientId, module);
   } else {
     //worklist 
-    var patientId = $pid; 
-    var selmoduleId = $("#modules").val(); 
-    util.getPatientEnrollModule(patientId,selmoduleId);
-    var status = $status; 
+    var patientId = $pid;
+    var selmoduleId = $("#modules").val();
+    util.getPatientEnrollModule(patientId, selmoduleId);
+    var status = $status;
     $("form[name='active_deactive_form'] #worklistclick").val("1");
     $("form[name='active_deactive_form'] #patientid").val(patientId);
     $("form[name='active_deactive_form'] #date_value").hide();
-      $("form[name='active_deactive_form'] #fromdate").hide();
-      $("form[name='active_deactive_form'] #todate").hide();
-      if ($status == 0) {
-        $("form[name='active_deactive_form'] #role1").show();
-        $("form[name='active_deactive_form'] #role0").hide();
-        $("form[name='active_deactive_form'] #role2").show();
-        $("form[name='active_deactive_form'] #role3").show();
-      }
-      if ($status == 1) {
-        $("form[name='active_deactive_form'] #role1").hide();
-        $("form[name='active_deactive_form'] #role0").show();
-        $("form[name='active_deactive_form'] #role2").show();
-        $("form[name='active_deactive_form'] #role3").show();
-      }
-      if ($status == 2) {
-        // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
-        $("form[name='active_deactive_form'] #role1").show();
-        $("form[name='active_deactive_form'] #role0").show();
-        $("form[name='active_deactive_form'] #role2").hide();
-        $("form[name='active_deactive_form'] #role3").show();
-      }
-      if ($status == 3) {
-        $("form[name='active_deactive_form'] #role1").show();
-        $("form[name='active_deactive_form'] #role0").show();
-        $("form[name='active_deactive_form'] #role2").show();
-        $("form[name='active_deactive_form'] #role3").hide();
-      } 
+    $("form[name='active_deactive_form'] #fromdate").hide();
+    $("form[name='active_deactive_form'] #todate").hide();
+    if ($status == 0) {
+      $("form[name='active_deactive_form'] #role1").show();
+      $("form[name='active_deactive_form'] #role0").hide();
+      $("form[name='active_deactive_form'] #role2").show();
+      $("form[name='active_deactive_form'] #role3").show();
+    }
+    if ($status == 1) {
+      $("form[name='active_deactive_form'] #role1").hide();
+      $("form[name='active_deactive_form'] #role0").show();
+      $("form[name='active_deactive_form'] #role2").show();
+      $("form[name='active_deactive_form'] #role3").show();
+    }
+    if ($status == 2) {
+      // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
+      $("form[name='active_deactive_form'] #role1").show();
+      $("form[name='active_deactive_form'] #role0").show();
+      $("form[name='active_deactive_form'] #role2").hide();
+      $("form[name='active_deactive_form'] #role3").show();
+    }
+    if ($status == 3) {
+      $("form[name='active_deactive_form'] #role1").show();
+      $("form[name='active_deactive_form'] #role0").show();
+      $("form[name='active_deactive_form'] #role2").show();
+      $("form[name='active_deactive_form'] #role3").hide();
+    }
   }
 }
 
@@ -325,111 +329,113 @@ var changeenrolldate = function () {
 }
 
 //add for device(ashwini mali 0202)
-$('#add_patient_devices').click(function() { //alert("add_patient_devices")
-    renderDeviceTableData();
-  });
-  
+$('#add_patient_devices').click(function () { //alert("add_patient_devices")
+  renderDeviceTableData();
+});
+
 
 $('.noallergiescheck').click(function () {
-    var form = $(this).closest('form');
-    var formname = $(form).attr('name');
-    if (this.checked) {
-      $("form[name='" + formname + "'] input[name='specify']").val("");
-      $("form[name='" + formname + "'] input[name='type_of_reactions']").val("");
-      $("form[name='" + formname + "'] input[name='severity']").val("");
-      $("form[name='" + formname + "'] input[name='course_of_treatment']").val("");
-      $("form[name='" + formname + "'] textarea[name='notes']").val("");
+  var form = $(this).closest('form');
+  var formname = $(form).attr('name');
+  if (this.checked) {
+    $("form[name='" + formname + "'] input[name='specify']").val("");
+    $("form[name='" + formname + "'] input[name='type_of_reactions']").val("");
+    $("form[name='" + formname + "'] input[name='severity']").val("");
+    $("form[name='" + formname + "'] input[name='course_of_treatment']").val("");
+    $("form[name='" + formname + "'] textarea[name='notes']").val("");
 
-      $("form[name='" + formname + "'] input[name='specify']").attr("disabled", 'disabled');
-      $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", true);
-      $("form[name='" + formname + "'] input[name='severity']").prop("disabled", true);
-      $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", true);
-      $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", true);
-    } else {
-      $("form[name='" + formname + "']")[0].reset();
-      $("form[name='" + formname + "'] input[name='specify']").prop("disabled", false);
-      $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", false);
-      $("form[name='" + formname + "'] input[name='severity']").prop("disabled", false);
-      $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", false);
-      $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", false);
-    }
+    $("form[name='" + formname + "'] input[name='specify']").attr("disabled", 'disabled');
+    $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", true);
+    $("form[name='" + formname + "'] input[name='severity']").prop("disabled", true);
+    $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", true);
+    $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", true);
+  } else {
+    $("form[name='" + formname + "']")[0].reset();
+    $("form[name='" + formname + "'] input[name='specify']").prop("disabled", false);
+    $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", false);
+    $("form[name='" + formname + "'] input[name='severity']").prop("disabled", false);
+    $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", false);
+    $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", false);
+  }
 });
 
 var callMonthllyMonitoringInitFunctions = function () {
-    var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]').val();
-    var id = $("#patient_id").val();
-    util.refreshAllergyCountCheckbox(id, allergy_type, 'allergy_drug_form');
-    carePlanDevelopment.renderDiagnosisTableData();
-    carePlanDevelopment.renderDMEServicesTableData();
-    carePlanDevelopment.renderHomeHealthServicesTableData();
-    carePlanDevelopment.renderTherapyServicesTableData();
-    carePlanDevelopment.renderSocialServicesTableData();
-    carePlanDevelopment.renderMedicalSuppliesServicesTableData();
-    carePlanDevelopment.renderOtherHealthServicesTableData();
-    carePlanDevelopment.renderDialysiServicesTableData();
-    carePlanDevelopment.renderdrugTableData();
-    carePlanDevelopment.renderFoodTableData();
-    carePlanDevelopment.renderEnviromentalTableData();
-    carePlanDevelopment.renderinsectTableData();
-    carePlanDevelopment.renderLatexTableData();
-    carePlanDevelopment.renderPetRelatedTableData();
-    carePlanDevelopment.renderAllergyOtherTableData();
-    carePlanDevelopment.renderLabsTable();
-    carePlanDevelopment.renderVitalTable();
-    carePlanDevelopment.renderMedicationsTableData();
+  var allergy_type = $('form[name="allergy_drug_form"] input[name="allergy_type"]').val();
+  var id = $("#patient_id").val();
+  util.refreshAllergyCountCheckbox(id, allergy_type, 'allergy_drug_form');
+  carePlanDevelopment.renderDiagnosisTableData();
+  carePlanDevelopment.renderDMEServicesTableData();
+  carePlanDevelopment.renderHomeHealthServicesTableData();
+  carePlanDevelopment.renderTherapyServicesTableData();
+  carePlanDevelopment.renderSocialServicesTableData();
+  carePlanDevelopment.renderMedicalSuppliesServicesTableData();
+  carePlanDevelopment.renderOtherHealthServicesTableData();
+  carePlanDevelopment.renderDialysiServicesTableData();
+  carePlanDevelopment.renderdrugTableData();
+  carePlanDevelopment.renderFoodTableData();
+  carePlanDevelopment.renderEnviromentalTableData();
+  carePlanDevelopment.renderinsectTableData();
+  carePlanDevelopment.renderLatexTableData();
+  carePlanDevelopment.renderPetRelatedTableData();
+  carePlanDevelopment.renderAllergyOtherTableData();
+  carePlanDevelopment.renderLabsTable();
+  carePlanDevelopment.renderVitalTable();
+  carePlanDevelopment.renderMedicationsTableData();
 
-    var year = (new Date).getFullYear();
-    var month = (new Date).getMonth() + 1; //add +1 for current mnth
-    var patient_id = $("#hidden_id").val();
-    var module_id = $("input[name='module_id']").val();
-    var prepstage_id = $("#call_preparation_preparation_followup_form input[name='stage_id']").val();
-    util.totalTimeSpent(patient_id, module_id, prepstage_id);
-    util.getPatientRelationshipBuilding($("#patient_id").val());
-    util.getPatientDetails(patient_id, module_id);
-    util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-    util.getPatientCareplanNotes(patient_id, module_id);
-    util.getPatientStatus(patient_id, module_id);
-    util.gatCaretoolData(patient_id, module_id);
-    util.getToDoListData($("#patient_id").val(), module_id);
-    //util.getDataCalender($("#patient_id").val(), module_id);
-    getFollowupList($('#patient_id').val(), module_id);
-    // Research followup data presentEMR
-    var patientId = $("#patient_id").val();
-    var checked_value1 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment1']").prop('checked');
-    var checked_value2 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment2']").prop('checked');
-    var checked_value3 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment3']").prop('checked');
-    var checked_value4 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment4']").prop('checked');
-    if (checked_value1 == true || checked_value2 == true || checked_value3 == true || checked_value4 == true) {
-        $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_yes").prop("checked", true);
-        var researchFollowupPreparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
-        carePlanDevelopment.populateForm(patientId, researchFollowupPreparationNotesFormPopulateURL);
-    } else if (checked_value1 == false || checked_value2 == false || checked_value3 == false || checked_value4 == false) {
-        $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
-        var researchFollowupPreparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
-        carePlanDevelopment.populateForm(patientId, researchFollowupPreparationNotesFormPopulateURL);
-    } else {
-        $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
-        var preparationNotesFormPopulateURL = URL_POPULATE_PREPARATION_NOTES + "/" + patientId + "/current";
-        carePlanDevelopment.populateForm(patientId, preparationNotesFormPopulateURL);
-        $('.invalid-feedback').html('');
-        $("form[name='research_follow_up_preparation_followup_form']")[0].reset();
-        $("form[name='research_follow_up_preparation_followup_form'] #data_present_in_emr_show").show();
-    }
-
-    util.getCallScriptsById($("form[name='text_form'] #text_template_id").val(), '#templatearea_sms', "form[name='text_form'] input[name='template_type_id']", "form[name='text_form'] input[name='content_title']");
-
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-        id = parts[parts.length - 1];
-    var patientId = id;
-    var data = "";
+  var year = (new Date).getFullYear();
+  var month = (new Date).getMonth() + 1; //add +1 for current mnth
+  var patient_id = $("#hidden_id").val();
+  var module_id = $("input[name='module_id']").val();
+  var prepstage_id = $("#call_preparation_preparation_followup_form input[name='stage_id']").val();
+  util.totalTimeSpent(patient_id, module_id, prepstage_id);
+  util.getPatientRelationshipBuilding($("#patient_id").val());
+  util.getPatientDetails(patient_id, module_id);
+  util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
+  util.getPatientCareplanNotes(patient_id, module_id);
+  util.getPatientStatus(patient_id, module_id);
+  util.gatCaretoolData(patient_id, module_id);
+  util.getToDoListData($("#patient_id").val(), module_id);
+  //util.getDataCalender($("#patient_id").val(), module_id);
+  getFollowupList($('#patient_id').val(), module_id);
+  // Research followup data presentEMR
+  var patientId = $("#patient_id").val();
+  var checked_value1 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment1']").prop('checked');
+  var checked_value2 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment2']").prop('checked');
+  var checked_value3 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment3']").prop('checked');
+  var checked_value4 = $("form[name='call_preparation_preparation_followup_form'] input[name$='condition_requirnment4']").prop('checked');
+  if (checked_value1 == true || checked_value2 == true || checked_value3 == true || checked_value4 == true) {
+    $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_yes").prop("checked", true);
+    var researchFollowupPreparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
+    carePlanDevelopment.populateForm(patientId, researchFollowupPreparationNotesFormPopulateURL);
+  } else if (checked_value1 == false || checked_value2 == false || checked_value3 == false || checked_value4 == false) {
+    $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
+    var researchFollowupPreparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
+    carePlanDevelopment.populateForm(patientId, researchFollowupPreparationNotesFormPopulateURL);
+  } else {
+    $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
     var preparationNotesFormPopulateURL = URL_POPULATE_PREPARATION_NOTES + "/" + patientId + "/current";
-    populateForm(patientId, preparationNotesFormPopulateURL);
+    carePlanDevelopment.populateForm(patientId, preparationNotesFormPopulateURL);
+    $('.invalid-feedback').html('');
+    $("form[name='research_follow_up_preparation_followup_form']")[0].reset();
+    $("form[name='research_follow_up_preparation_followup_form'] #data_present_in_emr_show").show();
+  }
+
+  util.getCallScriptsById($("form[name='text_form'] #text_template_id").val(), '#templatearea_sms', "form[name='text_form'] input[name='template_type_id']", "form[name='text_form'] input[name='content_title']");
+
+  var sPageURL = window.location.pathname;
+  parts = sPageURL.split("/"),
+    id = parts[parts.length - 1];
+  var patientId = id;
+  var data = "";
+  var preparationNotesFormPopulateURL = URL_POPULATE_PREPARATION_NOTES + "/" + patientId + "/current";
+  populateForm(patientId, preparationNotesFormPopulateURL);
 }
 
 var onCallHippa = function (formObj, fields, response) {
+
     if (response.status == 200) {
         util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+        $(".form_start_time").val(response.data.form_start_time);
         $("form[name='hippa_form'] .alert").show();
         util.totalTimeSpentByCM();
         var scrollPos = $(".main-content").offset().top;
@@ -466,213 +472,219 @@ var onCallHippa = function (formObj, fields, response) {
         var timer_paused = $("form[name='hippa_form'] input[name='end_time']").val();
         $("#timer_start").val(timer_paused);
     }
-};
+    
+  };
+
 
 
 var onCallStatus = function (formObj, fields, response) {
-    if (response.status == 200) {
-        util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
-        util.getToDoListData($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-      // util.getDataCalender($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-        var year = (new Date).getFullYear();
-        var month = (new Date).getMonth() + 1
-        util.getPatientPreviousMonthNotes($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val(), month, year);
-        $("form[name='callstatus_form'] #success-alert").show();
-        var scrollPos = $(".main-content").offset().top;
-        $(window).scrollTop(scrollPos);
+  if (response.status == 200) {
+    util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    util.getToDoListData($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
+    
+    // util.getDataCalender($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+    var year = (new Date).getFullYear();
+    var month = (new Date).getMonth() + 1
+    util.getPatientPreviousMonthNotes($("#patient_id").val(), $("form[name='callstatus_form'] input[name='module_id']").val(), month, year);
+    $("form[name='callstatus_form'] #success-alert").show();
+    var scrollPos = $(".main-content").offset().top;
+    $(window).scrollTop(scrollPos);
 
-        var d = new Date();
-        if (d.getMonth() + 1 < 10) {
-            var getmonth = "0" + (d.getMonth() + 1);
-        } else {
-            var getmonth = (d.getMonth() + 1);
-        }
-        if (d.getDate() < 10) {
-            var getday = "0" + d.getDate();
-        } else {
-            var getday = d.getDate();
-        }
-        var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-        var myDate = getmonth + "-" + getday + "-" + d.getFullYear();
-        var strDate = myDate + " " + strTime;
-        if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 3) {
-            var call_followup = $("#call_followup_date").val();
-            if (call_followup != '') {
-                var datePart = call_followup.match(/\d+/g),
-                    year = datePart[0], // get only two digits
-                    month = datePart[1],
-                    day = datePart[2];
-                var call_followup = month + '-' + day + '-' + year;
-            }
-
-            $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
-                + '<table> <tr><th>Call Follow-up date</th></tr>'
-                + '<tr>'
-                + '<td>' + call_followup + '</td>'
-                + '</tr>'
-                + '</table>'
-                + '<b> SMS Send:</b>' + $("#ccm_content_area").val() + '</li>');
-            var twiloError = $.trim(response.data);
-            if (twiloError === "" || twiloError === "null" || twiloError === null) {
-                var errormsg = '';
-                $("form[name='callstatus_form'] .twilo-error").html(errormsg);
-            } else {
-                var errormsg = '<div class="alert alert-danger" id="danger-alert" style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">� </button><strong>' + response.data + '</strong></div>';
-                $("form[name='callstatus_form'] .twilo-error").html(errormsg);
-                setTimeout(function () {
-                    $("form[name='callstatus_form'] .twilo-error").html('');
-                }, 5000);
-            }
-            $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
-            if (sub_module == 'care-plan-development') {
-                goToNextStep("patient-datap-tab");
-            } else {
-                goToNextStep("start-tab");
-                getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-            }
-        } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 2) {
-            var call_followup = $("#call_followup_date").val();
-            if (call_followup != '') {
-                var datePart = call_followup.match(/\d+/g),
-                    year = datePart[0], // get only two digits
-                    month = datePart[1],
-                    day = datePart[2];
-                var call_followup = month + '-' + day + '-' + year;
-            }
-            $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
-                + '<table> <tr><th>Call Follow-up date</th></tr>'
-                + '<tr>'
-                + '<td>' + call_followup + '</td>'
-                + '</tr>'
-                + '</table>'
-                + '<b> No Voice Mail</b>' + '</li>');
-            $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
-
-            if (sub_module == 'care-plan-development') {
-                goToNextStep("patient-datap-tab");
-            } else {
-                goToNextStep("start-tab");
-                getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-            }
-        } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 1) {
-            var call_followup = $("#call_followup_date").val();
-            if (call_followup != '') {
-                var datePart = call_followup.match(/\d+/g),
-                    year = datePart[0], // get only two digits
-                    month = datePart[1],
-                    day = datePart[2];
-                var call_followup = month + '-' + day + '-' + year;
-            }
-            $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
-                + '<table> <tr><th>Call Follow-up date</th></tr>'
-                + '<tr>'
-                + '<td>' + call_followup + '</td>'
-                + '</tr>'
-                + '</table>'
-                + '<b>Left Voice Mail : </b>' + $("#voice_mail_template").val() + '</li>');
-            $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
-
-            if (sub_module == 'care-plan-development') {
-                goToNextStep("patient-datap-tab");
-            } else {
-                goToNextStep("start-tab");
-                getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-            }
-        } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 1 && $("form[name='callstatus_form'] input[name$='call_continue_status']:checked").val() == 0) {
-            $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
-            var answer_followup_d = $("#answer_followup_date").val();
-            if (answer_followup_d != '') {
-                var datePart = answer_followup_d.match(/\d+/g),
-                    year = datePart[0], // get only two digits
-                    month = datePart[1],
-                    day = datePart[2];
-                var answer_followup_d = month + '-' + day + '-' + year;
-            }
-            var answer_followup_time = $("#answer_followup_time").val();
-            var inputEle = document.getElementById('answer_followup_time');
-
-            if (answer_followup_time != '') {
-                var timeSplit = inputEle.value.split(':'),
-                    hours,
-                    minutes,
-                    meridian;
-                hours = timeSplit[0];
-                minutes = timeSplit[1];
-                if (hours > 12) {
-                    meridian = 'PM';
-                    hours -= 12;
-                } else if (hours < 12) {
-                    meridian = 'AM';
-                    if (hours == 0) {
-                        hours = 12;
-                    }
-                } else {
-                    meridian = 'PM';
-                }
-                var inputEle = hours + ':' + minutes + ' ' + meridian;
-            } else {
-                var inputEle = '';
-            }
-            $("#history_list ul").prepend('<li><h5>Call Answered (' + strDate + ') </h5>'
-                + '<table> <tr><th>Call Continue Status</th><th>Call Follow-up date</th><th>Call Follow-up Time</th></tr>'
-                + '<tr>'
-                + '<td>No</td>'
-                + '<td>' + answer_followup_d + '</td>'
-                + '<td>' + inputEle + '</td>'
-                + '</tr>'
-                + '</table>'
-                + '<b> Call Script:</b>' + $("#call_answer_template").val() + '</li>');
-            if (sub_module == 'care-plan-development') {
-                goToNextStep("patient-datap-tab");
-            } else {
-                goToNextStep("start-tab");
-                getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-            }
-        } else {
-            $("#history_list ul").prepend('<li><h5>Call Answered (' + strDate + ') </h5>'
-                + '<table> <tr><th>Call Continue Status</th></tr>'
-                + '<tr>'
-                + '<td>Yes</td>'
-                + '</tr>'
-                + '</table>'
-                + '<b> Call Script:</b>' + $("#call_answer_template").val() + '</li>');
-            if (sub_module == 'care-plan-development') {
-                goToNextStep("verification-tab");
-            } else {
-                goToNextStep("ccm-verification-icon-tab");
-                getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
-            }
-        }
-        setTimeout(function () {
-            $("form[name='callstatus_form'] #success-alert").fadeOut();
-        }, 5000);
-        var timer_paused = $("form[name='callstatus_form'] input[name='end_time']").val();
-        $("#timer_start").val(timer_paused);
-        $("#timer_end").val(timer_paused);
-        var table = $('#callwrap-list');
-        table.DataTable().ajax.reload();
+    var d = new Date();
+    if (d.getMonth() + 1 < 10) {
+      var getmonth = "0" + (d.getMonth() + 1);
+    } else {
+      var getmonth = (d.getMonth() + 1);
     }
+    if (d.getDate() < 10) {
+      var getday = "0" + d.getDate();
+    } else {
+      var getday = d.getDate();
+    }
+    var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    var myDate = getmonth + "-" + getday + "-" + d.getFullYear();
+    var strDate = myDate + " " + strTime;
+    if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 3) {
+      var call_followup = $("#call_followup_date").val();
+      if (call_followup != '') {
+        var datePart = call_followup.match(/\d+/g),
+          year = datePart[0], // get only two digits
+          month = datePart[1],
+          day = datePart[2];
+        var call_followup = month + '-' + day + '-' + year;
+      }
+
+      $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
+        + '<table> <tr><th>Call Follow-up date</th></tr>'
+        + '<tr>'
+        + '<td>' + call_followup + '</td>'
+        + '</tr>'
+        + '</table>'
+        + '<b> SMS Send:</b>' + $("#ccm_content_area").val() + '</li>');
+      var twiloError = $.trim(response.data.errormsg);
+      if (twiloError === "" || twiloError === "null" || twiloError === null) {
+        var errormsg = '';
+        $("form[name='callstatus_form'] .twilo-error").html(errormsg);
+      } else {
+        var errormsg = '<div class="alert alert-danger" id="danger-alert" style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">� </button><strong>' + response.data.errormsg + '</strong></div>';
+        $("form[name='callstatus_form'] .twilo-error").html(errormsg);
+        setTimeout(function () {
+          $("form[name='callstatus_form'] .twilo-error").html('');
+        }, 5000);
+      }
+      $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
+      if (sub_module == 'care-plan-development') {
+        goToNextStep("patient-datap-tab");
+      } else {
+        goToNextStep("start-tab");
+        getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+      }
+    } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 2) {
+      var call_followup = $("#call_followup_date").val();
+      if (call_followup != '') {
+        var datePart = call_followup.match(/\d+/g),
+          year = datePart[0], // get only two digits
+          month = datePart[1],
+          day = datePart[2];
+        var call_followup = month + '-' + day + '-' + year;
+      }
+      $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
+        + '<table> <tr><th>Call Follow-up date</th></tr>'
+        + '<tr>'
+        + '<td>' + call_followup + '</td>'
+        + '</tr>'
+        + '</table>'
+        + '<b> No Voice Mail</b>' + '</li>');
+      $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
+
+      if (sub_module == 'care-plan-development') {
+        goToNextStep("patient-datap-tab");
+      } else {
+        goToNextStep("start-tab");
+        getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+      }
+    } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 2 && $("#answer").val() == 1) {
+      var call_followup = $("#call_followup_date").val();
+      if (call_followup != '') {
+        var datePart = call_followup.match(/\d+/g),
+          year = datePart[0], // get only two digits
+          month = datePart[1],
+          day = datePart[2];
+        var call_followup = month + '-' + day + '-' + year;
+      }
+      $("#history_list ul").prepend('<li><h5>Call Not Answered (' + strDate + ')</h5>'
+        + '<table> <tr><th>Call Follow-up date</th></tr>'
+        + '<tr>'
+        + '<td>' + call_followup + '</td>'
+        + '</tr>'
+        + '</table>'
+        + '<b>Left Voice Mail : </b>' + $("#voice_mail_template").val() + '</li>');
+      $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
+
+      if (sub_module == 'care-plan-development') {
+        goToNextStep("patient-datap-tab");
+      } else {
+        goToNextStep("start-tab");
+        getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+      }
+    } else if ($("form[name='callstatus_form'] input[name$='call_status']:checked").val() == 1 && $("form[name='callstatus_form'] input[name$='call_continue_status']:checked").val() == 0) {
+      $("form[name='callstatus_form'] #ccm_content_title option:last").prop("selected", "selected").change();
+      var answer_followup_d = $("#answer_followup_date").val();
+      if (answer_followup_d != '') {
+        var datePart = answer_followup_d.match(/\d+/g),
+          year = datePart[0], // get only two digits
+          month = datePart[1],
+          day = datePart[2];
+        var answer_followup_d = month + '-' + day + '-' + year;
+      }
+      var answer_followup_time = $("#answer_followup_time").val();
+      var inputEle = document.getElementById('answer_followup_time');
+
+      if (answer_followup_time != '') {
+        var timeSplit = inputEle.value.split(':'),
+          hours,
+          minutes,
+          meridian;
+        hours = timeSplit[0];
+        minutes = timeSplit[1];
+        if (hours > 12) {
+          meridian = 'PM';
+          hours -= 12;
+        } else if (hours < 12) {
+          meridian = 'AM';
+          if (hours == 0) {
+            hours = 12;
+          }
+        } else {
+          meridian = 'PM';
+        }
+        var inputEle = hours + ':' + minutes + ' ' + meridian;
+      } else {
+        var inputEle = '';
+      }
+      $("#history_list ul").prepend('<li><h5>Call Answered (' + strDate + ') </h5>'
+        + '<table> <tr><th>Call Continue Status</th><th>Call Follow-up date</th><th>Call Follow-up Time</th></tr>'
+        + '<tr>'
+        + '<td>No</td>'
+        + '<td>' + answer_followup_d + '</td>'
+        + '<td>' + inputEle + '</td>'
+        + '</tr>'
+        + '</table>'
+        + '<b> Call Script:</b>' + $("#call_answer_template").val() + '</li>');
+      if (sub_module == 'care-plan-development') {
+        goToNextStep("patient-datap-tab");
+      } else {
+        goToNextStep("start-tab");
+        getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+      }
+    } else {
+      $("#history_list ul").prepend('<li><h5>Call Answered (' + strDate + ') </h5>'
+        + '<table> <tr><th>Call Continue Status</th></tr>'
+        + '<tr>'
+        + '<td>Yes</td>'
+        + '</tr>'
+        + '</table>'
+        + '<b> Call Script:</b>' + $("#call_answer_template").val() + '</li>');
+      if (sub_module == 'care-plan-development') {
+        goToNextStep("verification-tab");
+      } else {
+        goToNextStep("ccm-verification-icon-tab");
+        getFollowupList($('#patient_id').val(), $("form[name='callstatus_form'] input[name='module_id']").val());
+      }
+    }
+    setTimeout(function () {
+      $("form[name='callstatus_form'] #success-alert").fadeOut();
+    }, 5000);
+    var timer_paused = $("form[name='callstatus_form'] input[name='end_time']").val();
+    $("#timer_start").val(timer_paused);
+    $("#timer_end").val(timer_paused);
+    var table = $('#callwrap-list');
+    table.DataTable().ajax.reload();
+  }
 };
 
 var onCallClose = function (formObj, fields, response) {
-    if (response.status == 200) {
-        util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
-        util.getToDoListData($("#patient_id").val(), $("form[name='call_close_form'] input[name='module_id']").val());
-        //util.getDataCalender($("#patient_id").val(), $("form[name='call_close_form'] input[name='module_id']").val());
-        util.totalTimeSpentByCM();
-        $("form[name='call_close_form'] .alert").show();
-        var scrollPos = $(".main-content").offset().top;
-        $(window).scrollTop(scrollPos);
-        setTimeout(function () { $('.alert').fadeOut('fast'); }, 5000);
-        if (sub_module == 'care-plan-development') {
-            goToNextStep("call-wrapup-tab");
-        } else {
-            goToNextStep("ccm-call-wrapup-icon-tab");
-            getFollowupList($('#patient_id').val(), $("form[name='call_close_form'] input[name='module_id']").val());
-        }
-        var timer_paused = $("form[name='call_close_form'] input[name='end_time']").val();
-        $("#timer_start").val(timer_paused);
+  if (response.status == 200) {
+    util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
+    util.getToDoListData($("#patient_id").val(), $("form[name='call_close_form'] input[name='module_id']").val());
+    //util.getDataCalender($("#patient_id").val(), $("form[name='call_close_form'] input[name='module_id']").val());
+    $(".form_start_time").val(response.data.form_start_time);
+    
+    util.totalTimeSpentByCM();
+    $("form[name='call_close_form'] .alert").show();
+    var scrollPos = $(".main-content").offset().top;
+    $(window).scrollTop(scrollPos);
+    setTimeout(function () { $('.alert').fadeOut('fast'); }, 5000);
+    if (sub_module == 'care-plan-development') {
+      goToNextStep("call-wrapup-tab");
+    } else {
+      goToNextStep("ccm-call-wrapup-icon-tab");
+      getFollowupList($('#patient_id').val(), $("form[name='call_close_form'] input[name='module_id']").val());
     }
+    var timer_paused = $("form[name='call_close_form'] input[name='end_time']").val();
+    $("#timer_start").val(timer_paused);
+  }
 };
 
 //  var onCallWrapUp = function (formObj, fields, response) { //moved to common js
@@ -690,7 +702,7 @@ var onCallClose = function (formObj, fields, response) {
 //   if( ((checkbox_1 == true || checkbox_2 == true ||  checkbox_3 == true || checkbox_4 == true || checkbox_5 == true || checkbox_6 == true || checkbox_7 == true )) )
 //   //  && (response.status == 200) )       
 //   {
- 
+
 //     $('form[name="callwrapup_form"] #checkboxerror' ).css('display', 'none');
 
 //           if (response.status == 200) {
@@ -705,7 +717,7 @@ var onCallClose = function (formObj, fields, response) {
 //               util.getToDoListData($("#patient_id").val(), $("form[name='callwrapup_form'] input[name='module_id']").val());
 //               //util.getDataCalender($("#patient_id").val(), $("form[name='callwrapup_form'] input[name='module_id']").val());
 //               if (sub_module == 'care-plan-development') {
-              
+
 //                   util.updateFinalizeDate($("input[name='patient_id']").val(), $("input[name='module_id']").val());
 //                   util.totalTimeSpentByCM();
 //                   $("form[name='callwrapup_form'] .alert-success").show();
@@ -722,7 +734,7 @@ var onCallClose = function (formObj, fields, response) {
 //                     var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
 //                     ccmMonthlyMonitoring.populateForm(patientId, preparationNotesFormPopulateURL); //please donot change sept 12 2022
 //               } else {
-               
+
 //                   $("#callwrapform-success-alert").show();
 //                   var table = $('#callwrap-list');
 //                   table.DataTable().ajax.reload();
@@ -755,49 +767,51 @@ var onCallWrapUp = function (formObj, fields, response) { //moved to common js /
   var patient_id = fields.values.uid;
   var module_id = fields.values.module_id;
   if (response.status == 200) {
-      util.updateTimer(patient_id, $("input[name='billable']").val(), module_id);
-      var timer_paused = $("form[name='callwrapup_form'] input[name='end_time']").val();
-      $("#timer_start").val(timer_paused);
-      var year = (new Date).getFullYear(); 
-      var month = (new Date).getMonth() + 1; //add +1 for current mnth
-      util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-      util.getToDoListData(patient_id, module_id);
-      //util.getDataCalender(patient_id, module_id);
-      if (sub_module == 'care-plan-development') {
-          util.updateFinalizeDate(patient_id, module_id);
-          util.totalTimeSpentByCM();
-          $("form[name='callwrapup_form'] .alert-success").show();
-          var scrollPos = $(".main-content").offset().top;
-          $(window).scrollTop(scrollPos);
-          setTimeout(function () { $("form[name='callwrapup_form'] .alert").fadeOut(); }, 5000);
-            //------ashwini ------//
-            // var table = $('#callwrap-list');
-            // table.DataTable().ajax.reload();
-            // $("#callwrapup_form")[0].reset();
-            var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
-            populateForm(patient_id, preparationNotesFormPopulateURL); //please donot change sept 12 2022
-      } else {
-		// util.updateBillableNonBillableAndTickingTimer(patient_id, module_id, 1);
-          $("#callwrapform-success-alert").show();
-          var table = $('#callwrap-list');
-          table.DataTable().ajax.reload();
-          // $("#callwrapup_form")[0].reset();
-          var scrollPos = $(".main-content").offset().top;
-          $(window).scrollTop(scrollPos);
-          setTimeout(function () { $("#callwrapform-success-alert").fadeOut('fast'); }, 5000);
-          
-          $(".remove-icons").trigger("click");
-          $(".additionalfeilds").remove();
-          var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
-          // carePlanDevelopment.populateForm(patient_id, preparationNotesFormPopulateURL);
-          ccmMonthlyMonitoring.populateForm(patient_id, preparationNotesFormPopulateURL);  //please donot change sept 12 2022
-		  //location.reload(true);
-		  //alert(window.location.origin+sPageURL+'#3');
-		  window.location.replace(window.location.origin+sPageURL+'#3');
-		  
-		  goToNextStep("followup-step");
-      }
-  }else{
+    util.updateTimer(patient_id, $("input[name='billable']").val(), module_id);
+    var timer_paused = $("form[name='callwrapup_form'] input[name='end_time']").val();
+    $("#timer_start").val(timer_paused);
+    $(".form_start_time").val(response.data.form_start_time);
+    
+    var year = (new Date).getFullYear();
+    var month = (new Date).getMonth() + 1; //add +1 for current mnth
+    util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
+    util.getToDoListData(patient_id, module_id);
+    //util.getDataCalender(patient_id, module_id);
+    if (sub_module == 'care-plan-development') {
+      util.updateFinalizeDate(patient_id, module_id);
+      util.totalTimeSpentByCM();
+      $("form[name='callwrapup_form'] .alert-success").show();
+      var scrollPos = $(".main-content").offset().top;
+      $(window).scrollTop(scrollPos);
+      setTimeout(function () { $("form[name='callwrapup_form'] .alert").fadeOut(); }, 5000);
+      //------ashwini ------//
+      // var table = $('#callwrap-list');
+      // table.DataTable().ajax.reload();
+      // $("#callwrapup_form")[0].reset();
+      var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
+      populateForm(patient_id, preparationNotesFormPopulateURL); //please donot change sept 12 2022
+    } else {
+      // util.updateBillableNonBillableAndTickingTimer(patient_id, module_id, 1);
+      $("#callwrapform-success-alert").show();
+      var table = $('#callwrap-list');
+      table.DataTable().ajax.reload();
+      // $("#callwrapup_form")[0].reset();
+      var scrollPos = $(".main-content").offset().top;
+      $(window).scrollTop(scrollPos);
+      setTimeout(function () { $("#callwrapform-success-alert").fadeOut('fast'); }, 5000);
+
+      $(".remove-icons").trigger("click");
+      $(".additionalfeilds").remove();
+      var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patient_id + "/current";
+      // carePlanDevelopment.populateForm(patient_id, preparationNotesFormPopulateURL);
+      ccmMonthlyMonitoring.populateForm(patient_id, preparationNotesFormPopulateURL);  //please donot change sept 12 2022
+      //location.reload(true);
+      //alert(window.location.origin+sPageURL+'#3');
+      window.location.replace(window.location.origin + sPageURL + '#3');
+
+      goToNextStep("followup-step");
+    }
+  } else {
     return false;
   }
 };
@@ -808,86 +822,91 @@ var onCallWrapUp = function (formObj, fields, response) { //moved to common js /
 
 var goToNextStep = function (id) {
   setTimeout(function () {
-      $('#' + id).click();
+    $('#' + id).click();
   }, 5000);
 }
 
-var getFollowupList = function(patient_id=null,module_id=null) {
-  var columns =  [ 
-    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-    {data:'task_notes',name:'task_notes'},
-    {data:'task',name:'task'},
-    {data:'notes',name:'notes',render: function(data, type, full, meta){
-        if(data!='' && data!='NULL' && data!=undefined){
-          return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'+full['id']+'" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
-        }else{ return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'+full['id']+'" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>';}
+var getFollowupList = function (patient_id = null, module_id = null) {
+  var columns = [
+    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+    { data: 'task_notes', name: 'task_notes' },
+    { data: 'task', name: 'task' },
+    {
+      data: 'notes', name: 'notes', render: function (data, type, full, meta) {
+        if (data != '' && data != 'NULL' && data != undefined) {
+          return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
+        } else { return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; }
       }
     },
-    {data: 'tt',type: 'date-dd-mm-yyyy',
-      "render":function (value) {
+    {
+      data: 'tt', type: 'date-dd-mm-yyyy',
+      "render": function (value) {
         if (value === null) return "";
         return util.viewsDateFormat(value);
       }
-    }, 
-    {data: 'task_time', name:'task_time',
-      render:function (data, type, full, meta) {
-        if(data!='' && data!='NULL' && data!=undefined){
+    },
+    {
+      data: 'task_time', name: 'task_time',
+      render: function (data, type, full, meta) {
+        if (data != '' && data != 'NULL' && data != undefined) {
           return full['task_time'];
-        }else{
+        } else {
           return '';
         }
-      } 
-    },  
-    {data: 'action', name: 'action', orderable: false, searchable: false}, 
-    {data:'task_completed_at',type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at',"render":function (value) {
-      if (value === null) return "";
+      }
+    },
+    { data: 'action', name: 'action', orderable: false, searchable: false },
+    {
+      data: 'task_completed_at', type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at', "render": function (value) {
+        if (value === null) return "";
         return util.viewsDateFormat(value);
       }
-    }, 
-    {data:null,
-      render:function (data, type, full, meta) {
-        if(data!='' && data!='NULL' && data!=undefined){
-          return full['f_name'] +' '+ full['l_name'];
-        }else{
-          return ''; 
+    },
+    {
+      data: null,
+      render: function (data, type, full, meta) {
+        if (data != '' && data != 'NULL' && data != undefined) {
+          return full['f_name'] + ' ' + full['l_name'];
+        } else {
+          return '';
         }
       }
     },
   ];
-  var url = "/ccm/patient-followup-task/"+patient_id+'/'+module_id+"/followuplist";
-  util.renderDataTable('task-list', url, columns, "{{ asset('') }}"); 
+  var url = "/ccm/patient-followup-task/" + patient_id + '/' + module_id + "/followuplist";
+  util.renderDataTable('task-list', url, columns, "{{ asset('') }}");
 }
 
-var copyPreviousMonthDataToThisMonth  = function(patient_id, module_id) {
+var copyPreviousMonthDataToThisMonth = function (patient_id, module_id) {
   if (!patient_id) {
-      return;
+    return;
   }
   if (!module_id) {
-      return;
+    return;
   }
-    
+
   axios({
-      method: "GET",
-      url: `/ccm/ajax/copy-previous-month-data-to-this-month/${patient_id}/${module_id}/previous-month-data`,
+    method: "GET",
+    url: `/ccm/ajax/copy-previous-month-data-to-this-month/${patient_id}/${module_id}/previous-month-data`,
   }).then(function (response) {
-  // if (module == 'care-plan-development') {
-  //   carePlanDevelopment.callCPDInitFunctions();
-  // } else {
-  //   callMonthllyMonitoringInitFunctions();
-  // }
+    // if (module == 'care-plan-development') {
+    //   carePlanDevelopment.callCPDInitFunctions();
+    // } else {
+    //   callMonthllyMonitoringInitFunctions();
+    // }
   }).catch(function (error) {
-      console.error(error, error.response);
+    console.error(error, error.response);
   });
 }
 
 var hideShowNKDAMsg = function (countid, msgid) {
-	// var formName = $("#" + countid).parents("form").attr("id");
+  // var formName = $("#" + countid).parents("form").attr("id");
   var d = $("#" + countid).val();
   if (d > 0) {
-      $("#" + msgid).show();
-      setTimeout(function () {
-          $("#" + msgid).hide();
-      }, 5000);
+    $("#" + msgid).show();
+    setTimeout(function () {
+      $("#" + msgid).hide();
+    }, 5000);
   }
 }
 
@@ -895,37 +914,37 @@ var noallergiescheck = function (formsObj) {
   var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
   var allergy_status = $("form[name='" + formName + "'] input[name ='allergy_status']:checked").val();
   if (allergy_status) {
-      $("form[name='" + formName + "'] input[name='specify']").val("");
-      $("form[name='" + formName + "'] input[name='type_of_reactions']").val("");
-      $("form[name='" + formName + "'] input[name='severity']").val("");
-      $("form[name='" + formName + "'] input[name='course_of_treatment']").val("");
-      $("form[name='" + formName + "'] textarea[name='notes']").val("");
+    $("form[name='" + formName + "'] input[name='specify']").val("");
+    $("form[name='" + formName + "'] input[name='type_of_reactions']").val("");
+    $("form[name='" + formName + "'] input[name='severity']").val("");
+    $("form[name='" + formName + "'] input[name='course_of_treatment']").val("");
+    $("form[name='" + formName + "'] textarea[name='notes']").val("");
 
-      $("form[name='" + formName + "'] input[name='specify']").attr("disabled", 'disabled');
-      $("form[name='" + formName + "'] input[name='type_of_reactions']").prop("disabled", true);
-      $("form[name='" + formName + "'] input[name='severity']").prop("disabled", true);
-      $("form[name='" + formName + "'] input[name='course_of_treatment']").prop("disabled", true);
-      $("form[name='" + formName + "'] textarea[name='notes']").prop("disabled", true);
+    $("form[name='" + formName + "'] input[name='specify']").attr("disabled", 'disabled');
+    $("form[name='" + formName + "'] input[name='type_of_reactions']").prop("disabled", true);
+    $("form[name='" + formName + "'] input[name='severity']").prop("disabled", true);
+    $("form[name='" + formName + "'] input[name='course_of_treatment']").prop("disabled", true);
+    $("form[name='" + formName + "'] textarea[name='notes']").prop("disabled", true);
   } else {
-      $("form[name='" + formName + "']")[0].reset();
-      $("form[name='" + formName + "'] input[name='specify']").prop("disabled", false);
-      $("form[name='" + formName + "'] input[name='type_of_reactions']").prop("disabled", false);
-      $("form[name='" + formName + "'] input[name='severity']").prop("disabled", false);
-      $("form[name='" + formName + "'] input[name='course_of_treatment']").prop("disabled", false);
-      $("form[name='" + formName + "'] textarea[name='notes']").prop("disabled", false);
+    $("form[name='" + formName + "']")[0].reset();
+    $("form[name='" + formName + "'] input[name='specify']").prop("disabled", false);
+    $("form[name='" + formName + "'] input[name='type_of_reactions']").prop("disabled", false);
+    $("form[name='" + formName + "'] input[name='severity']").prop("disabled", false);
+    $("form[name='" + formName + "'] input[name='course_of_treatment']").prop("disabled", false);
+    $("form[name='" + formName + "'] textarea[name='notes']").prop("disabled", false);
   }
 }
 
-$('#enrolledservice_modules').on('change', function (event) { 
+$('#enrolledservice_modules').on('change', function (event) {
   $("form[name='active_deactive_form'] #date_value").hide();
   $("form[name='active_deactive_form'] #fromdate").hide();
   $("form[name='active_deactive_form'] #todate").hide();
   var moduleId = $("#enrolledservice_modules").val();
-  var patientId = ($("form[name='active_deactive_form'] input[name='patientid']").val()!='') ? $("form[name='active_deactive_form'] input[name='patientid']").val() : $("form[name='active_deactive_form'] input[name='patient_id']").val();
+  var patientId = ($("form[name='active_deactive_form'] input[name='patientid']").val() != '') ? $("form[name='active_deactive_form'] input[name='patientid']").val() : $("form[name='active_deactive_form'] input[name='patient_id']").val();
   $.ajax({
     type: 'GET',
-    url: '/patients/patient-module-status/'+patientId+'/'+moduleId+'/patient-module-status', 
-    success: function (response) { 
+    url: '/patients/patient-module-status/' + patientId + '/' + moduleId + '/patient-module-status',
+    success: function (response) {
       var status = response[0].status;
       if (status == 0) {
         $("form[name='active_deactive_form'] #role1").show();
@@ -953,19 +972,19 @@ $('#enrolledservice_modules').on('change', function (event) {
         $("form[name='active_deactive_form'] #role3").hide();
       }
     }
-    }); 
+  });
 });
 
 
 
 function newcheckquery2(value) {
-  if(value==0 || value==1){
-      $("#ignore").show();  
-  }  else {
-      $("#ignore").hide(); 
+  if (value == 0 || value == 1) {
+    $("#ignore").show();
+  } else {
+    $("#ignore").hide();
   }
-  if(value==0){
-      $("#next_month_call_div").show(); 
+  if (value == 0) {
+    $("#next_month_call_div").show();
   }
 }
 
@@ -980,9 +999,11 @@ var init = function () {
   if ($.isNumeric(patientId)) {
     datapopulate(patientId);
   }
+  //if($("form[name='"+ formName +"'] .timearr").length < 1){
+  //	console.log('i am stuck here'+formName);
 
-
- 
+  $("form").append("<input type='hidden' name=timearr[form_start_time] class='timearr form_start_time'><input type='hidden' name=timearr['form_save_time'] class='form_save_time'><input type='hidden' name=timearr['pause_start_time']><input type='hidden' name=timearr['pause_end_time']><input type='hidden' name=timearr['extra_time']>");
+  //}
 
   // var dropdown = document.getElementById("provider_subtype_id");
   // dropdown.onchange = function(event){
@@ -1111,10 +1132,10 @@ window.ccmcpdcommonJS = {
   onCallStatus: onCallStatus,
   onCallClose: onCallClose,
   onCallWrapUp: onCallWrapUp,
-  getFollowupList:getFollowupList,
-  copyPreviousMonthDataToThisMonth:copyPreviousMonthDataToThisMonth,
+  getFollowupList: getFollowupList,
+  copyPreviousMonthDataToThisMonth: copyPreviousMonthDataToThisMonth,
   hideShowNKDAMsg: hideShowNKDAMsg,
   noallergiescheck: noallergiescheck,
-  newcheckquery2 : newcheckquery2,
-  renderDeviceTableData:renderDeviceTableData
+  newcheckquery2: newcheckquery2,
+  renderDeviceTableData: renderDeviceTableData
 };

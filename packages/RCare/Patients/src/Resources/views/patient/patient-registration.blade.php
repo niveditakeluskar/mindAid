@@ -35,16 +35,20 @@
 		    							<input type="hidden" name="form_name" value="patient_registration_form">
 		    							<input type="hidden" name="stage_id" value="{{$stage_id}}">
 		    							<input type="hidden" name="step_id" value="0">
+										<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
 										@hidden("timer_start",["id"=>"timer_start"])
 										@hidden("timer_end",["id"=>"timer_end"]) 
 										@hidden("page_landing_time",["id"=>"page_landing_time"])
+										<input type="hidden" id="page_landing_times" name="page_landing_times" value=''>
                                         @hidden("patient_time",["id"=>"patient_time"])
                                         @hidden("pause_time",["id"=>"pause_time", "value"=>"0"])
                                         @hidden("play_time",["id"=>"play_time", "value"=>"0"])
                                         @hidden("pauseplaydiff",["id"=>"pauseplaydiff", "value"=>"0"])
 										<div class="stopwatch" id="stopwatch">
 											<i class="text-muted i-Timer1"></i> :
-											<div id="time-container" class="container" data-toggle="tooltip" data-placement="right" title="Current Running Time" data-original-title="Current Running Time"></div>
+											<div id="time-container" class="container" data-toggle="tooltip" data-placement="right" title="Current Running Time" data-original-title="Current Running Time"  style="display:none!important"></div>
+											<label for="Current Running Time" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time">
+                                            <span id="time-containers"></span></label>
 											<a class="button" id="start" data-toggle="tooltip" data-placement="right" title="Start Timer" data-original-title="Start Timer"><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></a>
 											<a class="button" id="pause" data-toggle="tooltip" data-placement="right" title="Pause Timer" data-original-title="Pause Timer" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></a>
 											<a class="button" id="stop" data-toggle="tooltip" data-placement="right" title="Stop Timer" data-original-title="Stop Timer" style="display:<?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px;" /></a>

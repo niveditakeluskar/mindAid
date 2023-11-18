@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-header" id="headingOne">
             <p class="mb-0">
-               <strong>Patient Careplan123 Notes</strong>
+               <strong>Patient Careplan Notes</strong>
             </p>
         </div>
         <div class="patientCareplan-body" data-perfect-scrollbar data-suppress-scroll-x="true">

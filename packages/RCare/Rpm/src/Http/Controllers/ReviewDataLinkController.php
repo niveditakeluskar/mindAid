@@ -165,6 +165,8 @@ class ReviewDataLinkController extends Controller
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
         $step_id      = sanitizeVariable($request->step_id); 
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
         DB::beginTransaction();
         try {   
@@ -193,8 +195,9 @@ class ReviewDataLinkController extends Controller
                 'sub_sequence'        => $new_sub_sequence,
             );
             CallWrap::create($callWrapUp); 
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
          DB::commit();
+         return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;

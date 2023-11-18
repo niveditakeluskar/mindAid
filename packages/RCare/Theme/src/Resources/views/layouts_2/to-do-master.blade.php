@@ -978,36 +978,30 @@
                 });
 
 
-            function setIntervalMCFunctionAgain() { 
-                    var id = $("input[name='patient_id']").val();
-                    $.ajax({
-                        url: "/messaging/get-message-count",
-                        type: 'GET',
-                        // dataType: 'json', // added data type
-                        success: function (res) {
-                        $(".message-notification").html('');
-                        $(".message-notification").append(res.trim());
-                        setTimeout(function () { setIntervalMCFunction(); }, 10000);
-                        }
-                    });
-                }
-
-                function setIntervalMCFunction() {
-                    var id = $("input[name='patient_id']").val();
-                    $.ajax({
-                        url: "/messaging/get-message-count",
-                        type: 'GET',
-                        success: function (res) { 
-                            $(".message-notification").html('');
-                            $(".message-notification").append(res.trim());
-                            setTimeout(function () { setIntervalMCFunctionAgain(); }, 10000);
-                        }
-                    });
-                }
+                // function setIntervalMCFunction(id) {
+                //     $.ajax({
+                //         url: "/messaging/get-message-count/" + id,
+                //         type: 'GET',
+                //         success: function (res) { 
+                //             var data = res;
+                //             $(".message-notification").html('');
+                //             $(".message-notification").append(data['count']);
+                //             if(id != 0){
+                //                 $("#ajax-message-history").html('');
+                //                 $("#ajax-message-history").append(data['history']);
+                //             }
+                //             setTimeout(function () { setIntervalMCFunction(id); }, 10000);
+                //         }
+                //     });
+                // }
 
             $(document).ready(function () {
                 localStorage.setItem("idleTime", 0);
                 util.getSessionLogoutTimeWithPopupTime();
+                
+                if($("input[name='patient_id']").val() == '' && $("input[name='module_id']").val() != 8){
+                    util.updateTimeEveryMinutes(0,0,0);
+                }
                 var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
                 $(this).mousemove(function(e) {
                     // idleTime = 0;
@@ -1054,8 +1048,7 @@
                               util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
                           }
                 });
-				
-                setIntervalMCFunction();
+                
 				setTimeout(function () {
 					document.getElementById("customizer_id").style.display = "block";
 				}, 3000);

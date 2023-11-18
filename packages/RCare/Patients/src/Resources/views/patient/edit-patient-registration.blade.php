@@ -33,13 +33,16 @@
                                         @hidden("pause_time",["id"=>"pause_time", "value"=>"0"])
                                         @hidden("play_time",["id"=>"play_time", "value"=>"0"])
                                         @hidden("pauseplaydiff",["id"=>"pauseplaydiff", "value"=>"0"])
+										<input type="hidden" id="page_landing_times" name="page_landing_times" value=''>
 										
 									<div class="stopwatch" id="stopwatch">
 										<i class="text-muted i-Timer1"></i> :
-										<div id="time-container" class="container" data-toggle="tooltip" data-placement="right" title="Current Running Time" data-original-title="Current Running Time"></div>
-										<a class="button" id="start" data-toggle="tooltip" data-placement="right" title="Start Timer" data-original-title="Start Timer"><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></a>
+										<div id="time-container" class="container" data-toggle="tooltip" data-placement="right" title="Current Running Time" data-original-title="Current Running Time" style="display:none!important"></div>
+										<label for="Current Running Time" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time">
+                                        <span id="time-containers"></span></label>
+										<a class="button" id="start" data-toggle="tooltip" data-placement="right" title="Start Timer" data-original-title="Start Timer" onclick="util.logPauseTime($('.form_start_time').val(), {{$patient[0]->id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient[0]->id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></a>
 										<a class="button" id="pause" data-toggle="tooltip" data-placement="right" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient[0]->id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient[0]->id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');"  ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;"   /></a>
-										<a class="button" id="stop" data-toggle="tooltip" data-placement="right" title="Stop Timer" data-original-title="Stop Timer" style="display:<?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px;" /></a>
+										<a class="button" id="stop" data-toggle="tooltip" data-placement="right" title="Stop Timer" data-original-title="Stop Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient[0]->id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient[0]->id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" style="display:<?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px;" /></a>
 										<button class="button" id="reset" data-toggle="tooltip" data-placement="top" title="Reset Timer" data-original-title="Reset Timer" style="display:none;">Reset</button>
                                             <button class="button" id="resetTickingTime" data-toggle="tooltip" data-placement="top" title="resetTickingTime Timer" data-original-title="resetTickingTime Timer" style="display:none;">resetTickingTime</button>
 									</div>
@@ -85,6 +88,7 @@
 							<input type="hidden" name="start_time" id="start_time">
 							<input type="hidden" name="end_time" id="end_time">
 							<input type="hidden" name="organization" value="" id="organization"/>
+							<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
 							<div class="alert alert-success" id="success-alert" style="display: none;">
 								<button type="button" class="close" data-dismiss="alert">x</button>
 								<strong> Patient data updated successfully! </strong><span id="text"></span>
