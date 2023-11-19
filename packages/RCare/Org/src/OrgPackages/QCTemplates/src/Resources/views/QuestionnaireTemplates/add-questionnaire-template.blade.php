@@ -182,12 +182,12 @@
                             <label class="col-md-1 mt-2" >Sequence</label>
                             <input type="number" class="form-control col-md-2" name="sequence" id="sequence"> 
             
-                            <div class="col-md-6 form-group mt-2 team-invite">
+                            <!--<div class="col-md-6 form-group mt-2 team-invite">
                                 <label for="tags" class="">Enter Tags</label>
                                 <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30">
                                 <br>
                                 <p id='subtext'>You can enter multiple tags with comma</p>
-                            </div>
+                            </div>-->
                             </div>
                             
                         </div>

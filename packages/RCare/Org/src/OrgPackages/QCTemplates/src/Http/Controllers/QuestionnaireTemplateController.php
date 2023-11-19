@@ -129,7 +129,7 @@ class QuestionnaireTemplateController extends Controller
                         'score'   => sanitizeVariable($request->add_score),
                         'sequence' => sanitizeVariable($request->sequence),
                         'display_months' => json_encode($months),
-                        'tags' => sanitizeVariable($request->tags)
+                       // 'tags' => sanitizeVariable($request->tags)
                     );
 
         //check from which form submit requested
@@ -374,7 +374,7 @@ class QuestionnaireTemplateController extends Controller
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
         'display_months' => json_encode($months),
-        'tags' => sanitizeVariable($request->tags)
+       // 'tags' => sanitizeVariable($request->tags)
         );
         
         //dd($data);
@@ -465,7 +465,7 @@ class QuestionnaireTemplateController extends Controller
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
         'display_months' => json_encode($months),
-        'tags' => sanitizeVariable($request->tags)
+        //'tags' => sanitizeVariable($request->tags)
         );
         //dd($data);
         QuestionnaireTemplate::where('id',sanitizeVariable($request->question_id))->update(['status' => 2, 'updated_by' =>session()->get('userid')]);
