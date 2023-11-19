@@ -1117,8 +1117,8 @@ var checkTimeInterval = function timerIncrement() {
                
 
                 console.log("idleTime-"+idleTime);
-                // console.log("showPopupTime-"+showPopupTime);
-                // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
+                 console.log("showPopupTime-"+showPopupTime);
+                 console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
 
 
                 if(idleTime >= showPopupTime) {
@@ -1144,8 +1144,8 @@ var checkTimeInterval = function timerIncrement() {
                             $( "#sign-out-btn" )[0].click();
                             var base_url = window.location.origin; 
                             // alert(base_url);  
-                            window.location.href = base_url+'/rcare-login';   
-                            window.location.reload();   
+                            window.location.replace = base_url+'/rcare-login';   
+                            //window.location.reload();   
                         
                         }
 
