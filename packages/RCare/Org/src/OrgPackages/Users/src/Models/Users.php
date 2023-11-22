@@ -242,12 +242,12 @@ class Users extends Authenticatable
         // select u.id, u.f_name, u.l_name, r.role_name 
         // from ren_core.users u left join ren_core.roles r on r.id = u.role where u.status = 1 
         // and (r.id = 5 or  r.id =4 or  r.id = 11 )order by f_name
-      $cm = DB::select(DB::raw("select u.id, u.f_name, u.l_name, r.role_name 
+      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
                                 where u.status = 1 and (UPPER(r.role_name) LIKE UPPER('%Care Manager%') 
                                 or UPPER(r.role_name) LIKE UPPER('%Team Lead%')
-                                or UPPER(r.role_name) LIKE UPPER('%Sr. Care Manager%'))"));
+                                or UPPER(r.role_name) LIKE UPPER('%Sr. Care Manager%'))");
         
         foreach($cm as $c)
         {          
@@ -267,10 +267,10 @@ class Users extends Authenticatable
         // from ren_core.users u left join ren_core.roles r on r.id = u.role where u.status = 1 
         // and (r.id = 5 or  r.id =4 or  r.id = 11 )order by f_name
 
-      $cm = DB::select(DB::raw("select u.id, u.f_name, u.l_name, r.role_name 
+      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
-                                where u.status = 1 and r.id != 2"));
+                                where u.status = 1 and r.id != 2");
                            
         
         foreach($cm as $c)
@@ -289,11 +289,11 @@ class Users extends Authenticatable
         
     public static function RpmActiveCareManager()
    {
-      $cm = DB::select(DB::raw("select u.id, u.f_name, u.l_name, r.role_name 
+      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
                                 left join patients.patient_services ps on ps.created_by = u.id 
-                                where u.status = 1 and r.id = 5 and ps.module_id =2 order by f_name"));
+                                where u.status = 1 and r.id = 5 and ps.module_id =2 order by f_name");
         
         foreach($cm as $c) 
         {          

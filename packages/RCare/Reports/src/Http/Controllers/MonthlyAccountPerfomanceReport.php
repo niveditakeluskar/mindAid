@@ -137,7 +137,7 @@ class MonthlyAccountPerfomanceReport extends Controller
 
                   $query.=" group  by pp.practice_id,mpra.name" ; 
         //  dd($query);
-            $data  = DB::select( DB::raw($query) );
+            $data  = DB::select($query);
             // dd($data); 
 
             return Datatables::of($data)
@@ -192,7 +192,7 @@ class MonthlyAccountPerfomanceReport extends Controller
       $query.=" and pp.practice_id = $p"; 
      }
    // dd($query);
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
           return Datatables::of($data)  
           ->addIndexColumn()            
           ->make(true);

@@ -96,7 +96,7 @@ class TimeLogsReportController extends Controller
         '".$configTZ ."','".$userTZ."',
         $activedeactivestatus)"; 
 //  dd($query);    
-       $data = DB::select( DB::raw($query) );
+       $data = DB::select($query);
         return Datatables::of($data)
                ->addIndexColumn()            
                ->make(true);   
