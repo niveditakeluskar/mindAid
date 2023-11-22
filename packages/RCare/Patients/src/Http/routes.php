@@ -190,13 +190,16 @@ Route::get('ajax/relationship/list', 'RCare\Patients\Http\Controllers\PatientCon
 
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('patients')->group(function () {  
+        Route::get("/worklist", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserListData")->name("work.list");
 
         Route::post('/save-patient-fin-number', 'RCare\Patients\Http\Controllers\PatientController@savepatientfinnumber')->name('patient.savefinnumber');	
 		Route::get("/generate-careplan-age","RCare\Patients\Http\Controllers\PatientWorklistController@addCarePlanAge")->name("generate.careplan.age");
 		
         Route::get("/activity_time/{id}/{practice_id}","RCare\Patients\Http\Controllers\PatientWorklistController@get_activitytime")->name("get.activitytime");
         Route::post("/patient-activity","RCare\Patients\Http\Controllers\PatientWorklistController@savePatientActivity")->name("save.patient.activity");
-        Route::get("/worklist", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserListData")->name("work.list");
+        
+       
+
         Route::get("/worklist/{practice_id}/{patient_id}/{module_id}/{timeoption}/{time}/{activedeactivestatus}", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserListDataAll")->name("work.list.all");
         Route::get("/getuser-filters", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserFilters")->name("user.filters");                     
         Route::post("/worklist/saveuser-filters/{practice_id}/{patient_id}/{module_id}/{timeoption}/{time}/{activedeactivestatus}", "RCare\Patients\Http\Controllers\PatientWorklistController@saveUserFilters")->name("save.user.filters");  

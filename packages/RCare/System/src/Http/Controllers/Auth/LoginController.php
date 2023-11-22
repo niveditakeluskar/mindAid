@@ -421,13 +421,13 @@ class LoginController extends Controller
                     );
                         
                     try{
+                        $body['message'] = '<h5>Hi  ' . $data["name"].', </h5> 
+                        <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
+                        <a>Team Renova</a>';
                         Mail::send([], $data, function ($message) use($data) {
                             $message->to($data['email'], $data['name'] )
                             ->subject('RCARE Multifactor Authentication Code') 
-                            ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
-                                <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
-                                <a>Team Renova</a>',  
-                            'text/html'); // for HTML rich messages
+                            ->setBody($body['message'],'text/html'); // for HTML rich messages
                         });
                         if (Mail::failures()) {
                             $response['email_otp']='n';
