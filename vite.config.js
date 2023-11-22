@@ -25,4 +25,15 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
+   server: {
+    proxy: {
+              '/foo': 'http://localhost:4567',
+      '/api': {
+        target: 'https://pranali.d-insights.global',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    },
+    cors: false // This enables CORS for the development server
+  },
 });

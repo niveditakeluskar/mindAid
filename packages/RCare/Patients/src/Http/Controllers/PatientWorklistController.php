@@ -42,7 +42,7 @@ class PatientWorklistController extends Controller {
         if(isset($cid)){
             $usersdetails = Users::where('id',$cid)->get();
             $roleid = $usersdetails[0]->role;    
-            return Inertia::render('Patients::PatientAllocation/WorkList', [
+            return Inertia::render('Test', [
                 'roleid' => $roleid,
             ]); 
         } else {
