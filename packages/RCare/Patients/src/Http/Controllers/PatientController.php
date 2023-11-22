@@ -124,7 +124,7 @@ class PatientController extends Controller
 	
 	public function populateFinNumberData($id){        
         $id = sanitizeVariable($id);
-        $data=DB::select( DB::raw("select fin_number from patients.patient where id = '".$id."'" ));
+        $data=DB::select("select fin_number from patients.patient where id = '".$id."'" );
         $result['fin_number_form'] = $data;
         return $result;
     }
@@ -858,7 +858,7 @@ class PatientController extends Controller
             $query.=" group by concat(pra.name || ' ' || pra.location ),pra.id, pr.name,usr.f_name,usr.l_name,ptr.totaltime,last_date,p.id,usr.id,pp.practice_emr";
 
   // dd($query);
-          $data = DB::select( DB::raw($query) );
+          $data = DB::select($query);
           //$careManager = DB::table('ren_core.users')->where('role', '=', 5)->get();
 
           return Datatables::of($data)
@@ -882,7 +882,7 @@ class PatientController extends Controller
               where us.status=1 and user_id = $row->uid   $practice_cond
               GROUP BY us.user_id, pp.practice_id";
 
-              $patient_count = DB::select( DB::raw($patientcount) );
+              $patient_count = DB::select($patientcount);
               if(!empty($patient_count)) {
                 return $patient_count[0]->patient_count;
             }else{
@@ -1031,7 +1031,7 @@ class PatientController extends Controller
                 $query.=" group by pra.name, pr.name,usr.f_name,usr.l_name,ptr.totaltime,last_date,p.id";
 
       // dd($query);
-              $data = DB::select( DB::raw($query) );
+              $data = DB::select($query);
               return Datatables::of($data)
              ->addIndexColumn() 
              
@@ -1096,7 +1096,7 @@ class PatientController extends Controller
         //                                   order by condition asc
         //                                   "));
 
-        $Condition = DB::select( DB::raw("select distinct diagnosis, 
+        $Condition = DB::select("select distinct diagnosis, 
                         max(updated_at) as date
                         FROM patients.patient_diagnosis_codes 
                         where updated_at >= date_trunc('month', current_date)  
@@ -1105,7 +1105,7 @@ class PatientController extends Controller
                         AND status = 1 
                         group by diagnosis 
                         
-                        "));
+                        ");
 
         $chronicCondition = empty($Condition) ? '' : $Condition;
         // dd( $chronicCondition);
@@ -1193,15 +1193,15 @@ class PatientController extends Controller
 
        
       
-        $education_training = DB::select( DB::raw("select 
+        $education_training = DB::select("select 
                                           max(record_date) as date
                                           FROM rpm.device_education_training 
                                           where patient_id = '".$patient_id."'
                                           AND status = 1 
-                                          "));
+                                          ");
 
         $device_education_training =(empty($education_training[0]->date) || $education_training[0]->date==null)? '' :date("m-d-Y",strtotime($education_training[0]->date)); 
-        $medication_data = DB::select(DB::raw("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,
+        $medication_data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,
                                         rm.description as name, pm1.updated_at as updated_at
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
@@ -1210,7 +1210,7 @@ class PatientController extends Controller
                                             AND EXTRACT(Month from pm.created_at)= '".$formonth."'
                                             AND EXTRACT(YEAR from pm.created_at) = '".$foryear."' 
                                             group by pm.med_id) 
-                                        order by rm.description asc"));
+                                        order by rm.description asc");
         
         $medication = empty($medication_data)?'':$medication_data;
 
@@ -1221,7 +1221,7 @@ class PatientController extends Controller
         $currentEllapsedTime = CommonFunctionController::getCcmNetTime($patient_id, $module_id);
         $previousEllapsedTime = CommonFunctionController::getCcmPreviousMonthNetTime($patient_id, $module_id);
         /*$non_billable_time = DB::select( DB::raw("select * from patients.sp_non_billabel_net_time($patient_id, $module_id, $component_id, $formonth, $foryear)"));*/
-        $non_billable_time = DB::select( DB::raw("select * from patients.sp_non_billabel_net_time($patient_id, $module_id, $component_id, $formonth, $foryear)"));
+        $non_billable_time = DB::select("select * from patients.sp_non_billabel_net_time($patient_id, $module_id, $component_id, $formonth, $foryear)");
         $ps = QuestionnaireTemplate::where('add_to_patient_status',1)->where('status',1)->get('id');
         if(isset($ps[0]->id)) {
             $questionnaire_status = QuestionnaireTemplatesUsageHistory::where('template_id',$ps[0]->id)->where('patient_id',$patient_id)->latest()->first();
@@ -1414,7 +1414,7 @@ class PatientController extends Controller
 	
 	public function populateDeviceData($id){ 
         $id = sanitizeVariable($id);
-        $data=DB::select( DB::raw("select pd.id,pd.patient_id,pd.device_code ,pd.updated_by ,pdd.device_name,p.name ,pdd.id as pdevice_id ,p.id as partner_id
+        $data=DB::select("select pd.id,pd.patient_id,pd.device_code ,pd.updated_by ,pdd.device_name,p.name ,pdd.id as pdevice_id ,p.id as partner_id
             from patients.patient_devices pd 
             left join ren_core.users as u on pd.created_by = u.id 
             inner join ren_core.partners as p on p.id = pd.partner_id
@@ -1439,7 +1439,7 @@ class PatientController extends Controller
             left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
             where patient_id  = '".$id."'";  
         //dd($query);
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
         return Datatables::of($data)
         ->addIndexColumn()
         ->addColumn('action', function($row){
@@ -1849,11 +1849,11 @@ public function practicePatients($practice,$moduleId){
             //     and p.id = q.patient_id and ps.status in(0,1)
             //     and p.id not in (SELECT id FROM patients.patient where status in(2,3))
             //     and q.is_active=1 order by p.fname "));
-            $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+            $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient as p, patients.patient_services as ps, patients.patient_providers
                 as q where p.id = ps.patient_id and ps.module_id ='".$moduleId."' 
                 and p.id = q.patient_id
-                and q.is_active=1 order by p.fname "));
+                and q.is_active=1 order by p.fname ");
         }else{
             if($practice!='null' && $module > 0) {
                // $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
@@ -1862,21 +1862,21 @@ public function practicePatients($practice,$moduleId){
                //      and p.id = q.patient_id  and q.practice_id = '".$practice."' and ps.status in(0,1)
                //      and p.id not in (SELECT id FROM patients.patient where status in(2,3)) 
                //      and q.is_active=1 order by p.fname "));
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_services ps, patients.patient_providers
                     as q where p.id = ps.patient_id and ps.module_id = '".$moduleId."' 
                     and p.id = q.patient_id  and q.practice_id = '".$practice."'
-                    and q.is_active=1 order by p.fname "));
+                    and q.is_active=1 order by p.fname ");
             }else{ 
                 // $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 //     from patients.patient p, patients.patient_providers
                 //     as q where  p.id = q.patient_id and q.practice_id = '".$practice."'and ps.status in(0,1)
                 //     and p.id not in (SELECT id FROM patients.patient where status in(2,3)) 
                 //     and q.is_active=1 order by p.fname ") );
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_providers
                     as q where  p.id = q.patient_id and q.practice_id = '".$practice."'
-                    and q.is_active=1 order by p.fname ") );
+                    and q.is_active=1 order by p.fname ");
             }
         }
         return response()->json($patients);
@@ -1891,26 +1891,26 @@ public function practicePatientsAssignDevice($practice,$moduleId){
          $module = Module::where('id',$moduleId)->where('patients_service',1)->count();
         if($practice=='null' &&  $module > 0 ) {
        
-             $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+             $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient as p, patients.patient_services as ps, patients.patient_providers as q, patients.patient_devices as d 
                 where p.id = ps.patient_id and ps.module_id ='".$moduleId."' 
                 and p.id = q.patient_id and p.id = d.patient_id and d.status=1
-                and q.is_active=1 order by p.fname "));
+                and q.is_active=1 order by p.fname ");
 
         }else{
             if($practice!='null' && $module > 0) {
               
-                 $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                 $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_services ps, patients.patient_providers as q, patients.patient_devices as d
                      where p.id = ps.patient_id and ps.module_id = '".$moduleId."' 
                     and p.id = q.patient_id  and q.practice_id = '".$practice."' and p.id = d.patient_id and d.status=1
-                    and q.is_active=1 order by p.fname "));
+                    and q.is_active=1 order by p.fname ");
             }else{ 
                
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_providers as q , patients.patient_devices as d
                      where  p.id = q.patient_id and q.practice_id = '".$practice."' and p.id = d.patient_id and d.status=1
-                    and q.is_active=1 order by p.fname ") );
+                    and q.is_active=1 order by p.fname ");
             }
         }
         return response()->json($patients);
@@ -1928,15 +1928,15 @@ public function practicePatientsAssignDevice($practice,$moduleId){
             if($roleid == 2) 
             {
                 //admin
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p
                 inner join patients.patient_services ps  on p.id = ps.patient_id
-                where  1=1 order by p.fname ") );  
+                where  1=1 order by p.fname ");  
             }
             else if($roleid == 5 )
             {
                //caremanager
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p 
                 INNER JOIN task_management.user_patients up
                 on p.id = up.patient_id and up.status = 1               
@@ -1945,12 +1945,12 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id = 1
                inner join patients.patient_services ps 
                on p.id = ps.patient_id                
-               where    up.user_id = '".$cid."' order by p.fname ") );
+               where    up.user_id = '".$cid."' order by p.fname ");
             } 
             else{
 				
 				 //teamlead, senior care manager and manager
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p 
 
                inner join patients.patient_providers pp                 
@@ -1958,7 +1958,7 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                inner join patients.patient_services ps 
                on p.id = ps.patient_id                
                where 
-               pp.practice_id in (SELECT practice_id FROM ren_core.user_practices where user_id = '".$cid."') order by p.fname ") ); 
+               pp.practice_id in (SELECT practice_id FROM ren_core.user_practices where user_id = '".$cid."') order by p.fname "); 
 			   
                 
             }
@@ -1967,17 +1967,17 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         else{
             if($roleid==2)
             {
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p
                 inner join patients.patient_services ps
                 on   p.id = ps.patient_id 
                 inner join patients.patient_providers pp                 
                 on p.id = pp.patient_id and pp.provider_type_id = 1 and pp.is_active = 1
-                where    pp.practice_id = '".$practice."' order by p.fname ") );      
+                where    pp.practice_id = '".$practice."' order by p.fname ");      
             }
             else if($roleid==5)
             {
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p
                 INNER JOIN task_management.user_patients up
                 on p.id = up.patient_id and up.status = 1               
@@ -1986,17 +1986,17 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                 on   p.id = ps.patient_id 
                 inner join patients.patient_providers  pp                 
                 on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id=1
-                where  pp.practice_id = '".$practice."' and up.user_id = '".$cid."' order by p.fname ") );
+                where  pp.practice_id = '".$practice."' and up.user_id = '".$cid."' order by p.fname ");
             }
             else{
-                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p 
 
                inner join patients.patient_providers pp
 			   on p.id = pp.patient_id and pp.is_active=1 and pp.provider_type_id = 1
 			   and pp.practice_id = '".$practice."'
                where    
-               pp.practice_id in (SELECT practice_id FROM ren_core.user_practices where user_id = '".$cid."') order by p.fname ") );
+               pp.practice_id in (SELECT practice_id FROM ren_core.user_practices where user_id = '".$cid."') order by p.fname ");
             }
            
         }
@@ -2064,14 +2064,14 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                 
                 $id = $p->id ; 
                 
-                $pat = \DB::select(\DB::raw("select count(distinct p.id) from patients.patient p 
+                $pat = \DB::select("select count(distinct p.id) from patients.patient p 
                 left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
                 from patients.patient_providers pp1  
                 inner join (select patient_id, max(id) as max_pat_practice 
                 from patients.patient_providers  where provider_type_id = 1  and is_active =1  
                 group by patient_id  ) as pp2 on pp1.patient_id = pp2.patient_id and pp1.id = pp2.max_pat_practice) pp                 
                 on p.id = pp.patient_id
-                left join ren_core.practices rp on rp.id = pp.practice_id where rp.id = ".$id." "));    
+                left join ren_core.practices rp on rp.id = pp.practice_id where rp.id = ".$id." ");    
                 
     
                 $patientcount =$pat[0]->count;
@@ -2090,14 +2090,14 @@ public function practicePatientsAssignDevice($practice,$moduleId){
             
             $id = $p->id ; 
             
-            $pat = \DB::select(\DB::raw("select count(distinct p.id) from patients.patient p 
+            $pat = \DB::select("select count(distinct p.id) from patients.patient p 
             left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
             from patients.patient_providers pp1  
             inner join (select patient_id, max(id) as max_pat_practice 
             from patients.patient_providers  where provider_type_id = 1  and is_active =1  
             group by patient_id  ) as pp2 on pp1.patient_id = pp2.patient_id and pp1.id = pp2.max_pat_practice) pp                 
             on p.id = pp.patient_id
-            left join ren_core.practices rp on rp.id = pp.practice_id where rp.id = ".$id." "));    
+            left join ren_core.practices rp on rp.id = pp.practice_id where rp.id = ".$id." ");    
             
 
             $patientcount =$pat[0]->count;
@@ -2119,7 +2119,7 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         
         if($practiceId=='null'){
           //dd($practiceId);
-          $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+          $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p
                 inner join patients.patient_services ps
                 on   p.id = ps.patient_id 
@@ -2130,11 +2130,11 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                 group by patient_id  ) as pp2 on pp1.patient_id = pp2.patient_id and pp1.id = pp2.max_pat_practice
                 and pp1.provider_type_id = 1 ) pp                 
                 on p.id = pp.patient_id
-                where ps.module_id =  '".$module_id."' and  pp.practice_emr ='".$emr."' order by p.fname ") );
+                where ps.module_id =  '".$module_id."' and  pp.practice_emr ='".$emr."' order by p.fname ");
         return response()->json($patients);
         }else{
           // dd($practiceId);
-            $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+            $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient p
                 inner join patients.patient_services ps
                 on   p.id = ps.patient_id 
@@ -2145,7 +2145,7 @@ public function practicePatientsAssignDevice($practice,$moduleId){
                 group by patient_id  ) as pp2 on pp1.patient_id = pp2.patient_id and pp1.id = pp2.max_pat_practice
                 and pp1.provider_type_id = 1 ) pp                 
                 on p.id = pp.patient_id
-                where ps.module_id =  '".$module_id."' and  pp.practice_emr ='".$emr."' and pp.practice_id = '".$practiceId."' order by p.fname ") );
+                where ps.module_id =  '".$module_id."' and  pp.practice_emr ='".$emr."' and pp.practice_id = '".$practiceId."' order by p.fname ");
             return response()->json($patients);
     
         }
@@ -3057,8 +3057,8 @@ echo $url_module."/".$url_submodule."/".$request->patient_id.$apend_service_id;
         $fname = sanitizeVariable($request->fname);
         $lname = sanitizeVariable($request->lname);
         $dob = sanitizeVariable($request->dob);
-        $data      = DB::select( DB::raw("select patients.generate_patient_uid('".$fname."' , '".$dob."', '".$lname."') as id") );
-        $patientId = DB::select( DB::raw("select * from patients.patient where id = ".$data[0]->id));
+        $data      = DB::select("select patients.generate_patient_uid('".$fname."' , '".$dob."', '".$lname."') as id");
+        $patientId = DB::select("select * from patients.patient where id = ".$data[0]->id);
         $response  = [];
         if(count($patientId) > 0) {
             $response = $data[0]->id;
@@ -3197,8 +3197,8 @@ echo $url_module."/".$url_submodule."/".$request->patient_id.$apend_service_id;
         $fname     = sanitizeVariable($request->fName);
         $lname     = sanitizeVariable($request->lName);
         $dob       = sanitizeVariable($request->dob);
-        $data      = DB::select( DB::raw("select patients.generate_patient_uid('".$fname."' , '".$dob."', '".$lname."') as id") );
-        $patientId = DB::select( DB::raw("select * from patients.patient where id = ".$data[0]->id));
+        $data      = DB::select("select patients.generate_patient_uid('".$fname."' , '".$dob."', '".$lname."') as id");
+        $patientId = DB::select("select * from patients.patient where id = ".$data[0]->id);
         $response  = [];
         if(count($patientId) > 0) {
             $response['error']="Patient with this First Name, Last Name and DOB already exist.";
@@ -3213,7 +3213,7 @@ echo $url_module."/".$url_submodule."/".$request->patient_id.$apend_service_id;
     {
         //createdby ashvini -19thoct2020
         if($request->ajax()){
-            $data = DB::select( DB::raw("select * from patients.patient p where p.id NOT IN (SELECT up.patient_id FROM task_management.user_patients up where up.status = 1) " ));
+            $data = DB::select("select * from patients.patient p where p.id NOT IN (SELECT up.patient_id FROM task_management.user_patients up where up.status = 1) " );
             return Datatables::of($data) 
             ->addIndexColumn()
             ->addColumn('action', function($row){ 

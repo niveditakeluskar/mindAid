@@ -107,7 +107,7 @@ class CarePlanDevelopmentController extends Controller
                       where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =".$patientId."
                       and EXTRACT(Month from plr.created_at) = '".$month."' AND EXTRACT(YEAR from plr.created_at) = '".$year."' 
                       group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
-        $data = DB::select( DB::raw($qry) );
+        $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()  
             ->addColumn('action', function($row){           
@@ -133,7 +133,7 @@ class CarePlanDevelopmentController extends Controller
             where rec_date is not null and patient_id =".$patientId."
             and rec_date::timestamp between '".$dateS."' and '".$dateE."' 
             order by id desc";
-            $data = DB::select( DB::raw($qry) );
+            $data = DB::select($qry);
             return Datatables::of($data)
             ->addIndexColumn()
             ->make(true);
@@ -1183,7 +1183,7 @@ class CarePlanDevelopmentController extends Controller
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
         $dataexist = PatientMedication::with('medication')->where("patient_id", $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if($dataexist==true) {
-            $data = DB::select(DB::raw("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
@@ -1191,9 +1191,9 @@ class CarePlanDevelopmentController extends Controller
                                             where pm.patient_id = '".$id."' 
                                             AND EXTRACT(Month from pm.created_at)= '".$current_month."'
                                             AND EXTRACT(YEAR from pm.created_at) = '".$current_year."' group by pm.med_id) 
-                                        order by pm1.updated_at desc"));
+                                        order by pm1.updated_at desc");
         } else {
-            $data = DB::select(DB::raw("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
@@ -1201,7 +1201,7 @@ class CarePlanDevelopmentController extends Controller
                                             where pm.patient_id = '".$id."'
                                             AND EXTRACT(Month from pm.created_at) = '".$prev_month."'
                                             AND EXTRACT(YEAR from pm.created_at) = '".$prev_year."' group by pm.med_id) 
-                                        order by pm1.updated_at desc")); 
+                                        order by pm1.updated_at desc"); 
         } 
         return Datatables::of($data)
         ->addIndexColumn()
@@ -1462,7 +1462,7 @@ class CarePlanDevelopmentController extends Controller
         $query = "select * from patients.patient_allergy where patient_id ='".$id."' and allergy_type ='".$allergy_type."' 
         and status = 1 and extract(month from created_at) = '".$currentmonth."'
         and extract(year from created_at) = '".$currentyear."' and (allergy_status = '' or allergy_status is null)";
-        $allergy = DB::select( DB::raw($query) ); 
+        $allergy = DB::select($query); 
         $count_allergy = count($allergy);
         return $count_allergy;
     }  
