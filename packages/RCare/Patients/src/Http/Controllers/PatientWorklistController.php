@@ -74,26 +74,55 @@ class PatientWorklistController extends Controller {
           $data = DB::select($query); 
          $patientcount=$data[0]->totalpatients;
           
-          if($patientcount!="" || $patientcount!=0 || $patientcount!=null)
-          {  
-           $time=$data[0]->totaltime;       
-           $timesplit=explode(':',$time);
-           // $min=($timesplit[0]*60)+($timesplit[1])+($timesplit[2]>30?1:0);     
-           $min1=($timesplit[0]*60)+($timesplit[1])+($timesplit[2]/60);  
-             $min=number_format((float)$min1, 2, '.', '');        
-           if($min < 10 )
-           {
-            $min='0'.$min;
-           }
-            $data['minutes']=$min;
-          }
-          else
-          {
-            $data=null;
-          }
+        //   if($patientcount!="" || $patientcount!=0 || $patientcount!=null)
+        //   {  
+        //    $time=$data[0]->totaltime;       
+        //    $timesplit=explode(':',$time);
+        //    // $min=($timesplit[0]*60)+($timesplit[1])+($timesplit[2]>30?1:0);     
+        // //    $min1=($timesplit[0]*60)+($timesplit[1])+($timesplit[2]/60);  
+        //     $min1 = ($timesplit[0] * 60) + ($timesplit[1]) + ($timesplit[2] / 60);
+        //      $min=number_format((float)$min1, 2, '.', '');        
+        //    if($min < 10 )
+        //    {
+        //     $min='0'.$min;
+        //    }
+        //     $data['minutes']=$min;
+        //   }
+        //   else
+        //   {
+        //     $data=null;
+        //   }
          
-          return json_encode($data);
+        //   return json_encode($data);
 
+        if ($patientcount != "" || $patientcount != 0 || $patientcount != null) {  
+            $time = $data[0]->totaltime;       
+            $timesplit = explode(':', $time);
+        
+            // Check if $timesplit contains at least 3 elements
+            if (count($timesplit) >= 3) {
+                $hours = (int)$timesplit[0];
+                $minutes = (int)$timesplit[1];
+                $seconds = (int)$timesplit[2];
+        
+                $min1 = ($hours * 60) + $minutes + ($seconds / 60);  
+                $min = number_format((float)$min1, 2, '.', '');        
+        
+                if ($min < 10) {
+                    $min = '0' . $min;
+                }
+        
+                $data['minutes'] = $min;
+            } else {
+                // Handle the case where $timesplit doesn't have the expected number of elements
+            }
+        } else {
+            $data = null;
+        }
+        
+        return json_encode($data);
+        
+        
     }
  
     public function get_activitytime(Request $request){

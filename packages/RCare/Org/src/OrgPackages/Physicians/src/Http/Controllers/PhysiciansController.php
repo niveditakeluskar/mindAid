@@ -5,7 +5,8 @@ use App\Http\Controllers\Controller;
 use RCare\Org\OrgPackages\Physicians\src\Http\Requests\physiciansAddRequest;
 use Illuminate\Http\Request;
 use RCare\Org\OrgPackages\Physicians\src\Models\Physicians;
-use RCare\Rpm\Models\Providers;
+use RCare\Org\OrgPackages\Providers\src\Models\Providers;
+// use RCare\Rpm\Models\Providers;
 
 use DataTables;
 use Hash;
@@ -257,7 +258,7 @@ class PhysiciansController extends Controller {
 		\DB::enableQueryLog(); 
         $providerList = Providers::where("is_active", 1)->where('provider_type_id',1)
                                         ->where("name","!=","null")->where("practice_id",$practiceId)->get();
-										//dd(\DB::getQueryLog());
+										// dd(\DB::getQueryLog());
         return response()->json($providerList);
     }
 

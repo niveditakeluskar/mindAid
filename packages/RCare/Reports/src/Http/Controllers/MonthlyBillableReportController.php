@@ -412,15 +412,9 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
 
           //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
 
-       $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid  
-       
-       
-       ";
-       $data = DB::select($query);
-      //  dd($query);
-      //  dd($data);
-      
-            
+       $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
+
+       $data = DB::select($query);            
        $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
        $diagnosis = DB::select($diagnosis);
       //  dd($diagnosis);  

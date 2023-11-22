@@ -20,7 +20,7 @@ class MonthlyAccountPerfomanceReport extends Controller
 {
     
         public function listMonthlyAccountPerformanceReport(Request $request)//manually adjust timer report storeprocedure
-    {   
+        { dd("working");   
         if ($request->ajax()) { 
           $practicesgrp = sanitizeVariable($request->route('practicesgrpid'));
           $practices    = sanitizeVariable($request->route('practice'));
