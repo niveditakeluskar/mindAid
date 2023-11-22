@@ -2181,7 +2181,7 @@ function stepWizardHorizontal(cl) {
  * @param {jQuery Object} selectElement
  * @param {Integer}       selectedSubModules
  */
-var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) {
+var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) { 
     $(selectElement)
         .empty()
         .append('<option value="">Select Modules</option> <option value="0">None</option>');
@@ -2544,15 +2544,14 @@ var getPatientDetails = function (patientId, moduleId) {
         // ptient enrolleed module in change status
         $('.enrolledservice_modules').html('');
         enr = response.data.patient_services.length;
-        // alert(response.data.patient_services[0].module.module); 
-
-
+        // alert(response.data.patient_services[0].module.module);
         for (i = 0; i < enr; i++) {
             // alert(i); 
             // var module_name = response.data.patient[0].patient_services[i].module.module;
             var module_id = response.data.patient_services[i].module_id;
             $('.enrolledservice_modules').append(`<option value="${module_id}">${response.data.patient_services[i].module.module}</option>`);
         }
+
         // 
         count_enroll_Services = response.data.patient_services.length;
         var enroll_services = [];

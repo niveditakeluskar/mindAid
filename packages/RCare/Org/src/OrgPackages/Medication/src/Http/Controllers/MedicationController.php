@@ -2,6 +2,7 @@
 namespace RCare\Org\OrgPackages\Medication\src\Http\Controllers;
 use App\Http\Controllers\Controller;
 use RCare\Org\OrgPackages\Medication\src\Http\Requests\MedicationRequest;
+use RCare\Org\OrgPackages\Medication\src\Http\Requests\MedicationUpdateRequest;
 use Illuminate\Http\Request;
 use RCare\Org\OrgPackages\Medication\src\Models\Medication;
 //use RCare\Org\OrgPackages\Medication\src\Models\Providers;
@@ -66,7 +67,7 @@ class MedicationController extends Controller {
     }
 
     // edit users
-    public function updateMedication(MedicationRequest $request) {
+    public function updateMedication(MedicationUpdateRequest $request) {
         $id= sanitizeVariable($request->id);        
         $drugname = sanitizeVariable($request->description);
         $drugreaction = sanitizeVariable($request->drug_reaction);   

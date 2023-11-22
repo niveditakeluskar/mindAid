@@ -292,12 +292,22 @@ class DiagnosisController extends Controller {
                 $dccode = $codevi[$i];
                 // print_r($dccode); 
                 $color_vi = preg_split('/[#]/' , $dccode);
+                // print_r($color_vi);
                 if(count($color_vi)>=2){
                   $codedata = $color_vi[0];
-                  // print_r($codedata);echo "<pre>";
+                  // print_r($color_vi);echo "<pre>";
                   $validinvalid = $color_vi[1];
                   if($validinvalid == '0'){
                       //$invalidcolor = '<div class="color-red">'.$codedata.'</div>';
+                      array_push($invalidcodearray,"<span style='color: red;'>".$codedata."</span>");
+                  }else{
+                    array_push($validcodearray,$codedata);
+                  }
+                } 
+                else{
+                  $codedata = $color_vi[0];
+                  $validinvalid = '1'; //whend valid invalid is null
+                  if($validinvalid == '0'){
                       array_push($invalidcodearray,"<span style='color: red;'>".$codedata."</span>");
                   }else{
                     array_push($validcodearray,$codedata);

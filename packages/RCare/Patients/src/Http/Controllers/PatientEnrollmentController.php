@@ -715,7 +715,7 @@ class PatientEnrollmentController extends Controller
 
             //    dd($questionnairehistory);
             $insert_content = QuestionnaireTemplateUsageHistory::create($questionnairehistory);
-        
+            // dd($insert_content);
             $history_id      = $insert_content->id;
             $action_template = array('template_id' => $template_id, 'history_id' => $history_id);
 

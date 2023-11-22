@@ -140,7 +140,9 @@ class TaskManagementController extends Controller {
         {            
             $practid = sanitizeVariable($request->practice);
 
-              $query = "select * from patients.SP_TOTAL_PATIENT_DEATILS_OF_ASSIGN_PATIENT($practid)";  
+            //   $query = "select * from patients.SP_TOTAL_PATIENT_DEATILS_OF_ASSIGN_PATIENT($practid)";  
+            
+            $query = "select * from patients.patient_details($practid)";
             
             $data = DB::select($query);
           
