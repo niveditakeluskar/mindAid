@@ -977,8 +977,12 @@ function assingCareManager($id){
 }
 
 function activeThemeMode($id){
-    $am = RCare\Org\OrgPackages\Users\src\Models\Users::where('id', $id)->get();
+	if(isset($id)){
+    $am = RCare\Org\OrgPackages\Users\src\Models\Users::where('id', $id)->get();	
     return $am[0]->theme;
+	}else{
+		return '0';
+	}
 }
 
 function getVTreeData($id){

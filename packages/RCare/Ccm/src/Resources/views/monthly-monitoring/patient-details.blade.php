@@ -122,7 +122,7 @@
             $('.tooltipevent').remove();
         },
         timezone: "local",
-        events:'/rpm/calender-data/'+patient_id+'/'+deviceid,
+        events:'/rpm/calender-data/'+patient_id+'/'+1, //deviceid
         selectable: true, 
         selectHelper: true,       
     });
@@ -1136,18 +1136,22 @@
                 $("input[name='end_time']").val(timer_paused);
                 $("#timer_end").val(timer_paused);
                 $("#time-container").val(AppStopwatch.startClock);
+                var form_start_time = $("form[name='callwrapup_form'] .form_start_time").val();
                 var url = '/ccm/delete-callwrapup-notes/'+id;
                 $.ajax({
                     type   : 'get',
                     url    : url,
-                    data   : {"id": id, "timer_start": timer_start, "timer_paused": timer_paused},
+                    data   : {"id": id, "timer_start": timer_start, "timer_paused": timer_paused, "form_start_time": form_start_time},
                     success: function(response) {
-                        util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
-                        $("#time-container").val(AppStopwatch.pauseClock);
+                        //util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
+                       // $(".form_start_time").val(response);
+                       // $("#time-container").val(AppStopwatch.pauseClock);
                         var table =  $('#callwrap-list');
                         table.DataTable().ajax.reload();
-                        $(".last_time_spend").html(response);
-                        $("#time-container").html(response);
+                        //$(".last_time_spend").html(response);
+                        //$("#time-container").html(response);
+                       
+                        //$("#time-container").val(AppStopwatch.startClock);
                     }
                 });
             } else {

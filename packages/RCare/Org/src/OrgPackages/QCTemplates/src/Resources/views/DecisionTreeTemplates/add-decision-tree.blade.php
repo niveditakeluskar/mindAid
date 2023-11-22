@@ -275,12 +275,12 @@ The markup will be simple nested lists
                     </div> 
                     <div class="form-group">  
                         <div class="row">
-                            <div class="col-md-6 form-group mt-2 team-invite">
+                            <!--<div class="col-md-6 form-group mt-2 team-invite">
                                 <label for="tags" class="">Enter Tags</label>
                                 <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30">
                                 <br>
                                 <p id='subtext'>You can enter multiple tags with comma</p>
-                            </div>
+                            </div>-->
                         </div>
                     </div>  
                     <hr>
