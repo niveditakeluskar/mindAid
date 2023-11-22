@@ -1,17 +1,17 @@
 <?php
 
-namespace RCare\Ccm\Models;
+namespace RCare\Rpm\Models;
 use RCare\System\Support\DashboardFetchable;
 use RCare\System\Support\ModelMapper;
 use Illuminate\Database\Eloquent\Model;
 use RCare\System\Traits\DatesTimezoneConversion;
 use Carbon\Carbon;
 
-class CallWrapupChecklist extends Model
+class BulkUploadDevices extends Model
 {
-    //
+    // 
     use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='ccm.callwrapup_checklist';
+    protected $table ='rpm.duplicate_bulk_upload_device';
     public $timestamps = TRUE;
         /**
      * The attributes that are mass assignable.
@@ -24,26 +24,27 @@ class CallWrapupChecklist extends Model
     
     protected $dates = [
         'created_at',
-        'updated_at',
+        'updated_at', 
         'record_date'
        
     ]; 
 
     protected $fillable = [
         'id', 
-        'emr_entry_completed',
-        'schedule_office_appointment',
-        'resources_for_medication',
-        'medical_renewal',
-        'called_office_patientbehalf',
-        'referral_support',
-        'no_other_services',
-        'patient_id',
+        'patient_id', 
+        'partner',
+        'practice',
+        'fname',
+        'lname',
+        'dob',
+        'device_code',
+        'device',
         'created_by',
         'updated_by',
-        'created_at',
-        'updated_at',
-        'record_date'
+        'created_at', 
+        'updated_at', 
+        'record_date',
+        'status'
 
 
        

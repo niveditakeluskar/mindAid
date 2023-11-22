@@ -1419,7 +1419,7 @@ class PatientController extends Controller
             left join ren_core.users as u on pd.created_by = u.id 
             inner join ren_core.partners as p on p.id = pd.partner_id
             inner join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id
-            where pd.id  = '".$id."'" ));  
+            where pd.id  = '".$id."'" ));
        // dd($data);  inner join ren_core.devices as d  on d.id = pd.device_id
         $result['devices_form'] = $data;
         return $result;
