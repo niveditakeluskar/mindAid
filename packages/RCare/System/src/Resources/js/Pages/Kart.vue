@@ -1,13 +1,13 @@
 
 <template>
-    <p>THIS IS A TEST VUE file</p>
+    <p>THIS IS A system VUE file</p>
     
 </template>
 
 <script>
 export default {
     mounted() {
-        console.log('Test.vue component mounted');
+        console.log('kart.vue component mounted');
     }
 }
 </script>

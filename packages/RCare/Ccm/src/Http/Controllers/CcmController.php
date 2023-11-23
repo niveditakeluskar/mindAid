@@ -670,12 +670,6 @@ class CcmController extends Controller
 
     public function fetchMonthlyMonitoringPatientDetails(Request $request)
     {
-
-        Inertia::setRootView('Theme::inertia-layouts/master');
-
-        return Inertia::render('Test');
-
-        exit;
         $patient_id   = sanitizeVariable($request->route('id'));
         $module_id    = getPageModuleName();
         $component_id = getPageSubModuleName();
@@ -755,7 +749,9 @@ class CcmController extends Controller
                 $patient_assign_deviceid = "";
             }
         }
-     
+
+        Inertia::setRootView('Theme::inertia-layouts/master');
+        return Inertia::render('monthly-monitoring/patient-details');
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
         //     compact(

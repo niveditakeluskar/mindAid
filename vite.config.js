@@ -6,8 +6,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/laravel/js/app.js',
                 'resources/js/appInertia.js',
+                'resources/laravel/js/app.js',
             ],
             refresh: true,
         }),
@@ -25,15 +25,4 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
-   server: {
-    proxy: {
-              '/foo': 'http://localhost:4567',
-      '/api': {
-        target: 'https://pranali.d-insights.global',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    },
-    cors: false // This enables CORS for the development server
-  },
 });

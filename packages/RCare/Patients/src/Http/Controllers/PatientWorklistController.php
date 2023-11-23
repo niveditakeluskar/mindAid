@@ -41,7 +41,8 @@ class PatientWorklistController extends Controller {
         $cid = session()->get('userid');
         if(isset($cid)){
             $usersdetails = Users::where('id',$cid)->get();
-            $roleid = $usersdetails[0]->role;    
+            $roleid = $usersdetails[0]->role;   
+           
             return Inertia::render('Test', [
                 'roleid' => $roleid,
             ]); 

@@ -23,8 +23,7 @@
     {{-- page specific css --}}
     <link rel="Stylesheet" href="{{ asset('assets/styles/external-css/themes-smoothness-jquery-ui.css')}}">
     <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
-    @vite('resources/js/appInertia.js')
-    @inertiaHead
+
     <style>
         .select2-container .select2-selection--single {
             height: 34px !important;
@@ -42,7 +41,8 @@
         $themeMode = "dark-theme";
     }
     ?>
-
+    @vite('resources/js/appInertia.js')
+    @inertiaHead
 </head>
 
 <body class="layout_2 text-left {{$themeMode}}">
@@ -61,7 +61,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
-                @inertia
+            @inertia
             </div>
             @include('Theme::layouts_2.footer')
         </div> <!-- ============ Body content End ============= -->
@@ -106,7 +106,6 @@
         </div>
     </div>
     <!-- LAModel Ended here -->
-
 
     {{-- common js --}}
     <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>

@@ -3,7 +3,7 @@
             <img src="{{asset('assets/images/logo.png')}}" alt="">
         </div>
         <div class="d-flex align-items-center">
-            <a href="{{ route("work.list") }}"> <img src="{{'/images/home.png'}}" class="home-icon d-sm-inline-block" alt="" aria-expanded="false" height='27'></a>
+            <a href="{{ route('work.list') }}"> <img src="{{'/images/home.png'}}" class="home-icon d-sm-inline-block" alt="" aria-expanded="false" height='27'></a>
             <div class="form-row" style="color: #fff; background-color: transparent; font-weight: bold;">
                 <?php
                 $base_url = url('/');
@@ -18,7 +18,7 @@
         <div style="margin: auto">@include('Theme::layouts_2.horizontal-bar')</div>
         <div class="header-part-right">
             <!-- Full screen toggle -->
-            <a href="{{ route("message.log") }}"> <em class="nav-icon mr-2 i-Envelope"><mark class="message-notification">0</mark></em></a>
+            <a href="{{ route('message.log') }}"> <em class="nav-icon mr-2 i-Envelope"><mark class="message-notification">0</mark></em></a>
             <em class="i-Full-Screen header-icon text-muted d-sm-inline-block" data-fullscreen></em>
             <!-- User avatar dropdown -->
             <div class="dropdown">
