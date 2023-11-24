@@ -712,7 +712,7 @@ class CcmController extends Controller
         } else {
             $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
         }
-        $patient             = Patients::where('id', $patient_id)->get();
+        $patient             = Patients::where('id', $patient_id)->first();
         $patient_providers   = PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id', 1)
             ->where('is_active', 1)->orderby('id', 'desc')->first();
         if ($patient_providers == null || $patient_providers == '' || $patient_providers == " ") {
@@ -751,7 +751,9 @@ class CcmController extends Controller
         }
 
         Inertia::setRootView('Theme::inertia-layouts/master');
-        return Inertia::render('monthly-monitoring/patient-details');
+        return Inertia::render('MonthlyMonitoring/PatientDetails', [
+            'patient_details' => $patient,
+        ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
         //     compact(
