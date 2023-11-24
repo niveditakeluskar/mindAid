@@ -18,6 +18,7 @@ use RCare\Patients\Models\PatientImaging;
 use RCare\Patients\Models\PatientServices;
 use Illuminate\Support\Facades\Log;
 use RCare\Messaging\Models\MessageLog;
+use RCare\Org\OrgPackages\Roles\src\Models\Roles;
 use RCare\System\Models\MfaTextingLog;
 use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
 use RCare\Patients\Models\Patients;
@@ -39,9 +40,8 @@ class CommonFunctionController extends Controller
         $patient_id = sanitizeVariable($patient_id);
         $module_id  = sanitizeVariable($module_id);
 
-
         $query = "select * from patients.sp_monthly_get_patient_net_time(" . $patient_id . ", " . $module_id . ", 0, '" . $month . "', '" . $year . "');";
-        $data  = DB::select(DB::raw($query));
+        $data  = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -82,9 +82,8 @@ class CommonFunctionController extends Controller
         $patient_id = sanitizeVariable($patient_id);
         $module_id  = sanitizeVariable($module_id);
 
-
         $query = "select * from patients.sp_non_billabel_net_time(" . $patient_id . ", " . $module_id . ", 0, '" . $month . "', '" . $year . "');";
-        $data  = DB::select(DB::raw($query));
+        $data  = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -119,7 +118,6 @@ class CommonFunctionController extends Controller
         // and pt.patient_id = $patient_id";
 
         $query = "select * from patients.sp_get_patient_net_time(" . $patient_id . ", " . $module_id . ", 0, '" . $month . "', '" . $year . "');";
-        // $data  = DB::select(DB::raw($query));
         $data  = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
@@ -161,7 +159,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8)
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(" . $patient_id . ", " . $module_id . ", 0, '" . $month . "', '" . $year . "');";
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -197,7 +195,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8)
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(" . $patient_id . ", " . $module_id . ", 0, '" . $month . "', '" . $year . "');";
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -234,7 +232,7 @@ class CommonFunctionController extends Controller
         // AND (EXTRACT(YEAR from record_date) = '".$year."') and  module_id in (".$module_id.", 8) and component_id =".$component_id." 
         // and pt.patient_id = $patient_id";
         $query = "select * from patients.sp_get_patient_net_time(" . $patient_id . ", " . $module_id . ", " . $component_id . ", '" . $month . "', '" . $year . "');";
-        $data = DB::select(DB::raw($query));
+        $data = DB::select($query);
         if (empty($data)) {
             $last_time_spend = "00:00:00";
         } else {
@@ -282,10 +280,12 @@ class CommonFunctionController extends Controller
     }
 
     //record time  
-    public static function recordTimeSpent($start_time = null, $end_time = null, $patient_id = null, $module_id = null, $component_id = null, $stage_id = null, $billable = null, $uid = null, $step_id = null, $form_name = null, $callwrap_id = null, $activity = null, $activity_id = null, $comment = null)
+    public static function recordTimeSpent($start_time = null, $end_time = null, $patient_id = null, $module_id = null, $component_id = null, $stage_id = null, $billable = null, $uid = null, $step_id = null, $form_name = null, $form_start_time = null, $form_save_time = null, $callwrap_id = null, $activity = null, $activity_id = null, $comment = null)
     {
 
-        // dd($stage_id,$step_id);   
+
+        $form_start_time = sanitizeVariable($form_start_time);
+        $form_save_time = sanitizeVariable($form_save_time);
         $start_time   = sanitizeVariable($start_time);
         $end_time     = sanitizeVariable($end_time);
         $patient_id   = sanitizeVariable($patient_id);
@@ -307,6 +307,11 @@ class CommonFunctionController extends Controller
             $end_time = '00:00:00';
         }
 
+        $splitStartTime = explode(" ", $form_start_time);
+        $splitEndTime = explode(" ", $form_save_time);
+
+        $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time));
         $timer_data = array(
             'uid'          => $patient_id,
@@ -316,10 +321,13 @@ class CommonFunctionController extends Controller
             'component_id' => $component_id,
             'timer_on'     => $start_time,
             'timer_off'    => $end_time,
-            'net_time'     => $net_time,
+            'net_time'     => $form_net_time,
             'billable'     => $billable,
             'stage_code'   => $step_id,
             'form_name'    => $form_name,
+            'form_start_time' => $form_start_time,
+            "form_save_time" => $form_save_time,
+            "old_net_time" =>  $net_time,
             'created_by'   => session()->get('userid'),
             // 'status'       => 1,
             'stage_id'     => $stage_id,
@@ -328,6 +336,7 @@ class CommonFunctionController extends Controller
             'activity_id' => $activityid,
             'comment' => $comments
         );
+        // dd($timer_data);  
         $insert_query = PatientTimeRecords::create($timer_data);
         $assignpatient = assingSessionUser($patient_id);
     }
@@ -346,6 +355,21 @@ class CommonFunctionController extends Controller
         $patient_id   = sanitizeVariable($request->patientId);
         $step_id      = sanitizeVariable($request->stepId);
         $form_name    = sanitizeVariable($request->formName);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $pause_start_time = null;
+        $pause_save_time = null;
+        if (sanitizeVariable($request->pause_start_time)) {
+            //$form_save_time = null;
+            //$form_start_time = null;
+            $form_net_time = '00:00:00';
+            $pause_start_time = sanitizeVariable($request->pause_start_time);
+            $pause_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        } else {
+            $splitStartTime = explode(" ", $form_start_time);
+            $splitEndTime = explode(" ", $form_save_time);
+            $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+        }
 
         if ($start_time == null || $start_time == "" || $start_time == 'undefined') {
             $start_time = '00:00:00';
@@ -364,10 +388,15 @@ class CommonFunctionController extends Controller
             'component_id' => $component_id,
             'timer_on'     => $start_time,
             'timer_off'    => $end_time,
-            'net_time'     => $net_time,
+            'net_time'     => $form_net_time,
             'billable'     => $billable,
             'stage_code'   => $step_id,
             'form_name'    => $form_name,
+            'form_start_time' => $form_start_time,
+            "form_save_time" => $form_save_time,
+            "old_net_time" =>  $net_time,
+            "pause_start_time" => $pause_start_time,
+            "pause_save_time" => $pause_save_time,
             'created_by'   => session()->get('userid'),
             // 'status'       => 1,
             'stage_id'     => $stage_id
@@ -375,7 +404,7 @@ class CommonFunctionController extends Controller
         $insert_query = PatientTimeRecords::create($timer_data);
 
         if ($insert_query) {
-            return $end_time;
+            return response(['form_start_time' => $form_save_time, 'end_time' => $end_time]); //$end_time;
         } else {
             return "";
         }
@@ -576,11 +605,11 @@ class CommonFunctionController extends Controller
             // $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
             // $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
             // $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
-            $user_id = session()->get('userid');
+            /*$user_id = session()->get('userid');
             $current_timestamp = Carbon::now();
             $lastMonthPatientVitalsDataQuery = 'INSERT INTO patients.patient_vitals ( "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", "created_by", "created_at", "updated_at" )
-            ( SELECT \'' . $current_timestamp . '\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' FROM patients.patient_vitals WHERE "patient_id" = ' . $patient_id . ' order by id desc limit 1 )';
-            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);
+            ( SELECT \''.$current_timestamp.'\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
+            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);*/
             // $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->get()->last();
             // if($lastMonthPatientVitalsData) {
             //     $insert_vital   = array(
@@ -819,6 +848,94 @@ class CommonFunctionController extends Controller
     //         }
     //     }
     // }
+
+    public function getLandingTime()
+    {
+        $timeArray['landing_time'] = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        return $timeArray;
+    }
+
+    public function getTotalTime($patientID, $moduleId, $startTime)
+    {
+        $patient_id                     = sanitizeVariable($patientID);
+        $module_id                      = sanitizeVariable($moduleId);
+        $timeArray                      = [];
+
+        if ($patient_id != '0') {
+            $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
+            if ($patientID == 'null') {
+                $totalTime = '00:00:00';
+                if ($startTime != 'null') {
+                    $StartTime = explode(" ", $startTime);
+                    $totalTime = date("H:i:s", strtotime($nowTime) - strtotime($StartTime[1]));
+                }
+            } else {
+                $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
+                $checkBillableTime              = (isset($billableTime) && ($billableTime != '0')) ? $billableTime : '00:00:00';
+                $timeArray['billable_time']     = $checkBillableTime;
+
+                $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+                $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
+                $timeArray['non_billable_time'] = $checkNonBillableTime;
+
+                if ($startTime == 'null') {
+                    $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+                } else {
+                    $StartTime = explode(" ", $startTime);
+                    $totalTime = date("H:i:s", strtotime($nowTime) - strtotime($StartTime[1]) + strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+                }
+            }
+
+            $returnTotalTime                = (isset($totalTime) && ($totalTime != '0')) ? $totalTime : '00:00:00';
+            $timeArray['total_time']        = $returnTotalTime;
+            $mh = '';
+            if ($module_id != 8) {
+                $dateS = Carbon::now()->startOfMonth()->subMonth(1);
+                $dateE = Carbon::now();
+                $call_history = MessageLog::select('patient_id', 'status', 'created_at', 'module_id', 'message_date', 'status', 'message_date', 'id', 'message')
+                    ->where('patient_id', $patient_id)
+                    ->whereBetween('created_at', [$dateS, $dateE])
+                    ->orderBy('created_at', 'desc')->get();
+                foreach ($call_history as $callhistory) {
+                    $mh .= "<li>";
+                    if ($callhistory->status == "received") {
+                        $mh .= "<h5> Incoming Response (" . $callhistory->created_at . ")</h5>";
+                        $mh .= "<b>SMS: </b>" . $callhistory->message;
+                    } else {
+                        $mh .= "<h5> Sent Messages (" . $callhistory->created_at . ")</h5>";
+                        $mh .= "<b>SMS: </b>" . $callhistory->message;
+                    }
+                    $mh .= "</li>";
+                }
+            }
+            $timeArray['history'] = $mh;
+        }
+
+        $role = session()->get('role_type');
+        $role_id = session()->get('role');
+
+        $roles = Roles::where('id', $role_id)->get();
+        $caremanager = session()->get('userid');
+        if ($roles[0]->role_name == 'Care Manager') {
+            $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
+        from task_management.user_patients up where user_id = $caremanager and up.status = 1  and read_status = 1) or 
+        patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
+            $data  = DB::select(DB::raw($query));
+            $count = $data[0]->count;
+        } elseif ($roles[0]->role_name == 'Team Lead') {
+            $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
+        from task_management.user_patients up where user_id = $caremanager and up.status = 1  and read_status = 1) or 
+        patient_id in (select distinct  b.patient_id from ren_core.user_practices a join patients.patient_providers b
+        on a.practice_id = b.practice_id join ccm.message_log c on b.patient_id = c.patient_id  where a.user_id = $caremanager and b.is_active = 1 and read_status = 1) or
+        patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
+            $data  = DB::select(DB::raw($query));
+            $count = $data[0]->count;
+        } else {
+            $count = MessageLog::where('read_status', 1)->distinct('patient_id')->count('patient_id');
+        }
+        $timeArray['count'] = $count;
+        return $timeArray;
+    }
 
     public function getTotalBillableAndNonBillableTime($patientID, $moduleId)
     {

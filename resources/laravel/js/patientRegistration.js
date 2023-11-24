@@ -145,6 +145,7 @@ var onPatientRegisteration = function (formObj, fields, response) {
         $("#time-container").val(AppStopwatch.resetClock);
         // $("form[name='patient_registration_form']")[0].reset();
         resetPatientRegisterationForm();
+        util.setLandingTime();
         $("form[name='patient_registration_form'] #practices").val('');
         $("form[name='patient_registration_form'] #physician").val('');
         $(".providers_name").hide();
@@ -340,7 +341,15 @@ $("#physician").on("change", function () {
 
 
 var init = function () {
+    util.setLandingTime();
 	util.redirectToWorklistPage();
+    if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+		var start_time = null;
+	}else{
+        var start_time = $(".form_start_time").val();
+    }
+
+    util.updateTimeEveryMinutes(null, module_id, start_time);
     // $("#confirmdialog").modal('show');
     form.ajaxForm("patient_registration_form", onPatientRegisteration, function () {
         var uidError = $('form[name="patient_registration_form"]  #uid').next(".invalid-feedback").html();

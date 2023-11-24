@@ -41,8 +41,7 @@ class SchedulerTest extends Command
      * @return int
      */
     public function handle()
-    { 
-		   
+    { 		   
         //created and modified by ashvini 24thmarch2021
         $schedulerId = $this->argument('schedulerId');
         $data = Scheduler::where('id',$schedulerId)->get()->toArray();    
@@ -60,7 +59,7 @@ class SchedulerTest extends Command
         foreach($paramdata as $key=>$p)     
         { 
           $practicegrp = \DB::table('ren_core.practices')->where('id',$p)->where('is_active',1)->value('practice_group');
-          $patientscount = \DB::table('patients.patient_providers')->where('practice_id',$p)->where('is_active',1)->count();   
+          $patientscount = \DB::table('patients.patient_providers')->where('practice_id',$p)->where('is_active',1)->where('provider_type_id',1)->count();   
           $practicetime = PracticeActivity::where('activity_id',$activityid)->where('status',1)->where('practice_id',$p)->value('time_required');
           $currentdatetimeforschedulerrecorddate =   date("Y-m-d h:i:s");
           $schedulerrecorddate = DatesTimezoneConversion::userToConfigTimeStamp($currentdatetimeforschedulerrecorddate); 

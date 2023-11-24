@@ -39,7 +39,7 @@ class CPDReportController extends Controller
       to_char(finalizedate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as finalizedate 
        from patients.cpd_report($practices,$practicesgrp,$billable,$careplanstatuas,timestamp '".$dt1."',timestamp '".$dt2."',$activedeactivestatus)";
    
-  $data  = DB::select( DB::raw($query) );
+  $data  = DB::select($query);
 
   return Datatables::of($data)
       ->addIndexColumn()

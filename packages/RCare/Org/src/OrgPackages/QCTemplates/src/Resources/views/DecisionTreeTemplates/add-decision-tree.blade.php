@@ -1,6 +1,6 @@
 @extends('Theme::layouts.master')
 @section('page-css')
-
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.css">
 <script src="https://cdn.ckeditor.com/4.8.0/full-all/ckeditor.js"></script>
 <style>
 /*Now the CSS Created by R.S*/
@@ -104,7 +104,18 @@ right connector from last child*/
 .tree li a:hover+ul ul::before{
 	border-color:  #94a0b4;
 }
+.badtag {
+  border: solid 1px red !important;
+  background-color: #d24a4a !important;
+  color: white !important;
+}
 
+.badtag a {
+  color: #ad2b2b !important;
+}
+.badtag span{
+    background:none!important;
+}
 /*Thats all. I hope you enjoyed it.
 Thanks :)*/
 </style>
@@ -262,7 +273,16 @@ The markup will be simple nested lists
                             </div> 
                         </div>
                     </div> 
-                   
+                    <div class="form-group">  
+                        <div class="row">
+                            <!--<div class="col-md-6 form-group mt-2 team-invite">
+                                <label for="tags" class="">Enter Tags</label>
+                                <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30">
+                                <br>
+                                <p id='subtext'>You can enter multiple tags with comma</p>
+                            </div>-->
+                        </div>
+                    </div>  
                     <hr>
             <div class="form-group">  
                 <div class="row">
@@ -373,6 +393,8 @@ The markup will be simple nested lists
 	
 @endsection
 @section('page-js')
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-tagsinput/1.3.6/jquery.tagsinput.min.js"></script>
 <script>
     function getChild(id){
         var parentId = $(id).parents(".question_tree").attr("id");
@@ -646,7 +668,36 @@ function addSubQuestion(valOfCount,labelname,lbid) {
         $("#module").val(module_id);
         util.updateSubModuleList(parseInt(module_id), $("#sub_module"));
         util.getToDoListData(0, {{getPageModuleName()}});
-    });        
+        $('#tags').tagsInput({
+        'width': 'auto',
+        'delimiter': ',',
+        'defaultText': 'Enter Tag',
+        onAddTag: function(item) {
+            $($(".tagsinput").get(0)).find(".tag").each(function() {
+            if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+                $(this).addClass("badtag");
+            }
+            });
+        },
+        'onChange': function(item) {
+                $($(".tagsinput").get(0)).find(".tag").each(function() {
+            if (!ValidateEmail($(this).text().trim().split(/(\s+)/)[0])) {
+                $(this).addClass("badtag");
+            }
+            });
+        }
+
+        });
+    });      
+
+    function ValidateEmail(mail) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return (true)
+  }
+  return (false)
+}
+
+
     $("[name='module']").on("change", function () {
         util.updateSubModuleList(parseInt($(this).val()), $("#sub_module"));
     });

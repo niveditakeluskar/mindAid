@@ -56,6 +56,7 @@ var onCaremanagerNotes = function (formObj, fields, response) {
         $("#time-container").val(AppStopwatch.pauseClock);
         var formname = "form[name='rpm_review_form']";
         util.updateBillableNonBillableAndTickingTimer($("input[name='patient_id']").val(), $(formname + " input[name='module_id']").val());
+        util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
         $("form[name='rpm_review_form'] .alert").show();
         var scrollPos = $(".main-content").offset().top;
         $(window).scrollTop(scrollPos);
@@ -67,6 +68,7 @@ var onCaremanagerNotes = function (formObj, fields, response) {
         $("#timer_start").val(timer_paused);
         var table = $('#callwrap-list');
         table.DataTable().ajax.reload();
+        $(".form_start_time").val(response.data.form_start_time);
         // $("#timer_end").val(timer_paused);
     }
 };
@@ -420,6 +422,10 @@ var init = function () {
         $("#time-container").val(AppStopwatch.pauseClock);
         var timer_start = $("#timer_start").val();
         var timer_paused = $("#time-container").text();
+        if ($("form[name='rpm_review_form'] .form_start_time").val() == "undefined" || ($("form[name='rpm_review_form'] .form_start_time").val() == '')) {
+            var form_start_time = $("#page_landing_times").val();
+            $("form[name='rpm_review_form'] .form_start_time").val(form_start_time);
+        }
         $("input[name='start_time']").val(timer_start);
         $("input[name='end_time']").val(timer_paused);
         // $("#timer_start").val(timer_paused);

@@ -107,11 +107,11 @@ class RpmBillingReportController extends Controller
        $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.rwpid";
       //  dd($query);
              
-          $data = DB::select( DB::raw($query) );
+          $data = DB::select($query);
             
           $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
 
-      $diagnosis = DB::select( DB::raw($diagnosis) );
+      $diagnosis = DB::select($diagnosis);
       // dd($diagnosis);
       // if($diagnosis[0]->quli<2){
       //   $tot_quali=2;

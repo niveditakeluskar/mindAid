@@ -20,6 +20,7 @@ require("./enrollPatient"); //to be deleted
 require("./report");
 require("./configurations");
 require("./deviceTraning");
+require("./holiday");
 require("./diagnosisCode");
 require("./carePlanTemplate");
 require("./devices");

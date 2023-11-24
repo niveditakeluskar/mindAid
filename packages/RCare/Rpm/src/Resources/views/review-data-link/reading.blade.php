@@ -166,7 +166,7 @@ for($i=0;$i<count($devices);$i++){
 </ul>
 
 <!--=========//* show all tab (code End)*//==============-->
-<input type="hidden" id="hd_deviceid" value="<?php echo $Adeviceid[0];?>" >
+<input type="hidden" id="hd_deviceid" value=1 >
 
 
 <div class="row mt-4">

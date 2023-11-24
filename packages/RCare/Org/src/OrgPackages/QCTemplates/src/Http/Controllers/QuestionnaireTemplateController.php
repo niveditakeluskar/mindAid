@@ -76,7 +76,7 @@ class QuestionnaireTemplateController extends Controller
 
     public function saveTemplate(SaveQuestionnaireTemplateRequest $request)
     {
-
+       
         $months = array();
         if($request->months != null || $request->months != ''){
             foreach(sanitizeVariable($request->months) as $key => $val){
@@ -128,7 +128,8 @@ class QuestionnaireTemplateController extends Controller
                         'one_time_entry'   => sanitizeVariable($request->one_time_entry),
                         'score'   => sanitizeVariable($request->add_score),
                         'sequence' => sanitizeVariable($request->sequence),
-                        'display_months' => json_encode($months)
+                        'display_months' => json_encode($months),
+                       // 'tags' => sanitizeVariable($request->tags)
                     );
 
         //check from which form submit requested
@@ -147,6 +148,7 @@ class QuestionnaireTemplateController extends Controller
             }
 
             if(sanitizeVariable($request->has('edit'))) {
+
             QuestionnaireTemplate::where('id',sanitizeVariable($request->temp_id))->update(['status' => 2, 'updated_by' =>session()->get('userid')]);
                 $data['created_by']= session()->get('userid');
                 $data['updated_by']= session()->get('userid'); 
@@ -371,7 +373,8 @@ class QuestionnaireTemplateController extends Controller
         'question' => json_encode($questionDetails),
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
-        'display_months' => json_encode($months)
+        'display_months' => json_encode($months),
+       // 'tags' => sanitizeVariable($request->tags)
         );
         
         //dd($data);
@@ -461,7 +464,8 @@ class QuestionnaireTemplateController extends Controller
         'question' => json_encode($questionDetails),
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
-        'display_months' => json_encode($months)
+        'display_months' => json_encode($months),
+        //'tags' => sanitizeVariable($request->tags)
         );
         //dd($data);
         QuestionnaireTemplate::where('id',sanitizeVariable($request->question_id))->update(['status' => 2, 'updated_by' =>session()->get('userid')]);

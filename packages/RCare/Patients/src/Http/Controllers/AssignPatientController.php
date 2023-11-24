@@ -148,7 +148,7 @@ class AssignPatientController extends Controller
 
             $query = "select * from patients.sp_assigned_patients_report($p,$pr,$month, $year,$timeoption,'".$totime."',$status, '".$configTZ ."','".$userTZ."',$c)";        
                // dd($query);   
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
               //$careManager = DB::table('ren_core.users')->where('role', '=', 5)->get();
               // dd($data);  
                return Datatables::of($data)
@@ -172,7 +172,7 @@ class AssignPatientController extends Controller
                   where us.status=1 and user_id = $row->userid   $practice_cond
                   GROUP BY us.user_id, pp.practice_id";
     
-                  $patient_count = DB::select( DB::raw($patientcount) );
+                  $patient_count = DB::select(($patientcount) );
                   if(!empty($patient_count)) {
                     return $patient_count[0]->patient_count;
                 }else{

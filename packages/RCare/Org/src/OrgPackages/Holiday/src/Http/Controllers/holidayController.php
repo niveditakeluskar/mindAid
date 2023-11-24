@@ -50,7 +50,7 @@ class holidayController extends Controller {
              $configTZ = config('app.timezone'); 
              $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
              //dd($configTZ , $userTZ);
-             $data=DB::select( DB::raw("select h.id,h.status,u.f_name, u.l_name,h.event,h.date,to_char(h.date, 'mm-dd-yyyy') as date1,INITCAP(to_char(h.date,'day')) as day,h.created_at,h.created_by,h.updated_at,h.updated_by from ren_core.holiday h  
+             $data=DB::select(("select h.id,h.status,u.f_name, u.l_name,h.event,h.date,to_char(h.date, 'mm-dd-yyyy') as date1,INITCAP(to_char(h.date,'day')) as day,h.created_at,h.created_by,h.updated_at,h.updated_by from ren_core.holiday h  
              left join ren_core.users as u on h.created_by=u.id"));
              //dd( $data);
               return Datatables::of($data)
@@ -75,7 +75,7 @@ class holidayController extends Controller {
 
     public function populateHolidayData($patientId){ //dd("working"); FORMAT (getdate(), 'yyyy-MM-dd hh:mm:ss tt') as date
         $patientId = sanitizeVariable($patientId); 
-        $data=DB::select( DB::raw("select h.id,h.event,to_char(h.date, 'YYYY-MM-DD') as date1,h.date,h.created_at,h.updated_at,h.created_by,h.updated_by from ren_core.holiday h where h.id = '".$patientId."'"));  
+        $data=DB::select(("select h.id,h.event,to_char(h.date, 'YYYY-MM-DD') as date1,h.date,h.created_at,h.updated_at,h.created_by,h.updated_by from ren_core.holiday h where h.id = '".$patientId."'"));  
         $result['holiday_form'] = $data;
         return $result;
     }

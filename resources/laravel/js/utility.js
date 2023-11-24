@@ -7,10 +7,12 @@
  * @param  {String}       search The value(s) to search for in the data
  * @return {JSON Object}
  */
- var baseURL = window.location.origin + '/';
- var sPageURL = window.location.pathname;
+var pause_stop_flag = 0;
+var pause_next_stop_flag = 0;
+var baseURL = window.location.origin + '/';
+var sPageURL = window.location.pathname;
 parts = sPageURL.split("/"),
-	module = parts[parts.length - 2];
+    module = parts[parts.length - 2];
 var filterValues = function (data, fields, search = "") {
     search = search.toLowerCase().trim();
     let filtered = {};
@@ -99,14 +101,14 @@ var getDistinctDiagnosisCountForBubble = function (patientId) {
         method: "GET",
         url: `/org/ajax/diagnosis/${patientId}/patientdiagnosiscountforbubble`,
     }).then(function (response) {
-         
+
         // console.log(response);
         var diagcount = response.data[0].count;
         // alert(diagcount);  
-        
-		$('.reviewcareplanbuttoncount').html(diagcount);
-       
-        
+
+        $('.reviewcareplanbuttoncount').html(diagcount);
+
+
 
     }).catch(function (error) {
         console.error(error, error.response);
@@ -135,7 +137,7 @@ var getDiagnosisCount = function (patientId) {
             $('.createcareplanbutton').show();
             $('.reviewcareplanbutton').hide();
             // $('#createcareplanbuttoncount').show();
-            $('#reviewcareplanbuttoncount').show();  
+            $('#reviewcareplanbuttoncount').show();
         }
 
     }).catch(function (error) {
@@ -145,7 +147,7 @@ var getDiagnosisCount = function (patientId) {
 }
 
 //ashwini
-var getDiagnosisIdfromPatientdiagnosisid = function (editid, condition_name,code, formsObj, patientId) {
+var getDiagnosisIdfromPatientdiagnosisid = function (editid, condition_name, code, formsObj, patientId) {
     if (!editid) {
         return;
     }
@@ -156,9 +158,9 @@ var getDiagnosisIdfromPatientdiagnosisid = function (editid, condition_name,code
 
         // alert("condition change");
         var count = response.data;
-        console.log(count); 
+        console.log(count);
         // var datatrim = d.trim();
-        
+
 
         // console.log(datatrim);
         // console.log(condition_name);
@@ -1319,8 +1321,8 @@ function download_csv(csv, filename) {
     downloadLink.click();
 }
 
-var renderDataTable = function (tabid, url, columnData, assetBaseUrl, copyflag = "0", copyTo = '', directExport = null) { 
-   // console.log("tabid="+tabid+"  url="+url+"   columnData==>"+columnData);
+var renderDataTable = function (tabid, url, columnData, assetBaseUrl, copyflag = "0", copyTo = '', directExport = null) {
+    // console.log("tabid="+tabid+"  url="+url+"   columnData==>"+columnData);
     var copy_img = "assets/images/copy_icon.png";
     var excel_img = "assets/images/excel_icon.png";
     var pdf_img = "assets/images/pdf_icon.png";
@@ -1456,7 +1458,7 @@ var renderDataTable_pdf = function (tabid, url, columnData, assetBaseUrl, copyfl
     return table;
 }
 
-var renderFixedColumnDataTable = function (tabid, url, columnData, assetBaseUrl) { 
+var renderFixedColumnDataTable = function (tabid, url, columnData, assetBaseUrl) {
     //console.log("tabid="+tabid+"  url="+url+"   columnData==>"+columnData);
     var copy_img = "assets/images/copy_icon.png";
     var excel_img = "assets/images/excel_icon.png";
@@ -1682,7 +1684,7 @@ var updatePartnerDevice = function (partnerid, selectElement, selectPartnerDevic
     // if (!practiceId) {
     //     return;
     // }
-   // alert("In Util");
+    // alert("In Util");
     axios({
         method: "GET",
         url: `/patients/ajax/${partnerid}/practice/practiceId/moduleId/patient`,
@@ -2179,7 +2181,7 @@ function stepWizardHorizontal(cl) {
  * @param {jQuery Object} selectElement
  * @param {Integer}       selectedSubModules
  */
-var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) {
+var updateSubModuleList = function (moduleId, selectElement, selectedSubModules = null) { 
     $(selectElement)
         .empty()
         .append('<option value="">Select Modules</option> <option value="0">None</option>');
@@ -2244,10 +2246,11 @@ var updateTimer = function (patientID, billable, moduleId) {
         url: `/system/get-updated-time/${patientID}/${billable}/${moduleId}/total-time`,
     }).then(function (response) {
         if (billable == 1) {
-            $(".last_time_spend").html(response.data);
+            $(".last_time_spend").html(response.data['billable_time']);
         } else {
-            $(".non_billabel_last_time_spend").html(response.data);
+            $(".non_billabel_last_time_spend").html(response.data['non_billable_time']);
         }
+        $("#time-containers").html(response.data['total_time']);
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -2514,23 +2517,23 @@ var getPatientStatus = function (patientId, moduleId) {
 //     }); 
 // }; 
 
-var getPatientEnrollModule = function (patientId,selmoduleId) {
-    axios({ 
-        method: "GET", 
+var getPatientEnrollModule = function (patientId, selmoduleId) {
+    axios({
+        method: "GET",
         url: `/patients/patient-module/${patientId}/patient-module`,
-    }).then(function (response){
+    }).then(function (response) {
         $('.enrolledservice_modules').html('');
-        enr = response.data; 
-        count_enroll = enr.length; 
-        for(var i=0; i < count_enroll; i++){  
+        enr = response.data;
+        count_enroll = enr.length;
+        for (var i = 0; i < count_enroll; i++) {
             $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
         }
         $("#enrolledservice_modules").val(selmoduleId).trigger('change');
         // $("#patient-Ajaxdetails-model").html(response.data); 
     }).catch(function (error) {
         console.error(error, error.response);
-    }); 
-}; 
+    });
+};
 
 
 var getPatientDetails = function (patientId, moduleId) {
@@ -2539,44 +2542,43 @@ var getPatientDetails = function (patientId, moduleId) {
         url: `/patients/patient-details/${patientId}/${moduleId}/patient-details`,
     }).then(function (response) {
         // ptient enrolleed module in change status
-            $('.enrolledservice_modules').html('');
-            enr = response.data.patient_services.length;
-            // alert(response.data.patient_services[0].module.module); 
-			
-			
-            for(i= 0; i < enr; i++){
-                // alert(i); 
-                // var module_name = response.data.patient[0].patient_services[i].module.module;
-                var module_id = response.data.patient_services[i].module_id; 
-                $('.enrolledservice_modules').append(`<option value="${module_id}">${response.data.patient_services[i].module.module}</option>`);
-            } 
+        $('.enrolledservice_modules').html('');
+        enr = response.data.patient_services.length;
+        // alert(response.data.patient_services[0].module.module);
+        for (i = 0; i < enr; i++) {
+            // alert(i); 
+            // var module_name = response.data.patient[0].patient_services[i].module.module;
+            var module_id = response.data.patient_services[i].module_id;
+            $('.enrolledservice_modules').append(`<option value="${module_id}">${response.data.patient_services[i].module.module}</option>`);
+        }
+
         // 
         count_enroll_Services = response.data.patient_services.length;
         var enroll_services = [];
-        var enroll_services_status = []; 
+        var enroll_services_status = [];
         for (i = 0; i < count_enroll_Services; i++) {
             enroll_services_status = response.data.patient_services[i].status;
-            if(enroll_services_status == 0){ 
+            if (enroll_services_status == 0) {
                 patient_enroll_services_status = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
-            }else if(enroll_services_status == 1){
+            } else if (enroll_services_status == 1) {
                 patient_enroll_services_status = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
-            }else if(enroll_services_status == 2){
+            } else if (enroll_services_status == 2) {
                 patient_enroll_services_status = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
-            }else if(enroll_services_status == 3){
+            } else if (enroll_services_status == 3) {
                 patient_enroll_services_status = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
             }
-            enroll_services[i] = response.data.patient_services[i].module.module +"-"+patient_enroll_services_status;
-			if(response.data.patient_services[i].module.module == 'RPM'){
-				$("#add_patient_devices").show();
-			}
-        } 
-        console.log(enroll_services+'enroll_services')
+            enroll_services[i] = response.data.patient_services[i].module.module + "-" + patient_enroll_services_status;
+            if (response.data.patient_services[i].module.module == 'RPM') {
+                $("#add_patient_devices").show();
+            }
+        }
+        console.log(enroll_services + 'enroll_services')
         $(".patient_enroll_services").html(enroll_services.toString());
 
         //dropdown for change modules in Change Patient Status priya 14 04 2023
 
-        
-		//changes for devices button ashwini mali 02 02 2023
+
+        //changes for devices button ashwini mali 02 02 2023
         /*var devicesdata = enroll_services[0];
         var devicesdata1 = enroll_services[1];
         if(devicesdata == 'RPM'){ 
@@ -2589,17 +2591,17 @@ var getPatientDetails = function (patientId, moduleId) {
             }
 
         }*/
-        
+
         //end
 
         //patient profile picture
         var path = response.data.patient[0].profile_img;
         var default_img_path = window.location.origin + '/assets/images/faces/avatar.png';
         var img = "";
-        if(path){
-            img = "<img src='"+path+"' class='user-image' style='width: 60px;' />";
+        if (path) {
+            img = "<img src='" + path + "' class='user-image' style='width: 60px;' />";
         } else {
-            img = "<img src='"+default_img_path+"' class='user-image' style='width: 60px;' />";
+            img = "<img src='" + default_img_path + "' class='user-image' style='width: 60px;' />";
         }
         $(".patient_img").html(img);
 
@@ -2621,7 +2623,7 @@ var getPatientDetails = function (patientId, moduleId) {
         } else {
             var gender = "";
         }
-		var mmddyydob = moment(response.data.patient[0].dob).format('MM-DD-YYYY');
+        var mmddyydob = moment(response.data.patient[0].dob).format('MM-DD-YYYY');
         $(".patient_gender").text(gender + '(' + response.data.age + ')');
         $(".patient_dob").text(mmddyydob);
 
@@ -2674,7 +2676,7 @@ var getPatientDetails = function (patientId, moduleId) {
             var zipcode = ', ' + response.data.zipcode;
         };
         $(".patient_address").text(add1 + add2 + state + city + zipcode);
-        
+
         //forth column
         var practice = '';
         if (response.data.practice_name != '') {
@@ -2890,7 +2892,7 @@ var getPatientDetails = function (patientId, moduleId) {
         }
         $("textarea#part_of_research_study").val(research_study);
 
-        if( $('#contact_number').length ) { // to  check id is exist on page(enrollment screen not  sending sms so not exist on screen)
+        if ($('#contact_number').length) { // to  check id is exist on page(enrollment screen not  sending sms so not exist on screen)
             if (response.data.patient[0].mob != '' && response.data.patient[0].mob != null && (response.data.patient[0].primary_cell_phone == "1")) {
                 var mob = response.data.patient[0].mob;
                 var country_code = response.data.patient[0].country_code;
@@ -2901,13 +2903,13 @@ var getPatientDetails = function (patientId, moduleId) {
                 var secondary_country_code = response.data.patient[0].secondary_country_code;
                 $('#contact_number').append(`<option value="${secondary_country_code}${home_num}">${home_num} (S)</option>`);
             }
-            if((response.data.patient[0].primary_cell_phone == "0") && (response.data.patient[0].secondary_cell_phone == "0")){
+            if ((response.data.patient[0].primary_cell_phone == "0") && (response.data.patient[0].secondary_cell_phone == "0")) {
                 var txt = "<div class='alert alert-warning mt-2 ml-2'>Patient Cell Number is Unavailable. Text Message cannot be sent to this patient.</div> <input type='hidden' name='error' value='Patient Cell Number is Unavailable. Text Message cannot be sent to this patient.'>";
                 $('#patient_cell_number_unavailable').html(txt);
             }
         }
-        
-        if(response.data.patient_enroll_date[0].finalize_cpd == 0 && response.data.billable == 0 && response.data.enroll_in_rpm == 0 && module == 'care-plan-development'){
+
+        if (response.data.patient_enroll_date[0].finalize_cpd == 0 && response.data.billable == 0 && response.data.enroll_in_rpm == 0 && module == 'care-plan-development') {
             $('input[name="billable"]').val(0);
         } else {
             $('input[name="billable"]').val(1);
@@ -3037,10 +3039,10 @@ var getToDoListData = function (patientId, moduleId) {
 };
 
 var getToDoListCalendarData = function (patient_id, module_id) {
-    if (patient_id==''){
+    if (patient_id == '') {
         patient_id = 0;
     }
-    if(module_id == ''){   
+    if (module_id == '') {
         module_id = 0;
     }
     axios({
@@ -3052,7 +3054,7 @@ var getToDoListCalendarData = function (patient_id, module_id) {
         //alert();
     }).catch(function (error) {
         console.error(error, error.response);
-    }); 
+    });
 };
 // var getDataCalender = function (patientId, moduleId){
 //   axios({
@@ -3067,9 +3069,47 @@ var getToDoListCalendarData = function (patient_id, module_id) {
 //         console.error(error, error.response);
 //     });  
 // }
+var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stageId, billable, uId, stepId, formName) {
+    axios({
+        method: "POST",
+        url: `/system/log-time/time`,
+        data: {
+            timerStart: '00:00:00',
+            timerEnd: '00:00:00',
+            patientId: patientId,
+            moduleId: moduleId,
+            subModuleId: subModuleId,
+            stageId: stageId,
+            billable: billable,
+            uId: uId,
+            stepId: stepId,
+            formName: formName,
+            form_start_time: timerStart,
+            pause_start_time: timerStart
+        }
+    }).then(function (response) {
+        $("#timer_runing_status").val(0);
+        $('.form_start_time').val(response.data.form_start_time);
+        $("form").find(":submit").attr("disabled", false);
+        $("form").find(":button").attr("disabled", false);
+        pause_next_stop_flag = 0;
+        setTimeout(function () {
+            pause_stop_flag = 0;
+            if(pause_next_stop_flag == 0){
+                updateTimeEveryMinutes(patientId, moduleId, response.data.form_start_time);
+            }
+        }, 60000);
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
 
 var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subModuleId, stageId, billable, uId, stepId, formName) {
     // alert('calling');
+    var form_start_time = $('.form_start_time').val();
+    pause_stop_flag = 1;
+    pause_next_stop_flag = 1;
+    $("#timer_runing_status").val(1);
     axios({
         method: "POST",
         url: `/system/log-time/time`,
@@ -3083,13 +3123,18 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             billable: billable,
             uId: uId,
             stepId: stepId,
-            formName: formName
+            formName: formName,
+            form_start_time: form_start_time
         }
     }).then(function (response) {
-        if (JSON.stringify(response.data) != "" && JSON.stringify(response.data) != null && JSON.stringify(response.data) != undefined) {
-            $("#timer_start").val(response.data);
-            $("#timer_end").val(response.data);
-            $(".last_time_spend").html(response.data);
+        if (JSON.stringify(response.data.end_time) != "" && JSON.stringify(response.data.end_time) != null && JSON.stringify(response.data.end_time) != undefined) {
+            $("#timer_start").val(response.data.end_time);
+            $("#timer_end").val(response.data.end_time);
+            updateTimer(patientId, billable, moduleId);
+            $("form").find(":submit").attr("disabled", true);
+            $("form").find(":button").attr("disabled", true);
+            //$(".last_time_spend").html(response.data.end_time);
+            $('.form_start_time').val(response.data.form_start_time);
             alert("Timer paused and Time Logged successfully.");
         } else {
             alert("Unable to log time, please try after some time.");
@@ -3525,7 +3570,7 @@ var geteditPracticelistaccordingtopracticegrp = function (practicegrpId, selectE
 
 var getPatientPreviousMonthCalender = function (patientId, moduleId) {
 
-    if(patientId != undefined && patientId != '' ){   
+    if (patientId != undefined && patientId != '') {
         axios({
             method: "GET",
             url: `/ccm/previous-month-calendar/${patientId}/${moduleId}/previousstatus`,
@@ -3534,12 +3579,12 @@ var getPatientPreviousMonthCalender = function (patientId, moduleId) {
             $("#regi_mnth").val(response.data.created_at);
             // var patientdata = response.data.created_at;
             // return patientdata;
-    
+
         }).catch(function (error) {
             console.error(error, error.response);
         });
     }
-    
+
 };
 
 const getCircularReplacer = () => {
@@ -3590,7 +3635,7 @@ const getCircularReplacer = () => {
 //     }
 // };
 
-var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId, totaltimeonly= null) {
+var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId, totaltimeonly = null) {
 
     axios({
         method: "GET",
@@ -3603,24 +3648,24 @@ var updateBillableNonBillableAndTickingTimer = function (patientID, moduleId, to
         M = splitTime[1];
         S = splitTime[2];
         $("#time-container").val(AppStopwatch.resetTickingTimeClock);
-		if(totaltimeonly==null){
-			$("#start").hide();
-			$("#pause").show();
+        if (totaltimeonly == null) {
+            $("#start").hide();
+            $("#pause").show();
 
-			$("#timer_start").val(time);
-			$("#page_landing_time").val(moment(Date.now()).format('HH:mm:ss'));
-			$("#patient_time").val(time);
-			$("#pause_time").val('0');
-			$("#play_time").val('0');
-			$("#pauseplaydiff").val('0');
+            $("#timer_start").val(time);
+            $("#page_landing_time").val(moment(Date.now()).format('HH:mm:ss'));
+            $("#patient_time").val(time);
+            $("#pause_time").val('0');
+            $("#play_time").val('0');
+            $("#pauseplaydiff").val('0');
 
 
-			var billableTime = data['billable_time'];
-			$(".last_time_spend").html(billableTime);
+            var billableTime = data['billable_time'];
+            $(".last_time_spend").html(billableTime);
 
-			var nonBillableTime = data['non_billable_time'];
-			$(".non_billabel_last_time_spend").html(nonBillableTime);
-		}
+            var nonBillableTime = data['non_billable_time'];
+            $(".non_billabel_last_time_spend").html(nonBillableTime);
+        }
 
     }).catch(function (error) {
         console.error(error, error.response);
@@ -4214,43 +4259,95 @@ var getSpirometerChartOnclick = function (data, id, deviceid) {
 
 }
 
-var redirectToWorklistPage = function (){
-	var interval_id =0;
-	document.addEventListener("visibilitychange", function() {
-		var timediff = 0;
-		 if (document.hidden) {
-			var start_time = moment(); 
-			var refreshIntervalId = setInterval(function(){
-				var patientScreenTimeout = $("#patientScreenTimeout").val();
-				if (document.hidden) {
-					interval_id++;
-					var now = moment(); 
-					var timediff = now-start_time;
-					console.log("inactive for "+interval_id+ " now"+now+" starttime"+start_time+" " +timediff+" "+ timediff/60000 +" sec"); 
-					if(timediff/60000 >= patientScreenTimeout){
-						console.log("tab was inactive for 20 mins");
-						var baseURL = window.location.origin + '/';
-						window.open(baseURL + "patients/worklist", '_self');
-						clearInterval(refreshIntervalId);
-						interval_id = 0;						
-						
-					}
-				}
-				else{
-					if(timediff/60000 >= patientScreenTimeout){
-						console.log("tab was inactive for 20 mins");
-						var baseURL = window.location.origin + '/';
-						window.open(baseURL + "patients/worklist", '_self');
-						clearInterval(refreshIntervalId);
-						interval_id = 0;						
-						
-					}else{
-						interval_id = 0;
-					}
-				}				
-			}, 5000);   
-		 }	
-	});
+var redirectToWorklistPage = function () {
+    var interval_id = 0;
+    document.addEventListener("visibilitychange", function () {
+        var timediff = 0;
+        if (document.hidden) {
+            var start_time = moment();
+            var refreshIntervalId = setInterval(function () {
+                var patientScreenTimeout = $("#patientScreenTimeout").val();
+                if (document.hidden) {
+                    interval_id++;
+                    var now = moment();
+                    var timediff = now - start_time;
+                    console.log("inactive for " + interval_id + " now" + now + " starttime" + start_time + " " + timediff + " " + timediff / 60000 + " sec");
+                    if (timediff / 60000 >= patientScreenTimeout) {
+                        console.log("tab was inactive for 20 mins");
+                        var baseURL = window.location.origin + '/';
+                        window.open(baseURL + "patients/worklist", '_self');
+                        clearInterval(refreshIntervalId);
+                        interval_id = 0;
+
+                    }
+                }
+                else {
+                    if (timediff / 60000 >= patientScreenTimeout) {
+                        console.log("tab was inactive for 20 mins");
+                        var baseURL = window.location.origin + '/';
+                        window.open(baseURL + "patients/worklist", '_self');
+                        clearInterval(refreshIntervalId);
+                        interval_id = 0;
+
+                    } else {
+                        interval_id = 0;
+                    }
+                }
+            }, 5000);
+        }
+    });
+}
+
+var setLandingTime = function () {
+    axios({
+        method: "GET",
+        url: `/system/get-landing-time`,
+    }).then(function (response) {
+        var data = response.data;
+        var landing_time = data['landing_time'];
+        $("#page_landing_times").val(landing_time);
+        $(".form_start_time").val(landing_time);
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+}
+
+var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
+    axios({
+        method: "GET",
+        url: `/system/get-total-time/${patientID}/${moduleId}/${starttime}/total-time`,
+    }).then(function (response) {
+        if (patientID != 0 ) {
+            if(pause_stop_flag == 0){
+                var data = response.data;
+                var fial_time = data['total_time'];
+                $("#time-containers").html(fial_time);
+                $(".message-notification").html('');
+                $(".message-notification").append(data['count']);
+                $("#ajax-message-history").html('');
+                $("#ajax-message-history").append(data['history']);
+                var now = new Date();
+                var timeToNextTick = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+                setTimeout(function () {
+                    if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
+                        var start_time = $("#page_landing_times").val();
+                    } else {
+                        var start_time = $(".form_start_time").val();
+                    }
+                    updateTimeEveryMinutes(patientID, moduleId, start_time);
+                }, 60000);
+            }
+        }else{
+            var data = response.data;
+            $(".message-notification").html('');
+            $(".message-notification").append(data['count']);
+            setTimeout(function () {
+                updateTimeEveryMinutes(0, 0, 0);
+            }, 60000);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
 }
 
 var getSessionLogoutTimeWithPopupTime = function () {
@@ -4296,25 +4393,27 @@ var getSessionLogoutTimeWithPopupTime = function () {
     // });
 }
 
-$('.sub-item-name').click(function(){
+$('.sub-item-name').click(function () {
     // alert(this.textContent.trim());
 });
 // $('form[name="personal_notes_form"]').on('submit', function (e) { e.preventDefault(); form.ajaxSubmit('personal_notes_form', onPersonalNotes); });
 // $('form[name="part_of_research_study_form"]').on('submit', function (e) { e.preventDefault(); form.ajaxSubmit('part_of_research_study_form', onPartOfResearchStudy); });
 // Export the module
 
-var displayLoader =  function (){
-    $("#preloader").css('display','block');	
+var displayLoader = function () {
+    $("#preloader").css('display', 'block');
 }
 
 window.util = {
-	redirectToWorklistPage:redirectToWorklistPage,
+    redirectToWorklistPage: redirectToWorklistPage,
     getPatientPreviousMonthCalender: getPatientPreviousMonthCalender,
     validateAndGenerateUid: validateAndGenerateUid,
     getCallScriptsById: getCallScriptsById,
     getEmailScriptsBYId: getEmailScriptsBYId,
     getPatientStatus: getPatientStatus,
     getPatientDetails: getPatientDetails,
+    setLandingTime: setLandingTime,
+    updateTimeEveryMinutes: updateTimeEveryMinutes,
     // getPatientDetailsModel:getPatientDetailsModel,
     getRelationBuild: getRelationBuild,
     //getRelationshipRadioStatus      : getRelationshipRadioStatus,
@@ -4383,6 +4482,7 @@ window.util = {
     //businessDays                : businessDays,
     viewsDateFormat: viewsDateFormat,
     logTimeManually: logTimeManually,
+    logPauseTime: logPauseTime,
     updateBmi: updateBmi,
     getPatientNetTimeBasedOnModule: getPatientNetTimeBasedOnModule,
     updateMedicationList: updateMedicationList,
@@ -4416,12 +4516,12 @@ window.util = {
     getSessionLogoutTimeWithPopupTime: getSessionLogoutTimeWithPopupTime,
     getDiagnosisIdfromPatientdiagnosisid: getDiagnosisIdfromPatientdiagnosisid,
     getDiagnosisCount: getDiagnosisCount,
-    getDistinctDiagnosisCountForBubble:getDistinctDiagnosisCountForBubble,
-	displayLoader:displayLoader,
-	updatePartnerDevice:updatePartnerDevice,
-	getPatientEnrollModule:getPatientEnrollModule,
-	getToDoListCalendarData:getToDoListCalendarData,
-	updateTemplateList:updateTemplateList,
-	updateTemplateLists:updateTemplateLists
-	
+    getDistinctDiagnosisCountForBubble: getDistinctDiagnosisCountForBubble,
+    displayLoader: displayLoader,
+    updatePartnerDevice: updatePartnerDevice,
+    getPatientEnrollModule: getPatientEnrollModule,
+    getToDoListCalendarData: getToDoListCalendarData,
+    updateTemplateList: updateTemplateList,
+    updateTemplateLists: updateTemplateLists
+
 };

@@ -8,6 +8,8 @@ use RCare\System\Support\GeneratedFillableModel;
 use Carbon\Carbon;
 use RCare\System\Traits\DatesTimezoneConversion;
 use Illuminate\Database\Eloquent\Model;
+use RCare\Org\OrgPackages\Responsibility\src\Models\Responsibility;
+
 use Session, DB;
 
 // class Responsibility extends GeneratedFillableModel
