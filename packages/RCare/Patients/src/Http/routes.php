@@ -1,5 +1,6 @@
 <?php
-
+use RCare\Patients\Models\Patients;
+use RCare\System\Support\Form;
 /*
 |--------------------------------------------------------------------------
 | RCare / Patients Routes
@@ -13,7 +14,6 @@
 Route::get("/test1", "RCare\Patients\Http\Controllers\DashboardController@test")->name("home");
 Route::middleware(["auth","roleAccess", "web"])->group(function () {
     Route::prefix('patients')->group(function () {  
-	
         //patientStatus        
 
         // //to-do-list -> moved to task management
@@ -190,6 +190,16 @@ Route::get('ajax/relationship/list', 'RCare\Patients\Http\Controllers\PatientCon
 
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('patients')->group(function () {  
+        Route::get('/patientslist', function () {
+            $patients = Patients::Allpatients(); // worklistPractices() fetches practices
+            return response()->json($patients);
+        });
+
+        Route::get('/gettime', function () {
+            $inputTimeData = Form::input('text', 'hh:mm:ss'); // worklistPractices() fetches practices
+            return response()->json($inputTimeData);
+        });
+
         Route::get("/worklist", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserListData")->name("work.list");
 
         Route::post('/save-patient-fin-number', 'RCare\Patients\Http\Controllers\PatientController@savepatientfinnumber')->name('patient.savefinnumber');	

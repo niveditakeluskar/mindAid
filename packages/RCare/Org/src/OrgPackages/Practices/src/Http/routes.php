@@ -1,4 +1,5 @@
 <?php
+use RCare\Org\OrgPackages\Practices\src\Models\Practices;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,11 @@ Route::prefix('org')->group(function () {
             Route::get("/org-practice", function(){
                 return view('Practices::practice-main');
             })->name("org_practice");   
+        });
+
+        Route::get('/practiceslist', function () {
+            $practices = Practices::worklistPractices(); // worklistPractices() fetches practices
+            return response()->json($practices);
         });
         Route::post("/subtypeProviders", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@getsubProviders")->name("subtypeProviders");
         Route::get("/org-practices-list", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@PracticeList")->name("org_practices_list");

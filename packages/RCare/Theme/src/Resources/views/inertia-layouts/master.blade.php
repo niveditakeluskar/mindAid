@@ -61,7 +61,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
-            @inertia
+                @inertia
             </div>
             @include('Theme::layouts_2.footer')
         </div> <!-- ============ Body content End ============= -->
@@ -109,7 +109,6 @@
 
     {{-- common js --}}
     <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
-    <script src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
     {{-- page specific javascript --}}
     {{-- form.basic --}}
     <script src="{{asset('assets/js/form.basic.script.js')}}"></script>
@@ -118,9 +117,7 @@
     <script src="{{asset('assets/js/script.js')}}"></script>
     <script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>
     {{-- laravel js --}}
-    <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
-    <script src="{{asset('assets/js/vendor/dataTables.select.min.js')}}"></script>
-    <script src="{{asset('assets/js/vendor/datatables/dataTables.editor.min.js')}}"></script>
+
     <script src="{{asset('assets/js/vendor/jquery-migrate-3.0.0.min.js')}}"></script>
     <script src="{{asset('assets/js/laravel/app.js')}}"></script>
 
@@ -131,7 +128,6 @@
     <script src="{{asset('assets/js/customizer.script.js')}}"></script>
 
     <script src="{{asset('assets/js/external-js/bootstrap-1.13.14-select.min.js')}}"></script>
-    <script src="{{asset('assets/js/laravel/select2.min.js')}}"></script>
 </body>
 
 </html>
