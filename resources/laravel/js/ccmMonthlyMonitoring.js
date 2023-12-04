@@ -1439,6 +1439,7 @@ var init = function () {
         $("#healthcare-services").hide();
         $("#allergy-information").hide();
         $("#vitalsHealth").show();
+        $("form[name='number_tracking_vitals_form']")[0].reset();
     });
 
     $("#call_preparation-services-modal, #research_follow_up-services-modal").click(function () {

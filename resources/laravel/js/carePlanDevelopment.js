@@ -1331,6 +1331,7 @@ var onNumberTrackingVital = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_vitals_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_vitals_form']")[0].reset();
 		
 	} else if (response.status == 200 && ($.trim(response.data) == 'false')) {
 		$("form[name='number_tracking_vitals_form'] .alert-success").hide();

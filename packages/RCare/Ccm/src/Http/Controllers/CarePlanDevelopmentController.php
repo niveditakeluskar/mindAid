@@ -84,6 +84,8 @@ class CarePlanDevelopmentController extends Controller
         $patientId = sanitizeVariable($request->route('patientid'));
         $month     = date('m');
         $year      = date("Y");
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6); 
+        $dateE = Carbon::now()->endOfMonth(); 
         $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
                       plr.reading,
                       ',' ) else STRING_AGG (
@@ -93,7 +95,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id
                       where plr.lab_date is not null and plr.lab_test_id is not null and plr.patient_id=".$patientId."
-                      and EXTRACT(Month from plr.created_at) = '".$month."' AND EXTRACT(YEAR from plr.created_at) = '".$year."' 
+                      and plr.created_at::timestamp between '".$dateS."' and '".$dateE."' 
                       group  by plr.lab_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes
                       union 
                       select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as  description,plr.rec_date ,(case when rlt.description='COVID-19' then STRING_AGG (
@@ -105,7 +107,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id and rltpr.status=1
                       where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =".$patientId."
-                      and EXTRACT(Month from plr.created_at) = '".$month."' AND EXTRACT(YEAR from plr.created_at) = '".$year."' 
+                      and plr.created_at::timestamp between '".$dateS."' and '".$dateE."' 
                       group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
         $data = DB::select( DB::raw($qry) );
         return Datatables::of($data)
@@ -127,12 +129,12 @@ class CarePlanDevelopmentController extends Controller
         $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
-		$qry = "select rec_date,height,weight,bmi,bp,o2,pulse_rate,
+		$qry = "select distinct rec_date ,height,weight,bmi,bp,o2,pulse_rate,
             diastolic,other_vitals,oxygen,notes,pain_level
             from patients.patient_vitals
             where rec_date is not null and patient_id =".$patientId."
             and rec_date::timestamp between '".$dateS."' and '".$dateE."' 
-            order by id desc";
+            order by rec_date desc";
             $data = DB::select( DB::raw($qry) );
             return Datatables::of($data)
             ->addIndexColumn()
