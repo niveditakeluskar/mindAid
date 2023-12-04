@@ -1805,21 +1805,6 @@ class PatientController extends Controller
         return response()->json($relativeList);
     }
 
-
-    // public function practicePatients($practice,$moduleId)
-    // { 
-    //      $practice = sanitizeVariable($practice);
-    //      $moduleId = sanitizeVariable($moduleId);
-    //     $patients = []; 
-    //     $module = Module::where('id',$moduleId)->where('patients_service',1)->count();
-    //     if ( $module > 0 ) {
-    //         $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  from patients.patient p, patients.patient_services ps, patients.patient_providers as q where p.id = ps.patient_id and ps.module_id = '".$moduleId."' and p.id = q.patient_id  and q.practice_id = '".$practice."' and p.id not in (SELECT id FROM patients.patient where status=2 ) and q.is_active=1 order by p.fname "));
-    //     } else {
-    //         $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  from patients.patient p, patients.patient_providers as q where  p.id = q.patient_id and q.practice_id = '".$practice."' and p.id not in (SELECT id FROM patients.patient where status=2 ) and q.is_active=1 order by p.fname ") );
-    //     }
-    //     return response()->json($patients);
-    // }
-
     public function practicePatients($practice, $moduleId)
     {
         $practice = sanitizeVariable($practice);
@@ -1827,12 +1812,6 @@ class PatientController extends Controller
         $patients = [];
         $module = Module::where('id', $moduleId)->where('patients_service', 1)->count();
         if ($practice == 'null' &&  $module > 0) {
-            // $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
-            //     from patients.patient as p, patients.patient_services as ps, patients.patient_providers
-            //     as q where p.id = ps.patient_id and ps.module_id ='".$moduleId."' 
-            //     and p.id = q.patient_id and ps.status in(0,1)
-            //     and p.id not in (SELECT id FROM patients.patient where status in(2,3))
-            //     and q.is_active=1 order by p.fname "));
             $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                 from patients.patient as p, patients.patient_services as ps, patients.patient_providers
                 as q where p.id = ps.patient_id and ps.module_id ='" . $moduleId . "' 
@@ -1840,23 +1819,12 @@ class PatientController extends Controller
                 and q.is_active=1 order by p.fname ");
         } else {
             if ($practice != 'null' && $module > 0) {
-                // $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
-                //      from patients.patient p, patients.patient_services ps, patients.patient_providers
-                //      as q where p.id = ps.patient_id and ps.module_id = '".$moduleId."' 
-                //      and p.id = q.patient_id  and q.practice_id = '".$practice."' and ps.status in(0,1)
-                //      and p.id not in (SELECT id FROM patients.patient where status in(2,3)) 
-                //      and q.is_active=1 order by p.fname "));
                 $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_services ps, patients.patient_providers
                     as q where p.id = ps.patient_id and ps.module_id = '" . $moduleId . "' 
                     and p.id = q.patient_id  and q.practice_id = '" . $practice . "'
                     and q.is_active=1 order by p.fname ");
             } else {
-                // $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
-                //     from patients.patient p, patients.patient_providers
-                //     as q where  p.id = q.patient_id and q.practice_id = '".$practice."'and ps.status in(0,1)
-                //     and p.id not in (SELECT id FROM patients.patient where status in(2,3)) 
-                //     and q.is_active=1 order by p.fname ") );
                 $patients = DB::select("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
                     from patients.patient p, patients.patient_providers
                     as q where  p.id = q.patient_id and q.practice_id = '" . $practice . "'
@@ -3181,5 +3149,14 @@ class PatientController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+    }
+
+    public function fetchPatientRelationshipQuestionnaire(Request $request)
+    {
+        $patientId   = sanitizeVariable($request->route('patient_id'));
+        $moduleId    = sanitizeVariable($request->route('module_id'));
+        $componentId = sanitizeVariable($request->route('sub_module_id'));
+        $patientRelationshipQuestionnaire = getRelationshipQuestionnaire($patientId, $moduleId, $componentId);
+        return $patientRelationshipQuestionnaire;
     }
 }

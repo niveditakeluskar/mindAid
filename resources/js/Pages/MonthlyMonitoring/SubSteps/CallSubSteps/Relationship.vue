@@ -15,8 +15,7 @@
                         <button type="button" class="close" data-dismiss="alert">x</button>
                         <strong> Relationship data saved successfully! </strong><span id="text"></span>
                     </div>
-                    <h3>Patient Relationship Building</h3>
-                    {{ RelationshipQuestionnaire }}
+                    <div v-html="RelationshipQuestionnaire"></div>
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
@@ -32,21 +31,16 @@
 </template>
 
 <script>
-// const props = defineProps({
-//     patientId: Number,
-//     moduleId: Number,
-//     loading: "",
-//     patientServices: [],
-//     patientEnrollServices: []
-// });
+import axios from 'axios';
 export default {
     props: {
         patientId: Number,
-        moduleId: Number
+        moduleId: Number,
+        componentId: Number
     },
     data() {
         return {
-            responseData: null,
+            RelationshipQuestionnaire: null,
         };
     },
     mounted() {
@@ -54,9 +48,9 @@ export default {
     },
     methods: {
         fetchData() {
-            axios.get(`/patients/patient-details/${this.patientId}/${this.moduleId}/patient-details`)
+            axios.get(`/patients/patient-relationship-questionnaire/${this.patientId}/${this.moduleId}/${this.componentId}/patient-relationship-questionnaire`)
                 .then(response => {
-                    this.responseData = response.data.data;
+                    this.RelationshipQuestionnaire = response.data;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);

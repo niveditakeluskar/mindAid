@@ -23,7 +23,7 @@
                            <Preparation />
                            <SubStepCall />
                            <SubStepVerification />
-                           <SubStepRelationship :patientId="patientId" :moduleId="moduleId" />
+                           <SubStepRelationship :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                            <SubStepConditionReview />
                            <SubStepGeneralQuestions />
                            <SubStepCallClose />
@@ -55,7 +55,8 @@
 export default {
    props: {
       patientId: Number,
-      moduleId: Number
+      moduleId: Number,
+      componentId: Number
    },
    components: {
       Preparation,

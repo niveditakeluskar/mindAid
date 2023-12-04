@@ -785,6 +785,7 @@ class CcmController extends Controller
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => 3,
+            'componentId' => 19,
         ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
