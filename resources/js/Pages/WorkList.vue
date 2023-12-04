@@ -161,19 +161,29 @@ export default {
   },
   setup() {
     const showModal = ref(false);
+    const selectedPractice = ref(null);
+    const dataTableLoaded = ref(false);
+    const dataTable = ref([]);
+    const practices = ref([]);
+    const selectedPatient = ref(null);
+    const patients = ref([]);
+    const selectedOption = ref('1');
+    const timeValue = ref('00:20:00');
+    const activedeactivestatus = ref(null);
+    const patientsmodules = ref('3');
 
     return {
       showModal,
-      dataTableLoaded: false,
-      dataTable: [],
-      selectedPractice: null, // To store the selected practice ID
-      practices: [], // Array to hold the fetched practices
-      selectedPatient: null, // To store the selected Patient ID
-      patients: [], // Array to hold the fetched Patients
-      selectedOption: '1', // Default selected option
-      timeValue: '00:20:00', // Default time value
-      activedeactivestatus:null,
-      patientsmodules: '3',
+      selectedPractice,
+      dataTableLoaded,
+      dataTable,
+      practices,
+      selectedPatient,
+      patients,
+      selectedOption,
+      timeValue,
+      activedeactivestatus,
+      patientsmodules
     };
   },
   watch: {
@@ -229,9 +239,6 @@ export default {
         const timeoption = this.selectedOption;
         const time = this.timeValue || null;
         const activedeactivestatus = this.activedeactivestatus || null;
-
-     
-          console.log("patient :"+patient );
           // Retrieve the CSRF token from your application's state or meta tags
           const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
