@@ -7,7 +7,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/appInertia.js',
-                'resources/laravel/js/app.js',
+                'resources/laravel/js/iapp.js',
             ],
             refresh: true,
         }),
@@ -23,6 +23,13 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': '/resources/js',
+            '@@': '/public/',
         },
     },
+      build: {
+    rollupOptions: {
+      external: ['assets/js/laravel/ccmcpdcommonJS'], // Add the module to externalize
+      // Other rollup options...
+    },
+  },
 });

@@ -2,6 +2,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <?php
+    $component_name = \Request::segment(2);
+    $module_name = \Request::segment(1);
+    $patient_list = \Request::segment(3);
+    ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -11,7 +16,11 @@
     <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
     <link rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">
     {{-- form wizard --}}
-    <link rel="stylesheet" href="{{ asset('assets/styles/vendor/tsf-wizard.bundle.min.css') }}">
+    <?php
+    if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
+    ?>
+        <link rel="stylesheet" href="{{ asset('assets/styles/vendor/tsf-wizard.bundle.min.css') }}">
+    <?php } ?>
     {{-- pickupdate --}}
 
     <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}">
@@ -68,17 +77,10 @@
     </div> <!--=============== End app-admin-wrap ================-->
 
     <?php
-    $component_name = \Request::segment(2);
-    $module_name = \Request::segment(1);
-    $patient_list = \Request::segment(3);
     if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
     ?>
         @include('Theme::layouts_2.patient_caretool_data')
         @include('Theme::layouts_2.patient_status')
-
-    <?php
-    }
-    if ($component_name != '' && $patient_list != 'patients' && ($component_name == 'monthly-monitoring' || $component_name == 'care-plan-development' || ($component_name == 'daily-review' && $patient_list != '') || $component_name == 'patient-alert-data-list')) { ?>
         @include('Theme::layouts_2.patient_careplan')
         @include('Theme::layouts_2.previous-month-notes')
     <?php
@@ -128,6 +130,39 @@
     <script src="{{asset('assets/js/customizer.script.js')}}"></script>
 
     <script src="{{asset('assets/js/external-js/bootstrap-1.13.14-select.min.js')}}"></script>
+    <script>
+        $(document).ready(function() {
+            var str = window.location.href;
+            str = str.split("/");
+            var module_id = <?php echo getPageModuleName(); ?>;
+            if(module_id == 3) {
+                var patient_id = str[5].split('#')[0];
+                util.getToDoListData(patient_id, module_id);
+            } else {
+                util.getToDoListData(0, module_id);
+            }
+            util.stepWizard('tsf-wizard-2');
+
+            var $body = $("body");
+            // //Dark version
+            $('#dark-checkbox').change(function() {
+                if ($(this).prop('checked')) {
+                    $body.addClass("dark-theme");
+                    var ch = 1;
+                } else {
+                    $body.removeClass("dark-theme");
+                    var ch = 0;
+                }
+                $.ajax({
+                    method: "get",
+                    url: "/org/ajax/theme-dark",
+                    data: {
+                        darkmode: ch
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
