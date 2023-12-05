@@ -10,8 +10,7 @@
   <script >
   import PatientBasicInfo from '../Patients/Components/PatientBasicInfo.vue';
   import PatientMonthlyMonitoringDetails from './PatientMonthlyMonitoringDetails.vue';
-
-  export default {
+  export default { 
     props: {
       patientId: Number,
       moduleId: Number

@@ -610,7 +610,6 @@ class PatientWorklistController extends Controller {
 
     public function saveUserFilters(Request $request)
     {
-        if ($request->ajax()) {
             $pagemodule_id = getPageModuleName();
             $pagesubmodule_id =getPageSubModuleName();
             $filters = [];
@@ -699,10 +698,7 @@ class PatientWorklistController extends Controller {
            
                 $insert = UserFilters::create($data);  
             }
-              
-        
 
-        }
    
     }
     
@@ -719,6 +715,7 @@ class PatientWorklistController extends Controller {
               $timeoption = sanitizeVariable($request->route('timeoption'));
               $time = sanitizeVariable($request->route('time'));
               $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus')); 
+              //this.saveUserFilters($practices,$patient,$module,$timeoption,$time,$activedeactivestatus);
               $usersdetails = Users::where('id',$cid)->get();
               $roleid = $usersdetails[0]->role;
               $monthly = Carbon::now();
@@ -928,13 +925,9 @@ class PatientWorklistController extends Controller {
               ->addColumn('activedeactive', function($row){
   
                   if($row->pstatus == 1 && $row->pstatus!=0 && $row->pstatus!=2 && $row->pstatus!=3){
-                      $btn ='<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                      onclick=ccmcpdcommonJS.onActiveDeactiveClick("'.$row->pid.'","'.$row->pstatus.'") data-target="#active-deactive"  id="active_deactive">             
-                      <i class="i-Yess i-Yes"  title="Patient Status"></i></a>'; 
+                      $btn ='<button type="button" class="ActiveDeactiveClass" id="active_deactive" @click="callExternalFunctionWithParams("'.$row->pid.'","'.$row->pstatus.'")><i class="i-Yess i-Yes"  title="Patient Status"></i></button>'; 
                   } else { 
-                      $btn ='<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                      onclick=ccmcpdcommonJS.onActiveDeactiveClick("'.$row->pid.'","'.$row->pstatus.'") data-target="#active-deactive"  id="active_deactive"> 
-                      <i class="i-Closee i-Close" title="Patient Status"></i></a>'; 
+                      $btn ='<button type="button" class="ActiveDeactiveClass" id="active_deactive" @click="callExternalFunctionWithParams("'.$row->pid.'","'.$row->pstatus.'")><i class="i-Closee i-Close" title="Patient Status"></i></button>'; 
                       
                   } 
                   return $btn;  

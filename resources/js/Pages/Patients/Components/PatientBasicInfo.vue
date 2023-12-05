@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-md-3 right-divider">
                                         <span data-toggle="tooltip" data-placement="right" title="Contact Number" data-original-title="Patient Phone No."><i class="text-muted i-Old-Telephone"></i> : <b>{{ patientDetails.patient[0].mob }}</b></span><br>
-                                        <span data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text" data-original-title="Consent Text" style="padding-right:2px;"><i class="text-muted i-Speach-Bubble-Dialog"></i> : <span id ="concent_to_text" class="patient_concent_to_text">
+                                        <span data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text" data-original-title="Consent Text" style="padding-right:2px;"><i class="text-muted i-Speach-Bubble-Dialog"></i> : <span id="concent_to_text" class="patient_concent_to_text">
                                             {{ (patientDetails.consent_to_text === 1) ? "Consent to text - Yes" : "Consent to text - No" }}
                                         </span></span><br/>
                                         <span data-toggle="tooltip" data-placement="right" id="basix-info-address" title="Address" data-original-title="Patient Address" style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i> :
@@ -157,7 +157,7 @@ onMounted(async () => {
         patientDetails.value = data;
         props.loading = "done";
         console.log('Fetched Patient details:', data);
-        patientServices =  data.patient_services;
+        const patientServices =  data.patient_services;
         const countEnrollServices = patientServices.length;
         const enrollServices = [];
 

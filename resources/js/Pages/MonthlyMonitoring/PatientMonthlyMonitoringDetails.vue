@@ -1,62 +1,35 @@
 <template>
- <div class="row mb-4">
+   <div class="row mb-4">
       <div class="col-md-12">
          <div class="card">
             <div class="card-body">
-               <div id="activities">
-                  <div class="row mb-4" id="select-activity-1">
-                     <div class="col-md-12">
-                        <div class="tsf-wizard tsf-wizard-2" >
-                           <div class="tsf-nav-step " style="width:10%;">
-                              <ul class="gsi-step-indicator triangle gsi-style-1 gsi-transition " >
-                                 <li class="current preparation act1" id="start-tab" data-target="step-first">
-                                    <a href="#0" id="preparation-step">
-                                       <span class="desc"><span>Preparation</span></span>
-                                    </a>
-                                 </li>
-                                 <li class="review-data-1 " id="review_data_1_id" data-target="step-12">
-                                    <a href="#0">
-                                       <span class="desc"><span>Review RPM</span></span>
-                                    </a>
-                                 </li>
-                                 <li class="call-step-1 " id="call_step_1_id" data-target="step-2">
-                                    <a href="#0">
-                                       <span class="desc"><span>Call</span></span>
-                                    </a>
-                                 </li>
-                                 <li class="follow-up act1" id="follow_up_id" data-target="step-10">
-                                    <a href="#0" id="followup-step">
-                                       <span class="desc"><span>Follow-up</span></span>
-                                    </a>
-                                 </li>
-                                 <li class="text act1" id="text_id" data-target="step-11">
-                                    <a href="#0">
-                                       <span class="desc"><span>Text</span></span>
-                                    </a>
-                                 </li>
+               <div class="tsf-wizard tsf-wizard-2">
+                  <ul class="gsi-step-indicator triangle gsi-style-1 gsi-transition">
+                     <li v-for="(step, index) in steps" :key="index" :class="{ active: index === activeStep }"
+                        @click="changeStep(index)">
+                        <a :href="`#${index}`">
+                           <span class="desc">{{ step }}</span>
+                        </a>
+                     </li>
+                  </ul>
+                  <div class="tsf-container" style="width: 90%;">
+                     <div class="tsf-content">
+                        <div v-for="(content, index) in contents" :key="index" v-show="index === activeStep" :id="index"
+                           class="tsf-step" v-bind:style="(activeStep === index )? 'display: block;' : 'display: none;'">
+                           {{ index }},,..
+                           {{ activeStep }}........
 
-                              </ul>
-                           </div>
-                           <div class="tsf-container" style="width: 90%;">
-                              <!-- BEGIN CONTENT-->
-                              <div class="tsf-content">
-                                 <div id="step-1" class="tsf-step step-first active">
-                                    step-1
-                                 </div>
-                                 <div id="step-14" class="tsf-step step-2">
-                                    step-2
-                                 </div>
-                                 <div id="step-10" class="tsf-step step-10">
-                                    step-3
-                                 </div>
-                                 <div id="step-11" class="tsf-step step-11">
-                                    step-4
-                                 </div>
-                                 <div id="step-12" class="tsf-step step-12">
-                                    step-5
-                                 </div>
-                              </div>
-                           </div>
+                           {{ content }}
+                           <Preparation />
+                           <SubStepCall />
+                           <SubStepVerification />
+                           <SubStepRelationship :patientId="patientId" :moduleId="moduleId" />
+                           <SubStepConditionReview />
+                           <SubStepGeneralQuestions />
+                           <SubStepCallClose />
+                           <SubStepCallWrapUp />
+                           <FollowUp />
+                           <Text />
                         </div>
                      </div>
                   </div>
@@ -66,7 +39,57 @@
       </div>
    </div>
 </template>
-<script>
-console.log("PatientMonthlyMonitoringDetails.vue testing");
 
+<script>
+   import Preparation from './SubSteps/Preparation.vue';
+   import SubStepConditionReview from './SubSteps/CallSubSteps/ConditionReview.vue';
+   import SubStepCall from './SubSteps/CallSubSteps/Call.vue';
+   import SubStepVerification from './SubSteps/CallSubSteps/Verification.vue';
+   import SubStepRelationship from './SubSteps/CallSubSteps/Relationship.vue';
+   import SubStepGeneralQuestions from './SubSteps/CallSubSteps/GeneralQuestions.vue';
+   import SubStepCallClose from './SubSteps/CallSubSteps/CallClose.vue';
+   import SubStepCallWrapUp from './SubSteps/CallSubSteps/CallWrapUp.vue';
+   import FollowUp from './SubSteps/FollowUp.vue';
+   import Text from './SubSteps/Text.vue';
+// import stepWizard from 'js/app.js';
+export default {
+   props: {
+      patientId: Number,
+      moduleId: Number
+   },
+   components: {
+      Preparation,
+      SubStepConditionReview,
+      SubStepCall,
+      SubStepVerification,
+      SubStepRelationship,
+      SubStepGeneralQuestions,
+      SubStepCallClose,
+      SubStepCallWrapUp,
+      FollowUp,
+      Text
+   },
+   data() {
+      return {
+         activeStep: 0,
+         steps: ['Preparation', 'Review RPM', 'Call', 'Follow-up', 'Text'],
+         contents: [
+            'Content for Step 1',
+            'Content for Step 2',
+            'Content for Step 3',
+            'Content for Step 4',
+            'Content for Step 5'
+         ]
+      };
+   },
+   methods: {
+      changeStep(index) {
+         this.activeStep = index;
+
+      }
+   },
+   mounted() {
+      console.log('Component mounted.')
+   }
+};
 </script>
