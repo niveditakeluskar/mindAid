@@ -40,6 +40,7 @@ Route::get('/time-logs-report', function(){
             })->name('call.additional.ccm.call.report'); 
 
 			 Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
+			 Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
 			 
              Route::get('/Clinical-insight', function(){
                 return view('Reports::initial-report.initial-report');
