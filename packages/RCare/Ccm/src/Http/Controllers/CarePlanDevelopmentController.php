@@ -121,6 +121,50 @@ class CarePlanDevelopmentController extends Controller
         ->make(true);
     }
 
+    public function getImagingData(Request $request) {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth(); 
+		$configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+		$qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date
+            from patients.patient_imaging
+            where  patient_id =".$patientId."
+            and created_at::timestamp between '".$dateS."' and '".$dateE."' 
+            group by imaging_details,imaging_date order by updated_at desc";
+            $data = DB::select( DB::raw($qry) );
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
+    public function getHealthData(Request $request) {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth(); 
+		$configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+		$qry = "select distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
+            from patients.patient_health_data
+            where  patient_id =".$patientId."
+            and created_at::timestamp between '".$dateS."' and '".$dateE."' 
+            group by health_data,health_date order by updated_at desc";
+            $data = DB::select( DB::raw($qry) );
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function getVitalData(Request $request) {
         $patientId = sanitizeVariable($request->route('patientid'));
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);

@@ -173,6 +173,64 @@ var labColumns = [
 	{ data: 'action', name: 'action' }
 ];
 
+var healthColumns = [
+	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				if (data['health_date'] == null || data['health_date'] == 'null' || data['health_date'] == '') {
+					var health_date = '';
+				} else {
+					var health_date = data['health_date'];
+				}
+				return moment(health_date).format('MM-DD-YYYY');
+			}
+		},	
+		orderable: true
+	},
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				var imaging = data['health_data'];
+				if (data['health_data'] == null) {
+					imaging = '';
+				}
+				return imaging;
+			}
+		},
+		orderable: true
+	}
+];
+
+var imagingColumns = [
+	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				if (data['imaging_date'] == null || data['imaging_date'] == 'null' || data['imaging_date'] == '') {
+					var imaging_date = '';
+				} else {
+					var imaging_date = data['imaging_date'];
+				}
+				return moment(imaging_date).format('MM-DD-YYYY');
+			}
+		},	
+		orderable: true
+	},
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				var imaging = data['imaging_details'];
+				if (data['imaging_details'] == null) {
+					imaging = '';
+				}
+				return imaging;
+			}
+		},
+		orderable: true
+	}
+];
+
 var vitalColumns = [
 	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
 	{
@@ -185,7 +243,7 @@ var vitalColumns = [
 				}
 				return moment(rec_date).format('MM-DD-YYYY');
 			}
-		},
+		},	
 		orderable: true
 	},
 	{
@@ -1396,6 +1454,7 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 		if (module == 'care-plan-development') {
 			util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
 			CompletedCheck();
+			renderImagingTable();
 		} else {
 			util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
 			var module_id = $("input[name='module_id']").val();
@@ -1403,6 +1462,7 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 			var month = (new Date).getMonth() + 1; //add +1 for current mnth
 			util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 			var table = $('#callwrap-list');
+			carePlanDevelopment.renderImagingTable();
 			table.DataTable().ajax.reload();
 		}
 		var scrollPos = $(".main-content").offset().top;
@@ -1430,6 +1490,7 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 		if (module == 'care-plan-development') {
 			util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
 			CompletedCheck();
+			renderHealthTable();
 		} else {
 			util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
 			var module_id = $("input[name='module_id']").val();
@@ -1439,6 +1500,7 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 			util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 			var table = $('#callwrap-list');
 			table.DataTable().ajax.reload();
+			carePlanDevelopment.renderHealthTable();
 		}
 		var scrollPos = $(".main-content").offset().top;
 		$(window).scrollTop(scrollPos);
@@ -2768,6 +2830,14 @@ var renderVitalTable = function () {
 	util.renderDataTable('vital-list', baseURL + "ccm/care-plan-development-vital-vitallist/" + patient_id, vitalColumns, baseURL);
 }
 
+var renderImagingTable = function(){
+	util.renderDataTable('imaging-list', baseURL + "ccm/care-plan-development-imaging-imaginglist/" + patient_id, imagingColumns, baseURL);
+} 
+
+var renderHealthTable = function(){
+	util.renderDataTable('health-list', baseURL + "ccm/care-plan-development-health-healthlist/" + patient_id, healthColumns, baseURL);
+} 
+
 var renderMedicationsTableData = function () {
 	var url = baseURL + "ccm/care-plan-development-medications-medicationslist/" + patient_id;
 	var table1 = util.renderDataTable('Medication-list', url, medicationColumns, baseURL);
@@ -3547,6 +3617,8 @@ $(document).on('click', '#click_services_id', function () {
 $(document).on('click', '.vitals_and_health_data#click_id', function () {
 	renderLabsTable();
 	renderVitalTable();
+	renderImagingTable();
+	renderHealthTable();
 });
 
 var init = function () {
@@ -4563,6 +4635,8 @@ window.carePlanDevelopment = {
 	renderMedicationsTableData: renderMedicationsTableData,
 	renderLabsTable: renderLabsTable,
 	renderVitalTable: renderVitalTable,
+	renderImagingTable: renderImagingTable,
+	renderHealthTable:renderHealthTable,
 	renderDiagnosisTableData: renderDiagnosisTableData,
 	renderDiagnosisTable: renderDiagnosisTable,
 	getLabParamsOnLabChange: getLabParamsOnLabChange,

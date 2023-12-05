@@ -272,7 +272,6 @@ class PrintCarePlanController extends Controller
         where rec_date is not null and patient_id =".$uid."
         and rec_date::timestamp between '".$dateS."' and '".$dateE."' 
         order by rec_date desc"));
-        
 
         // $patient_vitals         = PatientVitalsData::where('patient_id',$uid)
         //                         ->whereMonth('updated_at', '>=', date('m'))

@@ -40,17 +40,17 @@
 
 <div class="separator-breadcrumb border-top"></div>
 <div id="msgsccess"></div>
-<!-- <div class="row">
+ <div class="row">
     <div class="col-12">
         <div class="table-responsive">
             <table id="labs-list" class="display table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr> 
                         <th style="width:auto!important">Sr No.</th>
-                        <th style="width:auto!important">Health Data</th>
                         <th style="width:auto!important">Health Date</th>
-                        <th style="width:auto!important">Comment</th>  
-                        <th style="width:auto!important">Action</th>  
+                        <th style="width:auto!important">Health Data</th>
+                        <!--th style="width:auto!important">Comment</th>  
+                        <th style="width:auto!important">Action</th-->  
                     </tr>
                 </thead>
                 <tbody>
@@ -59,4 +59,4 @@
             
         </div>
     </div>
-</div> -->
+</div> 
