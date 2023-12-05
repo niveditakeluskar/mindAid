@@ -23,7 +23,7 @@ use Session;
 class PatientQuestionaireReportController extends Controller {
 
     public function PatientQuestionaireReport(Request $request){ 
-        return view('Reports::pateint_questionaire_report.pateint-questionaire-report');
+        return view('Reports::pateint-questionaire-report.pateint_questionaire_report');
     }
 
     public function QuestionaireReportSearch(Request $request){ 
