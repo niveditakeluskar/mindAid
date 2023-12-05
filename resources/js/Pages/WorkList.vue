@@ -1,6 +1,127 @@
+<template>
+  <div>
+    <div class="breadcrusmb">
+      <div class="row" style="margin-top: 10px">
+        <div class="col-md-8">
+          <h4 class="card-title mb-3">Work List</h4>
+        </div>
+        <div class="form-group col-md-4"></div>
+      </div>
+    </div>
+    <div class="separator-breadcrumb border-top"></div>
+    <div id='success'></div>
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <div class="card text-left">
+          <div class="card-body">
+            <form @submit.prevent="handleSubmit">
+              <div class="form-row">
+                <div class="col-md-6 form-group mb-6">
+                  <label for="practicename">Practice Name</label>
+                  <!-- Your selectworklistpractices component -->
+                  <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice">
+                    <option v-for="practice in practices" :key="practice.id" :value="practice.id">
+                      {{ practice.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-6 form-group mb-6">
+                  <label for="patientsname">Patient Name</label>
+                  <!-- Your selectallworklistccmpatient component -->
+                  <select id="patients" class="custom-select show-tick select2" v-model="selectedPatients">
+                    <option v-for="patient in patients" :key="patient.id" :value="patient.id">
+                      {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-md-3 form-group mb-3">
+                  <select id="timeoption" class="custom-select show-tick" style="margin-top: 23px;"
+                    v-model="selectedOption" @change="handleChange">
+                    <option value="2">Greater than</option>
+                    <option value="1" selected>Less than</option>
+                    <option value="3">Equal to</option>
+                    <option value="4">All</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label for="time">Time Spent</label>
+                  <input v-model="timeValue" id="time" placeholder="hh:mm:ss" class="form-control" name="time" type="text"
+                    value="" autocomplete="off">
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label for="module">Module</label>
+                  <select name="modules" id="modules" v-model="patientsmodules" class="custom-select show-tick">
+                    <option value="3" selected>CCM</option>
+                    <option value="2">RPM</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <label for="activedeactivestatus">Patient Status</label>
+                  <select id="activedeactivestatus" v-model="activedeactivestatus" name="activedeactivestatus"
+                    class="custom-select show-tick">
+                    <option value="" selected>All (Active,Suspended,Deactivated,Deceased)</option>
+                    <option value="1">Active</option>
+                    <option value="0">Suspended</option>
+                    <option value="2">Deactivated</option>
+                    <option value="3">Deceased</option>
+                  </select>
+                </div>
+                <div class="col-md-3 form-group mb-3">
+                  <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
+                  <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
+                </div>
+                <div class="col-md-8 form-group">
+                  <h4 style="float: right;">
+                    <label float-right="">Total Minutes Spent</label>
+                    <label for="programs" class="cmtotaltimespent" data-toggle="tooltip" data-placement="right" title=""
+                      data-original-title="Total minutes spent/Total No. of patients"
+                      style="margin-left: 2px;margin-top: 10px;font-size: 16px;"></label>
+                  </h4>
+                 
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-12 mb-4">
+        <div class="card text-left">
+          <div class="card-body">
+            <div v-if="dataTableLoaded" class="table-responsive">
+              <table id="patient-list" class="display table table-striped table-bordered" style="width:100%">
+               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div id="app"></div>
+    <!-- Start Modal -->
+    <div id="add-activities" class="modal fade" role="dialog">
+      <!-- Modal Content -->
+    </div>
+    <!-- End Modal -->
+
+<!-- use the modal component, pass in the prop -->
+<modal :show="showModal" @close="showModal = false">
+   <template #header>
+     <h3>custom header</h3>
+   </template>
+ </modal>
+
+  
+
+  </div>
+
+</template>
+
 <script>
-import Modal from './Modal.vue';
-import { ref } from 'vue';
 import $ from 'jquery';
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
@@ -15,7 +136,8 @@ import 'datatables.net-buttons/js/dataTables.buttons.min.js';
 import 'datatables.net-buttons/js/buttons.html5.min.js';
 import 'datatables.net-buttons/js/buttons.print.min.js';
 import 'datatables.net-buttons/js/buttons.colVis.min.js';
-const showModal = ref(false);
+import Modal from './Modal.vue';
+import { ref } from 'vue';
 
 // Load the fonts dynamically using URLs
 const fonts = {
@@ -35,20 +157,33 @@ DataTable.use(Buttons);
 export default {
   components: {
     DataTable,
+    Modal
   },
-  data() {
+  setup() {
+    const showModal = ref(false);
+    const selectedPractice = ref(null);
+    const dataTableLoaded = ref(false);
+    const dataTable = ref([]);
+    const practices = ref([]);
+    const selectedPatient = ref(null);
+    const patients = ref([]);
+    const selectedOption = ref('1');
+    const timeValue = ref('00:20:00');
+    const activedeactivestatus = ref(null);
+    const patientsmodules = ref('3');
+
     return {
-    
-      dataTableLoaded: false,
-      dataTable: [],
-      selectedPractice: null, // To store the selected practice ID
-      practices: [], // Array to hold the fetched practices
-      selectedPatient: null, // To store the selected Patient ID
-      patients: [], // Array to hold the fetched Patients
-      selectedOption: '1', // Default selected option
-      timeValue: '00:20:00', // Default time value
-      activedeactivestatus:null,
-      patientsmodules: '3',
+      showModal,
+      selectedPractice,
+      dataTableLoaded,
+      dataTable,
+      practices,
+      selectedPatient,
+      patients,
+      selectedOption,
+      timeValue,
+      activedeactivestatus,
+      patientsmodules
     };
   },
   watch: {
@@ -63,6 +198,14 @@ export default {
     this.fetchPatients();
     await this.getPatientList();
     $('#patient-list').DataTable();
+    // After DataTable initialization, attach click event listeners to the buttons
+  $('#patient-list').on('click', '.ActiveDeactiveClass', (event) => {
+    // Extract the row data using DataTable API
+    const table = $('#patient-list').DataTable();
+    const rowData = table.row($(event.target).closest('tr')).data();
+    // Call the Vue method with the extracted parameters from the row
+    this.callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
+  });
   },
   computed: {
     placeholderText() {
@@ -96,9 +239,6 @@ export default {
         const timeoption = this.selectedOption;
         const time = this.timeValue || null;
         const activedeactivestatus = this.activedeactivestatus || null;
-
-     
-          console.log("patient :"+patient );
           // Retrieve the CSRF token from your application's state or meta tags
           const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -251,9 +391,9 @@ export default {
     // Assuming 'activedeactive' contains a button to trigger the function
     // Dynamically generate the button with the function call and parameters
     if(row.pstatus == 1 && row.pstatus!=0 && row.pstatus!=2 && row.pstatus!=3){
-      return `<button type="button" class="ActiveDeactiveClass" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="i-Yess i-Yes"  title="Patient Status"></i></button>`;
+      return `<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal" data-target="#active-deactive"  id="active_deactive" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="i-Yess i-Yes"  title="Patient Status"></i></a>`;
     }else{
-      return `<button type="button" class="ActiveDeactiveClass" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="text-20 i-Stopwatch" style="color: #2cb8ea;"></button>`;
+      return `<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal" data-target="#active-deactive"  id="active_deactive" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="text-20 i-Stopwatch" style="color: #2cb8ea;"></a>`;
     }
 
   }
@@ -327,129 +467,3 @@ export default {
 <style>
 
 </style>
-<template>
-  <div>
-    <div class="breadcrusmb">
-      <div class="row" style="margin-top: 10px">
-        <div class="col-md-8">
-          <h4 class="card-title mb-3">Work List</h4>
-        </div>
-        <div class="form-group col-md-4"></div>
-      </div>
-    </div>
-    <div class="separator-breadcrumb border-top"></div>
-    <div id='success'></div>
-    <div class="row">
-      <div class="col-md-12 mb-4">
-        <div class="card text-left">
-          <div class="card-body">
-            <form @submit.prevent="handleSubmit">
-              <div class="form-row">
-                <div class="col-md-6 form-group mb-6">
-                  <label for="practicename">Practice Name</label>
-                  <!-- Your selectworklistpractices component -->
-                  <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice">
-                    <option v-for="practice in practices" :key="practice.id" :value="practice.id">
-                      {{ practice.name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-md-6 form-group mb-6">
-                  <label for="patientsname">Patient Name</label>
-                  <!-- Your selectallworklistccmpatient component -->
-                  <select id="patients" class="custom-select show-tick select2" v-model="selectedPatients">
-                    <option v-for="patient in patients" :key="patient.id" :value="patient.id">
-                      {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="col-md-3 form-group mb-3">
-                  <select id="timeoption" class="custom-select show-tick" style="margin-top: 23px;"
-                    v-model="selectedOption" @change="handleChange">
-                    <option value="2">Greater than</option>
-                    <option value="1" selected>Less than</option>
-                    <option value="3">Equal to</option>
-                    <option value="4">All</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="time">Time Spent</label>
-                  <input v-model="timeValue" id="time" placeholder="hh:mm:ss" class="form-control" name="time" type="text"
-                    value="" autocomplete="off">
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="module">Module</label>
-                  <select name="modules" id="modules" v-model="patientsmodules" class="custom-select show-tick">
-                    <option value="3" selected>CCM</option>
-                    <option value="2">RPM</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="activedeactivestatus">Patient Status</label>
-                  <select id="activedeactivestatus" v-model="activedeactivestatus" name="activedeactivestatus"
-                    class="custom-select show-tick">
-                    <option value="" selected>All (Active,Suspended,Deactivated,Deceased)</option>
-                    <option value="1">Active</option>
-                    <option value="0">Suspended</option>
-                    <option value="2">Deactivated</option>
-                    <option value="3">Deceased</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
-                  <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
-                </div>
-                <div class="col-md-8 form-group">
-                  <h4 style="float: right;">
-                    <label float-right="">Total Minutes Spent</label>
-                       <!-- Button to Open Modal -->
-                       <button type="button" class="ActiveDeactiveClass" @click="callExternalFunctionWithParams()"><i class="i-Yess i-Yes" title="Patient Status"></i></button>
-
-
-                    <label for="programs" class="cmtotaltimespent" data-toggle="tooltip" data-placement="right" title=""
-                      data-original-title="Total minutes spent/Total No. of patients"
-                      style="margin-left: 2px;margin-top: 10px;font-size: 16px;"></label>
-                  </h4>
-                 
-                </div>
-              </div>
-            </form>
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row mb-4">
-      <div class="col-md-12 mb-4">
-        <div class="card text-left">
-          <div class="card-body">
-            <div v-if="dataTableLoaded" class="table-responsive">
-              <table id="patient-list" class="display table table-striped table-bordered" style="width:100%">
-               </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  
-    <div id="app"></div>
-    <!-- Start Modal -->
-    <div id="add-activities" class="modal fade" role="dialog">
-      <!-- Modal Content -->
-    </div>
-    <!-- End Modal -->
-
-<!-- use the modal component, pass in the prop -->
-<modal :show="showModal" @close="showModal = false">
-   <template #header>
-     <h3>custom header</h3>
-   </template>
- </modal>
-
-  
-
-  </div>
-
-</template>

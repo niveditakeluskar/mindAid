@@ -2,7 +2,7 @@
     <div class="row text-align-center">
       <div class="col-md-12">
           <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" />
-          <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" />
+          <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
       </div>
     </div>
   </template>
@@ -13,7 +13,8 @@
   export default { 
     props: {
       patientId: Number,
-      moduleId: Number
+      moduleId: Number,
+      componentId: Number
     },
     components: {
       PatientBasicInfo,
