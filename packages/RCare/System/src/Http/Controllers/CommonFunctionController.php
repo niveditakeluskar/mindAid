@@ -320,7 +320,7 @@ class CommonFunctionController extends Controller
         //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
         $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time));
 		
-		 $form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
+		 //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
         
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time));
 		
