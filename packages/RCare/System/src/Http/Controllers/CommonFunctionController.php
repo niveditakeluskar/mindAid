@@ -314,12 +314,16 @@ class CommonFunctionController extends Controller
         if($start_time == null || $start_time == "" || $start_time == 'undefined') { $start_time = '00:00:00'; }
         if($end_time == null || $end_time == "" || $end_time == 'undefined') { $end_time = '00:00:00'; }
 
-        $splitStartTime = explode(" ",$form_start_time);
-        $splitEndTime = explode(" ",$form_save_time);
+        //$splitStartTime = explode(" ",$form_start_time);
+        //$splitEndTime = explode(" ",$form_save_time);
 
-        $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+        //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+        $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time));
+		
+		 //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
         
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time));
+		
         $timer_data = array(
             'uid'          => $patient_id,
             'patient_id'   => $patient_id,
@@ -343,7 +347,7 @@ class CommonFunctionController extends Controller
             'activity_id' => $activityid,
             'comment'=>$comments
         );
-       // dd($timer_data);  
+        //dd($timer_data);  
         $insert_query = PatientTimeRecords::create($timer_data);  
         $assignpatient = assingSessionUser($patient_id);
         
@@ -376,7 +380,8 @@ class CommonFunctionController extends Controller
         }else{
             $splitStartTime = explode(" ",$form_start_time);
             $splitEndTime = explode(" ",$form_save_time);
-            $form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+            //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
+            $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time));
         }
     
         if($start_time == null || $start_time == "" || $start_time == 'undefined') { $start_time = '00:00:00'; }
@@ -855,14 +860,14 @@ class CommonFunctionController extends Controller
         $patient_id                     = sanitizeVariable($patientID);
         $module_id                      = sanitizeVariable($moduleId);
         $timeArray                      = [];
-
+        $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
         if($patient_id != '0'){
-            $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
+            
             if($patientID == 'null'){
                 $totalTime = '00:00:00';
                 if($startTime != 'null'){
-                    $StartTime = explode(" ",$startTime);
-                    $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($StartTime[1]));
+                    //$StartTime = explode(" ",$startTime);
+                    $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
                 }
             }else{
                 $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
@@ -876,8 +881,8 @@ class CommonFunctionController extends Controller
                 if($startTime == 'null'){
                     $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
                 }else{
-                    $StartTime = explode(" ",$startTime);
-                    $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($StartTime[1])+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+                    //$StartTime = explode(" ",$startTime);
+                    $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime)+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
                 }
             }
             
