@@ -98,7 +98,7 @@ Consolidate Billing Report
     <div class="col-md-12 mb-4">
         <div class="card text-rightleft">
             <div class="card-body">
-                <div style="display: block;margin-left:50%" id="load-monthly-billing-tbl">
+                <div style="display: none;margin-left:50%" id="load-monthly-billing-tbl">
                     <div>Loading</div>
                      <span class="loader-bubble loader-bubble-info m-2"></span>
                  </div>
@@ -260,21 +260,32 @@ $('#load-monthly-billing-tbl').hide();
 
         $(document).ready(function() {  
             var practice = $('#practices').val();
-           // getMonthlyBillingPatientList();
-            // function getMonth(date) {
-            // var month = date.getMonth() + 1;
-            // return month < 10 ? '0' + month : '' + month; // ('' + month) for string result
-            // }
 
-            // var c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
-            // var c_year = new Date().getFullYear();
-            // var current_MonthYear = c_year+'-'+c_month;
             $("#monthly").val(firstDayWithSlashes);
             $("#monthlyto").val(currentdate);
-      
-            util.getToDoListData(0, {{getPageModuleName()}});
-            // $(".patient-div").hide(); // to hide patient search select
 
+            var monthly = $('#monthly').val();
+            var monthlyto = $('#monthlyto').val();
+
+            // if(monthlyto < monthly)
+            // {
+            //     $('#monthlyto').addClass("is-invalid");
+            //     $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
+            //     $('#monthly').addClass("is-invalid");
+            //     $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
+            // } 
+            
+            // else{ 
+            //     $('#load-monthly-billing-tbl').show();
+            //     $('#monthlyto').removeClass("is-invalid");
+            //     $('#monthlyto').removeClass("invalid-feedback");
+            //     $('#monthly').removeClass("is-invalid");
+            //     $('#monthly').removeClass("invalid-feedback");
+            //     getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
+            // }
+            
+            util.getToDoListData(0, {{getPageModuleName()}});
+            
             $("[name='practicesgrp']").on("change", function () { 
                 var practicegrp_id = $(this).val(); 
                 if(practicegrp_id==0){

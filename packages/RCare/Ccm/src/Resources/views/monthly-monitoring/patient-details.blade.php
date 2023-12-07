@@ -122,7 +122,7 @@
             $('.tooltipevent').remove();
         },
         timezone: "local",
-        events:'/rpm/calender-data/'+patient_id+'/'+deviceid,
+        events:'/rpm/calender-data/'+patient_id+'/'+1, //deviceid
         selectable: true, 
         selectHelper: true,       
     });
@@ -447,6 +447,18 @@
         }
     }); 
     }  
+
+    function saveEMR(){
+        $.ajax({
+            url: '/ccm/saveEmrSummary',
+            type: 'POST',
+            data: $("#callwrapup_form").serialize(),
+            success: function (data) {
+            var table = $('#callwrap-list');
+            table.DataTable().ajax.reload();
+            }
+        });
+    }
 
     $('#searchbutton').click(function(){       
         var ref_this = $("ul#patientdevicetab li a.active").attr('id');
@@ -1034,6 +1046,11 @@
             var valid = true;
             $('#generalQue'+code).attr("disabled", true);
             var check_singal_question = 0;
+
+            if ($("form[name='general_question_form_"+code+"'] .form_start_time").val() == "undefined" || ($("form[name='general_question_form_"+code+"'] .form_start_time").val() == '')) {
+                var form_start_time = $("#page_landing_times").val();
+                $("form[name='general_question_form_"+code+"'] .form_start_time").val(form_start_time);
+            }
             
             $("form[name='general_question_form_"+code+"'] div.radioVal ").each(function() {
                 check_singal_question = $('input:radio:checked, input:checkbox:checked', this).length;
@@ -1083,6 +1100,8 @@
                     data: $("form#general_question_form_"+code).serialize() + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&stage_id=' + stage_id,
                     success: function(response) {
                         $("#timer_start").val(timer_paused);
+                        console.log(response);
+                        $(".form_start_time").val(response.form_start_time);
                         $('.general_success').show();
                         util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
                         setTimeout(function(){ $('.general_success').fadeOut(); }, 3000);
@@ -1117,18 +1136,22 @@
                 $("input[name='end_time']").val(timer_paused);
                 $("#timer_end").val(timer_paused);
                 $("#time-container").val(AppStopwatch.startClock);
+                var form_start_time = $("form[name='callwrapup_form'] .form_start_time").val();
                 var url = '/ccm/delete-callwrapup-notes/'+id;
                 $.ajax({
                     type   : 'get',
                     url    : url,
-                    data   : {"id": id, "timer_start": timer_start, "timer_paused": timer_paused},
+                    data   : {"id": id, "timer_start": timer_start, "timer_paused": timer_paused, "form_start_time": form_start_time},
                     success: function(response) {
-                        util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
-                        $("#time-container").val(AppStopwatch.pauseClock);
+                        //util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
+                       // $(".form_start_time").val(response);
+                       // $("#time-container").val(AppStopwatch.pauseClock);
                         var table =  $('#callwrap-list');
                         table.DataTable().ajax.reload();
-                        $(".last_time_spend").html(response);
-                        $("#time-container").html(response);
+                        //$(".last_time_spend").html(response);
+                        //$("#time-container").html(response);
+                       
+                        //$("#time-container").val(AppStopwatch.startClock);
                     }
                 });
             } else {

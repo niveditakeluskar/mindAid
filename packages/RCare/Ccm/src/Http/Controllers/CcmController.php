@@ -833,6 +833,8 @@ class CcmController extends Controller {
         $step_id      = 0; 
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if($status_flag==1){
@@ -865,7 +867,7 @@ class CcmController extends Controller {
                         'updated_by' => session()->get('userid')
                         );
                 ToDoList::where('id',$id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
 
             }else{
                     $check = CallWrap::where('task_id',$task_id)->exists();
@@ -884,9 +886,10 @@ class CcmController extends Controller {
                         'updated_by' => session()->get('userid')
                         );
                 ToDoList::where('id',$id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -972,9 +975,12 @@ class CcmController extends Controller {
                 $component_id = sanitizeVariable($request->component_id); //sanitizeVariable(getPageSubModuleName());
                 $stage_id     = sanitizeVariable($request->stage_id); //$request->stage_id
                 $step_id      = sanitizeVariable($request->step_id);
+                $form_start_time = sanitizeVariable($request->startTime);
+                $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
                 $billable     = 1;
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, 'follow-up-mark-as-completed-task');
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, 'follow-up-mark-as-completed-task', $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1141,9 +1147,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id     = 9;
         $step_id      = 0; 
         $billable     = 1;
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid);
-        $last_time_spend      = CommonFunctionController::getNetTimeBasedOnModule($patient_id, $mid);
-        return $last_time_spend;
+        $form_name    = 'callwrapup_delete';
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+       // $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+       // $last_time_spend      = CommonFunctionController::getNetTimeBasedOnModule($patient_id, $mid);
+        return $form_save_time;
     }
 
     public function SaveCallSatus(CallAddRequest $request) {
@@ -1200,6 +1209,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $step_id      = $step_id;
         $billable     = sanitizeVariable($request->billable);
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction(); 
         try {
             if ($call_status == '1') {
@@ -1275,7 +1286,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'component_id'             => $component_id
             );
            
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             if(isset($call_followup_date) && ($call_followup_date != "")) {
                 $follow_up_date =$call_followup_date;
                 $to_do = array(
@@ -1377,7 +1388,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 PatientContactTime::create($patient_contact_time_data);
             }
             DB::commit();
-            return $errormsg;
+            return response(['form_start_time' =>$form_save_time, 'errormsg'=>$errormsg]);
+           // return $errormsg;
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1424,6 +1436,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
         $end_time                      = sanitizeVariable($request->end_time);
+       // dd($request->timearr['form_start_time']);
+        $form_start_time               = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+       // dd($form_save_time);
         $module_id                     = sanitizeVariable($request->module_id);
         $component_id                  = sanitizeVariable($request->component_id);
         $stage_id                      = sanitizeVariable($request->stage_id);
@@ -1625,7 +1641,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         // DB::beginTransaction(); 
         // try {
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             if(CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->exists()) {
                 $note_0['updated_by'] = session()->get('userid');
                 CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->update($note_0);
@@ -1696,6 +1712,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } else {
                 PatientQuestionnaire::create($patient_questionnaire_data);
             }
+
+            return response(['form_start_time' =>$form_save_time]);
         //     DB::commit();
         // } catch(\Exception $ex) {
         //     DB::rollBack();
@@ -1734,6 +1752,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id                      = sanitizeVariable($request->stage_id);
         $step_id                       = sanitizeVariable($request->step_id);
         $form_name                     = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $billable                      = 1;
         $currentMonth                  = date('m');
         $currentYear                   = date('Y');
@@ -1938,7 +1958,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         DB::beginTransaction(); 
         try {
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             $chk1_exist = CallWrap::where('patient_id', $patient_id)->where('topic', 'New Hospitalization / ER visit / Urgent Care')->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->exists();
                 if($cr!='' && $chk1_exist==false){
                     $note_0['sequence'] = "1";
@@ -2023,6 +2043,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
 
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2062,6 +2083,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $check_id     = CallHipaaVerification::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
         DB::beginTransaction();
         try {
@@ -2075,7 +2098,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'component_id' => $component_id
             );  
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
 
             if ($check_id == true) {
                 $data['updated_by']= session()->get('userid');
@@ -2085,6 +2108,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $insert_query = CallHipaaVerification::create($data);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;
@@ -2102,6 +2126,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $component_id = sanitizeVariable($request->component_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = 1;
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $taken_stage_id = sanitizeVariable($request->stage_id);
         if($taken_stage_id == 0){
             $stage_id = sanitizeVariable($request->hid_stage_id);
@@ -2235,8 +2261,9 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
                 //$record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2287,6 +2314,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $fri_3               = sanitizeVariable($request->fri_3);
         $fri_any             = sanitizeVariable($request->fri_any);
         $billable            = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $current_month_date  = date('Y-m-d'); 
         DB::beginTransaction();
         try {
@@ -2306,7 +2335,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'patient_id'   => $patient_id,
             );
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $request->patient_id,$step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $request->patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             if(isset($q2_datetime) && ($q2_datetime != "")) {
                 $to_do = array(
                     'uid'                         => $uid,
@@ -2374,6 +2403,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 PatientContactTime::create($patient_contact_time_data);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -2474,7 +2504,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     //     }
     // }
 
-    //please donot remove this function = created and modified ashwini 19th sept 2022     
     public function emrSummary(Request $request){
         $uid                 = sanitizeVariable($request->uid);
             $patient_id          = sanitizeVariable($request->patient_id);
@@ -2641,6 +2670,173 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
     }
 
+    //please donot remove this function = created and modified ashwini 19th sept 2022     
+    // public function emrSummary(Request $request){
+    //     $uid                 = sanitizeVariable($request->uid);
+    //         $patient_id          = sanitizeVariable($request->patient_id);
+    //         $sequence            = 5;
+    //         $emr_entry_completed = empty(sanitizeVariable($request->emr_entry_completed)) ?'0' : sanitizeVariable($request->emr_entry_completed);
+    //         $emr_monthly_summary = sanitizeVariable($request->emr_monthly_summary);
+    //         $emr_monthly_summary_date = sanitizeVariable($request->emr_monthly_summary_date);
+    //         //record time
+    //         $start_time          = sanitizeVariable($request->start_time);
+    //         $end_time            = sanitizeVariable($request->end_time);
+    //         $module_id           = sanitizeVariable($request->module_id);
+    //         $component_id        = sanitizeVariable($request->component_id);
+    //         $stage_id            = sanitizeVariable($request->stage_id);
+    //         $step_id             = sanitizeVariable($request->step_id);
+    //         $form_name           = sanitizeVariable($request->form_name);
+
+    //         $currentmonth = date('m'); 
+    //         $currentyear  = date('Y');
+    //         $record_date  = Carbon::now();
+    //         $billable            = 1;
+    //         $last_sub_sequence   = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+    //         $new_sub_sequence    = $last_sub_sequence + 1;
+
+    //         $routine_response = sanitizeVariable($request->routine_response);
+    //         $urgent_emergent_response = sanitizeVariable($request->urgent_emergent_response);
+    //         $referral_order_support = sanitizeVariable($request->referral_order_support);
+    //         $medication_support = sanitizeVariable($request->medication_support);
+    //         $verbal_education_review_with_patient = sanitizeVariable($request->verbal_education_review_with_patient);
+    //         $mailed_documents = sanitizeVariable($request->mailed_documents);
+    //         $resource_support = sanitizeVariable($request->resource_support);
+    //         $veterans_services = sanitizeVariable($request->veterans_services);
+    //         $authorized_cm_only = sanitizeVariable($request->authorized_cm_only);
+    //         $no_additional_services_provided = sanitizeVariable($request->no_additional_services_provided); 
+
+    //         $routineresponse = sanitizeVariable($request->routineresponse);
+    //         $urgentemergentresponse = sanitizeVariable($request->urgentemergentresponse);
+    //         $referralordersupport = sanitizeVariable($request->referralordersupport);
+    //         $medicationsupport = sanitizeVariable($request->medicationsupport);
+    //         $verbaleducationreviewwithpatient = sanitizeVariable($request->verbaleducationreviewwithpatient);
+    //         $maileddocuments = sanitizeVariable($request->maileddocuments);
+    //         $resourcesupport = sanitizeVariable($request->resourcesupport);
+    //         $veteransservices = sanitizeVariable($request->veteransservices);
+    //         $authorizedcmonly = sanitizeVariable($request->authorizedcmonly);
+    
+    //         $servicesdata1 = '';
+    //         $servicesdata2 = '';
+    //         $servicesdata3 = '';
+    //         $servicesdata4 = '';
+    //         $servicesdata5 = '';
+    //         $servicesdata6 = '';
+    //         $servicesdata7 = '';
+    //         $servicesdata8 = '';
+    //         $servicesdata9 = '';
+    //         $servicesdata10 = '';
+    
+    //         $additionalservices1 = '';
+    //         $additionalservices2 = '';
+    //         $additionalservices3 = '';
+    //         $additionalservices4 = '';
+    //         $additionalservices5 = '';
+    //         $additionalservices6 = '';
+    //         $additionalservices7 = '';
+    //         $additionalservices8 = '';
+    //         $additionalservices9 = '';
+    //         $additionalservices10 = '';
+
+    //         DB::beginTransaction();
+    //         try {
+    
+                
+    //            $v = 'Summary notes added on';
+
+    //            $c= CallWrap::where('patient_id', $patient_id)
+    //                 ->whereMonth('created_at',  date('m'))
+    //                 ->whereYear('created_at',  date('Y'))
+    //                 ->where(function ($query) use ($v){
+    //                     $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%'); 
+    //                 })->update([
+    //                     'status' => 0,
+    //                     'updated_at' =>Carbon::now()
+    //                 ]);
+
+    //             $e =    EmrMonthlySummary::where('patient_id', $patient_id)
+    //                     ->whereMonth('created_at', date('m'))
+    //                     ->whereYear('created_at',  date('Y'))
+    //                     ->where(function ($query) use ($v){
+    //                         $query->where('topic', 'EMR Monthly Summary')->orWhere('topic', 'like', $v.'%');
+    //                     })->update([
+    //                         'status' => 0,
+    //                         'updated_at' =>Carbon::now()
+    //                     ]); 
+    //                     foreach($emr_monthly_summary as $key => $emr_monthly_summary_notes)
+    //                     {
+    //                         if($key==0){
+    //                             $emr_monthly_summary_data = array(  
+    //                                 'uid'                       => $uid,
+    //                                 'record_date'               => Carbon::now(),
+    //                                 'topic'                     => 'EMR Monthly Summary',
+    //                                 'notes'                     => $emr_monthly_summary_notes,
+    //                                 'emr_entry_completed'       => $emr_entry_completed, 
+    //                                 'created_by'                => session()->get('userid') , 
+    //                                 'patient_id'                => $patient_id,
+    //                                 'sequence'                  => $sequence,
+    //                                 'sub_sequence'              => $new_sub_sequence
+            
+    //                             );
+    //                             $monthlydate =  Carbon::now();  
+    //                             $emr_type = 1;
+    //                             // $is_old_emr = 1;
+                              
+    //                         }else{
+    //                             $d= explode("-",$emr_monthly_summary_date[$key-1]);
+    //                             $summary='Summary notes added on '.$d[1]."-".$d[2]."-".$d[0];
+    //                             $emr_monthly_summary_data = array(  
+    //                                 'uid'                       => $uid,
+    //                                 'record_date'               => Carbon::now(),
+    //                                 'topic'                     => $summary,
+    //                                 'notes'                     => $emr_monthly_summary_notes,
+    //                                 'emr_entry_completed'       => $emr_entry_completed, 
+    //                                 'created_by'                => session()->get('userid'), 
+    //                                 'patient_id'                => $patient_id,
+    //                                 'sequence'                  => $sequence,
+    //                                 'sub_sequence'              => $new_sub_sequence
+                                   
+    //                             );
+        
+    //                             $currentdatetime =  Carbon::now();  
+    //                             $dt1 = DatesTimezoneConversion::userTimeStamp($currentdatetime);  
+    //                             $datetimearray = explode(" ", $dt1);
+    //                             $currenttime = $datetimearray[1];
+    //                             $monthlydate = $emr_monthly_summary_date[$key-1]." ".$currenttime;    
+    //                             $emr_type = 2;  
+        
+    //                         }
+            
+    //                          /*******ccm-emr-monthly-summarytable-start************/
+            
+    //                          $emr_monthly_summary_data['record_date'] = $monthlydate; 
+    //                          $emr_monthly_summary_data['status'] = 1;
+    //                          $emr_monthly_summary_data['emr_type'] = $emr_type;  
+                            
+    //                          $e = EmrMonthlySummary::create($emr_monthly_summary_data);  
+                         
+             
+    //                           /*******ccm-emr-monthly-summarytable-end************/ 
+            
+            
+    //                         $emr_monthly_summary_data['uid']     = $uid; 
+    //                         $emr_monthly_summary_data['emr_monthly_summary'] = $emr_monthly_summary_notes;
+    //                         $emr_monthly_summary_data['emr_monthly_summary_date']     = $monthlydate;     
+            
+    //                         //some fields are added seperately bcz these fields are not present in ccm_emr_monthly_summary
+                          
+    //                         CallWrap::create($emr_monthly_summary_data);
+            
+    //                     }
+
+    //                     DB::commit();
+    //                 } catch(\Exception $ex) {
+    //                     DB::rollBack();
+    //                     return $ex;
+    //                     return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+    //                 }
+
+    // }
+
     public function SaveCallWrapUp(CallwrapAddRequest $request) {
             $uid                 = sanitizeVariable($request->uid);
             $patient_id          = sanitizeVariable($request->patient_id);
@@ -2656,7 +2852,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $stage_id            = sanitizeVariable($request->stage_id);
             $step_id             = sanitizeVariable($request->step_id);
             $form_name           = sanitizeVariable($request->form_name);
-
+            $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+            $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
             // $schedule_office_appointment = sanitizeVariable($request->schedule_office_appointment);
             // $resources_for_medication = sanitizeVariable($request->resources_for_medication);
             // $medical_renewal = sanitizeVariable($request->medical_renewal);
@@ -3047,7 +3244,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         ->update(['status'=>0]);
                  CallWrap::create($additional_services_data);  
                  $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, 
-                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                  if($additionalservices6!=''){ 
                     $form_name= $form_name.'_additional_services'; 
                     $check =  PatientTimeRecords::where('patient_id',$patient_id)
@@ -3057,13 +3254,18 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         // print_r($start_time .'====='. $end_time); die;
                         $start_time = "00:00:00";
                         $time2 = "00:04:00"; 
+                        $st = strtotime("00-00-0000 00:00:00");
+                        $et = strtotime("00-00-0000 00:04:00");
+                        $form_start_time1 =  date("m-d-Y H:i:s", $st);
+                        $form_save_time1 =  date("m-d-Y H:i:s", $et);
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
                         $end_time = date("H:i:s",strtotime($start_time)+$secs); 
                         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
-                        $billable, $uid,$step_id,$form_name);
+                        $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);
                     } 
                 }
                 DB::commit();
+                return response(['form_start_time' =>$form_save_time]);
             } catch(\Exception $ex) {
                 DB::rollBack();
                 return $ex;
@@ -3089,6 +3291,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id              = sanitizeVariable($request->stage_id);
         $step_id               = sanitizeVariable($request->step_id);
         $form_name             = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $notes                 = sanitizeVariable($request->notes);
         $billable              = 1;
         $sequence              = 7;
@@ -3163,7 +3367,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     $insert_query = FollowUp::create($data); 
                 }  
                 //record time 
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             }else if($followupmaster_task[0]!='' || $emr_complete =='1'){
                 if($followupmaster_task[0]!='') {
                     foreach ($followupmaster_task as $i => $value) { 
@@ -3231,7 +3435,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $insert_query = FollowUp::create($data);
                     }
                     //record time 
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                 }else{
                     $data = array(
                         'uid'                 => $patient_id,
@@ -3249,12 +3453,13 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $insert_query = FollowUp::create($data);
                     }
                     //record time 
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                 }
             }else{
             return 'blank form';
             }//end else
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) { 
             DB::rollBack(); 
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3308,6 +3513,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id           = sanitizeVariable($request->stage_id);
         $step_id            = sanitizeVariable($request->step_id);
         $form_name          = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $billable           = 1;
         DB::beginTransaction();
         try {
@@ -3333,7 +3540,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $history_id = $insert_content->id;
             $text_temp  = array('template_id' => $template_id, 'history_id' => $history_id);
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             $data = array(
                 'uid'          => $uid,
                 'rec_date'     => Carbon::now(),
@@ -3364,7 +3571,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 CallWrap::create($text_note);
             }
             DB::commit();
-            return $msg;
+            return response(['form_start_time' =>$form_save_time,'msg'=>$msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3722,6 +3929,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         //$template_id  = sanitizeVariable($request->template_id);
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $patient_id   = sanitizeVariable($request->patient_id);
         if(isset($request->template_id)){
             $template_id  = sanitizeVariable($request->template_id);
@@ -3997,7 +4206,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid,$step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid,$step_id, $form_name, $form_start_time, $form_save_time);
             foreach($t as $k => $v) {
                 $new_sub_sequence = $new_sub_sequence + 1;
                 $note2 = array(
@@ -4017,7 +4226,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     CallWrap::create($note2);
                 }
             }
-            return response()->json(['success' => "Added successfully."]);
+            //return response()->json(['success' => "Added successfully."]);
+            return response(['form_start_time' =>$form_save_time]);
           /*  DB::commit();
         } catch(\Exception $ex) {
             DB::rollBack();

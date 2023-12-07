@@ -265,7 +265,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id); 
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = 1;
-         
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id!='') {
@@ -282,9 +283,10 @@ class CarePlanDevelopmentController extends Controller
                     CarePlanUpdateLogs::where('patient_diagnosis_id',$id)->where('diagnosis_id',$diagnosis_id)->update($update_diagnosis);
                     PatientCareplanLastUpdateandReview::where('diagnosis_id',$diagnosis_id)->where('patient_id',$patient_id)->update($update_diagnosis);  
                 }
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -302,6 +304,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id); 
         $billable     = sanitizeVariable($request->billable); 
         $form_name    = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id != '' ){ 
@@ -309,9 +313,10 @@ class CarePlanDevelopmentController extends Controller
                 $update_PatientHealthServices['updated_by'] = session()->get('userid'); 
                 $update_PatientHealthServices['created_by'] = session()->get('userid');
                 PatientHealthServices::where('id', $id)->update($update_PatientHealthServices);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -329,7 +334,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id); 
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
-
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id != '' ){
@@ -337,9 +343,10 @@ class CarePlanDevelopmentController extends Controller
                 $update_allergy['updated_by'] = session()->get('userid'); 
                 $update_allergy['created_by'] = session()->get('userid');
                 PatientAllergy::where('id', $id)->update($update_allergy);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             } 
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -724,17 +731,21 @@ class CarePlanDevelopmentController extends Controller
         $step_id       = sanitizeVariable($request->step_id); 
         $form_name     = sanitizeVariable($request->form_name);
         $billable      = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id!='') {
                 PatientFamily::where('id', $id)->delete();
-                $record_time   = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+                $record_time   = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
                 $count         = PatientFamily::where('patient_id',$patient_id)->where('tab_name',$tab_name)->count();
+                $msg = '';
                 if($count==0) {
-                    return $tab_name;
+                    $msg =  $tab_name;
                 }
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time, 'msg' => $msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -760,17 +771,21 @@ class CarePlanDevelopmentController extends Controller
         $step_id       = sanitizeVariable($request->step_id); 
         $form_name     = sanitizeVariable($request->form_name);
         $billable      = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id!='') {
                 PatientPet::where('id', $id)->delete();
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
             $count   = PatientPet::where('patient_id',$patient_id)->where('pet_status',$pet_status)->count();
+            $msg = '';
             if($count == 0) {
-                return 'nothing';
+                $msg = 'nothing';
             }
+            return response(['form_start_time' =>$form_save_time, 'msg' => $msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -796,17 +811,21 @@ class CarePlanDevelopmentController extends Controller
         $step_id        = sanitizeVariable($request->step_id); 
         $form_name      = sanitizeVariable($request->form_name);
         $billable       = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id!=''){
                 PatientHobbies::where('id',$id)->delete();
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
             $count = PatientHobbies::where('patient_id',$patient_id)->where('hobbies_status',$hobbies_status)->count();
+            $msg = '';
             if( $count == 0 ) {
-                return 'nothing';
+                $msg = 'nothing';
             }
+            return response(['form_start_time' =>$form_save_time, 'msg' => $msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -832,17 +851,21 @@ class CarePlanDevelopmentController extends Controller
         $step_id       = sanitizeVariable($request->step_id);        
         $form_name     = sanitizeVariable($request->form_name); 
         $billable      = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($patient_id) || $patient_id!=''){
                 PatientTravel::where('id',$id)->delete();
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
-            } 
-            DB::commit();
-            $count = PatientTravel::where('patient_id',$patient_id)->where('travel_status',$travel_status)->count();
-            if($count == 0 ) {
-                return 'nothing';
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             }
+                DB::commit();
+            $count = PatientTravel::where('patient_id',$patient_id)->where('travel_status',$travel_status)->count();
+            $msg = '';
+            if($count == 0 ) {
+                $msg = 'nothing';
+            }
+            return response(['form_start_time' =>$form_save_time, 'msg' => $msg]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -868,6 +891,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id); 
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(!empty($id) || $id!=''){
@@ -875,9 +900,10 @@ class CarePlanDevelopmentController extends Controller
                 $update_provider['updated_by'] = session()->get('userid'); 
                 $update_provider['created_by'] = session()->get('userid'); 
                 PatientProvider::where('id', $id)->update($update_provider);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -917,6 +943,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         
         DB::beginTransaction();
         try {
@@ -925,9 +953,10 @@ class CarePlanDevelopmentController extends Controller
                 $update_medication['updated_by'] = session()->get('userid'); 
                 $update_medication['created_by'] = session()->get('userid');
                 PatientMedication::where('id', $id)->update($update_medication);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id,$step_id, $form_name, $form_start_time, $form_save_time);
             } 
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) { 
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1375,6 +1404,8 @@ class CarePlanDevelopmentController extends Controller
             $billable            = sanitizeVariable($request->billable);
             $allergy_status      = sanitizeVariable($request->allergy_status);
             $noallergymsg        = sanitizeVariable($request->noallergymsg);
+            $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+            $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
             DB::beginTransaction();
             try {
                 if($allergy_status== 'true'){
@@ -1398,7 +1429,7 @@ class CarePlanDevelopmentController extends Controller
                     $insert_allergy['review'] = 1; 
                 }
                 //record time 
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
                 if($allergyid=='' || $allergyid=='null') {
                     $check = PatientAllergy::where('patient_id',$patient_id)->where('status',1)->where('allergy_type',$allergy_type)->where('allergy_status','!=',"")->get();
                     if(count($check)>0) {
@@ -1416,6 +1447,7 @@ class CarePlanDevelopmentController extends Controller
                 }
                 $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
                 DB::commit();
+                return response(['form_start_time' =>$form_save_time]);
             } catch(\Exception $ex) {
                 DB::rollBack();
                 return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1450,6 +1482,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if ($tab_name =='review-patient') {
@@ -1461,7 +1495,7 @@ class CarePlanDevelopmentController extends Controller
                 'email'       => $email, 
             );
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
 
             $insert_query = Patients::where('id', $patient_id)->update($insert);
@@ -1482,6 +1516,7 @@ class CarePlanDevelopmentController extends Controller
                 }
             }
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1508,6 +1543,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id      = sanitizeVariable($request->step_id);
         $form_name    = sanitizeVariable($request->form_name);
         $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             $insert_familyPersonalData = array(
@@ -1535,9 +1572,10 @@ class CarePlanDevelopmentController extends Controller
                 $insert_familyPersonalData['created_by'] = session()->get('userid');
                 $insert_query = PatientFamily::create($insert_familyPersonalData);
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return $ex;
@@ -1616,8 +1654,11 @@ class CarePlanDevelopmentController extends Controller
         $step_id           = sanitizeVariable($request->step_id);
         $form_name         = sanitizeVariable($request->form_name);
         $billable          = sanitizeVariable($request->billable);
-        DB::beginTransaction();
-        try {
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+       
+         DB::beginTransaction();
+         try {
             foreach ($fname as $key => $value) {
                 if ($tab_name =='sibling' || $tab_name =='children' || $tab_name =='grandchildren') {
                     $relationship =  sanitizeVariable($request->relationship);
@@ -1629,23 +1670,32 @@ class CarePlanDevelopmentController extends Controller
                         $relationship = sanitizeVariable($request->relationship[$key]);
                     } 
                 }
-                if($age[$key]=='') {
-                    $age=null;
+                if($age == null){
+                    $age[$key]=null;
                 }
+                else if($age[$key]=='') {
+                    $age[$key]=null;
+                }
+
+                if($address == null){
+                    $address[$key]=null;
+                }
+                else if($address[$key]=='') {
+                    $address[$key]=null;
+                }
+                
                 $insert_familyData = array(
                     'relational_status' => $relational_status,
                     'patient_id'       => $patient_id, 
                     'fname'            => $fname[$key],
                     'lname'            => $lname[$key],
-                    'mobile'           => $mobile[$key],
-                    'phone_2'          => $phone_2[$key], 
-                    'email'            => $email[$key],
                     'address'          => $address[$key],
                     'relationship'     => $relationship,
                     'age'              => $age[$key],
                     'tab_name'         => $tab_name,
                     'additional_notes' => $additional_notes[$key],
                 );
+
                 if ($tab == 'review-patient') {
                     $insert_familyData['review'] = 1;
                 }
@@ -1662,12 +1712,13 @@ class CarePlanDevelopmentController extends Controller
                     $insert_query = PatientFamily::create($insert_familyData);     
                 }
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
-            DB::commit(); 
-        } catch(\Exception $ex) {
-            DB::rollBack();
-            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
-        }  
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+             DB::commit(); 
+            return response(['form_start_time' =>$form_save_time]);
+         } catch(\Exception $ex) {
+             DB::rollBack();
+             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+         }  
     }
 
     public function savePatientprovidersData(PatientsProvidersAddRequest $request) {    
@@ -1694,6 +1745,8 @@ class CarePlanDevelopmentController extends Controller
         $form_name           = sanitizeVariable($request->form_name);
         $billable            = sanitizeVariable($request->billable);
         $practice_type       = sanitizeVariable($request->practice_type);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if($practice_id == '0') { 
@@ -1758,9 +1811,10 @@ class CarePlanDevelopmentController extends Controller
                 $insert_query = PatientProvider::create($insert_providersData);
             }
             // record_time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -1794,6 +1848,8 @@ class CarePlanDevelopmentController extends Controller
         $createdby          = session()->get('userid');
         $hiddenenablebutton = sanitizeVariable($request->hiddenenablebutton);
         $editdiagnoid       = sanitizeVariable($request->editdiagnoid);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($editdiagnoid);
         
     
@@ -1829,7 +1885,7 @@ class CarePlanDevelopmentController extends Controller
                 $diagnosisData['review'] = 1;  
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             
             
             if(!empty($code)){ 
@@ -2252,7 +2308,8 @@ class CarePlanDevelopmentController extends Controller
                 $condition_data['sequence'] = $new_sequence;
                 CallWrap::create($condition_data);
             }      
-            $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);      
+            $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);     
+            return response(['form_start_time' =>$form_save_time]); 
         //     DB::commit();
         // } catch(\Exception $ex) {
         //     DB::rollBack();
@@ -3168,6 +3225,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if(isset($med_description)){
@@ -3200,7 +3259,7 @@ class CarePlanDevelopmentController extends Controller
                 $insert_medicationData['review'] = 1;
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name); 
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time); 
             $check_med_id = PatientMedication::where('patient_id',$patient_id)->where('status',1)->where('med_id',$med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
             if($check_med_id == true){
                 $insert_medicationData['updated_by'] = session()->get('userid');
@@ -3212,6 +3271,7 @@ class CarePlanDevelopmentController extends Controller
             }
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3243,6 +3303,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             if($service_end_date != ''){
@@ -3276,7 +3338,7 @@ class CarePlanDevelopmentController extends Controller
                 $data['review'] = 1;
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $dataExist    = PatientHealthServices::where('id',$id)->where('patient_id', $patient_id)->where('hid',$health_id)->where('status',1)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
             if($dataExist==true && $id!='') {
                 $data['updated_by'] = session()->get('userid');
@@ -3288,6 +3350,7 @@ class CarePlanDevelopmentController extends Controller
             }
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             // return $ex;
@@ -3316,6 +3379,8 @@ class CarePlanDevelopmentController extends Controller
         $billable             = sanitizeVariable($request->billable);
         $oxygen               = sanitizeVariable($request->oxygen);
         $notes                = sanitizeVariable($request->notes);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
        // dd($pain_level);
         //DB::beginTransaction();
        // try {
@@ -3408,8 +3473,9 @@ class CarePlanDevelopmentController extends Controller
                     }
                 // }
                 //record time
-                $record_time      = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+                $record_time      = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
                 $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
+                return response(['form_start_time' =>$form_save_time]);
             } else {
                 echo "false";
             }
@@ -3473,6 +3539,8 @@ class CarePlanDevelopmentController extends Controller
         $billable              = sanitizeVariable($request->billable);
         $module_name           = sanitizeVariable($request->module_name);
         $component_name        = sanitizeVariable($request->component_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             foreach($lab  as $key => $labvalue) {
@@ -3680,9 +3748,10 @@ class CarePlanDevelopmentController extends Controller
                 }
             } //endforeach
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name); 
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time); 
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         }catch(\Exception $ex) {
             DB::rollBack();
             return $ex;
@@ -3703,6 +3772,8 @@ class CarePlanDevelopmentController extends Controller
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
         $comment             = sanitizeVariable($request->comment);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             $DelPatientImaging = PatientImaging::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
@@ -3767,9 +3838,10 @@ class CarePlanDevelopmentController extends Controller
                 }                    
             }//end call wrapup
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3789,6 +3861,8 @@ class CarePlanDevelopmentController extends Controller
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
         $comment             = sanitizeVariable($request->comment);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             $DelPatientHealthdata = PatientHealthData::where('patient_id',$patient_id )->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
@@ -3840,9 +3914,10 @@ class CarePlanDevelopmentController extends Controller
                 }                    
             }//end call wrapup
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3868,6 +3943,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             foreach ($location as $key => $value) {
@@ -3896,8 +3973,9 @@ class CarePlanDevelopmentController extends Controller
                 }
             }// end Foreach 
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3920,6 +3998,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             foreach ($pet_name as $key => $value) {
@@ -3945,8 +4025,9 @@ class CarePlanDevelopmentController extends Controller
                 }
             }//endforeach
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -3971,6 +4052,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             foreach ($hobbies_name as $key => $value) {
@@ -3998,8 +4081,9 @@ class CarePlanDevelopmentController extends Controller
                 }
             }//endforeach
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -4067,6 +4151,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $last_sub_sequence   = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
         $new_sub_sequence    = $last_sub_sequence + 1;
         DB::beginTransaction();
@@ -4086,8 +4172,9 @@ class CarePlanDevelopmentController extends Controller
                 CallWrap::create($callwrapdata);
             }
             //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $uid, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $uid, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -4131,6 +4218,8 @@ class CarePlanDevelopmentController extends Controller
         $step_id                      = sanitizeVariable($request->step_id); 
         $form_name                    = sanitizeVariable($request->form_name);
         $billable                     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
             $data = array(
@@ -4146,8 +4235,9 @@ class CarePlanDevelopmentController extends Controller
             } else {
                 PatientFirstReview::create($data);   
             }
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $uid, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $uid, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' =>$form_save_time]);
         } catch(\Exception $ex) {
             DB::rollBack();
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
