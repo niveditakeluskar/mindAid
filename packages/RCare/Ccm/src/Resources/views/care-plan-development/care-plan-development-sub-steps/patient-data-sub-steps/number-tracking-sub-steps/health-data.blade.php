@@ -43,7 +43,7 @@
  <div class="row">
     <div class="col-12">
         <div class="table-responsive">
-            <table id="labs-list" class="display table table-striped table-bordered" style="width:100%">
+            <table id="health-list" class="display table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr> 
                         <th style="width:auto!important">Sr No.</th>

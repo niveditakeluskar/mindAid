@@ -1065,40 +1065,40 @@ var populateForm = function (id, url) {
 					$("form[name='review_travel_form'] #travel_status_no").prop("disabled", false);
 				}
 				if (key == 'number_tracking_imaging_form') {
-					if (result[key].static['imaging'] != null) {
-						var imagingDetails = JSON.parse(result[key].static['imaging']);
-						var imagingDate = JSON.parse(result[key].static['imaging_date']);
-						var comment = JSON.parse(result[key].static['comment']);
-						for (var imaging in imagingDetails) {
-							inc_imaging = imagingcount;
-							if (imagingcount == 0) {
-								$('#imaging_0').val(imagingDetails[imaging]);
-								$('#imaging_date').val(imagingDate[imaging]);
-							} else {
-								$('#append_imaging').append('<div class="row btn_remove" id="btn_removeimaging_' + inc_imaging + '"><div class="col-md-4"><input type="text" class="form-control" name="imaging[]" id="imaging_' + imagingcount + '" placeholder ="Enter Imaging" value="' + imagingDetails[imaging] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type="date" class="form-control" name="imaging_date[]" id="imaging_date' + imagingcount + '"placeholder ="Enter Imaging Date" value="' + imagingDate[imaging] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_imaging_' + imagingcount + '" title="Remove Imaging"></i></div>');
-							}
-							$('#imaging_comment').val(comment[imaging]);
-							imagingcount++;
-						}
-					}
+					// if (result[key].static['imaging'] != null) {
+					// 	var imagingDetails = JSON.parse(result[key].static['imaging']);
+					// 	var imagingDate = JSON.parse(result[key].static['imaging_date']);
+					// 	var comment = JSON.parse(result[key].static['comment']);
+					// 	for (var imaging in imagingDetails) {
+					// 		inc_imaging = imagingcount;
+					// 		if (imagingcount == 0) {
+					// 			$('#imaging_0').val(imagingDetails[imaging]);
+					// 			$('#imaging_date').val(imagingDate[imaging]);
+					// 		} else {
+					// 			$('#append_imaging').append('<div class="row btn_remove" id="btn_removeimaging_' + inc_imaging + '"><div class="col-md-4"><input type="text" class="form-control" name="imaging[]" id="imaging_' + imagingcount + '" placeholder ="Enter Imaging" value="' + imagingDetails[imaging] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type="date" class="form-control" name="imaging_date[]" id="imaging_date' + imagingcount + '"placeholder ="Enter Imaging Date" value="' + imagingDate[imaging] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_imaging_' + imagingcount + '" title="Remove Imaging"></i></div>');
+					// 		}
+					// 		$('#imaging_comment').val(comment[imaging]);
+					// 		imagingcount++;
+					// 	}
+					// }
 				}
 				if (key == 'number_tracking_healthdata_form') {
-					if (result[key].static['healthdata'] != null) {
-						var healthDetails = JSON.parse(result[key].static['healthdata']);
-						var healthDates = JSON.parse(result[key].static['health_date']);
-						var comment = JSON.parse(result[key].static['comment']);
-						for (var healthdata in healthDetails) {
-							inc_healthdata = healthdatacount;
-							if (healthdatacount == 0) {
-								$('#healthdata_0').val(healthDetails[healthdata]);
-								$('#health_date').val(healthDates[healthdata]);
-							} else {
-								$('#append_healthdata').append('<div class="row btn_remove" id="btn_removehealthdata_' + inc_healthdata + '"><div class="col-md-4"><input type="text" class="form-control"  name="health_data[]" id ="healthdata_' + inc_healthdata + '" placeholder ="Enter Health Data" value="' + healthDetails[healthdata] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type ="date" class="form-control" name="health_date[]" id="healthdate' + inc_healthdata + '" placeholder ="Enter Health Data Date" value="' + healthDates[healthdata] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_healthdata_' + inc_healthdata + '" title="Remove health data"></i></div>');
-							}
-							$('#healthdata_comment').val(comment[healthdata]);
-							healthdatacount++;
-						}
-					}
+					// if (result[key].static['healthdata'] != null) {
+					// 	var healthDetails = JSON.parse(result[key].static['healthdata']);
+					// 	var healthDates = JSON.parse(result[key].static['health_date']);
+					// 	var comment = JSON.parse(result[key].static['comment']);
+					// 	for (var healthdata in healthDetails) {
+					// 		inc_healthdata = healthdatacount;
+					// 		if (healthdatacount == 0) {
+					// 			$('#healthdata_0').val(healthDetails[healthdata]);
+					// 			$('#health_date').val(healthDates[healthdata]);
+					// 		} else {
+					// 			$('#append_healthdata').append('<div class="row btn_remove" id="btn_removehealthdata_' + inc_healthdata + '"><div class="col-md-4"><input type="text" class="form-control"  name="health_data[]" id ="healthdata_' + inc_healthdata + '" placeholder ="Enter Health Data" value="' + healthDetails[healthdata] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type ="date" class="form-control" name="health_date[]" id="healthdate' + inc_healthdata + '" placeholder ="Enter Health Data Date" value="' + healthDates[healthdata] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_healthdata_' + inc_healthdata + '" title="Remove health data"></i></div>');
+					// 		}
+					// 		$('#healthdata_comment').val(comment[healthdata]);
+					// 		healthdatacount++;
+					// 	}
+					// }
 				}
 				if (key == 'call_close_form') {
 					if (result[key] != '') {
@@ -1473,6 +1473,8 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_imaging_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_imaging_form']")[0].reset();
+		$("#append_imaging").html("");
 		
 	} else {
 		$("form[name='number_tracking_imaging_form'] .alert-success").hide();
@@ -1510,6 +1512,8 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_healthdata_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_healthdata_form']")[0].reset();
+		$("#append_healthdata").html("");
 		
 	} else {
 		$("form[name='number_tracking_healthdata_form'] .alert-success").hide();
@@ -3619,6 +3623,7 @@ $(document).on('click', '.vitals_and_health_data#click_id', function () {
 	renderVitalTable();
 	renderImagingTable();
 	renderHealthTable();
+	$("form[name='number_tracking_vitals_form']")[0].reset();
 });
 
 var init = function () {
