@@ -112,6 +112,7 @@ Route::get('/time-logs-report', function(){
         // 'RCare\Reports\Http\Controllers\TaskStatusReportController@TaskStatusReportSearch')->name('task.status.search.report'); 
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
+		Route::get('/patient_questionaire_list/search/{practice}/{patient}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReportSearch')->name('Patient.Questionaire.search.report');
 		
 		Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}','RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report'); 
 		

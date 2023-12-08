@@ -26,10 +26,9 @@ class PatientQuestionaireReportController extends Controller {
         return view('Reports::pateint-questionaire-report.pateint_questionaire_report');
     }
 
-    public function QuestionaireReportSearch(Request $request){ 
-        $practicesgrp = sanitizeVariable($request->route('practicesgrp'));
+    public function PatientQuestionaireReportSearch(Request $request){ 
         $practices = sanitizeVariable($request->route('practice'));
-        $provider = sanitizeVariable($request->route('provider'));
+        $patient = sanitizeVariable($request->route('patient'));
         $fromdate  =sanitizeVariable($request->route('fromdate1'));
         $todate  =sanitizeVariable($request->route('todate1'));
         $genquestionselection = sanitizeVariable($request->route('genquestionselection'));
@@ -42,34 +41,19 @@ class PatientQuestionaireReportController extends Controller {
         $roleid = $usersdetails[0]->role;
         $p;
         $pr;
-        $pracgrp; 
         $dt1;
         $dt2;
        
-        if( $practicesgrp!='null')
-        {
-            if( $practicesgrp==0)
-            {
-                $pracgrp = 0;  
-            }
-            else{
-                $pracgrp = $practicesgrp;
-            } 
-        }
-        else
-        {
-        $pracgrp = 'null';
-        }
 
 
-        if( $practices!='null')
+        if( $patient!='null')
         {
-            if( $practices==0)
+            if( $patient==0)
             {
                 $p = 0;  
             }
             else{
-                $p = $practices;
+                $p = $patient;
             } 
         }
         else
@@ -77,15 +61,15 @@ class PatientQuestionaireReportController extends Controller {
         $p = 'null';
         }
 
-        if($provider!='null')
+        if($practices!='null')
         {
-            if( $provider==0) 
+            if( $practices==0) 
             {
                 $pr = 0;  
             }
             else
             {
-                $pr = $provider;
+                $pr = $practices;
             }
         }
         else{
@@ -124,10 +108,8 @@ class PatientQuestionaireReportController extends Controller {
           $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);               
          }   
          
-
-        $query = "select month_year, bmicount, bpcount, bmi_greater_25, bmi_less_18,bp_140_90, bp_180_110, HgA1C_greater_7, HgA1C_less_7, topic, option, count from patients.questionaire_report($p,$pr,$pracgrp,timestamp '".$dt1."',timestamp '".$dt2."',$gq)";
-                             
-        //dd($query);
+        $query = "select * from patients.patient_questionaire_report($pr,$p,timestamp '".$dt1."',timestamp '".$dt2."',$gq)";                
+        // dd($query);
         $data = DB::select( DB::raw($query) );
         //dd($data);
         return Datatables::of($data) 
