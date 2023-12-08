@@ -1359,7 +1359,9 @@ class DailyReviewController extends Controller
     
       $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
       $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Non Active Message');
+	  
       $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$d->id,$SID);
+      //$enroll_msg = CommonFunctionController::sentSchedulMessage(2,'2945591',$SID);
 
       /*//$scripts = ContentTemplate::where('id', 42)->where('status', 1)->get(); 
       $scripts = ContentTemplate::where('stage_id', $SID)->where('status', 1)->get();
