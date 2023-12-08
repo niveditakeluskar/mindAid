@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use RCare\System\Http\Controllers\CommonFunctionController;
 use Illuminate\Http\Request;
 use RCare\Rpm\Models\Patient;
+use RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents;
 // use RCare\Rpm\Models\MailTemplate;
 use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
 use RCare\Rpm\Models\Template;
@@ -1302,7 +1303,7 @@ class DailyReviewController extends Controller
          
     }
 	
-	public function noReadingsLastthreedays(Request $request)
+	public function noReadingsLastthreedays()
  {
      //   dd("hello");
        $date=date("Y-m-d");
@@ -1326,10 +1327,10 @@ class DailyReviewController extends Controller
 ,            rp.name as practicename, pd.device_id , rpp.name as providername
              from patients.patient p 
              inner join patients.patient_services ps on ps.patient_id = p.id and ps.module_id = 2 and ps.status = 1
-             inner join patients.patient_providers pp on pp.patient_id = p.id  and pp.is_active = 1 and pp.provider_type_id = 1 and pp.practice_id= 40
+             inner join patients.patient_providers pp on pp.patient_id = p.id  and pp.is_active = 1 and pp.provider_type_id = 1 
 			 inner join ren_core.providers rpp on pp.provider_id = rpp.id
              inner join ren_core.practices rp on rp.id = pp.practice_id and rp.is_active = 1
-             inner join patients.patient_devices pd on pd.patient_id = p.id where pd.status = 1
+             inner join patients.patient_devices pd on pd.patient_id = p.id where pd.status = 1 and pd.partner_id = 3
              and p.id not in 			 
 			 (select patient_id from rpm.patient_cons_observations where effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."') and p.status = 1";
 
@@ -1356,36 +1357,21 @@ class DailyReviewController extends Controller
       
       $loginuserid = session()->get('userid');  
     
-      
-      $scripts = ContentTemplate::where('id', 42)->where('status', 1)->get(); 
+      $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
+      $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Non Active Message');
+      $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$d->id,$SID);
+
+      /*//$scripts = ContentTemplate::where('id', 42)->where('status', 1)->get(); 
+      $scripts = ContentTemplate::where('stage_id', $SID)->where('status', 1)->get();
       $intro = get_object_vars(json_decode($scripts[0]->content));
       $replace_pt = str_replace("[patient_name]",$d->fname.' '.$d->lname, $intro['message']);
-     
       $replace_provider = str_replace("[provider]", $d->providername, $replace_pt);
       $replace_practice_name = str_replace("[practice_name]", $d->practicename, $replace_provider);
       $replace_readings = str_replace("[device_condition]", $reading, $replace_practice_name);
-     
-     // $message = "Last three days readings not captured- RCARE";
-     // $messageold = "Hi Ms Jones,
-     // This is Dr Lee from MANA Prairie Grove. I've noticed we haven't seen a Blood Pressure reading from you in the past three days. Could you please do your best to take a reading once per day so I can better manage your care. 
-     // Taking regular readings helps me to identify trends in your blood pressure which improves medication management, and can prevent any avoidable emergency room visits. 
-     // If you need help with using your assigned device please call (479) 485-3227, and one of my nurses will be happy to help. 
-     // Thank you, Dr Ron Lee";
-
-     
-
      $m = $replace_readings;
      $message = strip_tags($m);
-     
-
-     $receiverNumber= $d->country_code.$d->mob;
-     // dd($receiverNumber);
-     // dd($message,$receiverNumber);
-     // $receiverNumber =$data[0]->country_code.$data[0]->mob;
-     // dd($receiverNumber);    
-    //  $receiverNumber = '+918451972393';  
+     $receiverNumber= '+918149320164';
                  $sms = Configurations::where('config_type','sms')->orderBy('created_at', 'desc')->first();
-               
                  if(isset($sms->configurations)){
                      $sms_detail = json_decode($sms->configurations);
                      $account_sid = $sms_detail->username;
@@ -1398,14 +1384,8 @@ class DailyReviewController extends Controller
                      'body' => $message]);
                      $sid = $msg->sid;
                      $date = $msg->dateCreated;   
-                     $message_date = $date->format('Y-m-d H:i:s');    
-                                
-                    
+                     $message_date = $date->format('Y-m-d H:i:s');               
                      $message1 = $client->messages($sid)->fetch();
-                     // $message1 = $client->messages('SM82407cd4316e76b207513625bc54db75')->fetch();
-                     // $message1 = $client->messages('SM5c2176d4e8bcbd7237fb2591717b0e13')->fetch();
-                     // dd($message1);
-                     
                      $datamessagelog = MessageLog::create([
 						 'message_id' =>$msg->sid,
 						 'patient_id'=> $d->id,
@@ -1422,11 +1402,8 @@ class DailyReviewController extends Controller
 						 'read_status' => 0
 
                      ]);
-
-                    
-
                  }
-
+*/
      }           
 
 
