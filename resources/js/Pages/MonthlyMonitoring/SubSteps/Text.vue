@@ -15,7 +15,7 @@
                 <input type="hidden" name="template_type_id" value=""> 
                 <div class="card">
                     <div class="card-body">
-                        @include('Theme::components.text')
+                       <Text />
                     </div>
                     <div class="card-footer">
                         <div class="mc-footer">
@@ -28,7 +28,19 @@
                     </div>
                 </div>
             </form>
-            @include('Messaging::text-history')
+            <TextHistory />
         </div>
     </div>
 </template>
+<script>
+import Text from '../../Messaging/Text.vue';
+import TextHistory from '../../Messaging/TextHistory.vue';
+import axios from 'axios';
+
+export default {
+    components: {
+        Text,
+        TextHistory,
+    },
+};
+</script>

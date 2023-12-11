@@ -19,12 +19,12 @@
 	                        <div class="col-md-12">
 								<div class='row ml-1'> 
 									<div class="col-md-4 form-group">
-										@text("task_name[]",["id"=>"task_name","placeholder"=>"Task"])
+										<input type="text" name="task_name[]" id="task_name" placeholder="Task" />
 									</div>
 									<div class="col-md-4 form-group selects" id="followupTaskDrpdwn_0">
 										@selectfuturefollowuptask("followupmaster_task[]",["id"=>"followupmaster_task"])
 									</div>
-									@hidden("selected_task_name[]",["id"=>"selected_task_name_0"])
+									<input type="hidden" name="selected_task_name[]" id="selected_task_name_0" />
 									<div class="col-md-4 form-group">
 			                                <label class="radio radio-primary col-md-4 float-left">
 			                                    <input type="radio" id="scheduled_0" class="status_flag" name="status_flag[0]" value="0" formControlName="radio" checked>
@@ -43,7 +43,7 @@
 										<textarea name="notes[]" class="forms-element form-control" id="notes_0" placeholder="Notes"></textarea>
 										<div class="invalid-feedback"></div>
 									</div>
-									<div class="col-md-2 form-group">@date('task_date[]',["id"=>"task_date_0"])</div>
+									<div class="col-md-2 form-group"><input type="date" name="task_date[]" id="task_date_0" /></div>
 								</div>
 	                        </div>
 	                        <!-- button add and minus task -->
@@ -113,11 +113,11 @@
 							<input type="hidden" name="stage_id" />
 							<input type="hidden" name="step_id" value="0">
 							<input type="hidden" name="form_name" value="followup_task_edit_notes">
-							@hidden('id',['id' =>'hiden_id'])
-							@hidden('topic',['id'=>'topic'])
+							<input type="hidden" name="topic" id="topic" />
+							<input type="hidden" name="id" id="hiden_idhiden_id" />
 							<p><b>Task : </b><span id ="task_notes"></span></p>
 							<p><b>Category : </b><span id ="category"></span> </p>
-							<p>@date('task_date',["id"=>"task_date_val"])</p>
+							<p><input type="date" name="task_date" id="task_date_val" /></p>
 							<textarea id="notes" name ="notes" class="forms-element form-control"></textarea>
 							<div class="form-group col-md-12 mt-2">
 								<label class="forms-element checkbox checkbox-outline-primary">

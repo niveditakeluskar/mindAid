@@ -11,7 +11,7 @@
                         <div class="row mb-4">
                             <div class="col-md-3"><h6><b>Call Notes for Review and Approval</b></h6></div>
                             <div class="col-md-3">
-                                <select class ="custom-select show-tick mr-4" id="rpm-report">
+                                <select name="select_report" class ="custom-select show-tick mr-4"><!--  id="rpm-report" -->
                                     <option>Select Report</option>
                                     <option value="2">Daily History Report</option>
                                 </select>
@@ -53,15 +53,16 @@
                         <div class="row ml-3"> 
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
-                                    <label class="col-md-12">EMR Monthly Summary</label>
-                                    <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" onfocusout="saveEMR()"></textarea>
+                                    <label class="col-md-12">EMR Monthly Summary
+                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" onfocusout="saveEMR()"></textarea>
+                                    </label>
                                     <div class="invalid-feedback"></div>  
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-bottom: 40px;">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <b><label style="margin-left: 20px; color: #69aac2;">Additional CCM Notes :</label></b>
+                                        <b><span style="margin-left: 20px; color: #69aac2;">Additional CCM Notes :</span></b>
                                     </div>
                                     <div class="col-md-1">
                                         <i id="addnotes" type="button" qno="1" class="add i-Add" style="color: rgb(44, 184, 234); font-size: 25px;float: left;"></i>
@@ -83,7 +84,7 @@
                             <hr style="width:100%">
                             <div class="col-md-12 forms-element">  
                                 <div class="row">
-                                    <div class="col-md-12"><b><label style="margin-left: 20px; color: #69aac2;">Additional Services :</label></b></div>
+                                    <div class="col-md-12"><b><span style="margin-left: 20px; color: #69aac2;">Additional Services :</span></b></div>
                                     <div class="col-md-4">
                                         <label for="routine_response" class="checkbox checkbox-primary mr-3">
                                             <input type="checkbox" name="routine_response" id="routine_response" value="1" class="RRclass routine_response" formControlName="checkbox" />  

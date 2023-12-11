@@ -170,6 +170,17 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
+export default {
+  // ... other code
+  onActiveDeactiveClick: function(pid, status) {
+    // Your function logic here
+    console.log('PID:', pid);
+    console.log('Status:', status);
+    // Other actions...
+  }
+  // ... other code
+};
+
 var onActiveDeactiveClick = function ($pid, $status) {
   var sPageURL = window.location.pathname;
   parts = sPageURL.split("/"),

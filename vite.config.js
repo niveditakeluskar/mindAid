@@ -7,7 +7,6 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/appInertia.js',
-                'resources/laravel/js/iapp.js',
             ],
             refresh: true,
         }),
@@ -24,11 +23,14 @@ export default defineConfig({
         alias: {
             '@': '/resources/js',
             '@@': '/public/',
+            '@@@': '/resources/laravel/js',
         },
     },
       build: {
+        outDir: 'public/build', // Output directory for Vite-built assets
+    assetsDir: 'assets', // Directory within outDir for assets
     rollupOptions: {
-      external: ['assets/js/laravel/ccmcpdcommonJS'], // Add the module to externalize
+      //external: ['assets/js/laravel/ccmcpdcommonJS'], // Add the module to externalize
       // Other rollup options...
     },
   },

@@ -566,7 +566,8 @@ class PatientController extends Controller
         $form_name      = sanitizeVariable($request->form_name);
         $billable       = 1;
         $patient_status = sanitizeVariable($request->status);
-        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_start_time = isset($request->timearr['form_start_time']) ? sanitizeVariable($request->timearr['form_start_time']) : null;
+
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $activedataInsert   = array(
             'patient_id'        => $patient_id,
@@ -3158,5 +3159,49 @@ class PatientController extends Controller
         $componentId = sanitizeVariable($request->route('sub_module_id'));
         $patientRelationshipQuestionnaire = getRelationshipQuestionnaire($patientId, $moduleId, $componentId);
         return $patientRelationshipQuestionnaire;
+    }
+
+    public function fetchPatientCallHistoryData(Request $request)
+    {
+        $patientCallHistoryHTML  = "";
+        $patientId   = sanitizeVariable($request->route('patient_id'));
+        $patientCallHistoryData = getCallHistory($patientId);
+        $patientCallHistoryHTML = '<div class="container mt-5 mb-5"><div class="row"><div class="col-md-7" id="history_list"><h4>Call History</h4><ul class="timeline">';
+        foreach ($patientCallHistoryData as $callhistory) {
+            $patientCallHistoryHTML .= '<li>';
+            if ($callhistory->phone_no == "received") {
+                $patientCallHistoryHTML .= "<h5> Incoming Response (" . $callhistory->created_at . ")</h5>";
+                $patientCallHistoryHTML .= "<b>SMS: </b>" . $callhistory->text_msg;
+            } else {
+                if ($callhistory->call_status == 1) {
+                    $patientCallHistoryHTML .= '<h5>Call Answered (' . $callhistory->created_at . ')</h5><table><tr><th>Call Continue Status</th>';
+                    if ($callhistory->call_continue_status == 0) {
+                        $patientCallHistoryHTML .= '<th>Call Follow-up date</th><th>Call Follow-up Time</th>';
+                    }
+                    $patientCallHistoryHTML .= '</tr><tr><td>' . ($callhistory->call_continue_status == 0)  ? "No" : "Yes" . '</td>';
+                    if ($callhistory->call_continue_status == 0) {
+                        $patientCallHistoryHTML .= '<td>' . str_replace('00:00:00', '', $callhistory->ccm_answer_followup_date) . '</td><td>' . $callhistory->ccm_answer_followup_time . '</td>';
+                    }
+                    $patientCallHistoryHTML .= '</tr></table>';
+                } else {
+                    $patientCallHistoryHTML .= '<h5>Call Not Answered (' . $callhistory->created_at . ')</h5><table><tr><th>Call Follow-up date</th></tr><tr><td>' . str_replace('00:00:00', '', $callhistory->ccm_call_followup_date) . '</td></tr></table>';
+                }
+                $patientCallHistoryHTML .= '<b>';
+                if ($callhistory->call_status == "1") {
+                    $patientCallHistoryHTML .= 'Call Script:';
+                } else {
+                    if ($callhistory->voice_mail == "1") {
+                        $patientCallHistoryHTML .= 'Left Voice Mail:';
+                    } else if ($callhistory->voice_mail == "2") {
+                        $patientCallHistoryHTML .= 'No Voice Mail';
+                    } else {
+                        $patientCallHistoryHTML .= 'SMS Sent';
+                    }
+                }
+                $patientCallHistoryHTML .= '</b>' . $callhistory->text_msg . '</li>';
+            }
+        }
+        $patientCallHistoryHTML .= '</ul><div class="d-flex justify-content-center"></div></div></div></div>';
+        return $patientCallHistoryHTML;
     }
 }

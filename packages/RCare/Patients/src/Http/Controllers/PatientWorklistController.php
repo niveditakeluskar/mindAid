@@ -838,7 +838,7 @@ class PatientWorklistController extends Controller {
               $run_score_procedure = 0;    
              }
           
-              return Datatables::of($data)
+             return Datatables::of($data)
               ->addIndexColumn()
               ->addColumn('action', function($row)
               {
@@ -938,11 +938,9 @@ class PatientWorklistController extends Controller {
                   return $btn; 
               }) 
               ->rawColumns(['action','activedeactive','addaction'])  
-              ->make(true);
+              ->make(true);   
               
-  
-          
-          
+            
       }
 
 	/*public function addCarePlanAge(Request $request){

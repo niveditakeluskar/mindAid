@@ -1,21 +1,13 @@
 <template>
 	<div class="card">
-		<button type="button" id="RenderGeneralQuestion" onclick='checkQuestion()' style="display: none"></button>
-		<label class="checkbox checkbox-primary mr-3">
-			<input type="checkbox" name="ajaxRenderTree">
-			<span></span>
-			<span class="checkmark"></span>
-		</label>
-			<input type="text" class='form-control col-md-5' >
-			<input type="hidden" class='form-control col-md-5 firsttbox'  style="display:none" >
-		<label class="radio radio-primary mr-3">
-			<input type="radio" >
-			<span></span>
-			<span class="checkmark"></span>
-		</label>
 		<div class="row" style="margin-bottom:5px;">
 			<div class="col-lg-12 mb-3">
-				@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 select2 capital-first" ])	
+				<select name="top_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire">
+					<option value="">Select General Question</option>
+					<option v-for="questionaire in questionnaire" :key="questionaire.id" :value="questionaire.id">
+					{{ questionaire.description }}
+					</option>
+				</select>
 			</div>
 		</div>
 		<div class="alert alert-success general_success" id="success-alert" style="display: none;">
@@ -43,7 +35,7 @@
 							<input type="hidden" name="form_name" value="general_question_form">
 							<input type="hidden" name="template_id1" value="">
 							<div class="mb-4 radioVal" id="1general_question11">
-								<label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="DT_" value="dt">sdfsdf</label>
+								<label class="col-md-12"><input type="hidden" name="DT_" value="dt">sdfsdf</label>
 								<input type="hidden" name="sq" value="0">
 								<div class="d-inline-flex mb-2 col-md-12">
 								</div>
@@ -51,7 +43,7 @@
 							</div>
 							<div id="question1"></div>
 							<div id="in-pain">
-								<label for="" class="mr-3">Current Monthly Notes:</label>
+								<span class="mr-3">Current Monthly Notes:</span>
 								<input type="hidden" name="monthly_topic" value=" Related Monthly Notes">	 
 								<textarea class="form-control" placeholder="Monthly Notes" name="monthly_notes">dc</textarea>
 								<p class="txtmsg" style="color:red"></p>
@@ -75,8 +67,43 @@
 			<button type="button" class="close" data-dismiss="alert">x</button>
 			<strong> General question data saved successfully! </strong><span id="text"></span>
 		</div>
-		@selectGQ("genquestionselection",$dmodule_id,$stage_id,["id" => "genquestionselection1", "class" => "mb-3 bottom select2"])						
+		<select name="bottom_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire">
+			<option value="">Select General Question</option>
+			<option v-for="questionaire in questionnaire" :key="questionaire.id" :value="questionaire.id" :selected="selectedQuestionnaire" >
+			{{ questionaire.description }}
+			</option>
+		</select>				
 		<div style="padding-left: 20px; color:red; font-size:13px;"><b>Select additional applicable questions</b></div>
 		<button type="button" class="btn  btn-primary m-1 nexttab" onclick="nexttab()" style='display:none;'>Next</button>
     </div>
 </template>
+<script>
+import axios from 'axios';
+const selectedQuestionnaire = 38; //"General Questions"; //ref(null);
+export default {
+	props: {
+		patientId: Number,
+		moduleId: Number,
+		componentId: Number
+	}, 
+	data() {
+		return {
+			questionnaire: null,
+		};
+	},
+	mounted() {
+		this.fetchQuestionnaireData();
+	},
+	methods: {
+		async fetchQuestionnaireData() {
+			await axios.get(`/org/stage_code/${this.moduleId}/17/stage_code_list`)
+				.then(response => {
+					this.questionnaire = response.data;
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		},
+	},
+};
+</script>
