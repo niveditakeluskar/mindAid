@@ -96,15 +96,18 @@ class RpmEnrolledReportController extends Controller
 
         if($fromdate=='null' || $fromdate=='')
         {
-              $date=date("Y-m-d"); 
-              $year = date('Y', strtotime($date));
-              $month = date('m', strtotime($date));
-              $fromdate = $year."-".$month."-01 00:00:00";
-              $todate = $date." 23:59:59"; 
+            //   $date=date("Y-m-d"); 
+            //   $year = date('Y', strtotime($date));
+            //   $month = date('m', strtotime($date));
+            //   $fromdate = $year."-".$month."-01 00:00:00";
+            //   $todate = $date." 23:59:59"; 
     
-              $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
-              $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);        
-  
+            //   $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
+            //   $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);        
+
+            $dt1 ='null';
+            $dt2 ='null';  
+            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,$dt1,$dt2)";  
         } 
         else
         {      
@@ -112,9 +115,11 @@ class RpmEnrolledReportController extends Controller
            $todate = $todate." 23:59:59" ; 
            $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
            $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);
+           
+           $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
 
-        $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
+        
 
         // dd($query);
         $data = DB::select( DB::raw($query) ); 
