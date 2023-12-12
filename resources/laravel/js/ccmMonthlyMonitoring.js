@@ -368,6 +368,8 @@ var onPreparationFollowUp = function (formObj, fields, response) {
         var patientId = id;
         carePlanDevelopment.renderLabsTable();
         carePlanDevelopment.renderVitalTable();
+        carePlanDevelopment.renderImagingTable();
+        carePlanDevelopment.renderHealthTable();
         var data = "";
         var researchPreparationNotesForm = 'research_follow_up_preparation_followup_form';
         var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
@@ -1111,6 +1113,8 @@ var init = function () {
     carePlanDevelopment.renderAllergyOtherTableData();
     carePlanDevelopment.renderLabsTable();
     carePlanDevelopment.renderVitalTable();
+    carePlanDevelopment.renderImagingTable();
+    carePlanDevelopment.renderHealthTable();
     carePlanDevelopment.renderMedicationsTableData();
 
 
@@ -1439,6 +1443,7 @@ var init = function () {
         $("#healthcare-services").hide();
         $("#allergy-information").hide();
         $("#vitalsHealth").show();
+        $("form[name='number_tracking_vitals_form']")[0].reset();
     });
 
     $("#call_preparation-services-modal, #research_follow_up-services-modal").click(function () {
