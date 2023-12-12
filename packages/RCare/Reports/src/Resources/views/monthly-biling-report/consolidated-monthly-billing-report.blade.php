@@ -98,7 +98,7 @@ Consolidate Billing Report
     <div class="col-md-12 mb-4">
         <div class="card text-rightleft">
             <div class="card-body">
-                <div style="display: block;margin-left:50%" id="load-monthly-billing-tbl">
+                <div style="display: none;margin-left:50%" id="load-monthly-billing-tbl">
                     <div>Loading</div>
                      <span class="loader-bubble loader-bubble-info m-2"></span>
                  </div>
@@ -267,22 +267,22 @@ $('#load-monthly-billing-tbl').hide();
             var monthly = $('#monthly').val();
             var monthlyto = $('#monthlyto').val();
 
-            if(monthlyto < monthly)
-            {
-                $('#monthlyto').addClass("is-invalid");
-                $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
-                $('#monthly').addClass("is-invalid");
-                $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
-            } 
+            // if(monthlyto < monthly)
+            // {
+            //     $('#monthlyto').addClass("is-invalid");
+            //     $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
+            //     $('#monthly').addClass("is-invalid");
+            //     $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
+            // } 
             
-            else{ 
-                $('#load-monthly-billing-tbl').show();
-                $('#monthlyto').removeClass("is-invalid");
-                $('#monthlyto').removeClass("invalid-feedback");
-                $('#monthly').removeClass("is-invalid");
-                $('#monthly').removeClass("invalid-feedback");
-                getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
-            }
+            // else{ 
+            //     $('#load-monthly-billing-tbl').show();
+            //     $('#monthlyto').removeClass("is-invalid");
+            //     $('#monthlyto').removeClass("invalid-feedback");
+            //     $('#monthly').removeClass("is-invalid");
+            //     $('#monthly').removeClass("invalid-feedback");
+            //     getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
+            // }
             
             util.getToDoListData(0, {{getPageModuleName()}});
             

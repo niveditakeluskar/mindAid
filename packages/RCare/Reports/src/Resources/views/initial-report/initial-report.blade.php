@@ -312,7 +312,7 @@ $(document).ready(function(){
     $('#todate').val(currentdate);
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val();
-    getinitialList(null,null,null,fromdate1,todate1);       
+    //getinitialList(null,null,null,fromdate1,todate1);       
     
     $("[name='practicesgrp']").on("change", function () { 
         var practicegrp_id = $(this).val(); 
