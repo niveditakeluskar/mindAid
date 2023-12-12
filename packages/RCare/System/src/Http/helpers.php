@@ -755,6 +755,18 @@
     // }
 
 
+function getNetTime($start_time, $end_time) {
+    /*$start          = strtotime($start_time); 
+    $end            = strtotime($end_time); 
+    $totaltime      = ($end - $start)  ; 
+    $hours          = intval($totaltime / 3600);   
+    $seconds_remain = ($totaltime - ($hours * 3600)); 
+    $minutes        = intval($seconds_remain / 60);   
+    $seconds        = ($seconds_remain - ($minutes * 60)); 
+    $net_time       =  abs($hours) .':'. abs($minutes) .':'. abs($seconds);*/
+	$net_time = gmdate('H:i:s', Carbon::parse($end_time)->diffInSeconds(Carbon::parse($start_time)));
+    return $net_time;
+}
 
 
     // function getToDoList() {
@@ -797,19 +809,7 @@
         return  $data = RCare\API\Models\PartnerCredentials::where('status', '1')->get();
     }
 
-    function getNetTime($start_time, $end_time)
-    {
-        $start          = strtotime($start_time);
-        $end            = strtotime($end_time);
-        $totaltime      = ($end - $start);
-        $hours          = intval($totaltime / 3600);
-        $seconds_remain = ($totaltime - ($hours * 3600));
-        $minutes        = intval($seconds_remain / 60);
-        $seconds        = ($seconds_remain - ($minutes * 60));
-        $net_time       =  abs($hours) . ':' . abs($minutes) . ':' . abs($seconds);
-
-        return $net_time;
-    }
+    
 
 
     function assingSessionUser($patientid)

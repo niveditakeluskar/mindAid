@@ -288,24 +288,28 @@ class PatientController extends Controller
         } else {
             $allreadydevice = 0;
         }
+        
+        $PatientDevices = PatientDevices::where('patient_id',$uid)->orderby('id','desc')->first();
+        
+        $device_code = empty($PatientDevices->device_code)?'':$PatientDevices->device_code;
+        
+        $device_status = empty($PatientDevices->shipping_status)?'':$PatientDevices->shipping_status;
 
-        $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+ 
+        $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
 
-        $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
+        if(isset($rpmDevices[0]->vital_devices)){
 
-        $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1) ? PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
-
-        if (isset($rpmDevices[0]->vital_devices)) {
-
-            $data = json_decode($rpmDevices[0]->vital_devices);
-            $show_device = "";
-
-            for ($j = 0; $j < count($data); $j++) {
-
-                if (array_key_exists("vid", $data[$j])) {
-                    // dd($data); 
-                    $dev =  Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
-                    if (!empty($dev)) {
+         $data = json_decode($rpmDevices[0]->vital_devices);
+                $show_device="";
+               
+                for($j=0;$j<count($data);$j++){
+                   
+                    if (array_key_exists("vid",$data[$j]))
+                    {
+                        // dd($data); 
+                      $dev=  Devices::where('id',$data[$j]->vid)->where('status','1')->orderby('id','asc')->first();
+                      if(!empty($dev)){
                         $parts = explode(" ", $dev->device_name);
                         $devices = implode('-', $parts);
 
@@ -334,56 +338,57 @@ class PatientController extends Controller
             $enroll_in_rpm   = 0;
         }
 
-        return [
-            'patient'               => $patient,
-            'patient_services'      => $patient_services,
-            'gender'                => $gender,
-            'military_status'       => $military_status,
-            'age'                   => $age,
-            'PatientAddress'        => $PatientAddress,
-            'add_1'                 => $add_1,
-            'add_2'                 => $add_2,
-            'city'                  => $city,
-            'state'                 => $state,
-            'zipcode'               => $zipcode,
-            'date_enrolled'         => $date_enrolled,
-            'suspended_from'        => $suspended_from,
-            'suspended_to'          => $suspended_to,
-            'provider_name'         => $provider_name,
-            'practice_emr'          => $practice_emr,
-            'practice_name'         => $practice_name,
-            // 'UserPatients' => $UserPatients,
-            'caremanager_name'      => $caremanager_name,
-            'patient_enroll_date'   => $patient_enroll_date,
-            'device_code'           => $device_code,
-            'non_billabel_time'     => $non_billabel_time,
-            'billable_time'         => $billable_time,
-            'personal_notes'        => $personal_notes,
-            'research_study'        => $research_study,
-            // 'patient_threshold'=>$patient_threshold
-            'systolichigh'          => $systolichigh,
-            'systoliclow'           => $systoliclow,
-            'diastolichigh'         => $diastolichigh,
-            'diastoliclow'          => $diastoliclow,
-            'bpmhigh'               => $bpmhigh,
-            'bpmlow'                => $bpmlow,
-            'oxsathigh'             => $oxsathigh,
-            'oxsatlow'              => $oxsatlow,
-            'glucosehigh'           => $glucosehigh,
-            'glucoselow'            => $glucoselow,
-            'weighthigh'            => $weighthigh,
-            'weightlow'             => $weightlow,
-            'temperaturehigh'       => $temperaturehigh,
-            'temperaturelow'        => $temperaturelow,
-            'spirometerfevhigh'     => $spirometerfevhigh,
-            'spirometerfevlow'      => $spirometerfevlow,
-            'spirometerpefhigh'     => $spirometerpefhigh,
-            'spirometerpeflow'      => $spirometerpeflow,
-            'patient_assign_device' => $patient_assign_device,
-            'consent_to_text'       => $consent_to_text,
-            'allreadydevice'        => $allreadydevice,
-            'billable'              => $billable,
-            'enroll_in_rpm'         => $enroll_in_rpm
+   return [
+           'patient'               =>$patient,
+           'patient_services'      =>$patient_services,
+           'gender'                =>$gender,
+           'military_status'       =>$military_status,
+           'age'                   =>$age,
+           'PatientAddress'        => $PatientAddress,
+           'add_1'                 =>$add_1,
+           'add_2'                 =>$add_2,
+           'city'                  =>$city,
+           'state'                 =>$state, 
+           'zipcode'               =>$zipcode,
+           'date_enrolled'         => $date_enrolled,
+           'suspended_from'        => $suspended_from,
+           'suspended_to'          => $suspended_to,
+           'provider_name'         => $provider_name,
+           'practice_emr'          => $practice_emr,
+           'practice_name'         => $practice_name,
+           // 'UserPatients' => $UserPatients,
+           'caremanager_name'      => $caremanager_name,
+           'patient_enroll_date'   => $patient_enroll_date,
+           'device_code'           => $device_code,
+           'device_status'         => $device_status,
+           'non_billabel_time'     => $non_billabel_time,
+           'billable_time'         =>$billable_time,
+           'personal_notes'        =>$personal_notes,
+           'research_study'        =>$research_study,
+           // 'patient_threshold'=>$patient_threshold
+           'systolichigh'          => $systolichigh,
+           'systoliclow'           => $systoliclow,
+           'diastolichigh'         => $diastolichigh,
+           'diastoliclow'          => $diastoliclow,
+           'bpmhigh'               => $bpmhigh,
+           'bpmlow'                => $bpmlow,
+           'oxsathigh'             => $oxsathigh,
+           'oxsatlow'              => $oxsatlow,
+           'glucosehigh'           => $glucosehigh, 
+           'glucoselow'            => $glucoselow,
+           'weighthigh'            => $weighthigh,
+           'weightlow'             => $weightlow,
+           'temperaturehigh'       => $temperaturehigh,
+           'temperaturelow'        => $temperaturelow,
+           'spirometerfevhigh'     => $spirometerfevhigh,
+           'spirometerfevlow'      => $spirometerfevlow,
+           'spirometerpefhigh'     => $spirometerpefhigh,
+           'spirometerpeflow'      => $spirometerpeflow,
+           'patient_assign_device' =>$patient_assign_device,
+           'consent_to_text'       => $consent_to_text,
+           'allreadydevice'        => $allreadydevice,
+           'billable'              => $billable,
+           'enroll_in_rpm'         => $enroll_in_rpm
         ];
     }
 

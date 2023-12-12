@@ -88,6 +88,9 @@
                                 <label data-toggle="tooltip" title="Device Code" data-original-title="Patient Device Code." for="Device Code">
                                     <i class="text-muted i-Hospital"></i> : <span id="device_code" class="patient_device_code"></span>
                                 </label>   
+                                <label data-toggle="tooltip" title="" data-original-title="Delivery status" for="Delivery status">
+                                    <span id="delivery_status" class="device_delivery_status"></span>
+                                </label>
                             </div>   
                             <div class="row col-md-3">
                                 <div class="col-md-11 careplan">

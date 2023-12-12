@@ -61,6 +61,11 @@ class PatientDevices extends Model
     public function devices(){
         return $this->belongsTo('RCare\Org\OrgPackages\Devices\src\Models\Devices','device_id');
     }
+    public static function device() 
+    {   
+        $id  = '1'; //sanitizeVariable($patient_id);
+        return self::where('status', $id)->orderBy('created_at', 'desc')->get();
+    }
     
     // public function template(){
     //     return $this->belongsTo('RCare\Rpm\Models\Template','template_type_id');
