@@ -717,7 +717,7 @@ $(document).ready(function(){
     $('#todate').val(currentdate);
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val();
-    getrpmenrolledpatientlist(null,null,null,fromdate1,todate1);    
+    getrpmenrolledpatientlist(null,null,null,null,null);    
 }); 
 
 $("[name='practices']").on("change", function () {
@@ -752,20 +752,25 @@ $('#searchbutton').click(function(){
     var shipping_status=$('#shippingstatus').val();
     var check_enrolled_date=$('#check_enrolled_date').val();
     var fromdate1=$('#fromdate').val();
-    var todate1=$('#todate').val(); 
-
-    if(check_enrolled_date == '1'){
-        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);     
-    }else{ 
-        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);   
+    var todate1=$('#todate').val();
+    if(check_enrolled_date == '0'){  
+        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);  
+    }else if(check_enrolled_date == '1') {
+        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);    
+    }else{
+        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);  
     }
+
+
+    
 });
 
 
 $("#month-reset").click(function(){   
     $('#practices').val('').trigger('change');
     $('#patient').val('').trigger('change'); 
-    var shipping_status=$('#shippingstatus').val();
+    $('#shippingstatus').val('').trigger('change'); 
+    // var shipping_status=$('#shippingstatus').val();
     $('#fromdate').val(firstDayWithSlashes);                         
     $('#todate').val(currentdate);
     var fromdate1=$('#fromdate').val();

@@ -215,14 +215,17 @@ class RpmEnrolledReportController extends Controller
             'patient_id'=> sanitizeVariable($request->patient_id),
             'updated_by' => session()->get('userid') 
         ); 
-
+        
+        // dd($data);
         if($device_code!='' && $device_code!= 'null'){
             $check_patient_d = PatientDevices::where('patient_id',$patient_id)->where('device_code',$device_code)->exists();
+            // dd($check_patient_d);
             if($check_patient_d==true){
                 // return response()->json(['error' => 'This Device Code already added'], 400);
                 return 'This Device Code already added';
             }else{
-                PatientDevices::create($data);
+                $add = PatientDevices::create($data);
+                // dd($add);
                 return 'Device Add Successfully';
             }
         }else{
@@ -371,11 +374,11 @@ class RpmEnrolledReportController extends Controller
         to_char(pd.updated_at  at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at 
         from patients.patient_services ps
         left join patients.patient  p on ps.patient_id = p.id  and p.status = 1
-        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1
+        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1 and pd.partner_id = 3
         left join ren_core.users as u on pd.updated_by=u.id
         inner join patients.patient_providers pp on pp.patient_id = p.id  and pp.provider_type_id = 1 and pp.is_active = 1
         inner join ren_core.practices prac on pp.practice_id = prac.id and prac.is_active = 1 
-        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."'";
+        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."' ";
 
 
         if($shipping_status!=='null' && $shipping_status != '0'){
@@ -392,29 +395,32 @@ class RpmEnrolledReportController extends Controller
     
     public function patientdevicelist($patientid){
         $patientid = sanitizeVariable($patientid);
-        // dd($patientid);
-        $device = [];
-        // to_char(pd.updated_at  at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at 
-        $device = PatientDevices::where('patient_id', $patientid)->where("status", 1)->orderBy('created_at', 'desc')->get();
-        // dd($device);
-        foreach($device as $p) {
+        $device = PatientDevices::where('patient_id', $patientid)
+            ->where("status", 1)
+            ->where("partner_id", 3)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        foreach ($device as $p) {
             $id = $p->id;
-            $pro= \DB::select(\DB::raw("select pd.device_code,pd.patient_id,pd.id, pd.status
-            from patients.patient_devices pd 
-            left join ren_core.users as u on pd.updated_by=u.id
-            inner join ren_core.partners as p on p.id = pd.partner_id   
-            left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
-            where pd.patient_id  = '".$id."' and pd.partner_id = 3")); 
-
-            // if (!empty($pro)) {
-            //     $practicecount = $pro[0]->count; 
-            //     $p->count = $practicecount;
-            // } else {
-            //     $p->count = 0; 
-            // }
+            $pro = \DB::select(\DB::raw("select pd.device_code, pd.patient_id, pd.id, pd.status
+                from patients.patient_devices pd 
+                left join ren_core.users as u on pd.updated_by = u.id
+                left join ren_core.partners as p on p.id = pd.partner_id and p.id = 3
+                left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
+                where pd.patient_id  = '".$id."' and pd.partner_id = 3 "));
+    
+            if (!empty($pro)) {
+                $practicecount = $pro[0]->count; 
+                $p->count = $practicecount;
+            } else {
+                $p->count = 0; 
+            }
         }
+    
         return response()->json($device); 
     }
+    
 }
 
 

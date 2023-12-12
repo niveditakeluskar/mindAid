@@ -49,7 +49,8 @@ class PatientDevices extends Model
         'updated_at',
         'device_id',
         'vital_devices',
-        'mrn_no'
+        'mrn_no',
+        'partner_id'
          
 
     ];
