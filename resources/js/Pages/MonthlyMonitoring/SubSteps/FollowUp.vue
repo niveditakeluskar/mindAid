@@ -22,7 +22,14 @@
 										<input type="text" name="task_name[]" id="task_name" placeholder="Task" />
 									</div>
 									<div class="col-md-4 form-group selects" id="followupTaskDrpdwn_0">
-										@selectfuturefollowuptask("followupmaster_task[]",["id"=>"followupmaster_task"])
+										<select name="followupmaster_task[]" id="followupmaster_task" class="custom-select show-tick select2"
+											v-model="selectedFollowupMasterTask">
+											<option value="">Select Task Category</option>
+											<option v-for="followupMasterTask in followupMasterTaskList" :key="followupMasterTask.id" :value="followupMasterTask.id">
+												{{ followupMasterTask.task }}
+											</option>
+										</select>
+										<!-- @selectfuturefollowuptask("followupmaster_task[]",["id"=>"followupmaster_task"]) -->
 									</div>
 									<input type="hidden" name="selected_task_name[]" id="selected_task_name_0" />
 									<div class="col-md-4 form-group">
@@ -134,3 +141,30 @@
 		</div>
 	</div>
 </template>
+<script>
+import axios from 'axios';
+
+export default {
+	data() {
+		return {
+			selectedFollowupMasterTask: null,
+			followupMasterTaskList: null,
+		};
+	},
+	mounted() {
+		this.fetchFollowupMasterTask();
+	},
+	methods: {
+		async fetchFollowupMasterTask() {
+			await axios.get(`/org/get_future_followup_task`)
+				.then(response => {
+					this.followupMasterTaskList = response.data;
+					console.log("followupMasterTaskList", response.data);
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		},
+	},
+};
+</script>

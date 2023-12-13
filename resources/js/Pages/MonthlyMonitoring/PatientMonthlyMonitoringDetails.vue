@@ -43,7 +43,7 @@
                               <SubStepCallClose />
                               <SubStepCallWrapUp />
                               <FollowUp />
-                              <Text />
+                              <Text :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                            </div>
                         </div>
                      </div>

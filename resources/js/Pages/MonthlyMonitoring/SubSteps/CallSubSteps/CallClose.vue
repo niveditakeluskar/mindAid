@@ -63,13 +63,15 @@
 								<div class="mr-3 d-inline-flex align-self-center">
 									<label class="forms-element mr-3">Select Date:<span class="error">*</span>
 										<!-- for="next_month_call_date"  -->
-										@date("q2_datetime", ["id"=>"next_month_call_date"])
-									<span id="nextmonth-date" class="error"></span>
+										<!-- @date("q2_datetime", ["id"=>"next_month_call_date"]) -->
+										<input type="date" name="q2_datetime" id="next_month_call_date" />
+										<span id="nextmonth-date" class="error"></span>
 									</label>
 
 									<label class="forms-element mr-3" >Select Time:<span class="error">*</span>
 										<!--  for="next_month_call_time" -->
-										@time("q2_time", ["id"=>"next_month_call_time"])
+										<!-- @time("q2_time", ["id"=>"next_month_call_time"]) -->
+										<input type="time" name="q2_time" id="next_month_call_time" />
 									</label>
 								</div>
 								<div class="">

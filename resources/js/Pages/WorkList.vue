@@ -1,139 +1,138 @@
 <template>
-    <LayoutComponent>
-  <div>
-    <div class="breadcrusmb">
-      <div class="row" style="margin-top: 10px">
-        <div class="col-md-8">
-          <h4 class="card-title mb-3">Work List</h4>
+  <LayoutComponent>
+    <div>
+      <div class="breadcrusmb">
+        <div class="row" style="margin-top: 10px">
+          <div class="col-md-8">
+            <h4 class="card-title mb-3">Work List</h4>
+          </div>
+          <div class="form-group col-md-4"></div>
         </div>
-        <div class="form-group col-md-4"></div>
       </div>
-    </div>
-    <div class="separator-breadcrumb border-top"></div>
-    <div id='success'></div>
-    <div class="row">
-      <div class="col-md-12 mb-4">
-        <div class="card text-left">
-          <div class="card-body">
-            <form @submit.prevent="handleSubmit">
-              <div class="form-row">
-                <div class="col-md-6 form-group mb-6">
-                  <label for="practicename">Practice Name</label>
-                  <!-- Your selectworklistpractices component -->
-                  <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice"
-                    @change="handlePracticeChange">
-                    <option v-for="practice in practices" :key="practice.id" :value="practice.id">
-                      {{ practice.name }}
-                    </option>
-                  </select>
+      <div class="separator-breadcrumb border-top"></div>
+      <div id='success'></div>
+      <div class="row">
+        <div class="col-md-12 mb-4">
+          <div class="card text-left">
+            <div class="card-body">
+              <form @submit.prevent="handleSubmit">
+                <div class="form-row">
+                  <div class="col-md-6 form-group mb-6">
+                    <label for="practicename">Practice Name</label>
+                    <!-- Your selectworklistpractices component -->
+                    <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice"
+                      @change="handlePracticeChange">
+                      <option v-for="practice in practices" :key="practice.id" :value="practice.id">
+                        {{ practice.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group mb-6">
+                    <label for="patientsname">Patient Name</label>
+                    <!-- Your selectallworklistccmpatient component -->
+                    <select id="patients" class="custom-select show-tick select2" v-model="selectedPatients">
+                      <option value="" selected>All Patients</option>
+                      <option v-for="patient in patients" :key="patient.id" :value="patient.id">
+                        {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                <div class="col-md-6 form-group mb-6">
-                  <label for="patientsname">Patient Name</label>
-                  <!-- Your selectallworklistccmpatient component -->
-                  <select id="patients" class="custom-select show-tick select2" v-model="selectedPatients">
-                    <option v-for="patient in patients" :key="patient.id" :value="patient.id">
-                      {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="col-md-3 form-group mb-3">
-                  <select id="timeoption" class="custom-select show-tick" style="margin-top: 23px;"
-                    v-model="selectedOption" @change="handleChange">
-                    <option value="2">Greater than</option>
-                    <option value="1" selected>Less than</option>
-                    <option value="3">Equal to</option>
-                    <option value="4">All</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="time">Time Spent</label>
-                  <input v-model="timeValue" id="time" placeholder="hh:mm:ss" class="form-control" name="time" type="text"
-                    value="" autocomplete="off">
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="module">Module</label>
-                  <select name="modules" id="modules" v-model="patientsmodules" class="custom-select show-tick">
-                    <option value="3" selected>CCM</option>
-                    <option value="2">RPM</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <label for="activedeactivestatus">Patient Status</label>
-                  <select id="activedeactivestatus" v-model="activedeactivestatus" name="activedeactivestatus"
-                    class="custom-select show-tick">
-                    <option value="" selected>All (Active,Suspended,Deactivated,Deceased)</option>
-                    <option value="1">Active</option>
-                    <option value="0">Suspended</option>
-                    <option value="2">Deactivated</option>
-                    <option value="3">Deceased</option>
-                  </select>
-                </div>
-                <div class="col-md-3 form-group mb-3">
-                  <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
-                  <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
-                </div>
-                <div class="col-md-8 form-group">
-                  <h4 style="float: right;">
-                    <label float-right="">Total Minutes Spent</label>
-                    <label for="programs" class="cmtotaltimespent" data-toggle="tooltip" data-placement="right" title=""
-                      data-original-title="Total minutes spent/Total No. of patients"
-                      style="margin-left: 2px;margin-top: 10px;font-size: 16px;"></label>
-                  </h4>
+                <div class="form-row">
+                  <div class="col-md-3 form-group mb-3">
+                    <select id="timeoption" class="custom-select show-tick" style="margin-top: 23px;"
+                      v-model="selectedOption" @change="handleChange">
+                      <option value="2">Greater than</option>
+                      <option value="1" selected>Less than</option>
+                      <option value="3">Equal to</option>
+                      <option value="4">All</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 form-group mb-3">
+                    <label for="time">Time Spent</label>
+                    <input v-model="timeValue" id="time" placeholder="hh:mm:ss" class="form-control" name="time"
+                      type="text" value="" autocomplete="off">
+                  </div>
+                  <div class="col-md-3 form-group mb-3">
+                    <label for="module">Module</label>
+                    <select name="modules" id="modules" v-model="patientsmodules" class="custom-select show-tick">
+                      <option value="3" selected>CCM</option>
+                      <option value="2">RPM</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 form-group mb-3">
+                    <label for="activedeactivestatus">Patient Status</label>
+                    <select id="activedeactivestatus" v-model="activedeactivestatus" name="activedeactivestatus"
+                      class="custom-select show-tick">
+                      <option value="" selected>All (Active,Suspended,Deactivated,Deceased)</option>
+                      <option value="1">Active</option>
+                      <option value="0">Suspended</option>
+                      <option value="2">Deactivated</option>
+                      <option value="3">Deceased</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 form-group mb-3">
+                    <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
+                    <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
+                  </div>
+                  <div class="col-md-8 form-group">
+                    <h4 style="float: right;">
+                      <label float-right="">Total Minutes Spent</label>
+                      <label for="programs" class="cmtotaltimespent" data-toggle="tooltip" data-placement="right" title=""
+                        data-original-title="Total minutes spent/Total No. of patients"
+                        style="margin-left: 2px;margin-top: 10px;font-size: 16px;"></label>
+                    </h4>
 
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
 
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="row mb-4">
-      <div class="col-md-12 mb-4">
-        <div class="card text-left">
-          <div class="card-body">
-            <div v-if="loading" class="table-responsive loading-spinner">
-              <p>Loading...</p>
-            </div>
-            <div v-else class="table-responsive">
-              <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
-                style="width:100%">
-              </table>
-            </div>
+      <div class="row mb-4">
+        <div class="col-md-12 mb-4">
+          <div class="card text-left">
+            <div class="card-body">
+              <div v-if="loading" class="table-responsive loading-spinner">
+                <p>Loading...</p>
+              </div>
+              <div v-else class="table-responsive">
+                <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
+                  style="width:100%">
+                </table>
+              </div>
 
+            </div>
           </div>
         </div>
       </div>
+      <!-- use the modal component, pass in the prop -->
+      <modal :show="showModal" @close="showModal = false">
+        <template #header>
+          <h3>custom header</h3>
+        </template>
+      </modal>
     </div>
-    <!-- use the modal component, pass in the prop -->
-    <modal :show="showModal" @close="showModal = false">
-      <template #header>
-        <h3>custom header</h3>
-      </template>
-    </modal>
-  </div>
 
-</LayoutComponent>
+  </LayoutComponent>
 </template>
 
 <script>
-import Modal from './Modal.vue';
 import {
-    ref,
-    onMounted,
-    computed,
-    watch,
-    DataTable,
-    // Add other common imports if needed
-  } from './commonImports';
+  ref,
+  onMounted,
+  computed,
+  watch,
+  DataTable,
+  // Add other common imports if needed
+} from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
 export default {
   components: {
     LayoutComponent,
     DataTable,
-    Modal,
   },
   setup() {
     const loading = ref(false);
@@ -167,27 +166,19 @@ export default {
 
     onMounted(async () => {
       try {
-        await fetchPractices();
-        await fetchPatients();
+        fetchPractices();
+        fetchPatients();
         await fetchUserFilters();
         await getPatientList(
-          selectedPractice.value,
-          selectedPatients.value,
-          patientsmodules.value,
-          selectedOption.value,
+          selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
+        initDataTable(dataTable.value);
 
-          initDataTable(dataTable.value);
-    
-        $('#patient-list').on('click', '.ActiveDeactiveClass', (event) => {
-          // Extract the row data using DataTable API
-          const table = $('#patient-list').DataTable();
-          const rowData = table.row($(event.target).closest('tr')).data();
-          // Call the Vue method with the extracted parameters from the row
-          callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
-        });
       } catch (error) {
         console.error('Error on page load:', error);
       }
@@ -214,34 +205,94 @@ export default {
     const fetchPatients = async (practiceId) => {
       try {
         if (practiceId === undefined || practiceId === null) {
-          //console.error('Practice ID is empty or invalid.');
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
-        const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist'); // Call the API endpoint
-        if (!response.ok) {
-          throw new Error('Failed to fetch patients');
-        }
-        const data = await response.json();
-        patients.value = data; // Set the fetched patients to the component data
-        return Promise.resolve(data);
+
+        const cacheKey = `patients_${practiceId}`;
+        const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+
+        // Open (or create) a database
+        const openRequest = indexedDB.open('PatientDataDBKd3', 1);
+
+        openRequest.onupgradeneeded = function (event) {
+          const db = event.target.result;
+          const objectStore = db.createObjectStore('PatientsStoreKd3', { keyPath: 'id', autoIncrement: true });
+        };
+
+        openRequest.onerror = function (event) {
+          console.error('IndexedDB error:', event.target.errorCode);
+        };
+
+        openRequest.onsuccess = function (event) {
+          const db = event.target.result;
+
+          const storeDataInIndexedDB = (key, data) => {
+            const transaction = db.transaction(['PatientsStoreKd3'], 'readwrite');
+            const store = transaction.objectStore('PatientsStoreKd3');
+            const request = store.put({ id: key, data: data });
+
+            request.onerror = function (e) {
+              console.error('Error adding data to IndexedDB:', e.target.error);
+            };
+
+            request.onsuccess = function () {
+              console.log('Data added to IndexedDB successfully!');
+            };
+          };
+
+          const getDataFromIndexedDB = (key) => {
+            const transaction = db.transaction(['PatientsStoreKd3'], 'readonly');
+            const store = transaction.objectStore('PatientsStoreKd3');
+            const request = store.get(key);
+
+            request.onerror = function (e) {
+              console.error('Error fetching data from IndexedDB:', e.target.error);
+            };
+
+            request.onsuccess = function () {
+              if (request.result) {
+                const cachedData = request.result.data;
+                patients.value = cachedData; // Set the value from IndexedDB to the component data
+                console.log('Retrieved data from IndexedDB:', cachedData);
+              } else {
+                // If data is not found in IndexedDB, fetch it from the API
+                fetchDataFromAPI();
+              }
+            };
+          };
+
+          const fetchDataFromAPI = async () => {
+            const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist');
+            if (!response.ok) {
+              throw new Error('Failed to fetch patients');
+            }
+            const data = await response.json();
+            patients.value = data; // Set the fetched patients to the component data
+            storeDataInIndexedDB(cacheKey, data); // Cache the fetched patients in IndexedDB
+          };
+
+          // Check if data is available in IndexedDB and retrieve it
+          getDataFromIndexedDB(cacheKey);
+        };
       } catch (error) {
-        console.error('Error fetching patients:', error);
+        console.error('Error handling patients data:', error);
         // Handle the error appropriately (show a message, retry, etc.)
-        return Promise.reject(error);
       }
     };
+
 
     const fetchUserFilters = async () => {
       try {
         const response = await fetch('/patients/getuser-filters');
         const data = await response.json();
         // Fetch patients and wait for the data before updating selectedPatients
-        const fetchedPatients = await fetchPatients(data.practice);
+        //const fetchedPatients = await fetchPatients(data.practice);
 
         selectedPractice.value = data.practice;
-        if (fetchedPatients && fetchedPatients.length > 0) {
-          selectedPatients.value = data.patient;
-        }
+        /*  if (fetchedPatients && fetchedPatients.length > 0) {
+           selectedPatients.value = data.patient;
+         } */
+        selectedPatients.value = data.patient;
         selectedOption.value = data.timeoption;
         timeValue.value = data.time;
         activedeactivestatus.value = data.patientstatus;
@@ -262,16 +313,16 @@ export default {
       try {
 
         await getPatientList(
-          selectedPractice.value,
-          selectedPatients.value,
-          patientsmodules.value,
-          selectedOption.value,
+          selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
         // Destroy and reinitialize DataTable on form submission
         await saveFilters();
-        
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -280,10 +331,10 @@ export default {
     let pratices, patents, patentsmodules, tmeoption, tme, actvedeactivestatus;
     const saveFilters = async () => {
       try {
-        pratices = selectedPractice.value;
-        patents = selectedPatients.value;
-        patentsmodules = patientsmodules.value;
-        tmeoption = selectedOption.value;
+        pratices = selectedPractice.value || null;
+        patents = selectedPatients.value || null;
+        patentsmodules = patientsmodules.value || null;
+        tmeoption = selectedOption.value || null;
         tme = timeValue.value || null;
         actvedeactivestatus = activedeactivestatus.value || null;
         console
@@ -312,6 +363,13 @@ export default {
     }
 
     const initDataTable = async () => {
+      $('#patient-list').on('click', '.ActiveDeactiveClass', (event) => {
+        // Extract the row data using DataTable API
+        const table = $('#patient-list').DataTable();
+        const rowData = table.row($(event.target).closest('tr')).data();
+        // Call the Vue method with the extracted parameters from the row
+        callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
+      });
       let tableInstance;
       const columns = [
         {
@@ -399,7 +457,7 @@ export default {
         loading.value = false;
         const data = await response.json();
         dataTable.value = data.data; // Replace data with the actual fetched data
-          initDataTable(dataTable.value);
+        initDataTable(dataTable.value);
       } catch (error) {
         console.error('Error fetching patient list:', error);
         loading.value = false;
@@ -407,64 +465,61 @@ export default {
     };
 
     const callExternalFunctionWithParams = (param1, param2) => {
-      console.log('You clicked me,Modal button clicked'+param1+param2);
-      //showModal.value = true;
       const activeDeactiveModal = document.getElementById('active-deactive');
       if (activeDeactiveModal) {
-    $(activeDeactiveModal).modal('show'); // Use jQuery to show the modal
-   
-  } else {
-    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-  }
+        $(activeDeactiveModal).modal('show'); // Use jQuery to show the modal
+      } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+      }
 
-  var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
-    patientId = parts[parts.length - 1];
-  if ($.isNumeric(patientId) == true) {
-    //patient list
-    var patientId = $("#hidden_id").val();
-    var module = $("input[name='module_id']").val();
-    var status = $("#service_status").val();
-    $('#enrolledservice_modules').val(module).trigger('change');
-    $('#enrolledservice_modules').change();
-    // util.getPatientDetails(patientId, module);
-  } else {
-    //worklist 
-    var patientId = param1;
-    var selmoduleId = $("#modules").val();
-    util.getPatientEnrollModule(patientId, selmoduleId);
-    var status = param2;
-    $("form[name='active_deactive_form'] #worklistclick").val("1");
-    $("form[name='active_deactive_form'] #patientid").val(patientId);
-    $("form[name='active_deactive_form'] #date_value").hide();
-    $("form[name='active_deactive_form'] #fromdate").hide();
-    $("form[name='active_deactive_form'] #todate").hide();
-    if (status == 0) {
-      $("form[name='active_deactive_form'] #role1").show();
-      $("form[name='active_deactive_form'] #role0").hide();
-      $("form[name='active_deactive_form'] #role2").show();
-      $("form[name='active_deactive_form'] #role3").show();
-    }
-    if (status == 1) {
-      $("form[name='active_deactive_form'] #role1").hide();
-      $("form[name='active_deactive_form'] #role0").show();
-      $("form[name='active_deactive_form'] #role2").show();
-      $("form[name='active_deactive_form'] #role3").show();
-    }
-    if (status == 2) {
-      // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
-      $("form[name='active_deactive_form'] #role1").show();
-      $("form[name='active_deactive_form'] #role0").show();
-      $("form[name='active_deactive_form'] #role2").hide();
-      $("form[name='active_deactive_form'] #role3").show();
-    }
-    if (status == 3) {
-      $("form[name='active_deactive_form'] #role1").show();
-      $("form[name='active_deactive_form'] #role0").show();
-      $("form[name='active_deactive_form'] #role2").show();
-      $("form[name='active_deactive_form'] #role3").hide();
-    }
-  }
+      var sPageURL = window.location.pathname;
+      parts = sPageURL.split("/"),
+        patientId = parts[parts.length - 1];
+      if ($.isNumeric(patientId) == true) {
+        //patient list
+        var patientId = $("#hidden_id").val();
+        var module = $("input[name='module_id']").val();
+        var status = $("#service_status").val();
+        $('#enrolledservice_modules').val(module).trigger('change');
+        $('#enrolledservice_modules').change();
+        // util.getPatientDetails(patientId, module);
+      } else {
+        //worklist 
+        var patientId = param1;
+        var selmoduleId = $("#modules").val();
+        util.getPatientEnrollModule(patientId, selmoduleId);
+        var status = param2;
+        $("form[name='active_deactive_form'] #worklistclick").val("1");
+        $("form[name='active_deactive_form'] #patientid").val(patientId);
+        $("form[name='active_deactive_form'] #date_value").hide();
+        $("form[name='active_deactive_form'] #fromdate").hide();
+        $("form[name='active_deactive_form'] #todate").hide();
+        if (status == 0) {
+          $("form[name='active_deactive_form'] #role1").show();
+          $("form[name='active_deactive_form'] #role0").hide();
+          $("form[name='active_deactive_form'] #role2").show();
+          $("form[name='active_deactive_form'] #role3").show();
+        }
+        if (status == 1) {
+          $("form[name='active_deactive_form'] #role1").hide();
+          $("form[name='active_deactive_form'] #role0").show();
+          $("form[name='active_deactive_form'] #role2").show();
+          $("form[name='active_deactive_form'] #role3").show();
+        }
+        if (status == 2) {
+          // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
+          $("form[name='active_deactive_form'] #role1").show();
+          $("form[name='active_deactive_form'] #role0").show();
+          $("form[name='active_deactive_form'] #role2").hide();
+          $("form[name='active_deactive_form'] #role3").show();
+        }
+        if (status == 3) {
+          $("form[name='active_deactive_form'] #role1").show();
+          $("form[name='active_deactive_form'] #role0").show();
+          $("form[name='active_deactive_form'] #role2").show();
+          $("form[name='active_deactive_form'] #role3").hide();
+        }
+      }
     };
 
     return {

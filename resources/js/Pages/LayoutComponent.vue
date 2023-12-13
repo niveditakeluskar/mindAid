@@ -28,7 +28,6 @@ export default {
       var str = window.location.href;
       var patientId = 0;
       str = str.split("/");
-      console.log("str length", str.length);
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
@@ -51,9 +50,38 @@ export default {
     },
     initializeScripts(moduleID, patientId) {
 
+  axios({
+    method: "GET",
+    url: "/task-management/patient-to-do/".concat(patientId, "/").concat(moduleID, "/list")
+  }).then(function (response) {
+    // console.log(response.data);
+    $("#toDoList").html(response.data);
+    //alert();
+    $('.badge').html($('#count_todo').val());
+  })["catch"](function (error) {
+    console.error(error, error.response);
+  });
 
-      util.getToDoListData(patientId, moduleID);
-      util.totalTimeSpentByCM();
+
+  axios({
+    method: "GET",
+    url: "/patients/getCMtotaltime"
+  }).then(function (response) {
+    var data = JSON.stringify(response.data);
+    if (data == "null" || data == "") {
+      var totalpatients = "00";
+      var totaltime = "00";
+    } else {
+      var totalpatients = response.data[0].totalpatients;
+      var totaltime = response.data.minutes;
+    }
+    var finaldata = " : " + totaltime + " / " + totalpatients;
+    $(".cmtotaltimespent").html(finaldata);
+    //console.log(response.data[0].totalpatients+" checkdata "+finaldata+"testdata"+data);
+  })["catch"](function (error) {
+    console.error(error, error.response);
+  });
+
       var $body = $("body");
       $('#dark-checkbox').change(function () {
         if ($(this).prop('checked')) {
@@ -71,6 +99,41 @@ export default {
           }
         });
       });
+
+
+      $(document).ready(function() {
+            localStorage.setItem("idleTime", 0);
+            var data;
+  axios({
+    method: "GET",
+    url: "/system/get-session-logout-time-with-popup-time"
+  }).then(function (response) {
+    var data = response.data;
+    var logoutPopupTime = data.logoutpoptime;
+    var sessionTimeout = data.session_timeout;
+    var sessionTimeoutInSeconds = sessionTimeout * 60;
+    var showPopupTime = sessionTimeoutInSeconds - logoutPopupTime;
+    localStorage.setItem("idleTime", 0);
+ localStorage.setItem("sessionTimeoutInSeconds", sessionTimeoutInSeconds); //changes by ashvini
+ localStorage.setItem("showPopupTime", showPopupTime); //changes by ashvini
+    var dt = new Date();
+   localStorage.setItem("systemDate", dt);
+ })["catch"](function (error) {
+    console.error(error, error.response);
+  });
+            var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
+            $(this).mousemove(function(e) {
+                // idleTime = 0;
+                localStorage.setItem("idleTime", 0);
+            });
+            $(this).keypress(function(e) {
+                // idleTime = 0;
+                localStorage.setItem("idleTime", 0);
+            });
+        
+        });
+
+        
       //end of initializeScripts
     }
   },

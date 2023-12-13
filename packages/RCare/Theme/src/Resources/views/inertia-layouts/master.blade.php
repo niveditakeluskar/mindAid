@@ -200,7 +200,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary float-right submit-active-deactive">Submit</button>
+                                <button type="button" class="btn btn-primary float-right submit-active-deactive">Submit</button>
                                 <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
                             </div>
                         </div>
@@ -214,85 +214,17 @@
     <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}
     {{-- form.basic --}}
-    <script src="{{asset('assets/js/form.basic.script.js')}}"></script>
+    <!-- <script src="{{asset('assets/js/form.basic.script.js')}}"></script>-->
     {{-- theme javascript --}}
-    <script src="{{asset('assets/js/script.js')}}"></script>
-    <script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>
+     <script src="{{asset('assets/js/script.js')}}"></script>
+    <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
-    <script src="{{asset('assets/js/laravel/app.js')}}"></script>
+    <script src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     {{-- page specific javascript --}}
     <script src="{{asset('assets/js/customizer.script.js')}}"></script>
     <script src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
-   <script>
-function setIntervalMCFunctionAgain() {
-            var id = $("input[name='patient_id']").val();
-            $.ajax({
-                url: "/messaging/get-message-count",
-                type: 'GET',
-                // dataType: 'json', // added data type
-                success: function(res) {
-                    $(".message-notification").html('');
-                    $(".message-notification").append(res.trim());
-                    setTimeout(function() {
-                        setIntervalMCFunction();
-                    }, 10000);
-                }
-            });
-        }
-
-        function setIntervalMCFunction() {
-            var id = $("input[name='patient_id']").val();
-            $.ajax({
-                url: "/messaging/get-message-count",
-                type: 'GET',
-                success: function(res) {
-                    $(".message-notification").html('');
-                    $(".message-notification").append(res.trim());
-                    setTimeout(function() {
-                        setIntervalMCFunctionAgain();
-                    }, 10000);
-                }
-            });
-        }
-       
-        $(document).ready(function() {
-            localStorage.setItem("idleTime", 0);
-            util.getSessionLogoutTimeWithPopupTime();
-            var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
-            $(this).mousemove(function(e) {
-                // idleTime = 0;
-                localStorage.setItem("idleTime", 0);
-            });
-            $(this).keypress(function(e) {
-                // idleTime = 0;
-                localStorage.setItem("idleTime", 0);
-            });
-            var $body = $("body");
-            // //Dark version
-            $('#dark-checkbox').change(function() {
-                if ($(this).prop('checked')) {
-                    $body.addClass("dark-theme");
-                    var ch = 1;
-                } else {
-                    $body.removeClass("dark-theme");
-                    var ch = 0;
-                }
-                $.ajax({
-                    method: "get",
-                    url: "/org/ajax/theme-dark",
-                    data: {
-                        darkmode: ch
-                    }
-                });
-            });
-            setIntervalMCFunction();
-            setTimeout(function() {
-                document.getElementById("customizer_id").style.display = "block";
-            }, 3000);
-            util.totalTimeSpentByCM();
-        });
-
-    var checkTimeInterval = function timerIncrement() {
+    <script>
+        var checkTimeInterval = function timerIncrement() {
             // idleTime = idleTime + 1; //Calls every 1 seconds
             sessionIdleTime = localStorage.getItem("idleTime");
 
@@ -309,9 +241,9 @@ function setIntervalMCFunctionAgain() {
             var idleTime = parseInt(sessionIdleTime) + (res % 60);
 
 
-            console.log("idleTime-" + idleTime);
+            //console.log("idleTime-" + idleTime);
             // console.log("showPopupTime-"+showPopupTime);
-            // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
+             console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
 
 
             if (idleTime >= showPopupTime) {
@@ -351,6 +283,7 @@ function setIntervalMCFunctionAgain() {
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
-   </script>
+    </script>
 </body>
+
 </html>

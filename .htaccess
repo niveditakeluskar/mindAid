@@ -1,0 +1,14 @@
+# Cache CSS files for one week
+<FilesMatch "\.(css)$">
+  Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+
+# Cache JavaScript files for one week
+<FilesMatch "\.(js)$">
+  Header set Cache-Control "max-age=604800, public"
+</FilesMatch>
+
+# Cache images for one month
+<FilesMatch "\.(ico|jpg|jpeg|png|gif|webp)$">
+  Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>

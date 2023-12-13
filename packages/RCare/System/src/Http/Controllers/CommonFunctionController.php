@@ -867,16 +867,9 @@ class CommonFunctionController extends Controller
         $patient_id                     = sanitizeVariable($patientID);
         $module_id                      = sanitizeVariable($moduleId);
         $timeArray                      = [];
-<<<<<<< HEAD
 
-        if ($patient_id != '0') {
-            $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
-            if ($patientID == 'null') {
-                $totalTime = '00:00:00';
-                if ($startTime != 'null') {
-                    $StartTime = explode(" ", $startTime);
-                    $totalTime = date("H:i:s", strtotime($nowTime) - strtotime($StartTime[1]));
-=======
+        
+
         $nowTime = date("H:i:s", $_SERVER['REQUEST_TIME']);
         if($patient_id != '0'){
             
@@ -885,7 +878,6 @@ class CommonFunctionController extends Controller
                 if($startTime != 'null'){
                     //$StartTime = explode(" ",$startTime);
                     $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
->>>>>>> fd751b39a2334e1d5a600f43e8fdd82db54ba474
                 }
             } else {
                 $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
@@ -895,21 +887,12 @@ class CommonFunctionController extends Controller
                 $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
                 $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
                 $timeArray['non_billable_time'] = $checkNonBillableTime;
-<<<<<<< HEAD
-
-                if ($startTime == 'null') {
-                    $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
-                } else {
-                    $StartTime = explode(" ", $startTime);
-                    $totalTime = date("H:i:s", strtotime($nowTime) - strtotime($StartTime[1]) + strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
-=======
     
                 if($startTime == 'null'){
                     $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
                 }else{
                     //$StartTime = explode(" ",$startTime);
                     $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime)+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
->>>>>>> fd751b39a2334e1d5a600f43e8fdd82db54ba474
                 }
             }
 
