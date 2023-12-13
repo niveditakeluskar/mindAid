@@ -788,7 +788,8 @@ function ApiECGCredeintials()
 }
 
 function getNetTime($start_time, $end_time) {
-    /*$start          = strtotime($start_time); 
+	/*dd($start_time.', '.$end_time);
+    $start          = strtotime($start_time); 
     $end            = strtotime($end_time); 
     $totaltime      = ($end - $start)  ; 
     $hours          = intval($totaltime / 3600);   
