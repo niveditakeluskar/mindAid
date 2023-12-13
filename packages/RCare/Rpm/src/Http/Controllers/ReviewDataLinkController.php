@@ -138,7 +138,8 @@ class ReviewDataLinkController extends Controller
         unit,
         hrunit,
         
-        to_char(effdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csseffdate  
+        --to_char(effdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS')
+        effdate as csseffdate  
         from patients.sp_patientdetailvitalalertsdevicelink($pat,'".$u."',timestamp '".$dt1."',timestamp '".$dt2."')";       
 //dd($query);
         $data = DB::select( DB::raw($query) ); 

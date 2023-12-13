@@ -208,6 +208,12 @@ class MioDeviceController extends Controller {
                         where  id= '".$id."' and device_id='".$device_id."' "));
                     }
                     }
+
+                    $count = Observation_BP::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+                    if($count == 16){
+                        $SID1          = getFormStageId(2, $ccmSubModule[0]->id, 'Sixteen Reading');
+                        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID1);
+                    }
             // }
        
             }else{
