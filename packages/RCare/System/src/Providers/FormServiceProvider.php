@@ -1594,6 +1594,21 @@ class FormServiceProvider extends ServiceProvider
             ?>';
         });
 
+        Blade::directive("selectpatientDevice", function ($expression) {
+            return '<?php
+                $params     = [' . $expression . '];
+                $name       = $params[0];
+                $attributes = defaultParameter($params, 1, []);
+                $selected   = defaultParameter($params, 2, "");
+                $options    = [];
+                foreach (RCare\Patients\Models\PatientDevices::device() as $patient_device) {
+                    $options[$patient_device->id] = $patient_device->device_code;
+                }
+                $options = array_unique($options); 
+                echo RCare\System\Support\Form::select("Pateint Device", $name, $options, $attributes, $selected);
+            ?>';
+        });
+
         Blade::directive("selectcaremanager", function ($expression) {
             return '<?php
                 $params     = [' . $expression . ']; 

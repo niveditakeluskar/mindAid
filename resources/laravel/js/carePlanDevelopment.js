@@ -1775,6 +1775,7 @@ function deleteMedications(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this Medication?")) {
 		$.ajaxSetup({
 			headers: {
@@ -1793,7 +1794,8 @@ function deleteMedications(id, formsObj) {
 				'&stage_id=' + stage_id +
 				'&step_id=' + step_id +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				if (module == 'care-plan-development') {
@@ -1803,6 +1805,7 @@ function deleteMedications(id, formsObj) {
 					renderMedicationsTableData();
 				}
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
@@ -1830,6 +1833,7 @@ function deleteAllergies(id, type, patient_id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	var result = confirm("Are you sure you want to delete this allergy?");
 	if (result) {
 		$.ajaxSetup({
@@ -1849,14 +1853,15 @@ function deleteAllergies(id, type, patient_id, formsObj) {
 				'&stage_id=' + stage_id +
 				'&step_id=' + step_id +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				if (type == 'food') {
 					util.refreshAllergyCountCheckbox(patient_id, type, formName);
 					if (module == 'care-plan-development') {
 						CompletedCheck();
-						renderfoodTable();
+						renderFoodTable();
 					} else {
 						renderFoodTableData();
 					}
@@ -1914,6 +1919,7 @@ function deleteAllergies(id, type, patient_id, formsObj) {
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
 				$("#time-container").val(AppStopwatch.startClock);
+				$(".form_start_time").val(response.form_start_time);
 			},
 		});
 	} else {
@@ -1963,6 +1969,7 @@ function deleteServices(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	var result = confirm("Are you sure you want to delete this Service ?");
 	if (result) {
 		$.ajaxSetup({
@@ -1982,7 +1989,8 @@ function deleteServices(id, formsObj) {
 				'&stage_id=' + stage_id +
 				'&step_id=' + step_id +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				if (module == 'care-plan-development') {
@@ -2004,6 +2012,7 @@ function deleteServices(id, formsObj) {
 					renderTherapyServicesTableData();
 				}
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
@@ -2101,6 +2110,7 @@ function deletePatientDignosis(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	var result = confirm("Are you sure you want to delete the Condition");
 	if (result) {
 		$.ajaxSetup({
@@ -2120,7 +2130,8 @@ function deletePatientDignosis(id, formsObj) {
 				'&stage_id=' + stage_id +
 				'&step_id=' + step_id +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				if (module == 'care-plan-development') {
@@ -2138,6 +2149,7 @@ function deletePatientDignosis(id, formsObj) {
 					util.getPatientStatus(patient_id, module_id);
 				}
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
@@ -2170,6 +2182,7 @@ function deleteSiblingData(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this data?")) {
 		$.ajaxSetup({
 			headers: {
@@ -2189,31 +2202,33 @@ function deleteSiblingData(id, formsObj) {
 				'&step_id=' + step_id +
 				'&tab_name=' + tab_name +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
 				$("#time-container").val(AppStopwatch.startClock);
 
-				if ($.trim(response) == 'live-with') {
+				if ($.trim(response.msg) == 'live-with') {
 					$("form[name='" + formName + "'] #relational_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("disabled", false);
 				}
-				if ($.trim(response) == 'sibling') {
+				if ($.trim(response.msg) == 'sibling') {
 					$("form[name='" + formName + "'] #relational_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("disabled", false);
 				}
-				if ($.trim(response) == 'children') {
+				if ($.trim(response.msg) == 'children') {
 					$("form[name='" + formName + "'] #relational_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("disabled", false);
 				}
-				if ($.trim(response) == 'grandchildren') {
+				if ($.trim(response.msg) == 'grandchildren') {
 					$("form[name='" + formName + "'] #relational_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #relational_status_no").prop("disabled", false);
@@ -2245,6 +2260,7 @@ function deleteSpecialistProviderPatient(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this Specialist Provider Data?")) {
 		$.ajaxSetup({
 			headers: {
@@ -2263,7 +2279,8 @@ function deleteSpecialistProviderPatient(id, formsObj) {
 				'&stage_id=' + stage_id +
 				'&step_id=' + step_id +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				if (module == 'care-plan-development') {
@@ -2273,6 +2290,7 @@ function deleteSpecialistProviderPatient(id, formsObj) {
 					renderOtherProviderSpecialistTableData();
 				}
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
@@ -2303,6 +2321,7 @@ function deleteHobbiesData(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this data?")) {
 		$.ajaxSetup({
 			headers: {
@@ -2322,15 +2341,17 @@ function deleteHobbiesData(id, formsObj) {
 				'&step_id=' + step_id +
 				'&hobbies_status=' + hobbies_status +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
 				$("#time-container").val(AppStopwatch.startClock);
-				if ($.trim(response) == 'nothing') {
+				if ($.trim(response.msg) == 'nothing') {
 					$("form[name='" + formName + "'] #hobbies_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #hobbies_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #hobbies_status_no").prop("disabled", false);
@@ -2363,6 +2384,7 @@ function deletePetData(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this data?")) {
 		$.ajaxSetup({
 			headers: {
@@ -2382,15 +2404,17 @@ function deletePetData(id, formsObj) {
 				'&step_id=' + step_id +
 				'&pet_status=' + pet_status +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
 				$("#time-container").val(AppStopwatch.startClock);
-				if ($.trim(response) == 'nothing') {
+				if ($.trim(response.msg) == 'nothing') {
 					$("form[name='" + formName + "'] #pet_status_yes").prop("checked", false);
 					$("form[name='" + formName + "'] #pet_status_no").prop("checked", false);
 					$("form[name='" + formName + "'] #pet_status_no").prop("disabled", false);
@@ -2423,6 +2447,7 @@ function deleteTraveltData(id, formsObj) {
 	var timer_start = $("#timer_start").val();
 	var timer_paused = $("#time-container").text();
 	var billable = $("form[name='" + formName + "'] input[name='billable']").val();
+	var form_start_time = $("form[name='" + formName + "'] .form_start_time").val();
 	if (confirm("Are you sure you want to delete this data?")) {
 		$.ajaxSetup({
 			headers: {
@@ -2442,16 +2467,18 @@ function deleteTraveltData(id, formsObj) {
 				'&step_id=' + step_id +
 				'&travel_status=' + travel_status +
 				'&form_name=' + form_name +
-				'&billable=' + billable
+				'&billable=' + billable +
+				'&form_start_time=' + form_start_time
 			,
 			success: function (response) {
 				util.updateTimer($("input[name='patient_id']").val(), billable, $("input[name='module_id']").val());
+				$(".form_start_time").val(response.form_start_time);
 				$("#time-container").val(AppStopwatch.pauseClock);
 				$("#timer_start").val(timer_paused);
 				$("#timer_end").val(timer_paused);
 				$("#time-container").val(AppStopwatch.startClock);
 
-				if ($.trim(response) == 'nothing') {
+				if ($.trim(response.msg) == 'nothing') {
 					$("form[name=" + formName + "] #hobbies_status_yes").prop("checked", false);
 					$("form[name=" + formName + "] #hobbies_status_no").prop("checked", false);
 					$("form[name=" + formName + "] #hobbies_status_no").prop("disabled", false);
