@@ -42,7 +42,7 @@
                               <SubStepGeneralQuestions :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                               <SubStepCallClose />
                               <SubStepCallWrapUp />
-                              <FollowUp />
+                              <FollowUp :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                               <Text :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                            </div>
                         </div>

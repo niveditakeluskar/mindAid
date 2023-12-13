@@ -129,6 +129,7 @@ import {
   // Add other common imports if needed
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
+import axios from 'axios';
 export default {
   components: {
     LayoutComponent,
@@ -482,12 +483,25 @@ export default {
         var status = $("#service_status").val();
         $('#enrolledservice_modules').val(module).trigger('change');
         $('#enrolledservice_modules').change();
-        // util.getPatientDetails(patientId, module);
       } else {
         //worklist 
         var patientId = param1;
         var selmoduleId = $("#modules").val();
-        util.getPatientEnrollModule(patientId, selmoduleId);
+        axios({
+        method: "GET",
+        url: `/patients/patient-module/${patientId}/patient-module`,
+    }).then(function (response) {
+        $('.enrolledservice_modules').html('');
+      const  enr = response.data;
+      var count_enroll = enr.length;
+        for (var i = 0; i < count_enroll; i++) {
+            $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
+        }
+        $("#enrolledservice_modules").val(selmoduleId).trigger('change');
+        // $("#patient-Ajaxdetails-model").html(response.data);
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
         var status = param2;
         $("form[name='active_deactive_form'] #worklistclick").val("1");
         $("form[name='active_deactive_form'] #patientid").val(patientId);

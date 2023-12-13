@@ -80,8 +80,7 @@ class PatientWorklistController extends Controller
         //  dd($query);
         $data = DB::select($query);
         $patientcount = $data[0]->totalpatients;
-
-        if ($patientcount != "" || $patientcount != 0 || $patientcount != null) {
+        if ($patientcount != "" && $patientcount != 0 && $patientcount != null) {
             $time = $data[0]->totaltime;
             $timesplit = explode(':', $time);
             $min1 = ($timesplit[0] * 60) + ($timesplit[1]) + ($timesplit[2] / 60);
@@ -911,17 +910,16 @@ class PatientWorklistController extends Controller
 
             ->addColumn('activedeactive', function ($row) {
 
-                if($row->pstatus == 1 && $row->pstatus!=0 && $row->pstatus!=2 && $row->pstatus!=3){
-                    $btn ='<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("'.$row->pid.'","'.$row->pstatus.'") data-target="#active-deactive"  id="active_deactive">             
-                    <i class="i-Yess i-Yes"  title="Patient Status"></i></a>'; 
-                } else { 
-                    $btn ='<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("'.$row->pid.'","'.$row->pstatus.'") data-target="#active-deactive"  id="active_deactive"> 
-                    <i class="i-Closee i-Close" title="Patient Status"></i></a>'; 
-                    
-                } 
-                return $btn;  
+                if ($row->pstatus == 1 && $row->pstatus != 0 && $row->pstatus != 2 && $row->pstatus != 3) {
+                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
+                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("' . $row->pid . '","' . $row->pstatus . '") data-target="#active-deactive"  id="active_deactive">             
+                    <i class="i-Yess i-Yes"  title="Patient Status"></i></a>';
+                } else {
+                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
+                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("' . $row->pid . '","' . $row->pstatus . '") data-target="#active-deactive"  id="active_deactive"> 
+                    <i class="i-Closee i-Close" title="Patient Status"></i></a>';
+                }
+                return $btn;
             })
             ->addColumn('addaction', function ($row) {
                 $btn = '<a href="javascript:void(0)"  data-toggle="modal" data-id="' . $row->pid . '/' . $row->ptrtotaltime . '/' . $row->ppracticeid . '/' . $row->psmodule_id . '" data-target="#add-activities" id="add-activity"
