@@ -3110,6 +3110,7 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
         $(".change_status_flag").attr("disabled", false);
+        $('.click_id').css({'opacity':'','pointer-events':''}); 
         $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
@@ -3153,6 +3154,7 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
             $(".change_status_flag").attr("disabled", true);
+            $('.click_id').css({'opacity':'0.5','pointer-events':'none'}); 
             $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
