@@ -4135,6 +4135,10 @@ var init = function () {
 			$("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn  btn-primary m-1" id="save-callstatus">Next</button>');
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='call_action_script'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #call_scripts_select option:selected").val(), '.call_answer_template', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+			
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		} else if (checked_call_option == 2 || checked_call_option == "2") {
 			$('.invalid-feedback').html('');
 			$("form[name='callstatus_form'] #callAnswer").hide();
@@ -4146,6 +4150,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn btn-primary m-1 call_status_submit" id="save_schedule_call">Schedule Call</button>');
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='content_title'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #ccm_content_title option:selected").val(), '#ccm_content_area', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		}
 	});
 
@@ -4170,6 +4177,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='call_action_script'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #call_scripts_select").val(), '.call_answer_template');
 			$("form[name='callstatus_form'] input[name='content_title']").val($("form[name='callstatus_form'] #call_scripts_select option:selected").text());
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		} else if (checked_call_option == '2') {
 			$('.invalid-feedback').html('');
 			$("form[name='callstatus_form'] #notAnswer").show();
@@ -4179,6 +4189,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='content_title'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #ccm_content_title").val(), '#ccm_content_area');
 			$("form[name='callstatus_form'] input[name='content_title']").val($("form[name='callstatus_form'] #ccm_content_title option:selected").text());
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		}
 	});
 

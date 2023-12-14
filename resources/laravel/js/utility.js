@@ -3109,6 +3109,8 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $('.form_start_time').val(response.data.form_start_time);
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
+        $(".change_status_flag").attr("disabled", false);
+        $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
             pause_stop_flag = 0;
@@ -3150,6 +3152,8 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             updateTimer(patientId, billable, moduleId);
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
+            $(".change_status_flag").attr("disabled", true);
+            $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
             alert("Timer paused and Time Logged successfully.");
@@ -4351,6 +4355,7 @@ var setLandingTime = function () {
         var landing_time = data['landing_time'];
         $("#page_landing_times").val(landing_time);
         $(".form_start_time").val(landing_time);
+        $('#stopwatch').css("display", "block");
     }).catch(function (error) {
         console.error(error, error.response);
     });
