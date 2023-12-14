@@ -19,12 +19,19 @@
 	                        <div class="col-md-12">
 								<div class='row ml-1'> 
 									<div class="col-md-4 form-group">
-										@text("task_name[]",["id"=>"task_name","placeholder"=>"Task"])
+										<input type="text" name="task_name[]" id="task_name" placeholder="Task" />
 									</div>
 									<div class="col-md-4 form-group selects" id="followupTaskDrpdwn_0">
-										@selectfuturefollowuptask("followupmaster_task[]",["id"=>"followupmaster_task"])
+										<select name="followupmaster_task[]" id="followupmaster_task" class="custom-select show-tick select2"
+											v-model="selectedFollowupMasterTask">
+											<option value="">Select Task Category</option>
+											<option v-for="followupMasterTask in followupMasterTaskList" :key="followupMasterTask.id" :value="followupMasterTask.id">
+												{{ followupMasterTask.task }}
+											</option>
+										</select>
+										<!-- @selectfuturefollowuptask("followupmaster_task[]",["id"=>"followupmaster_task"]) -->
 									</div>
-									@hidden("selected_task_name[]",["id"=>"selected_task_name_0"])
+									<input type="hidden" name="selected_task_name[]" id="selected_task_name_0" />
 									<div class="col-md-4 form-group">
 			                                <label class="radio radio-primary col-md-4 float-left">
 			                                    <input type="radio" id="scheduled_0" class="status_flag" name="status_flag[0]" value="0" formControlName="radio" checked>
@@ -43,7 +50,7 @@
 										<textarea name="notes[]" class="forms-element form-control" id="notes_0" placeholder="Notes"></textarea>
 										<div class="invalid-feedback"></div>
 									</div>
-									<div class="col-md-2 form-group">@date('task_date[]',["id"=>"task_date_0"])</div>
+									<div class="col-md-2 form-group"><input type="date" name="task_date[]" id="task_date_0" /></div>
 								</div>
 	                        </div>
 	                        <!-- button add and minus task -->
@@ -70,8 +77,16 @@
 					</div>
 					<hr>	
 					<div class="col-md-12">
-						<div class="table-responsive">
-							<table id="task-list" class="display table table-striped table-bordered" style="width:100%">
+						<div v-if="loading" class="table-responsive loading-spinner">
+							<p>Loading...</p>
+						</div>
+						<div v-else class="table-responsive">
+							<table id="task-list" ref="dataTable" class="display table table-striped table-bordered"
+							style="width:100%">
+							</table>
+						</div>
+						<!-- <div class="table-responsive">
+							<table class="display table table-striped table-bordered" style="width:100%">
 								<thead>
 									<tr>
 										<th>Sr No.</th>                        
@@ -86,7 +101,7 @@
 									</tr>
 								</thead>
 							</table>
-						</div> 
+						</div>  -->
 					</div>
 					<div class="card-footer"> 
 						<div class="mc-footer"></div>
@@ -113,11 +128,11 @@
 							<input type="hidden" name="stage_id" />
 							<input type="hidden" name="step_id" value="0">
 							<input type="hidden" name="form_name" value="followup_task_edit_notes">
-							@hidden('id',['id' =>'hiden_id'])
-							@hidden('topic',['id'=>'topic'])
+							<input type="hidden" name="topic" id="topic" />
+							<input type="hidden" name="id" id="hiden_idhiden_id" />
 							<p><b>Task : </b><span id ="task_notes"></span></p>
 							<p><b>Category : </b><span id ="category"></span> </p>
-							<p>@date('task_date',["id"=>"task_date_val"])</p>
+							<p><input type="date" name="task_date" id="task_date_val" /></p>
 							<textarea id="notes" name ="notes" class="forms-element form-control"></textarea>
 							<div class="form-group col-md-12 mt-2">
 								<label class="forms-element checkbox checkbox-outline-primary">
@@ -134,3 +149,162 @@
 		</div>
 	</div>
 </template>
+<script>
+import {
+	ref,
+	DataTable,
+	// Add other common imports if needed
+} from '../../commonImports';
+import axios from 'axios';
+
+const loading = ref(false);
+const dataTable = ref([]);
+
+export default {
+	props: {
+		patientId: Number,
+		moduleId: Number,
+		componentId: Number,
+	},
+	data() {
+		return {
+			selectedFollowupMasterTask: null,
+			followupMasterTaskList: null,
+		};
+	},
+	mounted() {
+		this.fetchFollowupMasterTask();
+		this.fetchFollowupMasterTaskList();
+		this.initDataTable(dataTable.value);
+	},
+	methods: {
+		async fetchFollowupMasterTask() {
+			await axios.get(`/org/get_future_followup_task`)
+				.then(response => {
+					this.followupMasterTaskList = response.data;
+					console.log("followupMasterTaskList", response.data);
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		},
+		async initDataTable() {
+			$('#task-list').on('click', '.ActiveDeactiveClass', (event) => {
+				// Extract the row data using DataTable API
+				const table = $('#task-list').DataTable();
+				const rowData = table.row($(event.target).closest('tr')).data();
+				// Call the Vue method with the extracted parameters from the row
+				callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
+			});
+			let tableInstance;
+			const columns = [
+				{ title: 'Sr. No.', data: 'DT_RowIndex', name: 'DT_RowIndex' },
+				{ title: 'Task', data: 'task_notes', name: 'task_notes' },
+				{ title: 'Category', data: 'task', name: 'task' },
+				{
+					title: 'Notes', data: 'notes', name: 'notes', render: function (data, type, full, meta) {
+						if (data != '' && data != 'NULL' && data != undefined) {
+							return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
+						} else { return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; }
+					}
+				},
+				{
+					title: 'Date Scheduled', data: 'tt', type: 'date-dd-mm-yyyy',
+					"render": function (value) {
+						if (value === null) return "";
+						return value;
+						// return util.viewsDateFormat(value);
+					}
+				},
+				{
+					title: 'Task Time', data: 'task_time', name: 'task_time',
+					render: function (data, type, full, meta) {
+						if (data != '' && data != 'NULL' && data != undefined) {
+							return full['task_time'];
+						} else {
+							return '';
+						}
+					}
+				},
+				{ title: 'Mark as Complete', data: 'action', name: 'action', orderable: false, searchable: false },
+				{
+					data: 'Task Completed Date', type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at', "render": function (value) {
+						if (value === null) return "";
+						return value;
+						// return util.viewsDateFormat(value);
+					}
+				},
+				{
+					title: 'Created By', data: null,
+					render: function (data, type, full, meta) {
+						if (data != '' && data != 'NULL' && data != undefined) {
+							return full['f_name'] + ' ' + full['l_name'];
+						} else {
+							return '';
+						}
+					}
+				},
+			];
+			const dataTableElement = document.getElementById('task-list');
+			// var url = `/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`;
+			if (dataTableElement) {
+				// util.renderDataTable('task-list', url, columns, "{{ asset('') }}");
+				tableInstance = $(dataTableElement).DataTable({
+					columns: columns,
+					data: dataTable.value,
+					destroy: true,
+					paging: true,
+					searching: true,
+					processing: true,
+					dom: 'Bfrtip',
+					buttons: [
+						{
+							extend: 'copyHtml5',
+							text: '<img src="/assets/images/copy_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Copy">',
+							titleAttr: 'Copy',
+						},
+						{
+							extend: 'excelHtml5',
+							text: '<img src="/assets/images/excel_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel">',
+							titleAttr: 'Excel',
+						},
+						{
+							extend: 'csvHtml5',
+							text: '<img src="/assets/images/csv_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="CSV">',
+							titleAttr: 'CSV',
+						},
+						{
+							extend: 'pdfHtml5',
+							text: '<img src="/assets/images/pdf_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="PDF">',
+							titleAttr: 'PDF',
+						},
+					],
+				});
+
+				tableInstance.clear().rows.add(dataTable.value).draw();
+
+			} else {
+				console.error('DataTables library not loaded or initialized properly');
+			}
+		},
+		async fetchFollowupMasterTaskList() {
+			try {
+				loading.value = true;
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+				const response = await fetch(`/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`);
+				if (!response.ok) {
+					throw new Error('Failed to fetch followup task list');
+				}
+				loading.value = false;
+				const data = await response.json();
+				dataTable.value = data.data; // Replace data with the actual fetched data
+				// console.log("data===followup====", dataTable.value);
+				this.initDataTable(dataTable.value);
+			} catch (error) {
+				console.error('Error fetching followup task list:', error);
+				loading.value = false;
+			}
+		},
+	},
+};
+</script>

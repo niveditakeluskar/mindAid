@@ -28,7 +28,7 @@
                                                 <span id="fin_number" class="patient_fin_number" ></span>
                                             </a>
                                         </span><br/>
-                                        <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#vateran-service" style="background-color:#27a7de;border:none;" id="vateran_service">
+                                        <a class="btn btn-info" id="show-modal" @click="showModal = true">
                                             Veteran Service -
                                             <span v-if="patientDetails.military_status == 0">Yes</span>
                                             <span v-else-if="patientDetails.military_status == 1">No</span>
@@ -132,11 +132,19 @@
             </div>
         </div>
     </div>
+    <modal :show="showModal" @close="showModal = false">
+      <template #header>
+        <h3>custom header</h3>
+      </template>
+    </modal>
 </template>
+  
 <script setup>
+import Modal from '@/Pages/Patients/Components/PatientInfoModel/Modal.vue';
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
+
 const props = defineProps({
     patientId: Number,
     moduleId: Number,
@@ -145,6 +153,7 @@ const props = defineProps({
     patientEnrollServices:[]
 });
 
+const showModal = ref(false)
 const patientDetails = ref(null);
 
 onMounted(async () => {
@@ -208,4 +217,4 @@ function format_date(value) {
     }
 }
 
-</script>
+</script> 

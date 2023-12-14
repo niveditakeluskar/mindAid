@@ -37,22 +37,23 @@
 							</div>
 							<div class="invalid-feedback"></div>
 							<div id="health_issue_notes_div">
-								<label for="q1_notes" class="mr-3">Monthly Notes:</label>
-								<textarea class="forms-element form-control" name="q1_notes"></textarea>
+								<label class="mr-3">Monthly Notes:
+									<textarea class="forms-element form-control" name="q1_notes" id="q1_notes"></textarea>
+								</label>
 								<div class="invalid-feedback"></div>
 							</div>
 						</div>
 						<div class="mb-4">
-							<label for="addressed-issue">Do you have a preferred day and time for our call next month?<span class="error">*</span></label>
+							<span>Do you have a preferred day and time for our call next month?<span class="error">*</span></span>
 							<br>
 							<div class="forms-element d-inline-flex">
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query2" value="1" id="newquery2"  onchange="ccmcpdcommonJS.newcheckquery2(this.value)">
+									<input type="radio" name="query2" value="1" id="newquery2_yes"  onchange="ccmcpdcommonJS.newcheckquery2(this.value)">
 									<span>Yes</span>
 									<span class="checkmark"></span>
 								</label> 
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query2" value="0" id="newquery2"  onchange="ccmcpdcommonJS.newcheckquery2(this.value)">
+									<input type="radio" name="query2" value="0" id="newquery2_no"  onchange="ccmcpdcommonJS.newcheckquery2(this.value)">
 									<span>No</span>
 									<span class="checkmark"></span>
 								</label>
@@ -60,18 +61,23 @@
 							<div class="invalid-feedback"></div>
 							<div id="next_month_call_div" class="nextcall">
 								<div class="mr-3 d-inline-flex align-self-center">
-									<label for="q2_date" class="forms-element mr-3">Select Date:<span class="error">*</span>
-										@date("q2_datetime", ["id"=>"next_month_call_date"])
-									<span id="nextmonth-date" class="error"></span>
+									<label class="forms-element mr-3">Select Date:<span class="error">*</span>
+										<!-- for="next_month_call_date"  -->
+										<!-- @date("q2_datetime", ["id"=>"next_month_call_date"]) -->
+										<input type="date" name="q2_datetime" id="next_month_call_date" />
+										<span id="nextmonth-date" class="error"></span>
 									</label>
 
-									<label for="q2_date" class="forms-element mr-3" >Select Time:<span class="error">*</span>
-										@time("q2_time", ["id"=>"next_month_call_time"])
+									<label class="forms-element mr-3" >Select Time:<span class="error">*</span>
+										<!--  for="next_month_call_time" -->
+										<!-- @time("q2_time", ["id"=>"next_month_call_time"]) -->
+										<input type="time" name="q2_time" id="next_month_call_time" />
 									</label>
 								</div>
 								<div class="">
-									<label for="q2_notes" class="mr-3">Monthly Notes:</label>
-									<textarea class="forms-element form-control" name="q2_notes"></textarea>
+									<label class="mr-3">Monthly Notes:
+										<textarea class="forms-element form-control" name="q2_notes"></textarea>
+									</label>
 									<div class="invalid-feedback"></div>
 								</div>
 							</div>

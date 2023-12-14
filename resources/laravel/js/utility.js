@@ -2766,6 +2766,22 @@ var getPatientDetails = function (patientId, moduleId) {
         }
         $(".patient_device_code").text(device_code)
 
+        var device_status = '';
+        if (response.data.device_status != '') {
+            shipping_status = response.data.device_status;
+            if(shipping_status == 1){
+                device_status = 'Dispatched';
+            }else if(shipping_status == 2){
+                device_status = 'Delivered';
+            }else if(shipping_status == 3){
+                device_status = 'Pending';
+            }else{
+                device_status = ''; 
+            }
+        }
+
+        $(".device_delivery_status").text(device_status);
+
         if (response.data.billable_time != '') {
             $("#btime").html(response.data.billable_time)
         }
@@ -3283,6 +3299,33 @@ var getPracticelistaccordingtopracticegrp = function (practicegrpId, selectEleme
         console.error(error, error.response);
     });
 };
+
+var pateintdevicecode = function(id, selectElement, selecteddevice = null){
+    $(selectElement)
+    .empty()
+    .append('<option value="">Select Device</option>');
+        if (!id) {
+            id = null;
+
+        }
+        if (isNaN(id)) {
+            id = null;
+        }
+        axios({
+            method: "GET",
+            url: `/reports/ajax/patientdevice/${id}/pateintdevice`,
+        }).then(function (response) { console.log(response);
+            // $("<option>").val('0').html('None').appendTo(selectElement);
+            Object.values(response.data).forEach(function (pateint) {
+                $("<option>").val(pateint.id).html(pateint.device_code).appendTo(selectElement);
+            });
+            if (selecteddevice) {
+                selectElement.val(selecteddevice);
+            }
+        }).catch(function (error) {
+            console.error(error, error.response);
+        });
+}
 
 var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectedPractice = null) {
     // alert(practicegrpId);
@@ -4493,6 +4536,7 @@ window.util = {
     updatePhysicianListWithoutOther: updatePhysicianListWithoutOther,
     getPracticelistaccordingtopracticegrp: getPracticelistaccordingtopracticegrp,
     getRpmPatientList: getRpmPatientList,
+    pateintdevicecode : pateintdevicecode ,
     getactivityPracticelistaccordingtopracticegrp: getactivityPracticelistaccordingtopracticegrp,
     getnewactivityPracticelistaccordingtopracticegrp: getnewactivityPracticelistaccordingtopracticegrp,
     getappendPracticelistaccordingtopracticegrp: getappendPracticelistaccordingtopracticegrp,

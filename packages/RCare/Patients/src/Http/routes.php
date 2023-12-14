@@ -330,6 +330,8 @@ Route::middleware(["auth", "web"])->group(function () {
 
         // 4Dec2023  by pranali
         Route::get('/patient-relationship-questionnaire/{patient_id}/{module_id}/{sub_module_id}/patient-relationship-questionnaire', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientRelationshipQuestionnaire')->name('patient_relationship_questionnaire');
+        // 5Dec2023  by pranali
+        Route::get('/patient-fetch-call-history-data/{patient_id}/patient-call-history', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientCallHistoryData')->name('patient_call_history');
     });
 });
 //testunscribed

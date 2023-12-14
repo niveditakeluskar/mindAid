@@ -24,6 +24,7 @@ require("./configurations");
 require("./deviceTraning");
 require("./holiday");
 require("./diagnosisCode");
+require("./enrolledShippingReport");
 require("./carePlanTemplate");
 require("./devices");
 require("./labs");
