@@ -129,51 +129,51 @@
                   </div>
                </div>
             </form>
-            <CallHistory :patientId="patientId" />
+            <CallHistory :patientId="patientId" :patientCallHistory="patientCallHistory" />
          </div>
       </div>
    </div>
 </template>
 <script>
-   import CallHistory from '../../../Messaging/CallHistory.vue';
-   import SendTextMessage from '../../../Messaging/TextMessage.vue';
-   import axios from 'axios';
-   
-   export default {
-      props: {
-         patientId: Number,
-         moduleId: Number,
-         componentId: Number,
+import CallHistory from '../../../Messaging/CallHistory.vue';
+import SendTextMessage from '../../../Messaging/TextMessage.vue';
+import axios from 'axios';
+
+export default {
+   props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
+   data() {
+      return {
+         callAnswerContentScript: null,
+         selectedCallAnswerdContentScript: null,
+         callNotAnswerContentScript: null,
+         selectedCallNotAnswerdContentScript: null,
+         callStatus: null,
+         voiceMailAction: null,
+      };
+   },
+   components: {
+      CallHistory,
+      SendTextMessage,
+   },
+   mounted() {
+      this.fetchCallAnswerContentScript();
+      this.fetchCallNotAnswerContentScript();
+   },
+   methods: {
+      async fetchCallAnswerContentScript() {
+         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/11/content_template`)
+            .then(response => {
+               this.callAnswerContentScript = response.data;
+               console.log("callAnswerContentScript", response.data);
+            })
+            .catch(error => {
+               console.error('Error fetching data:', error);
+            });
       },
-      data() {
-         return {
-            callAnswerContentScript: null,
-            selectedCallAnswerdContentScript: null,
-            callNotAnswerContentScript: null,
-            selectedCallNotAnswerdContentScript: null,
-            callStatus: null,
-            voiceMailAction: null,
-         };
-      },
-      components: {
-         CallHistory,
-         SendTextMessage,
-      },
-      mounted() {
-         this.fetchCallAnswerContentScript();
-         this.fetchCallNotAnswerContentScript();
-      },
-      methods: {
-         async fetchCallAnswerContentScript() {
-            await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/11/content_template`)
-               .then(response => {
-                  this.callAnswerContentScript = response.data;
-                  console.log("callAnswerContentScript", response.data);
-               })
-               .catch(error => {
-                  console.error('Error fetching data:', error);
-               });
-         },
       async fetchCallNotAnswerContentScript() {
          await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/9/content_template`)
             .then(response => {
@@ -184,6 +184,6 @@
                console.error('Error fetching data:', error);
             });
       },
-      },
-   };
+   },
+};
 </script>

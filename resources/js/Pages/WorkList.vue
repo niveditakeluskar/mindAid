@@ -95,47 +95,58 @@
         <div class="col-md-12 mb-4">
           <div class="card text-left">
             <div class="card-body">
-              <div v-if="loading" class="table-responsive loading-spinner">
-                <p>Loading...</p>
-              </div>
-              <div v-else class="table-responsive">
-                <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
+            
+              <div class="table-responsive" style="height: 100vh;">
+              <!--   <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
                   style="width:100%">
-                </table>
+                </table> -->
+                <!-- Ag-Grid Vue component -->
+                <ag-grid-vue
+      style="width: 100%; height: 100%;"
+      class="ag-theme-alpine"
+      :columnDefs="columnDefs.value"
+      :rowData="rowData.value"
+      :defaultColDef="defaultColDef"
+      :gridOptions="gridOptions"
+      rowGroupPanelShow="always"
+    ></ag-grid-vue>
               </div>
 
             </div>
           </div>
         </div>
       </div>
-      <!-- use the modal component, pass in the prop -->
-      <modal :show="showModal" @close="showModal = false">
+ 
+    </div>
+ <!-- use the modal component, pass in the prop -->
+ <modal :show="showModal" @close="showModal = false">
         <template #header>
           <h3>custom header</h3>
         </template>
       </modal>
-    </div>
-
   </LayoutComponent>
 </template>
 
 <script>
 import {
+  reactive,
   ref,
   onMounted,
   computed,
   watch,
-  DataTable,
+  AgGridVue,
   // Add other common imports if needed
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
+
 export default {
   components: {
     LayoutComponent,
-    DataTable,
+    AgGridVue,
   },
   setup() {
+    const rowData = reactive({value:[]}); // Initialize rowData as an empty array
     const loading = ref(false);
     const tableInstance = ref(null); // Define tableInstance using ref()
     const showModal = ref(false);
@@ -149,7 +160,6 @@ export default {
     const timeValue = ref('00:20:00');
     const activedeactivestatus = ref(null);
     const patientsmodules = ref('3');
-
     // Compute the values with checks
     const practice_id = computed(() => selectedPractice.value);
     const patient_id = computed(() => selectedPatients.value);
@@ -160,6 +170,52 @@ export default {
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
 
+    let columnDefs = reactive({value:[
+      {
+      headerName: 'Sr. No.',
+      valueGetter: 'node.rowIndex + 1',
+    },
+      { headerName: 'EMR No.', field: 'pppracticeemr',filter: true },
+      {
+        headerName: 'Patient Name',
+        field: 'pfname',
+        valueGetter: function (params) {
+          const row = params.data;
+          return row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
+        },
+      },
+      { headerName: 'DOB', field: 'pdob' },
+      { headerName: 'Practice', field: 'pracpracticename' },
+      { headerName: 'Last contact Date', field: 'csslastdate' },
+      { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
+      { headerName: 'Action', field: 'action' },
+      {
+        headerName: 'Patient Status',
+        field: 'activedeactive',
+        cellRenderer: function (params) {
+          const row = params.data;
+          if (row.pstatus === 1 && row.pstatus !== undefined) {
+            return `<a href="#" class="ActiveDeactiveClass" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="i-Yess i-Yes" title="Patient Status"></i></a>`;
+          } else {
+            return `<a href="#" class="ActiveDeactiveClass" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="text-20 i-Stopwatch" style="color: red;"></i></a>`;
+          }
+        },
+      },
+      { headerName: 'Call Score', field: 'pssscore' },
+    ]});
+
+
+    const defaultColDef = ref({
+      sortable:true,
+      flex:2,
+    });
+
+    const gridOptions = reactive({
+  // other properties...
+  pagination: true,
+  paginationPageSize: 20, // Set the number of rows per page
+  domLayout: 'autoHeight', // Adjust the layout as needed
+});
     // Watch for changes in selectedPractice
     watch(selectedPractice, (newPracticeId) => {
       fetchPatients(newPracticeId);
@@ -178,7 +234,7 @@ export default {
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
-        initDataTable(dataTable.value);
+       
 
       } catch (error) {
         console.error('Error on page load:', error);
@@ -206,81 +262,22 @@ export default {
     const fetchPatients = async (practiceId) => {
       try {
         if (practiceId === undefined || practiceId === null) {
+          //console.error('Practice ID is empty or invalid.');
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
-
-        const cacheKey = `patients_${practiceId}`;
-        const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-
-        // Open (or create) a database
-        const openRequest = indexedDB.open('PatientDataDBKd3', 1);
-
-        openRequest.onupgradeneeded = function (event) {
-          const db = event.target.result;
-          const objectStore = db.createObjectStore('PatientsStoreKd3', { keyPath: 'id', autoIncrement: true });
-        };
-
-        openRequest.onerror = function (event) {
-          console.error('IndexedDB error:', event.target.errorCode);
-        };
-
-        openRequest.onsuccess = function (event) {
-          const db = event.target.result;
-
-          const storeDataInIndexedDB = (key, data) => {
-            const transaction = db.transaction(['PatientsStoreKd3'], 'readwrite');
-            const store = transaction.objectStore('PatientsStoreKd3');
-            const request = store.put({ id: key, data: data });
-
-            request.onerror = function (e) {
-              console.error('Error adding data to IndexedDB:', e.target.error);
-            };
-
-            request.onsuccess = function () {
-              console.log('Data added to IndexedDB successfully!');
-            };
-          };
-
-          const getDataFromIndexedDB = (key) => {
-            const transaction = db.transaction(['PatientsStoreKd3'], 'readonly');
-            const store = transaction.objectStore('PatientsStoreKd3');
-            const request = store.get(key);
-
-            request.onerror = function (e) {
-              console.error('Error fetching data from IndexedDB:', e.target.error);
-            };
-
-            request.onsuccess = function () {
-              if (request.result) {
-                const cachedData = request.result.data;
-                patients.value = cachedData; // Set the value from IndexedDB to the component data
-                console.log('Retrieved data from IndexedDB:', cachedData);
-              } else {
-                // If data is not found in IndexedDB, fetch it from the API
-                fetchDataFromAPI();
-              }
-            };
-          };
-
-          const fetchDataFromAPI = async () => {
-            const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist');
-            if (!response.ok) {
-              throw new Error('Failed to fetch patients');
-            }
-            const data = await response.json();
-            patients.value = data; // Set the fetched patients to the component data
-            storeDataInIndexedDB(cacheKey, data); // Cache the fetched patients in IndexedDB
-          };
-
-          // Check if data is available in IndexedDB and retrieve it
-          getDataFromIndexedDB(cacheKey);
-        };
+        const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist'); // Call the API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch patients');
+        }
+        const data = await response.json();
+        patients.value = data; // Set the fetched patients to the component data
+        return Promise.resolve(data);
       } catch (error) {
-        console.error('Error handling patients data:', error);
+        console.error('Error fetching patients:', error);
         // Handle the error appropriately (show a message, retry, etc.)
+        return Promise.reject(error);
       }
     };
-
 
     const fetchUserFilters = async () => {
       try {
@@ -360,86 +357,11 @@ export default {
       // Reset form fields and table data
       selectedPractice.value = null;
       selectedPatients.value = [];
-      dataTable.value = [];
     }
 
     const initDataTable = async () => {
-      $('#patient-list').on('click', '.ActiveDeactiveClass', (event) => {
-        // Extract the row data using DataTable API
-        const table = $('#patient-list').DataTable();
-        const rowData = table.row($(event.target).closest('tr')).data();
-        // Call the Vue method with the extracted parameters from the row
-        callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
-      });
-      let tableInstance;
-      const columns = [
-        {
-          title: 'Sr. No.', render: function (data, type, row, meta) {
-            // Use meta.row to get the index of the row and add 1 for the serial number
-            return meta.row + 1;
-          }
-        },
-        { title: 'EMR No.', data: 'pppracticeemr' },
-        {
-          title: 'Patient Name', data: 'pfname', render: function (data, type, row) {
-            const patientName = (row && row.plname) ? row.pfname + ' ' + row.plname : 'N/A';
-            return patientName;
-          }
-        },
-        { title: 'DOB', data: 'pdob' },
-        { title: 'Practice', data: 'pracpracticename' },
-        { title: 'Last contact Date', data: 'csslastdate' },
-        { title: 'Total Time Spent', data: 'ptrtotaltime' },
-        { title: 'Action', data: 'action' },
-        {
-          title: 'Patient Status', data: 'activedeactive',
-          render: function (data, type, row) {
-            if (row.pstatus == 1 && row.pstatus != undefined) {
-              return `<a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="i-Yess i-Yes"  title="Patient Status"></i></a>`;
-            } else {
-              return `<a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click="callExternalFunctionWithParams('${row.pid}','${row.pstatus}')"><i class="text-20 i-Stopwatch" style="color: red;"></a>`;
-            }
-          }
-        },
-        { title: 'Call Score', data: 'pssscore' },
-      ];
-      const dataTableElement = document.getElementById('patient-list');
-      if (dataTableElement) {
-        tableInstance = $(dataTableElement).DataTable({
-          columns: columns,
-          data: dataTable.value,
-          destroy: true,
-          paging: true,
-          searching: true,
-          processing: true,
-          dom: 'Bfrtip',
-          buttons: [
-            {
-              extend: 'copyHtml5',
-              text: '<img src="/assets/images/copy_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Copy">',
-              titleAttr: 'Copy',
-            },
-            {
-              extend: 'excelHtml5',
-              text: '<img src="/assets/images/excel_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel">',
-              titleAttr: 'Excel',
-            },
-            {
-              extend: 'csvHtml5',
-              text: '<img src="/assets/images/csv_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="CSV">',
-              titleAttr: 'CSV',
-            },
-            {
-              extend: 'pdfHtml5',
-              text: '<img src="/assets/images/pdf_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="PDF">',
-              titleAttr: 'PDF',
-            },
-          ],
-        });
-        tableInstance.clear().rows.add(dataTable.value).draw();
-      } else {
-        console.error('DataTables library not loaded or initialized properly');
-      }
+
+      
     };
 
     const getPatientList = async (practice_id,
@@ -457,8 +379,9 @@ export default {
         }
         loading.value = false;
         const data = await response.json();
-        dataTable.value = data.data; // Replace data with the actual fetched data
-        initDataTable(dataTable.value);
+        rowData.value = data.data || []; // Replace data with the actual fetched data
+        //initDataTable();
+        console.log(rowData.value);
       } catch (error) {
         console.error('Error fetching patient list:', error);
         loading.value = false;
@@ -543,7 +466,10 @@ export default {
       selectedPractice,
       selectedPatients,
       dataTableLoaded,
-      dataTable,
+      columnDefs,
+      rowData,
+      defaultColDef,
+      gridOptions,
       practices,
       patients,
       selectedOption,
@@ -559,6 +485,9 @@ export default {
 };
 </script>
 <style>
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css'; /* Use the theme you prefer */
+
 .loading-spinner {
   display: flex;
   justify-content: center;
@@ -566,4 +495,5 @@ export default {
   height: 100px;
   /* Adjust as needed */
 }
+
 </style>

@@ -85,8 +85,20 @@
 							style="width:100%">
 							</table>
 						</div>
-						<!-- <div class="table-responsive">
-							<table class="display table table-striped table-bordered" style="width:100%">
+						<div class="table-responsive">
+						<ag-grid-vue
+							style="width: 100%; height: 100%;"
+							class="ag-theme-alpine"
+							:columnDefs="columnDefs.value"
+							:rowData="rowData.value"
+							:defaultColDef="defaultColDef"
+							:gridOptions="gridOptions"
+							:loadingCellRenderer="loadingCellRenderer"
+										:loadingCellRendererParams="loadingCellRendererParams"
+										:rowModelType="rowModelType"
+										:cacheBlockSize="cacheBlockSize"
+										:maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
+							<!-- <table class="display table table-striped table-bordered" style="width:100%">
 								<thead>
 									<tr>
 										<th>Sr No.</th>                        
@@ -100,8 +112,8 @@
 										<th>Created By</th>
 									</tr>
 								</thead>
-							</table>
-						</div>  -->
+							</table>  -->
+						</div>
 					</div>
 					<div class="card-footer"> 
 						<div class="mc-footer"></div>
@@ -149,22 +161,53 @@
 		</div>
 	</div>
 </template>
+
 <script>
 import {
-	ref,
-	DataTable,
-	// Add other common imports if needed
+		reactive,
+		ref,
+		AgGridVue,
+// Add other common imports if needed
 } from '../../commonImports';
+import LayoutComponent from '../../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
-
 const loading = ref(false);
-const dataTable = ref([]);
-
+const rowData = reactive({ value: [] });
+let columnDefs = reactive({
+	value: [
+		{
+			headerName: 'Sr. No.',
+			valueGetter: 'node.rowIndex + 1',
+		},
+		{ headerName: 'Task', field: 'task_notes', filter: true },
+		{ headerName: 'Category', field: 'task' },
+		{
+			headerName: 'Notes', field: 'notes'
+			// ,
+			// cellRenderer: function (params) {
+			// 	const row = params.data;
+			// 	if (row.pstatus === 1 && row.pstatus !== undefined) {
+			// 		return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
+			// 	} else {
+			// 		return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+			// 	}
+			// },
+		},
+		{ headerName: 'Date Scheduled', field: 'tt' },
+		{ headerName: 'Task Time', field: 'task_time' },
+		{ headerName: 'Mark as Complete', field: 'action' },
+		{ headerName: 'Created By', field: 'action' },
+	]
+});
 export default {
 	props: {
 		patientId: Number,
 		moduleId: Number,
 		componentId: Number,
+	},
+	components: {
+		LayoutComponent,
+		AgGridVue,
 	},
 	data() {
 		return {
@@ -175,7 +218,6 @@ export default {
 	mounted() {
 		this.fetchFollowupMasterTask();
 		this.fetchFollowupMasterTaskList();
-		this.initDataTable(dataTable.value);
 	},
 	methods: {
 		async fetchFollowupMasterTask() {
@@ -188,123 +230,193 @@ export default {
 					console.error('Error fetching data:', error);
 				});
 		},
-		async initDataTable() {
-			$('#task-list').on('click', '.ActiveDeactiveClass', (event) => {
-				// Extract the row data using DataTable API
-				const table = $('#task-list').DataTable();
-				const rowData = table.row($(event.target).closest('tr')).data();
-				// Call the Vue method with the extracted parameters from the row
-				callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
-			});
-			let tableInstance;
-			const columns = [
-				{ title: 'Sr. No.', data: 'DT_RowIndex', name: 'DT_RowIndex' },
-				{ title: 'Task', data: 'task_notes', name: 'task_notes' },
-				{ title: 'Category', data: 'task', name: 'task' },
-				{
-					title: 'Notes', data: 'notes', name: 'notes', render: function (data, type, full, meta) {
-						if (data != '' && data != 'NULL' && data != undefined) {
-							return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
-						} else { return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; }
-					}
-				},
-				{
-					title: 'Date Scheduled', data: 'tt', type: 'date-dd-mm-yyyy',
-					"render": function (value) {
-						if (value === null) return "";
-						return value;
-						// return util.viewsDateFormat(value);
-					}
-				},
-				{
-					title: 'Task Time', data: 'task_time', name: 'task_time',
-					render: function (data, type, full, meta) {
-						if (data != '' && data != 'NULL' && data != undefined) {
-							return full['task_time'];
-						} else {
-							return '';
-						}
-					}
-				},
-				{ title: 'Mark as Complete', data: 'action', name: 'action', orderable: false, searchable: false },
-				{
-					data: 'Task Completed Date', type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at', "render": function (value) {
-						if (value === null) return "";
-						return value;
-						// return util.viewsDateFormat(value);
-					}
-				},
-				{
-					title: 'Created By', data: null,
-					render: function (data, type, full, meta) {
-						if (data != '' && data != 'NULL' && data != undefined) {
-							return full['f_name'] + ' ' + full['l_name'];
-						} else {
-							return '';
-						}
-					}
-				},
-			];
-			const dataTableElement = document.getElementById('task-list');
-			// var url = `/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`;
-			if (dataTableElement) {
-				// util.renderDataTable('task-list', url, columns, "{{ asset('') }}");
-				tableInstance = $(dataTableElement).DataTable({
-					columns: columns,
-					data: dataTable.value,
-					destroy: true,
-					paging: true,
-					searching: true,
-					processing: true,
-					dom: 'Bfrtip',
-					buttons: [
-						{
-							extend: 'copyHtml5',
-							text: '<img src="/assets/images/copy_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Copy">',
-							titleAttr: 'Copy',
-						},
-						{
-							extend: 'excelHtml5',
-							text: '<img src="/assets/images/excel_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel">',
-							titleAttr: 'Excel',
-						},
-						{
-							extend: 'csvHtml5',
-							text: '<img src="/assets/images/csv_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="CSV">',
-							titleAttr: 'CSV',
-						},
-						{
-							extend: 'pdfHtml5',
-							text: '<img src="/assets/images/pdf_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="PDF">',
-							titleAttr: 'PDF',
-						},
-					],
-				});
-
-				tableInstance.clear().rows.add(dataTable.value).draw();
-
-			} else {
-				console.error('DataTables library not loaded or initialized properly');
-			}
-		},
 		async fetchFollowupMasterTaskList() {
 			try {
 				loading.value = true;
-				await new Promise((resolve) => setTimeout(resolve, 2000));
+				await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
 				const response = await fetch(`/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`);
 				if (!response.ok) {
 					throw new Error('Failed to fetch followup task list');
 				}
 				loading.value = false;
 				const data = await response.json();
-				dataTable.value = data.data; // Replace data with the actual fetched data
-				// console.log("data===followup====", dataTable.value);
-				this.initDataTable(dataTable.value);
+				rowData.value = data.data; // Replace data with the actual fetched data
+				console.log(rowData.value);
 			} catch (error) {
 				console.error('Error fetching followup task list:', error);
 				loading.value = false;
 			}
 		},
 	},
-};
+}
+// import {
+// 	ref,
+// 	DataTable,
+// 	// Add other common imports if needed
+// } from '../../commonImports';
+// import axios from 'axios';
+
+// const loading = ref(false);
+// const dataTable = ref([]);
+
+// export default {
+// 	props: {
+// 		patientId: Number,
+// 		moduleId: Number,
+// 		componentId: Number,
+// 	},
+// 	data() {
+// 		return {
+// 			selectedFollowupMasterTask: null,
+// 			followupMasterTaskList: null,
+// 		};
+// 	},
+// 	mounted() {
+// 		this.fetchFollowupMasterTask();
+// 		this.fetchFollowupMasterTaskList();
+// 		this.initDataTable(dataTable.value);
+// 	},
+// 	methods: {
+// 		async fetchFollowupMasterTask() {
+// 			await axios.get(`/org/get_future_followup_task`)
+// 				.then(response => {
+// 					this.followupMasterTaskList = response.data;
+// 					console.log("followupMasterTaskList", response.data);
+// 				})
+// 				.catch(error => {
+// 					console.error('Error fetching data:', error);
+// 				});
+// 		},
+// 		async initDataTable() {
+// 			$('#task-list').on('click', '.ActiveDeactiveClass', (event) => {
+// 				// Extract the row data using DataTable API
+// 				const table = $('#task-list').DataTable();
+// 				const rowData = table.row($(event.target).closest('tr')).data();
+// 				// Call the Vue method with the extracted parameters from the row
+// 				callExternalFunctionWithParams(rowData.pid, rowData.pstatus);
+// 			});
+// 			let tableInstance;
+// 			const columns = [
+// 				{ title: 'Sr. No.', data: 'DT_RowIndex', name: 'DT_RowIndex' },
+// 				{ title: 'Task', data: 'task_notes', name: 'task_notes' },
+// 				{ title: 'Category', data: 'task', name: 'task' },
+// 				{
+// 					title: 'Notes', data: 'notes', name: 'notes', render: function (data, type, full, meta) {
+// 						if (data != '' && data != 'NULL' && data != undefined) {
+// 							return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
+// 						} else { return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; }
+// 					}
+// 				},
+// 				{
+// 					title: 'Date Scheduled', data: 'tt', type: 'date-dd-mm-yyyy',
+// 					"render": function (value) {
+// 						if (value === null) return "";
+// 						return value;
+// 						// return util.viewsDateFormat(value);
+// 					}
+// 				},
+// 				{
+// 					title: 'Task Time', data: 'task_time', name: 'task_time',
+// 					render: function (data, type, full, meta) {
+// 						if (data != '' && data != 'NULL' && data != undefined) {
+// 							return full['task_time'];
+// 						} else {
+// 							return '';
+// 						}
+// 					}
+// 				},
+// 				{ title: 'Mark as Complete', data: 'action', name: 'action', orderable: false, searchable: false },
+// 				// {
+// 				// 	data: 'Task Completed Date', type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at', "render": function (value) {
+// 				// 		if (value === null) return "";
+// 				// 		return value;
+// 				// 		// return util.viewsDateFormat(value);
+// 				// 	}
+// 				// },
+// 				{
+// 					title: 'Created By', data: null,
+// 					render: function (data, type, full, meta) {
+// 						if (data != '' && data != 'NULL' && data != undefined) {
+// 							return full['f_name'] + ' ' + full['l_name'];
+// 						} else {
+// 							return '';
+// 						}
+// 					}
+// 				},
+// 			];
+// 			const dataTableElement = document.getElementById('task-list');
+// 			// var url = `/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`;
+// 			if (dataTableElement) {
+// 				// util.renderDataTable('task-list', url, columns, "{{ asset('') }}");
+// 				tableInstance = $(dataTableElement).DataTable({
+// 					columns: columns,
+// 					data: dataTable.value,
+// 					destroy: true,
+// 					paging: true,
+// 					searching: true,
+// 					processing: true,
+// 					dom: 'Bfrtip',
+// 					buttons: [
+// 						{
+// 							extend: 'copyHtml5',
+// 							text: '<img src="/assets/images/copy_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Copy">',
+// 							titleAttr: 'Copy',
+// 						},
+// 						{
+// 							extend: 'excelHtml5',
+// 							text: '<img src="/assets/images/excel_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel">',
+// 							titleAttr: 'Excel',
+// 						},
+// 						{
+// 							extend: 'csvHtml5',
+// 							text: '<img src="/assets/images/csv_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="CSV">',
+// 							titleAttr: 'CSV',
+// 						},
+// 						{
+// 							extend: 'pdfHtml5',
+// 							text: '<img src="/assets/images/pdf_icon.png" width="20" alt="" data-toggle="tooltip" data-placement="top" title="" data-original-title="PDF">',
+// 							titleAttr: 'PDF',
+// 						},
+// 					],
+// 				});
+
+// 				tableInstance.clear().rows.add(dataTable.value).draw();
+
+// 			} else {
+// 				console.error('DataTables library not loaded or initialized properly');
+// 			}
+// 		},
+// 		async fetchFollowupMasterTaskList() {
+// 			try {
+// 				loading.value = true;
+// 				await new Promise((resolve) => setTimeout(resolve, 2000));
+// 				const response = await fetch(`/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`);
+// 				if (!response.ok) {
+// 					throw new Error('Failed to fetch followup task list');
+// 				}
+// 				loading.value = false;
+// 				const data = await response.json();
+// 				dataTable.value = data.data; // Replace data with the actual fetched data
+// 				// console.log("data===followup====", dataTable.value);
+// 				this.initDataTable(dataTable.value);
+// 			} catch (error) {
+// 				console.error('Error fetching followup task list:', error);
+// 				loading.value = false;
+// 			}
+// 		},
+// 	},
+// };
 </script>
+<style>
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+/* Use the theme you prefer */
+
+.loading-spinner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+	/* Adjust as needed */
+}
+</style>

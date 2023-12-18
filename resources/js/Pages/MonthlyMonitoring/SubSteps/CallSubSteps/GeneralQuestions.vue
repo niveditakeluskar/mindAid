@@ -99,6 +99,7 @@ export default {
 			await axios.get(`/org/stage_code/${this.moduleId}/17/stage_code_list`)
 				.then(response => {
 					this.questionnaire = response.data;
+					console.log("questionnaire===>", this.questionnaire);
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);

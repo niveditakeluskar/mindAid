@@ -782,6 +782,11 @@ class CcmController extends Controller
         //     }
         // }
         // Inertia::setRootView('Theme::inertia-layouts/master');
+        // return Inertia::render('Test', [
+        //     'patientId' => $patient_id,
+        //     'moduleId' => 3,
+        //     'componentId' => 19,
+        // ]);
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => 3,

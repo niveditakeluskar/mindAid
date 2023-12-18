@@ -24,8 +24,9 @@ Route::prefix('org')->group(function () {
         Route::get('ajax/FollowupTask_populate/{id}/populate', 'RCare\Org\OrgPackages\FollowupTask\src\Http\Controllers\FollowupTaskController@populateFollowupTask')->name("ajax.followupTask.populate");
         Route::post('/delete-FollowupTask/{id}', 'RCare\Org\OrgPackages\FollowupTask\src\Http\Controllers\FollowupTaskController@deleteFollowupTask')->name('delete.FollowupTask');
         Route::get('/get_future_followup_task', function () {
-            $abc        = session()->get("user_type");
-            $tasks      = $abc == 1 ? FollowupTask::activeTask() : FollowupTask::activeTask();
+            // $abc        = session()->get("user_type");
+            // $tasks      = $abc == 1 ? FollowupTask::activeTask() : FollowupTask::activeTask();
+            $tasks      = FollowupTask::activeTask();
             return response()->json($tasks);
         });
     });

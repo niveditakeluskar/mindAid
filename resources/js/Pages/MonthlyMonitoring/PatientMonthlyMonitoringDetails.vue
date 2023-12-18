@@ -4,49 +4,13 @@
          <div class="col-md-12">
             <div class="card">
                <div class="card-body">
-                  <!-- <form-wizard>
-            <TabContent title="About You" :selected="true">
-                  This is content of Tab 1
-            </TabContent>
-            <TabContent title="About your Company"> 
-                  <p>Can contains</p>
-                  <p>Multiple Elements</p>
-            </TabContent>
-            <TabContent title="Finishing Up">
-                  <p>Or an image .. or any thing</p>
-                  
-            </TabContent>  
-         </form-wizard> -->
-                  <div class="tsf-wizard tsf-wizard-2">
-                     <ul class="gsi-step-indicator triangle gsi-style-1 gsi-transition">
-                        <li v-for="(step, index) in steps" :key="index" :class="{ active: index === activeStep }"
-                           @click="changeStep(index)">
-                           <a :href="`#${index}`">
-                              <span class="desc">{{ step }}</span>
-                           </a>
-                        </li>
-                     </ul>
-                     <div class="tsf-container" style="width: 90%;">
-                        <div class="tsf-content">
-                           <div v-for="(content, index) in contents" :key="index" v-show="index === activeStep" :id="index"
-                              class="tsf-step" v-bind:style="(activeStep === index )? 'display: block;' : 'display: none;'">
-                              <!-- {{ index }},,..
-                              {{ activeStep }}........
-
-                              {{ content }} -->
-                              <Preparation />
-                              <SubStepCall :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-                              <SubStepVerification />
-                              <SubStepRelationship :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-                              <SubStepConditionReview />
-                              <SubStepGeneralQuestions :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-                              <SubStepCallClose />
-                              <SubStepCallWrapUp />
-                              <FollowUp :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-                              <Text :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-                           </div>
-                        </div>
+                  <div style="width: 9%; float: left;">
+                     <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tab">
+                        {{ tab }}
                      </div>
+                  </div>
+                  <div style="width: 90%; float: right;">
+                     <component :is="selectedComponent" v-bind="componentProps"></component>
                   </div>
                </div>
             </div>
@@ -56,20 +20,13 @@
 </template>
 
 <script>
+   import axios from 'axios';
    import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
    import Preparation from './SubSteps/Preparation.vue';
-   import SubStepConditionReview from './SubSteps/CallSubSteps/ConditionReview.vue';
-   import SubStepCall from './SubSteps/CallSubSteps/Call.vue';
-   import SubStepVerification from './SubSteps/CallSubSteps/Verification.vue';
-   import SubStepRelationship from './SubSteps/CallSubSteps/Relationship.vue';
-   import SubStepGeneralQuestions from './SubSteps/CallSubSteps/GeneralQuestions.vue';
-   import SubStepCallClose from './SubSteps/CallSubSteps/CallClose.vue';
-   import SubStepCallWrapUp from './SubSteps/CallSubSteps/CallWrapUp.vue';
+   import Call from './SubSteps/Call.vue';
    import FollowUp from './SubSteps/FollowUp.vue';
    import Text from './SubSteps/Text.vue';
-   // import { FormWizard, TabContent } from 'vue-step-wizard'
-   // import 'vue-step-wizard/dist/vue-step-wizard.css'
-// import stepWizard from 'js/app.js';
+   
    export default {
       props: {
          patientId: Number,
@@ -79,39 +36,113 @@
       components: {
          LayoutComponent,
          Preparation,
-         SubStepConditionReview,
-         SubStepCall,
-         SubStepVerification,
-         SubStepRelationship,
-         SubStepGeneralQuestions,
-         SubStepCallClose,
-         SubStepCallWrapUp,
+         Call,
          FollowUp,
          Text,
-      // FormWizard,
-      // TabContent
       },
       data() {
          return {
-            activeStep: 0,
-            steps: ['Preparation', 'Review RPM', 'Call', 'Follow-up', 'Text'],
-            contents: [
-               'Content for Step 1',
-               'Content for Step 2',
-               'Content for Step 3',
-               'Content for Step 4',
-               'Content for Step 5'
-            ]
+            activeTab: 0,
+            tabs: ['Preparation', 'Review RPM', 'Call', 'Follow-up', 'Text'],
+            componentProps: {}, 
+            // selectedCallAnswerdContentScript: null,
+            // selectedCallNotAnswerdContentScript: null,
+            // callStatus: null,
+            // voiceMailAction: null,
          };
       },
-      methods: {
-         changeStep(index) {
-            this.activeStep = index;
-
-         }
+      computed: {
+         selectedComponent() {
+            switch (this.activeTab) {
+               case 0:
+                  return 'Preparation';
+               case 1:
+                  return 'SubStepConditionReview';
+               case 2:
+                  return 'Call';
+               case 3:
+                  return 'FollowUp';
+               case 4:
+                  return 'Text';
+               default:
+                  return 'Preparation'; // Default component if activeTab is not in the range
+            }
+         },
       },
       mounted() {
-         console.log('Component mounted.')
-      }
+         console.log('Patient Monthly Monitoring Details Component mounted.');
+         // this.initCareManagerDataTable();
+      },
+      methods: {
+         changeTab(index) {
+            this.activeTab = index;
+            this.updatePropsForComponent();
+         },
+         // async initCareManagerDataTable() {
+         //    // const columns = [
+         //    //    { title: 'Sr. No.', data: 'DT_RowIndex', name: 'DT_RowIndex' },
+         //    //    { title: 'Task', data: 'task_notes', name: 'task_notes' },
+         //    //    { title: 'Category', data: 'task', name: 'task' },
+         //    //    {
+         //    //       title: 'Notes', data: 'notes', name: 'notes', render: function (data, type, full, meta) {
+         //    //          if (data != '' && data != 'NULL' && data != undefined) {
+         //    //             return full['notes'] + '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a> ';
+         //    //          } else { return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' + full['id'] + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; }
+         //    //       }
+         //    //    },
+         //    //    {
+         //    //       title: 'Date Scheduled', data: 'tt', type: 'date-dd-mm-yyyy',
+         //    //       "render": function (value) {
+         //    //          if (value === null) return "";
+         //    //          return value;
+         //    //          // return util.viewsDateFormat(value);
+         //    //       }
+         //    //    },
+         //    //    {
+         //    //       title: 'Task Time', data: 'task_time', name: 'task_time',
+         //    //       render: function (data, type, full, meta) {
+         //    //          if (data != '' && data != 'NULL' && data != undefined) {
+         //    //             return full['task_time'];
+         //    //          } else {
+         //    //             return '';
+         //    //          }
+         //    //       }
+         //    //    },
+         //    //    { title: 'Mark as Complete', data: 'action', name: 'action', orderable: false, searchable: false },
+         //    //    // {
+         //    //    // 	data: 'Task Completed Date', type: 'date-dd-mm-yyyy h:i:s', name: 'task_completed_at', "render": function (value) {
+         //    //    // 		if (value === null) return "";
+         //    //    // 		return value;
+         //    //    // 		// return util.viewsDateFormat(value);
+         //    //    // 	}
+         //    //    // },
+         //    //    {
+         //    //       title: 'Created By', data: null,
+         //    //       render: function (data, type, full, meta) {
+         //    //          if (data != '' && data != 'NULL' && data != undefined) {
+         //    //             return full['f_name'] + ' ' + full['l_name'];
+         //    //          } else {
+         //    //             return '';
+         //    //          }
+         //    //       }
+         //    //    },
+         //    // ];
+         //    // const dataTableElement = document.getElementById('task-list');
+         //    // // var url = `/ccm/patient-followup-task/${this.patientId}/${this.moduleId}/followuplist`;
+         //    // if (dataTableElement) {
+         //    //    // util.renderDataTable('task-list', url, columns, "{{ asset('') }}");
+         //    //    this.drawTable(dataTableElement, columns, dataTable.value);
+         //    // } else {
+         //    //    console.error('DataTables library not loaded or initialized properly');
+         //    // }
+         // },
+         updatePropsForComponent() {
+            this.componentProps = {
+               patientId: this.patientId,
+               moduleId: this.moduleId,
+               componentId: this.componentId
+            };
+         },
+      },
    };
 </script>
