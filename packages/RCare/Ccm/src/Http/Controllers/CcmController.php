@@ -1147,9 +1147,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id     = 9;
         $step_id      = 0; 
         $billable     = 1;
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid);
-        $last_time_spend      = CommonFunctionController::getNetTimeBasedOnModule($patient_id, $mid);
-        return $last_time_spend;
+        $form_name    = 'callwrapup_delete';
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+       // $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+       // $last_time_spend      = CommonFunctionController::getNetTimeBasedOnModule($patient_id, $mid);
+        return $form_save_time;
     }
 
     public function SaveCallSatus(CallAddRequest $request) {
