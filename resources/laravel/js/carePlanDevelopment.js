@@ -3569,6 +3569,7 @@ var init = function () {
 	var id = $("#patient_id").val();
 
 	util.getPatientDetails(patient_id, module_id);
+	util.getAssignPatientListData(0, patient_id);
 	util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
 	util.refreshAllergyCountCheckbox(id, allergy_type, 'allergy_drug_form');
 	util.getPatientCurrentMonthNotes(patient_id, module_id);

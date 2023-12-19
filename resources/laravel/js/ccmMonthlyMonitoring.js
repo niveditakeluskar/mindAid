@@ -1123,6 +1123,7 @@ var init = function () {
     util.getPatientStatus(patient_id, module_id);
     util.gatCaretoolData(patient_id, module_id);
     util.getToDoListData($("#patient_id").val(), module_id);
+	util.getAssignPatientListData(0, patient_id);
     // util.getToDoListCalendarData($("#patient_id").val(), module_id);
     //util.getDataCalender($("#patient_id").val(), module_id);
     ccmcpdcommonJS.getFollowupList($('#patient_id').val(), module_id);

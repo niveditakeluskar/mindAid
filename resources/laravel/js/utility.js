@@ -1856,6 +1856,37 @@ var getPatientList = function (practiceId, selectElement, selectedPatients = nul
     });
 };
 
+var getCmAssignPatientList = function (practiceId, selectElement, selectedPatients = null) {
+    selectElement.html($("<option value=''>").html("Select Patient"));
+    // if (!practiceId) {
+    //     return;
+    // }
+
+    axios({
+        method: "GET",
+        //url: `/patients/ajax/practice/${practiceId}/${moduleId}/patient`
+        url: `/patients/ajax/assignpatientlist/${practiceId}/assignpatientlist`,
+    }).then(function (response) {
+        Object.values(response.data).forEach(function (patient) {
+            var mname;
+            if ((patient.mname != "") && (patient.mname != null) && (patient.mname != undefined)) {
+                mname = patient.mname;
+            } else {
+                mname = "";
+            }
+            $("<option>").val(patient.id).html(patient.fname + " " + mname + " " + patient.lname + ", DOB: " + moment(patient.dob).format('MM-DD-YYYY')).appendTo(selectElement);
+            // $("<option>").val(patient.id).html(patient.fname + " " + mname + " " +patient.lname + ", DOB: " + viewsDateFormat(patient.dob)).appendTo(selectElement);
+        });
+        if (selectedPatients) {
+            selectElement.val(selectedPatients);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
+
+
 /**
  * Update the list of call ccript to select from
  *
@@ -3050,6 +3081,25 @@ var getToDoListData = function (patientId, moduleId) {
         $("#toDoList").html(response.data);
         //alert();
         $('.badge').html($('#count_todo').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+var getAssignPatientListData = function (practice,patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        $('.badge').html($('#count_patient').val());
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -4476,6 +4526,7 @@ window.util = {
     updatePatientList: updatePatientList,
     updatePatientListAssignedDevice: updatePatientListAssignedDevice,
     getPatientList: getPatientList,
+    getCmAssignPatientList: getCmAssignPatientList,
     renderDataTableOrder: renderDataTableOrder,
     renderDataTable: renderDataTable,
     renderDataTable_pdf: renderDataTable_pdf,
@@ -4521,6 +4572,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
+    getAssignPatientListData:getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,

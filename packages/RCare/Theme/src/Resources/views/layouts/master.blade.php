@@ -72,6 +72,7 @@
         {{-- @include('Theme::layouts_2.search') --}}
         <!-- ============ Search UI End ============= -->
         @include('Theme::layouts_2.to-list-customizer')
+        @include('Theme::layouts_2.cm-patient-assign') 
         <!-- ============ Horizontal Layout End ============= -->
         <!-- LAModel Started here -->
         <div class="modal fade" id="logout_modal" aria-hidden="true">
