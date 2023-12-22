@@ -51,6 +51,9 @@ export default {
             componentCallProps: {},
         };
     },
+    created() {
+        this.updatePropsForCallComponent();
+    },
     computed: {
         selectedCallComponent() {
             switch (this.activeCallTabs) {
@@ -84,41 +87,6 @@ export default {
                 moduleId: this.moduleId,
                 componentId: this.componentId
             };
-            // switch (this.activeTab) {
-            //     case 0:
-            //         this.componentCallProps = {
-            //             patientId: patientId,
-            //             moduleId: moduleId,
-            //             componentId: componentId,
-            //         };
-            //     case 1:
-            //         this.componentCallProps = {};
-            //     case 2:
-            //         this.componentCallProps = {
-            //             patientId: this.patientId,
-            //             moduleId: this.moduleId,
-            //             componentId: this.componentId,
-            //         };
-            //     case 3:
-            //         this.componentCallProps = {};
-            //     case 4:
-            //         this.componentCallProps = {
-            //             patientId: this.patientId,
-            //             moduleId: this.moduleId,
-            //             componentId: this.componentId
-            //         };
-            //     case 5:
-            //         this.componentCallProps = {};
-            //     case 6:
-            //         this.componentCallProps = {};
-            //     default:
-            //         this.componentCallProps = {
-            //             patientId: this.patientId,
-            //             moduleId: this.moduleId,
-            //             componentId: this.componentId
-            //         };
-            // }
-            // console.log("call main==componentCallProps=========", componentCallProps);
         },
     },
 };

@@ -24,19 +24,21 @@
                     <div class="row m-1">
                         <div class="col-12">
                             <div class="table-responsive">
-                                <table id="callwrap-list" class="display table table-striped table-bordered" style="width: 100%; border: 1px solid #00000029;">
-                                    <thead>
-                                        <tr> 
-                                            <th>Seq.</th>
-                                            <th>Topic</th>
-                                            <th>CareManager Notes</th>
-                                            <th>Action Taken</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody> 
-                                </table>
+                                <div class="table-responsive">
+                                    <ag-grid-vue
+                                        style="width: 100%; height: 100%;"
+                                        id="callwrap-list"
+                                        class="ag-theme-alpine"
+                                        :columnDefs="callWrapColumnDefs.value"
+                                        :rowData="callWrapRowData.value"
+                                        :defaultColDef="defaultColDef"
+                                        :gridOptions="gridOptions"
+                                        :loadingCellRenderer="loadingCellRenderer"
+                                                    :loadingCellRendererParams="loadingCellRendererParams"
+                                                    :rowModelType="rowModelType"
+                                                    :cacheBlockSize="cacheBlockSize"
+                                                    :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -54,7 +56,8 @@
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
                                     <label class="col-md-12">EMR Monthly Summary
-                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" onfocusout="saveEMR()"></textarea>
+                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" ></textarea>
+                                        <!-- onfocusout="saveEMR()" -->
                                     </label>
                                     <div class="invalid-feedback"></div>  
                                 </div>
@@ -204,3 +207,176 @@
         </div>
     </div>
 </template>
+
+<script>
+import {
+    reactive,
+    ref,
+    onBeforeMount,
+    onMounted,
+    AgGridVue,
+    // Add other common imports if needed
+} from '../../../commonImports';
+import LayoutComponent from '../../../LayoutComponent.vue'; // Import your layout component
+import axios from 'axios';
+export default {
+    props: {
+        patientId: Number,
+        moduleId: Number,
+        componentId: Number,
+    },
+    components: {
+        LayoutComponent,
+        AgGridVue,
+    },
+    data() {
+        return {
+            uid: '', // Add default values or leave them as empty strings
+            patient_id: '',
+            start_time: '',
+            end_time: '',
+            module_id: '',
+            component_id: '',
+            stage_id: '',
+            step_id: '',
+            form_name: '',
+        };
+    },
+    methods: {
+        submitCallWrapUpFormData() {
+            const formData = {
+                uid: this.uid,
+                patient_id: this.patient_id,
+                start_time: this.start_time,
+                end_time: this.end_time,
+                module_id: this.module_id,
+                component_id: this.component_id,
+                stage_id: this.stage_id,
+                step_id: this.step_id,
+                form_name: this.form_name,
+            };
+            console.log("formData==>>", formData);
+            // axios.post('/your-api-endpoint', this.formData)
+            // 	.then(response => {
+            // 		console.log('Form submitted successfully!', response.data);
+            // 	})
+            // 	.catch(error => {
+            // 		// Handle error response
+            // 		console.error('Error submitting form:', error);
+            // 	});
+        },
+        deleteCallWrap() {
+            console.log("deleteCallWrap==========>>>");
+        },
+    },
+    setup(props) {
+        const callWrapRowData = reactive({ value: [] }); // Initialize rowData as an empty array
+        const loading = ref(false);
+        const loadingCellRenderer = ref(null);
+        const loadingCellRendererParams = ref(null);
+        const rowModelType = ref(null);
+        const cacheBlockSize = ref(null);
+        const maxBlocksInCache = ref(null);
+
+        let callWrapColumnDefs = reactive({
+            value: [
+                {
+                    headerName: 'Seq.',
+                    valueGetter: 'node.rowIndex + 1',
+                    width: 20,
+                },
+                { headerName: 'Topic', field: 'topic', filter: true },
+                { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
+                { headerName: 'Action Taken', field: 'action_taken', width: 60 },
+                {
+                    headerName: 'Action', field: 'action', width: 20,
+                    cellRenderer: function (params) {
+                        const row = params.data;
+                        return row.action;
+                    },
+                },
+            ]
+        });
+
+        const defaultColDef = ref({
+            sortable: true,
+            filter: true,
+            pagination: true,
+            minWidth: 100,
+            flex: 1,
+            editable: false,
+            wrapText: true,
+            autoHeight: true,
+        });
+
+        const gridOptions = reactive({
+            // other properties...
+            pagination: true,
+            paginationPageSize: 20, // Set the number of rows per page
+            domLayout: 'autoHeight', // Adjust the layout as needed
+        });
+
+        const fetchCallWrapUpList = async () => {
+            try {
+                loading.value = true;
+                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                const response = await fetch(`/ccm/monthly-monitoring-call-wrap-up/${props.patientId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch call wrap up list');
+                }
+                loading.value = false;
+                const data = await response.json();
+                callWrapRowData.value = data.data; // Replace data with the actual fetched data
+                console.log("test--call wrap up", callWrapRowData.value);
+            } catch (error) {
+                console.error('Error fetching call wrap up list:', error);
+                loading.value = false;
+            }
+        };
+        // deleteCallWrap = async () => {
+        //     alert("test");
+        // };
+
+        onBeforeMount(() => {
+            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
+            loadingCellRendererParams.value = {
+                loadingMessage: 'One moment please...',
+            };
+            rowModelType.value = 'serverSide';
+            cacheBlockSize.value = 20;
+            maxBlocksInCache.value = 10;
+        });
+
+        onMounted(async () => {
+            try {
+                fetchCallWrapUpList();
+            } catch (error) {
+                console.error('Error on page load:', error);
+            }
+        });
+
+        return {
+            loading,
+            callWrapColumnDefs,
+            callWrapRowData,
+            defaultColDef,
+            gridOptions,
+            fetchCallWrapUpList,
+            // deleteCallWrap,
+        };
+    }
+}
+</script>
+<style>
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+/* Use the theme you prefer */
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    /* Adjust as needed */
+}
+</style>
