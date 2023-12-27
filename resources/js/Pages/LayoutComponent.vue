@@ -17,7 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header.vue'; // Import your header component
 import Footer from './Footer.vue'; // Import your footer component
 import axios from 'axios'; // Import Axios for HTTP requests
-import { mapActions } from 'vuex';
+// import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -40,7 +40,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchPatientModules']), // Map the fetchPatientModules action
+    // ...mapActions(['fetchPatientModules']), // Map the fetchPatientModules action
     async getPageModuleID() {
       try {
         var url = encodeURIComponent(window.location.href);
