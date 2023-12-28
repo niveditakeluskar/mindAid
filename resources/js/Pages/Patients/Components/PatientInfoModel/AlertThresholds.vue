@@ -4,16 +4,19 @@ const props = defineProps({
 })
 </script>
 
-<template>
-  <Transition name="modal">
-    <div v-if="show" class="modal-mask">
+<template> 
+  <Transition name="AlertModal">
+    <div v-if="showModal1" class="modal-mask">
       <div class="modal-container">
-        <div class="modal-header">
-          <slot name="header">default header</slot>
+        <div class="modal-header"> 
+          <slot name="header">default header Alert</slot>
         </div>
-
-        <div class="modal-body">
-          <slot name="body">default body</slot>
+        <div class="modal-body">   
+          <slot name="body">
+            default body priyaalert 
+          </slot>
+          <!-- Vatran Service -->
+        </div>
         </div>
 
         <div class="modal-footer">
@@ -26,7 +29,6 @@ const props = defineProps({
           </slot>
         </div>
       </div>
-    </div>
   </Transition>
 </template>
 
@@ -78,7 +80,7 @@ const props = defineProps({
 .modal-enter-from {
   opacity: 0;
 }
-
+ 
 .modal-leave-to {
   opacity: 0;
 }

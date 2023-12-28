@@ -12,9 +12,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
-    <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
+    <link defer rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">
     {{-- form wizard --}}
     <?php
     if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
@@ -22,12 +22,12 @@
     <?php } ?> 
     {{-- pickupdate --}}
 
-    <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
     {{-- theme css --}}
     <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/styles/vendor/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css') }}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
+    <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css') }}">
 
     <style>
         .select2-container .select2-selection--single {
@@ -46,12 +46,13 @@
         $themeMode = "dark-theme";
     }
     ?>
-    @vite('resources/js/appInertia.js')
+     
     @inertiaHead
 </head>
 
 <body class="layout_2 text-left {{$themeMode}}">
-    @php
+@vite('resources/js/appInertia.js')
+@php
     $layout = session('layout');
     @endphp
     <!-- Pre Loader Strat  -->
@@ -66,6 +67,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
+         
                 @inertia
             </div>
             @include('Theme::layouts_2.footer')
@@ -115,7 +117,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="patientalertdiv"></div>
-                    <form action="{{route("patient.active.deactive")}}" method="post" name="active_deactive_form" id="active_deactive_form">
+                    <form  method="post" name="active_deactive_form" id="active_deactive_form">
                         @csrf
                         <?php
                         $module_id    = getPageModuleName();
@@ -695,14 +697,15 @@
     </div>
 <!-- End Reasearch Study Modal -->
     {{-- common js --}}
-    <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
+    <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}
     {{-- form.basic --}}
     <!-- <script src="{{asset('assets/js/form.basic.script.js')}}"></script>-->
     {{-- theme javascript --}}
-     <script src="{{asset('assets/js/script.js')}}"></script>
+     <script defer src="{{asset('assets/js/script.js')}}"></script>
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
+<<<<<<< HEAD
     <script src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     {{-- page specific javascript --}} 
     <script src="{{asset('assets/js/customizer.script.js')}}"></script>
@@ -769,6 +772,12 @@
             $('#logout_modal').modal('hide');
         });
     </script>
+=======
+    <script async src="{{asset('assets/js/laravel/iapp.js')}}"></script>
+    {{-- page specific javascript --}}
+    <script defer src="{{asset('assets/js/customizer.script.js')}}"></script>
+    <script defer src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
+>>>>>>> 5f9db29674213f34d82df65995122c6b28bc657a
 </body>
 
 </html>

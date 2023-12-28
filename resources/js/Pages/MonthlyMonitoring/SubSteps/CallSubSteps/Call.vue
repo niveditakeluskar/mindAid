@@ -76,12 +76,12 @@
                               <div class="row mb-3" id="schedule_call_ans_next_call" v-if="callContinueStatus == 0"  >
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up date: </span> 
-                                    <input type="date" name="answer_followup_date" id="answer_followup_date" />
+                                    <input type="date" name="answer_followup_date" id="answer_followup_date" class="forms-element form-control" />
                                     <div id="call_continue_followup_date_error" class="invalid-feedback"></div>
                                  </div>
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up Time:</span>
-                                    <input type="time" name="answer_followup_time" id="answer_followup_time" />
+                                    <input type="time" name="answer_followup_time" id="answer_followup_time" class="forms-element form-control" />
                                  </div>
                               </div>
                            </div>
@@ -113,12 +113,16 @@
                               <SendTextMessage v-if="voiceMailAction == 3" />
                               <div class="mb-3">
                                  <span>Select Call Follow-up date: </span>
-                                 <input type="date" name="call_followup_date" id="call_followup_date" />
+                                 <input type="date" name="call_followup_date" id="call_followup_date" class="forms-element form-control" />
                                  <div id="call_followup_date_error" class="invalid-feedback"></div>
                               </div>
                            </div>
                      </div>
-                     <div id="tempdiv"></div>                          
+                     <div>
+                        <hr />
+                        <div class="col-12 text-center"><h3>Best Time to contact</h3></div>
+                        <ContactTime />  
+                     </div>       
                   </div>
                   <div class="card-footer">
                      <div class="mc-footer">
@@ -135,55 +139,55 @@
    </div>
 </template>
 <script>
-   import CallHistory from '../../../Messaging/CallHistory.vue';
-   import SendTextMessage from '../../../Messaging/TextMessage.vue';
-   import axios from 'axios';
-   
-   export default {
-      props: {
-         patientId: Number,
-         moduleId: Number,
-         componentId: Number,
-      },
-      data() {
-         return {
-            callAnswerContentScript: null,
-            selectedCallAnswerdContentScript: null,
-            callNotAnswerContentScript: null,
-            selectedCallNotAnswerdContentScript: null,
-            callStatus: null,
-            voiceMailAction: null,
-         };
-      },
-      components: {
-         CallHistory,
-         SendTextMessage,
-      },
-      mounted() {
-         this.fetchCallAnswerContentScript();
-         this.fetchCallNotAnswerContentScript();
-      },
-      methods: {
-         async fetchCallAnswerContentScript() {
-            await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/11/content_template`)
-               .then(response => {
-                  this.callAnswerContentScript = response.data;
-                  console.log("callAnswerContentScript", response.data);
-               })
-               .catch(error => {
-                  console.error('Error fetching data:', error);
-               });
-         },
-      async fetchCallNotAnswerContentScript() {
-         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/9/content_template`)
+import CallHistory from '../../../Messaging/CallHistory.vue';
+import SendTextMessage from '../../../Messaging/TextMessage.vue';
+import ContactTime from '../../../../../laravel/js/components/ContactTime.vue';
+import axios from 'axios';
+
+export default {
+   props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
+   data() {
+      return {
+         callAnswerContentScript: null,
+         selectedCallAnswerdContentScript: null,
+         callNotAnswerContentScript: null,
+         selectedCallNotAnswerdContentScript: null,
+         callStatus: null,
+         voiceMailAction: null,
+      };
+   },
+   components: {
+      CallHistory,
+      SendTextMessage,
+      ContactTime,
+   },
+   mounted() {
+      this.fetchCallAnswerContentScript();
+      this.fetchCallNotAnswerContentScript();
+   },
+   methods: {
+      async fetchCallAnswerContentScript() {
+         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/11/content_template`)
             .then(response => {
-               this.callNotAnswerContentScript = response.data;
-               console.log("callNotAnswerContentScript", response.data);
+               this.callAnswerContentScript = response.data;
             })
             .catch(error => {
                console.error('Error fetching data:', error);
             });
       },
+      async fetchCallNotAnswerContentScript() {
+         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/9/9/content_template`)
+            .then(response => {
+               this.callNotAnswerContentScript = response.data;
+            })
+            .catch(error => {
+               console.error('Error fetching data:', error);
+            });
       },
-   };
+   },
+};
 </script>

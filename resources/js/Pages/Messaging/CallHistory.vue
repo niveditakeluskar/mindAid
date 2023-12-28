@@ -1,5 +1,5 @@
 <template>
-	<div v-html="patientCallHistory"></div>	 
+	<div v-html="patientCallHistory"></div>
 </template>					 
 <script>
 import axios from 'axios';
@@ -20,7 +20,6 @@ export default {
 			axios.get(`/patients/patient-fetch-call-history-data/${this.patientId}/patient-call-history`)
 				.then(response => {
 					this.patientCallHistory = response.data;
-					console.log("patientCallHistory", response.data);
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);

@@ -35,13 +35,12 @@
 <script>
 import Text from '../../Messaging/Text.vue';
 import TextHistory from '../../Messaging/TextHistory.vue';
-import axios from 'axios';
 
 export default {
     props: {
         patientId: Number,
         moduleId: Number,
-        componentId: Number
+        componentId: Number,
     },
     components: {
         Text,

@@ -782,6 +782,11 @@ class CcmController extends Controller
         //     }
         // }
         // Inertia::setRootView('Theme::inertia-layouts/master');
+        // return Inertia::render('Test', [
+        //     'patientId' => $patient_id,
+        //     'moduleId' => 3,
+        //     'componentId' => 19,
+        // ]);
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => 3,
@@ -1065,7 +1070,7 @@ class CcmController extends Controller
     {
         $id    = sanitizeVariable($id);
         $year  = date('Y');
-        $month = date('m');
+        $month = '08'; //date('m');
 
         // $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence
         //     from ccm.ccm_topics
@@ -1131,7 +1136,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" id="deactive"><i class="i-Closee i-Close"  title="Delete"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" id="deactive" onClick="deleteCallWrap"><i class="i-Closee i-Close"  title="Delete"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
