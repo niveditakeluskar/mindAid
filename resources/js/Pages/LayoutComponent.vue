@@ -15,7 +15,11 @@
 import Header from './Header.vue'; // Import your header component
 import Footer from './Footer.vue'; // Import your footer component
 import axios from 'axios'; // Import Axios for HTTP requests
+<<<<<<< HEAD
+// import { mapActions } from 'vuex';
+=======
 
+>>>>>>> 5f9db29674213f34d82df65995122c6b28bc657a
 
 export default {
   components: {
@@ -40,7 +44,12 @@ export default {
     }
   },
   methods: {
+<<<<<<< HEAD
+    // ...mapActions(['fetchPatientModules']), // Map the fetchPatientModules action
+    async getPageModuleID() {
+=======
       async getPageModuleID() {
+>>>>>>> 5f9db29674213f34d82df65995122c6b28bc657a
       try {
         var url = encodeURIComponent(window.location.href);
         // Make an API call to your server to fetch the moduleID

@@ -1060,6 +1060,7 @@ function getNetTime($start_time, $end_time, $flag) {
         $module_id    = getPageModuleName();
         $SID = getFormStageId(8, 9, 'Veteran');
         $patient_demographics = RCare\Patients\Models\PatientDemographics::where('patient_id', $id)->get();
+        // dd($patient_demographics);
         if (isset($patient_demographics[0]->template)) {
             $patient_questionnaire1 = json_decode($patient_demographics[0]->template, true);
             if (isset($patient_questionnaire1["template_id"])) {
@@ -1070,6 +1071,7 @@ function getNetTime($start_time, $end_time, $flag) {
         } else {
             $veteranQuestion = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('status', 1)->where('stage_id', $SID)->where('template_type_id', 5)->latest()->first();
         }
+        // dd($veteranQuestion);
 
         if ($veteranQuestion != null) {
             $queData = json_decode($veteranQuestion['question']);
