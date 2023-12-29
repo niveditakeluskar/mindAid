@@ -282,7 +282,10 @@ class PatientController extends Controller
         $PatientDevices = PatientDevices::where('patient_id',$uid)->orderby('id','desc')->first();
         
         $device_code = empty($PatientDevices->device_code)?'':$PatientDevices->device_code;
+        
+        $device_status = empty($PatientDevices->shipping_status)?'':$PatientDevices->shipping_status;
 
+ 
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
 
         if(isset($rpmDevices[0]->vital_devices)){
@@ -348,6 +351,7 @@ class PatientController extends Controller
            'caremanager_name'      => $caremanager_name,
            'patient_enroll_date'   => $patient_enroll_date,
            'device_code'           => $device_code,
+           'device_status'         => $device_status,
            'non_billabel_time'     => $non_billabel_time,
            'billable_time'         =>$billable_time,
            'personal_notes'        =>$personal_notes,
