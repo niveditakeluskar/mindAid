@@ -12,7 +12,7 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
 <div class="breadcrusmb">
     <div class="row">
         <div class="col-md-11">
-            <h4 class="card-title mb-3">Patient Questionaire Report</h4>
+            <h4 class="card-title mb-3">Patient Questionnaire Report</h4>
         </div>
     </div>
     <!-- ss -->             
@@ -26,13 +26,13 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
              <form id="patient_questionnaire_report" name="patient_questionnaire_report" method="post" action ="">
                 @csrf
                 <div class="form-row">
-                    <div class="col-md-3 form-group mb-3">
-                        <label for="practicename">Practice</label>                  
-                         @selectGroupedPractices("practices",["id" => "practices", "class" => "form-control show-tick select2"])   
+                    <div class="col-md-2 form-group mb-3">
+                        <label for="practicename">Practice Name</label>
+                        @selectworklistpractices("practices", ["id" => "practices", "class" => "select2"])
                     </div>
                     <div class="col-md-2 form-group mb-3">
-                        <label for="patient">Patient</label>
-                         @selectpatient("patient", ["class" => "select2","id" => "patient"])                               
+                        <label for="practicename">Patient Name</label>
+                        @selectallworklistccmpatient("Patient",["id" => "patient", "class" => "select2"])
                     </div>
                     <div class="col-md-2 form-group mb-3">
                         <label for="date">From date</label>
@@ -41,6 +41,12 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                     <div class="col-md-2 form-group mb-3">
                         <label for="date">To date</label>
                         @date('date',["id" => "todate"])                        
+                    </div>
+                    <div class="col-md-2 form-group mb-3 steps" id="steps"> 
+                        <!-- style="display: none;" -->
+                        <label for="date">Steps</label> 
+                        <!-- module_id stage_id --> 
+                        @selectGQ("genquestionselection",$module_id,$stage_id,["id" => "genquestionselection", "class" => "mb-3 bottom"])    
                     </div>
                     <div class="row col-md-2 mb-3">
                         <div class="col-md-4">
@@ -72,16 +78,16 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                     <table id="patient-questionaire-list-table" class="display datatable table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Sr No.</th>
-                            <th>Year Month</th>                       
-                            <th>Patient</th> 
-                            <th>Practice</th>
-                            <th>DOB</th>
-                            <th>BMI</th>
-                            <th>BP</th>
-                            <th>HgA1c</th>
-                            <th>Questions</th>
-                            <th>Answers</th>
+                            <th width ="10px">Sr No.</th>
+                            <th width ="10px">Year Month</th>                       
+                            <th width ="10px">Patient</th> 
+                            <th width ="10px">Practice</th>
+                            <th width ="10px">DOB</th>
+                            <th width ="10px">BMI</th>
+                            <th width ="10px">BP</th>
+                            <th width ="10px">HgA1c</th>
+                            <th width ="10px">Questions</th>
+                            <th width ="10px">Answers</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,7 +131,7 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                             month_year = hga1c_month_year;
                         }
                         if(data!='' && data!='NULL' && data!=undefined){
-                            if(full['topic_month_year'] == null){
+                            if(full['topic_month_year'] == null && full['vitals_month_year'] == null &&  full['hga1c_month_year'] == null){
                                 month_year = '';
                             }
                             if(data!='' && data!='NULL' && data!=undefined){
@@ -221,16 +227,16 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                 },
                 {data: null, 
                     mRender: function(data, type, full, meta){
-                        high_val = full['high_val'];
-                        if(full['high_val'] == null){
-                            high_val = '';
+                        hga1c = full['hga1c'];
+                        if(full['hga1c'] == null){
+                            hga1c = '';
                         }
                         if(data!='' && data!='NULL' && data!=undefined){
-                            if(full['high_val'] == null){
-                                high_val = '';
+                            if(full['hga1c'] == null){
+                                hga1c = '';
                             }
                             if(data!='' && data!='NULL' && data!=undefined){
-                                return high_val;
+                                return hga1c;
                             }               
                         }
                     },
