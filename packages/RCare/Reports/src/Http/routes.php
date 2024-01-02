@@ -45,6 +45,7 @@ Route::get('/time-logs-report', function(){
             })->name('call.additional.ccm.call.report'); 
 
 			 Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
+			 Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
 			 
              Route::get('/Clinical-insight', function(){
                 return view('Reports::initial-report.initial-report');
@@ -131,6 +132,7 @@ Route::get('/time-logs-report', function(){
  
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
+		Route::get('/patient_questionaire_list/search/{practice}/{patient}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReportSearch')->name('Patient.Questionaire.search.report');
 		
 		Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}','RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report'); 
 		
