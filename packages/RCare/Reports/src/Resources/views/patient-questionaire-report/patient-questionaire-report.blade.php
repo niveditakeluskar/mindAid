@@ -79,7 +79,7 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                     <thead>
                         <tr>
                             <th width ="10px">Sr No.</th>
-                            <th width ="10px">Year Month</th>                       
+                            <th width ="10px">Month Year</th>                       
                             <th width ="10px">Patient</th> 
                             <th width ="10px">Practice</th>
                             <th width ="10px">DOB</th>
@@ -174,22 +174,27 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                     },
                     orderable: true
                 },
-                {data: null, type: 'date-mm-dd-yyyy',
-                    mRender: function(data, type, full, meta){
-                        pdob = full['pdob'];
-                        if(full['pdob'] == null){
-                            pdob = '';
-                        }
-                        if(data!='' && data!='NULL' && data!=undefined){
-                            if(full['pdob'] == null){
-                                pdob = '';
-                            }
-                            if(data!='' && data!='NULL' && data!=undefined){
-                                return pdob;
-                            }               
-                        }
-                    },
-                    orderable: true
+                // {data: null, type: 'date-mm-dd-yyyy',
+                //     mRender: function(data, type, full, meta){
+                //         pdob = full['pdob'];
+                //         if(full['pdob'] == null){
+                //             pdob = '';
+                //         }
+                //         if(data!='' && data!='NULL' && data!=undefined){
+                //             if(full['pdob'] == null){
+                //                 pdob = '';
+                //             }
+                //             if(data!='' && data!='NULL' && data!=undefined){
+                //                 return pdob;
+                //             }               
+                //         }
+                //     },
+                //     orderable: true
+                // },
+                {data: 'pdob', type: 'date-dd-mmm-yyyy', name: 'pdob', "render":function (value) {
+                    if (value === null) return "";
+                    return util.viewsDateFormat(value);
+                    }
                 },
                 {data: null, 
                     mRender: function(data, type, full, meta){
@@ -363,6 +368,13 @@ $stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
                 
                 getpatientquestionairereport(practices,patient,fromdate1,todate1,genquestionselection);    
             }        
+            if(fromdate1 == '' || fromdate1 == null){
+                $('#fromdate').val(firstDayWithSlashes);                         
+                $('#todate').val(currentdate);
+                var fromdate1=$('#fromdate').val();
+                var todate1=$('#todate').val(); 
+                getpatientquestionairereport(practices,patient,fromdate1,todate1,genquestionselection); 
+            } 
 
         });
 
