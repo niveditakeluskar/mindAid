@@ -417,6 +417,7 @@
             filters();
             var table = $('#patient-list').DataTable();
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0,0);
             $(".patient-div").hide();
             $("[name='practices']").on("change", function() {
                 var practice_id = $(this).val();  

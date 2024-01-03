@@ -190,6 +190,34 @@ class PatientController extends Controller
         return $patientService;
     }
 
+    public function cmassignpatient(Request $request){
+        $login_user = Session::get('userid');
+        $configTZ   = config('app.timezone');
+        $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
+        $patient_id = sanitizeVariable($request->route('patient')); 
+        $practice_id = sanitizeVariable($request->route('practice'));
+
+        $data = "select p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name  from patients.patient p
+        inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
+        inner join ren_core.users usr on usr.id=up.user_id 
+        LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+        LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+        where usr.id = $login_user";
+        if(($practice_id =="null" || $practice_id==0) && ($patient_id =="null" || $patient_id==0)){
+           
+        }else if(($practice_id =="null" || $practice_id==0)){
+            $data .= "  and p.id = '".$patient_id."'";
+        }else if(($patient_id =="null" || $patient_id==0)){
+            $data .= "  and pp.practice_id = '".$practice_id."'";
+        } else{
+            $data .= "  and pp.practice_id = '".$practice_id."' and p.id = '".$patient_id."'";
+        }
+        //  dd($data);
+        $query = DB::select( DB::raw($data) );
+        // dd($query);
+        return view('Patients::patient.cm-assigned-patient-right',compact('query'));
+    }
+
 
     public function fetchPatientModule(Request $request) {
         $patient_id = sanitizeVariable($request->route('patient_id'));
@@ -2008,6 +2036,39 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         return response()->json($patients);
         
 	}
+
+    public function assignpatientlist($practice){
+        $patients = []; 
+        $cid = session()->get('userid');
+        $usersdetails = Users::where('id',$cid)->get();
+        $roleid = $usersdetails[0]->role;
+         
+        if($practice =="null" || $practice==0 ){       
+                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                from patients.patient p 
+                INNER JOIN task_management.user_patients up
+                on p.id = up.patient_id and up.status = 1               
+                inner join ren_core.users u  on u.id = up.user_id
+                inner join patients.patient_providers pp                 
+               on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id = 1
+               inner join patients.patient_services ps 
+               on p.id = ps.patient_id                
+               where    up.user_id = '".$cid."' order by p.fname ") );
+        }
+        else{
+                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                from patients.patient p
+                INNER JOIN task_management.user_patients up
+                on p.id = up.patient_id and up.status = 1               
+                inner join ren_core.users u  on u.id = up.user_id
+                inner join patients.patient_services ps
+                on   p.id = ps.patient_id 
+                inner join patients.patient_providers  pp                 
+                on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id=1
+                where  pp.practice_id = '".$practice."' and up.user_id = '".$cid."' order by p.fname ") );
+        }   
+        return response()->json($patients);
+    }
     
 	
     //created by ashvini 12 jan 2021  
