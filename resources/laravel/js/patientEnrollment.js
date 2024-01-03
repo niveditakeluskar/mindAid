@@ -531,6 +531,7 @@ var init = function () {
     util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
     util.gatCaretoolData($("#hidden_id").val(), $("#page_module_id").val());
     util.getPatientStatus($("#hidden_id").val(), $("#page_module_id").val());
+	util.getAssignPatientListData(0, $("#hidden_id").val());
     if ($(".form_start_time").val() == "undefined" || ($(".form_start_time").val() == '')) {
 		var start_time = null;
 	}else{
