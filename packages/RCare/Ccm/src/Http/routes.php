@@ -20,6 +20,12 @@ Route::middleware(["auth","roleAccess", "web"])->group(function () {
 Route::middleware(["auth", "web"])->group(function () {            
     Route::prefix('ccm')->group(function () {  
         
+
+        Route::get('/get-stepquestion/{module_id}/{stage_id}/{step_id}/question_list', function (string $module_id, string $stage_id, string $step_id) {
+            $d = getDecisionTree($module_id,$stage_id,$step_id);
+            return $d;
+        });
+        Route::get('/get-savedQuestion/{module_id}/{patient_id}/{step_id}/saved_question', 'RCare\Ccm\Http\Controllers\CcmController@getSavedGeneralQuestions')->name('get.saved.question');
         //     Route::get('/monthly-monitoring-patient-list', 'RCare\Ccm\Http\Controllers\CcmController@index')->name('monthly.monitoring.patient.list');
         ///////////////////////New Monthly Monitoring/////////////////////////////
         Route::get('/monthly-monitoring-call-wrap-up-activities/activities', 'RCare\Ccm\Http\Controllers\CcmController@callWrapUpActivities')->name('call.wrap.up.activities');  

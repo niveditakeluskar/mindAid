@@ -55,7 +55,7 @@ use RCare\Patients\Models\PatientHealthServices;
 use RCare\Ccm\src\Http\Requests\CallAddRequest;
 use RCare\Ccm\src\Http\Requests\HippaAddRequest;
 use RCare\Ccm\src\Http\Requests\HomeServicesAddRequest;
-use RCare\Ccm\src\Http\Requests\RelationshipAddRequest;
+use RCare\Ccm\Http\Requests\RelationshipAddRequest;
 use RCare\Ccm\src\Http\Requests\CallCloseAddRequest;
 use RCare\Ccm\src\Http\Requests\CallwrapAddRequest;
 use RCare\Ccm\src\Http\Requests\FollowupAddRequest;
@@ -698,6 +698,24 @@ class CcmController extends Controller
         $activitydata =  PatientServices::where('patient_id', $patient_id)->where('module_id', $module_id)->get('date_enrolled');
         $result['enrolleddateform'] = $activitydata;
         return $result;
+    }
+
+    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id){
+        $enrollinRPM = 1;
+        if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
+            $enrollinRPM = 2;
+         }
+         $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
+         $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+         $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
+         $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+         $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
+         if ($enrollinRPM > 1) {
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
+         }else{
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
+         }
+         return $genQuestion;
     }
 
     public function fetchMonthlyMonitoringPatientDetails(Request $request)
@@ -2199,7 +2217,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     public function SaveCallRelationship(RelationshipAddRequest $request)
     {
         $patient_id   = sanitizeVariable($request->patient_id);
-        $uid          = sanitizeVariable($request->uid);
+        $uid          = sanitizeVariable($request->patient_id);
         $sequence     = 2;
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
@@ -2217,6 +2235,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $stage_id = sanitizeVariable($request->stage_id);
             $step_id      = sanitizeVariable($request->step_id);
         }
+        
         $steps        = StageCode::where('module_id', $module_id)->where('submodule_id', $component_id)->where('stage_id', $stage_id)->get();
         DB::beginTransaction();
         try {

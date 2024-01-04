@@ -219,7 +219,7 @@
      <script src="{{asset('assets/js/script.js')}}"></script>
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
-    <script src="{{asset('assets/js/laravel/iapp.js')}}"></script>
+    <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     {{-- page specific javascript --}}
     <script src="{{asset('assets/js/customizer.script.js')}}"></script>
     <script src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
@@ -283,6 +283,7 @@
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
+       
     </script>
 </body>
 
