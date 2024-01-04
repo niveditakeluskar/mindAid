@@ -699,7 +699,24 @@ class FormServiceProvider extends ServiceProvider
                echo RCare\System\Support\Form::select("Partner", $name, $options, $attributes, $selected); 
            ?>'; 
            //$options    = ["0" => "All"];
-       }); 
+       });
+       
+       Blade::directive("selectrpmenrolledpartner", function ($expression) {
+        return '<?php
+           $params     = [' . $expression . '];
+           $name       = $params[0];
+           $attributes = defaultParameter($params, 1, []);
+           $selected   = defaultParameter($params, 2, ""); 
+           $options    = [];
+           foreach (RCare\Org\OrgPackages\Partner\src\Models\Partner::activePartner1() as $partners) {
+                $options[$partners->id] = $partners->name;
+           }
+           $options = array_unique($options);
+          
+           echo RCare\System\Support\Form::select("Partner", $name, $options, $attributes, $selected); 
+       ?>'; 
+       //$options    = ["0" => "All"];
+   });        
         
         Blade::directive("selectpracticeswithAll", function ($expression) {
             return '<?php
