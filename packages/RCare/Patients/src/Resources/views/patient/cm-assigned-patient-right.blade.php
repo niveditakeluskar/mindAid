@@ -17,6 +17,7 @@ th     { background:#eee; }
                         <div class="col-md-3 form-group mb-3">
                             <label for="practicename">Practice</label>                  
                             @selectworklistpractices("practices1", ["id" => "practices1", "class" => "select2"])   
+                            <div id="errorPractice" style="display: none; color: red;">Please select a practice.</div>
                         </div>
                         <div class="col-md-3 form-group mb-6">
                             <label for="practicename">Patient Name</label>
@@ -49,26 +50,41 @@ th     { background:#eee; }
                             <th>Practice</th> 
                             <th>Patient</th>
                             <th>DOB</th>
+                            <th>Action</th>
                         </tr> 
                     </thead>
+                    <?php $i = 1; $url=''; ?> 
                     <tbody>
                         <?php //if(!empty($prev_topics) || isset($prev_topics) || $prev_topics!=''){ $i=1; 
-                        if($query==0){ ?>
+                        if (empty($query)) { ?>
                         <tr><td></td>
+                            <td></td>
                             <td style='text-align:center'> Not Assigned any patient!!!</td>
                             <td></td>
+                            <td></td>
                         </tr>
-                    <?php }else{$i=1;
-                        foreach($query as $key => $value){?>
+                    <?php }else{ 
+                        foreach($query as $key => $value){ ?>
                         <tr>
                         <td><?php  echo $i++;?></td>
                         <td><?php  echo $value->practice;?></td>
-                        <td>
                         <?php
                          isset($value->fname)?$fname = $value->fname:$fname='';
                          isset($value->lname)?$lname = $value->lname:$lname='';
                          ?>
-                         <?php echo $fname.' '.$lname;?></td>
+                         <?php
+                            //dd($value);
+                             $module_name     = strtolower(str_replace(' ', '-', $value->module));
+                             $components_name1 = "monthly-monitoring";
+                             $components_name2 = "care-plan-development";
+                             $patient_id = $value->id;
+                
+                             $url1 = "/".$module_name."/".$components_name1."/".$patient_id;
+                             $url2 = "/".$module_name."/".$components_name2."/".$patient_id;
+                        ?> 
+                        <td>
+                            <!-- <a href="{{ $url }}" > -->
+                            <?php echo $fname.' '.$lname;?></td>
                         <td><?php  $dob= $value->dob;
                                 if($dob=='null' ||$dob==null){
                                     echo "";
@@ -76,6 +92,10 @@ th     { background:#eee; }
                                     echo date('m-d-Y',strtotime($value->dob));
                                 }?>
                         </td> 
+                        <td>
+                            <a href="{{ $url1 }}" ><button type="button" id="mmbtn" class="btn btn-primary">MM</button></a>
+                            <a href="{{ $url2 }}" ><button type="button" id="cpdbtn" class="btn btn-primary">CPD</button></a>
+                        </td>
                         </tr> 
                     <?php } }?>
                     </tbody>
@@ -109,6 +129,15 @@ th     { background:#eee; }
     $('#searchbutton1').click(function(){
         var practice=$('#practices1').val();
         var patient=$('#patient1').val();
+
+        if ((practice === "" || practice === null) && (patient === "" || patient === null)) {
+            $("#errorPractice").show();
+            setTimeout(function() {
+                $("#errorPractice").hide(); 
+            }, 4000); 
+        } else {
+            $("#errorPractice").hide(); 
+        }
         util.getAssignPatientListData(practice,patient);   
     });
 
