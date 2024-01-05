@@ -16,7 +16,6 @@ import Header from './Header.vue'; // Import your header component
 import Footer from './Footer.vue'; // Import your footer component
 import axios from 'axios'; // Import Axios for HTTP requests
 
-
 export default {
   components: {
     Header,

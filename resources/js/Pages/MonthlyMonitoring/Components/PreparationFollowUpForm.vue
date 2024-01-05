@@ -103,8 +103,8 @@
 				</div>
 			</div>
 			<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
-			<button type="button" name="allergies_id" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal"  >Edit Medication</button>
-			<ModalForm ref="modalForm" />
+			<button type="button" name="allergies_id" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal">Edit Medication</button>
+			<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 		</div> 
 		<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" style="display: none">
 			<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal" data-target="#myModal" target="medication">Edit Medication</button>
