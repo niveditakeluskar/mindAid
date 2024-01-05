@@ -6,22 +6,22 @@
 		<div class="col-md-12 forms-element">
 			<div class="mr-3 d-inline-flex align-self-center">
 				<label :for="`${sectionName}_condition_requirnment_new`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment1" :id="`${sectionName}_condition_requirnment_new`" value="1" class="CRclass" formControlName="cehckbox">
+					<input type="checkbox" name="condition_requirnment1" :id="`${sectionName}_condition_requirnment_new`" value="1" class="CRclass" formControlName="cehckbox" v-model="conditionRequirnment1">
 					<span>New Hospitalization</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_er_visit`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment2" :id="`${sectionName}_condition_requirnment_er_visit`" value="1" class="CRclass" formControlName="checkbox">
+					<input type="checkbox" name="condition_requirnment2" :id="`${sectionName}_condition_requirnment_er_visit`" value="1" class="CRclass" formControlName="checkbox" v-model="conditionRequirnment2">
 					<span>ER Visits</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_urgent_care`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment3" :id="`${sectionName}_condition_requirnment_urgent_care`" value="1" class="CRclass" formControlName="checkbox">
+					<input type="checkbox" name="condition_requirnment3" :id="`${sectionName}_condition_requirnment_urgent_care`" value="1" class="CRclass" formControlName="checkbox" v-model="conditionRequirnment3">
 					<span>Urgent Care</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_none`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment4" :id="`${sectionName}_condition_requirnment_none`" value="1"  formControlName="checkbox"> 
+					<input type="checkbox" name="condition_requirnment4" :id="`${sectionName}_condition_requirnment_none`" value="1"  formControlName="checkbox" v-model="conditionRequirnment4" @click="noneConditionRequireement()"> 
 					<span>None</span>
 					<span class="checkmark"></span>
 					<span class="error">*</span>
@@ -30,10 +30,9 @@
 		</div>		
 		<div :id="`${sectionName}_CPmsg`" class="invalid-feedback" style="font-size: 13px;"></div>
 		</div> 
-		<div :id="`${sectionName}_note`" class="notes mb-4" >
-
-		<textarea class="form-control" name="condition_requirnment_notes" :id="`${sectionName}_condition_requirnment_notes`"></textarea>
-		<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
+		<div v-if="conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1" :id="`${sectionName}_note`" class="notes mb-4" >
+			<textarea class="form-control" name="condition_requirnment_notes" :id="`${sectionName}_condition_requirnment_notes`"></textarea>
+			<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
 		</div>
 		<!-- New Office Visit  -->
 		<div class="form-row mb-4">
@@ -41,7 +40,7 @@
 				<span class="mr-3 mb-4"><b>New Office Visit(s): <span class="error">*</span></b></span>
 				<div class="mr-3 d-inline-flex align-self-center">
 					<label :for="`${sectionName}_newofficevisit_yes`" class="radio radio-primary mr-3">
-						<input type="radio"  formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_yes`" value="1">
+						<input type="radio" formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_yes`" value="1">
 						<span>Yes</span>
 						<span class="checkmark"></span>
 					</label>
@@ -104,6 +103,8 @@
 				</div>
 			</div>
 			<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
+			<button type="button" name="allergies_id" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal"  >Edit Medication</button>
+			<ModalForm ref="modalForm" />
 		</div> 
 		<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" style="display: none">
 			<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal" data-target="#myModal" target="medication">Edit Medication</button>
@@ -226,19 +227,45 @@
 	</div>
 	<!-- end::form -->
 </div>
-
 </template>
 
-  <script>
-  export default {
-	props: {
-    sectionName: {
-      type: String,
-      required: true,
-    },
-  },
-   mounted() {
-    //   console.log('Component mounted.')
-   }
-  }
-  </script>
+<script>
+import ModalForm from '../../Modals/Medication.vue'; 
+	export default {
+		props: {
+			patientId: Number,
+			moduleId: Number,
+			componentId: Number,
+			sectionName: {
+				type: String,
+				required: true,
+			},
+		},
+		data() {
+			return {
+				conditionRequirnment1: null,
+				conditionRequirnment2: null,
+				conditionRequirnment3: null,
+				conditionRequirnment4: null,
+			};
+		},
+		mounted() {
+		//   console.log('Component mounted.')
+		},
+		components: {
+			ModalForm // Register the modal component
+		},
+		methods: {
+			noneConditionRequireement() {
+				this.conditionRequirnment1 = null;
+				this.conditionRequirnment2 = null;
+				this.conditionRequirnment3 = null;
+			},
+			openModal() {
+				// Access the modal component through a ref
+				console.log("openMModel called");
+				this.$refs.modalForm.openModal();
+			}
+		},
+	}
+</script>

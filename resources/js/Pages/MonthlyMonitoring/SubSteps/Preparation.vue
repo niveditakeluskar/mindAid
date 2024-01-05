@@ -17,7 +17,7 @@
                <input type="hidden" name="form_name" value="call_preparation_followup_form" />
                <input type="hidden" name="stage_id" />
 	            <input type="hidden" name="step_id"  value="0">
-               <PreparationForm :sectionName="sectionName" />
+               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
             </div>
             <div class="card-footer">
                <div class="mc-footer">
@@ -39,6 +39,11 @@
    import PreparationForm from '../Components/PreparationFollowUpForm.vue';
 // import stepWizard from 'js/app.js';
 export default {
+   props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
    data() {
       return {
          sectionName: 'call_preparation',
