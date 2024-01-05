@@ -105,7 +105,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal for Deactivation-->
     <div id="active-deactive" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -384,9 +383,85 @@
             </div>
         </div>
     </div>
-    <!-- patient devices -->
+    <!-- Additional Device -->
+    <div id="additional-device" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Additional Device Email</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{route("additional.device.email")}}" method="post" name="patient_add_device_form" id="patient_add_device_form">
+                        @csrf
+                        <input type="hidden" name="patient_id" value="<?php if (isset($patient[0]->id)) {
+                                                                            echo $patient[0]->id;
+                                                                        } ?>" />
+                        <input type="hidden" name="uid" value="<?php if (isset($patient[0]->id)) {
+                                                                    echo $patient[0]->id;
+                                                                } ?>">
+                        <input type="hidden" name="start_time" value="00:00:00">
+                        <input type="hidden" name="end_time" value="00:00:00">
+                        <input type="hidden" name="module_id" value="{{ getPageModuleName() }}" />
+                        <input type="hidden" name="component_id" value="{{ getPageSubModuleName() }}" />
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="mail_content" id="mail_content">
+                        <?php
+                        $module_id = 2; //getPageModuleName();
+                        $submodule_id = 53; //getPageSubModuleName();
+                        $stage_id = getFormStageId($module_id, $submodule_id, 'Email');
+                        $step_id =  getFormStepId($module_id, $submodule_id, $stage_id, 'Additional Device');
+                        $template_id = 0;
 
 
+                        ?>
+                        <input type="hidden" name="stage_id" value="{{ $stage_id }}" />
+                        <div class="alert alert-success" id="device-alert" style="display: none;">
+                            <button type="button" class="close" data-dismiss="alert">x</button>
+                            <strong>Additional Device data saved successfully! </strong><span id="text"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3 ">
+                                <!--label for="module">Se</label-->
+                                <select name="add_replace_device" id="add_replace_device" class="custom-select show-tick select2">
+                                    <option value="1">Additional device</option>
+                                    <option value="2">Replace device</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group mb-3 ">
+                                <label for="sel1">Select Device:</label>
+                                <div class="wrapMulDropDevice">
+                                    <button type="button" id="multiDropDevice" name="multiDropDevice" class="multiDropDevice form-control col-md-12">Select Device<i style="float:right;" class="icon ion-android-arrow-dropdown"></i></button>
+                                    <ul>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6 form-group mb-3 ">
+                                <label for="sel1">Email Template:</label>
+                                @selectcontentscript("call_not_answer_template_id",$module_id,$submodule_id,$stage_id,$step_id,["id"=>"email_title","class"=>"custom-select", "value" =>$template_id])
+                            </div>
+                            <div class="col-md-6 form-group mb-3 " style="display:none">
+                                <input type="text" class="form-control" name="email_from" id="email_from">
+                            </div>
+                            <div class="col-md-6 form-group mb-3 " style="display:none">
+                                <input type="text" class="form-control" name="email_sub" id="email_sub">
+                            </div>
+                            <div class="col-md-12 form-group mb-3">
+                                <label><b>Content</b><span class="error">*</span></label>
+                                <textarea name="text_msg" class="form-control" id="email_title_area" style="padding: 5px;width: 47em;min-height: 5em;overflow: auto;height: 87px;}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary float-right submit-patient-add_device">Submit</button>
+                            <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Additional Device -->
     <!-- Model for patient threshold -->
     <div id="patient-threshold" class="modal fade" role="dialog">
         <div class="modal-dialog">
