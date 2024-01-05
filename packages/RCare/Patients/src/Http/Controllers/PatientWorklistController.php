@@ -911,13 +911,12 @@ class PatientWorklistController extends Controller
             ->addColumn('activedeactive', function ($row) {
 
                 if ($row->pstatus == 1 && $row->pstatus != 0 && $row->pstatus != 2 && $row->pstatus != 3) {
-                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
+                    /* $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
                     onclick=ccmcpdcommonJS.onActiveDeactiveClick("' . $row->pid . '","' . $row->pstatus . '") data-target="#active-deactive"  id="active_deactive">             
-                    <i class="i-Yess i-Yes"  title="Patient Status"></i></a>';
+                    <i class="i-Yess i-Yes"  title="Patient Status"></i></a>'; */
+                    $btn = 'a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click=callExternalFunctionWithParams('.$row->pid.','.$row->pstatus.')><i class="i-Yess i-Yes"  title="Patient Status"></i></a>';
                 } else {
-                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("' . $row->pid . '","' . $row->pstatus . '") data-target="#active-deactive"  id="active_deactive"> 
-                    <i class="i-Closee i-Close" title="Patient Status"></i></a>';
+                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click=callExternalFunctionWithParams('.$row->pid.','.$row->pstatus.')><i class="text-20 i-Stopwatch" style="color: red;"></a>';
                 }
                 return $btn;
             })

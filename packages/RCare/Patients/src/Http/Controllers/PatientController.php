@@ -1289,7 +1289,7 @@ class PatientController extends Controller
         $stage_id     = sanitizeVariable($request->stage_id);
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
-        $step_id      = 0;
+        $step_id      = 0; 
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
@@ -1485,7 +1485,7 @@ class PatientController extends Controller
     // Patient Threshold added on 16-06-21
     //public function savePatientThreshold(PatientThresholdAddRequest $request){
     public function savePatientThreshold(Request $request)
-    {
+    {    //dd('dadasdasdasd');
         $id             = sanitizeVariable($request->uid);
         $patient_id     = sanitizeVariable($request->patient_id);
         $bpmhigh        = sanitizeVariable($request->bpmhigh);

@@ -30,16 +30,13 @@
                                         <span data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
                                             data-original-title="Patient FIN Number" style="padding-right:2px;">
                                             <i class="text-muted i-ID-Card"></i> :
-                                            <a href="javascript:void(0)" type="button"
-                                                class="btn btn-info btn-sm patient_finnumber" data-toggle="modal"
-                                                data-target="#patient-finnumber"
-                                                style="background-color:#27a7de;border:none;" id="patient_finnumber">
-                                                <span id="fin_number" class="patient_fin_number"></span>
+
+                                            <a class="btn btn-info btn-sm patient_finnumber" @click="patient_finnumber_function"
+                                             style="background-color:#27a7de;border:none;" id="patient_finnumber">
+                                                <span id="fin_number" class="patient_fin_number" ></span>
                                             </a>
-                                        </span><br />
-                                        <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"
-                                            data-toggle="modal" data-target="#vateran-service"
-                                            style="background-color:#27a7de;border:none;" id="vateran_service">
+                                        </span><br/>
+                                        <a class="btn btn-info" id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
                                             <span v-if="patientDetails.military_status == 0">Yes</span>
                                             <span v-else-if="patientDetails.military_status == 1">No</span>
@@ -64,10 +61,7 @@
                                             {{ patientDetails.add_1 }}, {{ patientDetails.add_2 }}, {{ patientDetails.city
                                             }}, {{ patientDetails.state }}, {{ patientDetails.zipcode }}
                                         </span><br>
-                                        <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"
-                                            data-toggle="modal" data-target="#patient-threshold"
-                                            style="background-color:#27a7de;border:none;" id="patient_threshold">Alert
-                                            Thresholds</a>
+                                        <a class="btn btn-info btn-sm" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Practice"
@@ -129,12 +123,15 @@
                                                 class="text-muted i-Library"></i> :
                                             {{ patientEnrollServices }}
                                         </span>
-                                        <a href="javascript:void(0)" data-toggle="modal"
-                                            style="margin-left: 15px; font-size: 15px;" class="adddeviceClass"
-                                            data-target="#add-device" id="deviceadd">
-                                            <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
-                                                data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <br />
+
+                                        <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; font-size: 15px;" class="adddeviceClass"
+                                        data-target="#add-device"  id="deviceadd" >
+                                        <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
+                                        <!-- ash -->
+                                        <a class="btn btn-info btn-sm add_patient_devices" @click="add_devicesfunction"
+                                        style="background-color:#27a7de;" id="add_patient_devices">Devices</a>  
+                                        <!-- !ash --> 
+                                        <br/>
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
                                                 data-original-title="Enrolled Date"><i class="text-muted i-Over-Time"></i> :
@@ -199,28 +196,24 @@
 
                                                 </div>
                                             </div>
-                                            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"
-                                                data-toggle="modal" data-target="#personal-notes"
-                                                style="background-color:#27a7de;border:none;" id="personal_notes">Personal
-                                                Notes</a> |
-                                            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"
-                                                data-toggle="modal" data-target="#part-of-research-study"
-                                                style="background-color:#27a7de;border:none;"
-                                                id="part_of_research_study">Research Study</a>
+
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="personal_notes" @click="personalnotesfunction">Personal Notes</a> |
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="part_of_research_study" @click ="researchstudyfunction">Research Study</a>
                                         </div>
-                                    </div>
-                                    <div style="padding-left: 823px;">
+                                    </div> 
+                                    <div style="padding-left: 823px;"> 
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>
     </div>
 </template>
-<script setup>
+
+<script setup>  
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
@@ -232,10 +225,117 @@ const props = defineProps({
     patientServices: [],
     patientEnrollServices: []
 });
-
 const patientDetails = ref(null);
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
+const showAddPatientDevices = ref(false);
+const veteranServicefunction = async() => {
+    console.log("u clicked me");
+    const VeteranServiceModal = document.getElementById('vateran-service');
+      if (VeteranServiceModal) { 
+        $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
+      } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+      }
+    patientVeteranServiceModalDetails();
+}
+
+
+function devicesclear() {  
+    alert('dadsadasdsa');
+    $("#devices_form input[name='device_id']").val('');
+    $('#partner_id').val(''); 
+    $('#partner_devices_id').val('');
+    $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
+    $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
+
+}
+
+
+const add_devicesfunction = async() => {
+    const DeviceModal = document.getElementById('add-patient-devices');
+      if (DeviceModal) { 
+        $(DeviceModal).modal('show'); // Use jQuery to show the modal
+      } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+      }
+    patientVeteranServiceModalDetails();
+}
+const patient_finnumber_function = async()=>{
+    const FinNumberModal = document.getElementById('patient-finnumber');
+      if (FinNumberModal) { 
+        $(FinNumberModal).modal('show'); // Use jQuery to show the modal
+      } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+      }
+
+}
+const alertThresholdfunction = async() => {
+    const AlertThresholdeModal = document.getElementById('patient-threshold');
+    if (AlertThresholdeModal) {
+    $(AlertThresholdeModal).modal('show'); // Use jQuery to show the modal
+    } else {
+    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+    }
+    patComDetails();
+    
+}
+
+
+const personalnotesfunction = async() => {
+    console.log('dadasdasdasdasdas'+personalnotesfunction);
+    const PersonalNotesModal = document.getElementById('personal-notes');
+    if (PersonalNotesModal) {
+    $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
+    } else {
+    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+    }
+    patComDetails();
+    
+}
+
+const researchstudyfunction = async() => { 
+    const ResearchStudyModal = document.getElementById('part-of-research-study');
+    if (ResearchStudyModal) {
+    $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
+    } else {
+    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+    }
+    patComDetails();
+    
+}
+
+
+
+
+
+const patientVeteranServiceModalDetails = async()=>{ 
+    console.log('yess you!'); 
+    try {
+        const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
+        }
+        console.log('Fetched Patient VeteranService details:', response.data);
+    }catch (error) {
+        console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
+        // Handle the error appropriately
+    }
+}
+
+const patientAlertThresholdsModalDetails = async()=>{ 
+    try {
+        const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
+        }
+        console.log('Fetched Patient alertThreshold details:', response.data); 
+    }catch (error) {
+        console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
+        // Handle the error appropriately
+    }
+}
+
 
 onMounted(async () => {
     try {
@@ -279,7 +379,7 @@ onMounted(async () => {
 
             if (module === 'RPM') {
                 // Toggle visibility using a reactive property
-                this.showAddPatientDevices = true;
+                showAddPatientDevices.value = true;
             }
 
             console.log("enrollServices", enrollServices);
@@ -405,4 +505,125 @@ function format_date(value) {
     }
 }
 
-</script>
+
+$('.submit-add-patient-fin-number').on('click', function() {
+    // Serialize the form data 
+    const formData = $('#fin_number_form').serialize();
+    // Make an AJAX POST request to the specified route
+    $.ajax({
+      type: 'POST',
+      url: '/patients/save-patient-fin-number',
+      data: formData,
+      success: function(response) { 
+        // Display the response message within the modal
+        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+
+        // Optionally, close the modal after a certain delay
+        setTimeout(function() {
+          $('#active-deactive').modal('hide');
+        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+      },
+      error: function(xhr, status, error) {
+        // Display error messages in case of failure
+        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+      }
+    });
+});
+
+$('.submit-add-patient-devices').on('click', function() {
+    // Serialize the form data 
+    const formData = $('#devices_form').serialize();
+    // Make an AJAX POST request to the specified route
+    $.ajax({
+      type: 'POST',
+      url: '/patients/master-devices',
+      data: formData,
+      success: function(response) { 
+        // Display the response message within the modal
+        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+
+        // Optionally, close the modal after a certain delay
+        setTimeout(function() {
+          $('#active-deactive').modal('hide');
+        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+      },
+      error: function(xhr, status, error) {
+        // Display error messages in case of failure
+        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+      }
+    });
+});
+
+
+$('.submit-patient-threshold').on('click', function() {
+    // Serialize the form data 
+    const formData = $('#patient_threshold_form').serialize();
+    // Make an AJAX POST request to the specified route
+    $.ajax({
+      type: 'POST',
+      url: '/patients/patient-threshold',
+      data: formData,
+      success: function(response) { 
+        // Display the response message within the modal
+        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+
+        // Optionally, close the modal after a certain delay
+        setTimeout(function() {
+          $('#active-deactive').modal('hide');
+        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+      },
+      error: function(xhr, status, error) {
+        // Display error messages in case of failure
+        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+      }
+    });
+});
+ 
+$('.submit-personal-notes').on('click', function() {
+    // Serialize the form data
+    const formData = $('#personal_notes_form').serialize();
+    // Make an AJAX POST request to the specified route
+    $.ajax({
+      type: 'POST',
+      url: '/patients/patient-personal-notes',
+      data: formData,
+      success: function(response) { 
+        // Display the response message within the modal
+        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+
+        // Optionally, close the modal after a certain delay
+        setTimeout(function() {
+          $('#active-deactive').modal('hide');
+        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+      },
+      error: function(xhr, status, error) {
+        // Display error messages in case of failure
+        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+      }
+    });
+});
+
+$('.submit-part-of-research-study').on('click', function() {
+    // Serialize the form data
+    const formData = $('#part_of_research_study_form').serialize();
+    // Make an AJAX POST request to the specified route
+    $.ajax({
+      type: 'POST', 
+      url: '/patients/patient-research-study',
+      data: formData,
+      success: function(response) { 
+        // Display the response message within the modal
+        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+
+        // Optionally, close the modal after a certain delay
+        setTimeout(function() {
+          $('#active-deactive').modal('hide');
+        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+      },
+      error: function(xhr, status, error) {
+        // Display error messages in case of failure
+        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+      }
+    });
+});
+</script> 
