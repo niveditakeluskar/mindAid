@@ -96,15 +96,18 @@ class RpmEnrolledReportController extends Controller
 
         if($fromdate=='null' || $fromdate=='')
         {
-              $date=date("Y-m-d"); 
-              $year = date('Y', strtotime($date));
-              $month = date('m', strtotime($date));
-              $fromdate = $year."-".$month."-01 00:00:00";
-              $todate = $date." 23:59:59"; 
+            //   $date=date("Y-m-d"); 
+            //   $year = date('Y', strtotime($date));
+            //   $month = date('m', strtotime($date));
+            //   $fromdate = $year."-".$month."-01 00:00:00";
+            //   $todate = $date." 23:59:59"; 
     
-              $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
-              $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);        
-  
+            //   $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
+            //   $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);        
+
+            $dt1 ='null';
+            $dt2 ='null';  
+            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,$dt1,$dt2)";  
         } 
         else
         {      
@@ -112,9 +115,11 @@ class RpmEnrolledReportController extends Controller
            $todate = $todate." 23:59:59" ; 
            $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
            $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);
+           
+           $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
 
-        $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
+        
 
         // dd($query);
         $data = DB::select( DB::raw($query) ); 
@@ -157,7 +162,7 @@ class RpmEnrolledReportController extends Controller
 			'shipping_status' => sanitizeVariable($request->shipping_status),
             // 'device_code' => sanitizeVariable($request->device_code),
             'created_by'=> session()->get('userid'),
-            'partner_id' => '3',
+            // 'partner_id' => '3',
             'status' => '1',
             'updated_by' => session()->get('userid') 
         );
@@ -184,40 +189,45 @@ class RpmEnrolledReportController extends Controller
                 $updatetodo = PatientDevices::where('patient_id',$patient_id)->where('id',$device_id)->update($data);
                 $updateservice = PatientServices::where('patient_id',$patient_id)->update($pateintservicedata);
             }
-       } else{ 
+        } else{ 
             $data['patient_id'] = sanitizeVariable($request->patient_id);
             PatientDevices::create($data);
 
             $updateservice = PatientServices::where('patient_id',$patient_id)->update($pateintservicedata);
-       }
+        }
        
        
-       if(sanitizeVariable($request->shipping_status) == "2"){
+        if(sanitizeVariable($request->shipping_status) == "2"){
             $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
             $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Shipping Status');
             $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
         } 
     }
 
-    public function devicedetailssave(RpmDeviceShippingRequest $request){ //dd($request);
+    public function devicedetailssave(RpmDeviceShippingRequest $request){ //dd($request->all());
         $patient_id = sanitizeVariable($request->patient_id);
-        $device_code = sanitizeVariable($request->device_code);  
+        $device_code = sanitizeVariable($request->device_code); 
+        $last12Digits = substr($device_code, -12); 
         $data = array(
-            'device_code' => sanitizeVariable($request->device_code),
+            'device_code' => $last12Digits,
             'created_by'=> session()->get('userid'),
-            'partner_id' => '3',
+            'partner_id' => sanitizeVariable($request->partner_id),
+            'partner_device_id'  => sanitizeVariable($request->partner_devices_id),
             'status' => '1',
             'patient_id'=> sanitizeVariable($request->patient_id),
             'updated_by' => session()->get('userid') 
         ); 
-
+        
+        // dd($data);
         if($device_code!='' && $device_code!= 'null'){
-            $check_patient_d = PatientDevices::where('patient_id',$patient_id)->where('device_code',$device_code)->exists();
+            $check_patient_d = PatientDevices::where('patient_id',$patient_id)->where('device_code',$last12Digits)->exists();
+            // dd($check_patient_d);
             if($check_patient_d==true){
                 // return response()->json(['error' => 'This Device Code already added'], 400);
                 return 'This Device Code already added';
             }else{
-                PatientDevices::create($data);
+                $add = PatientDevices::create($data);
+                // dd($add);
                 return 'Device Add Successfully';
             }
         }else{
@@ -366,11 +376,11 @@ class RpmEnrolledReportController extends Controller
         to_char(pd.updated_at  at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at 
         from patients.patient_services ps
         left join patients.patient  p on ps.patient_id = p.id  and p.status = 1
-        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1
+        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1 and pd.partner_id = 3
         left join ren_core.users as u on pd.updated_by=u.id
         inner join patients.patient_providers pp on pp.patient_id = p.id  and pp.provider_type_id = 1 and pp.is_active = 1
         inner join ren_core.practices prac on pp.practice_id = prac.id and prac.is_active = 1 
-        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."'";
+        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."' ";
 
 
         if($shipping_status!=='null' && $shipping_status != '0'){
@@ -387,29 +397,32 @@ class RpmEnrolledReportController extends Controller
     
     public function patientdevicelist($patientid){
         $patientid = sanitizeVariable($patientid);
-        // dd($patientid);
-        $device = [];
-        // to_char(pd.updated_at  at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at 
-        $device = PatientDevices::where('patient_id', $patientid)->where("status", 1)->orderBy('created_at', 'desc')->get();
-        // dd($device);
-        foreach($device as $p) {
+        $device = PatientDevices::where('patient_id', $patientid)
+            ->where("status", 1)
+            ->where("partner_id", 3)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        foreach ($device as $p) {
             $id = $p->id;
-            $pro= \DB::select(\DB::raw("select pd.device_code,pd.patient_id,pd.id, pd.status
-            from patients.patient_devices pd 
-            left join ren_core.users as u on pd.updated_by=u.id
-            inner join ren_core.partners as p on p.id = pd.partner_id   
-            left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
-            where pd.patient_id  = '".$id."' and pd.partner_id = 3")); 
-
-            // if (!empty($pro)) {
-            //     $practicecount = $pro[0]->count; 
-            //     $p->count = $practicecount;
-            // } else {
-            //     $p->count = 0; 
-            // }
+            $pro = \DB::select(\DB::raw("select pd.device_code, pd.patient_id, pd.id, pd.status
+                from patients.patient_devices pd 
+                left join ren_core.users as u on pd.updated_by = u.id
+                left join ren_core.partners as p on p.id = pd.partner_id and p.id = 3
+                left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
+                where pd.patient_id  = '".$id."' and pd.partner_id = 3 "));
+    
+            if (!empty($pro)) {
+                $practicecount = $pro[0]->count; 
+                $p->count = $practicecount;
+            } else {
+                $p->count = 0; 
+            }
         }
+    
         return response()->json($device); 
     }
+    
 }
 
 
