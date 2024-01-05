@@ -172,7 +172,7 @@ class DeviceDataReportController extends Controller
        left join rpm.observations_spirometer spt on spt.effdatetime =x.effdatetime
         where x.effdatetime between '$fdt' and '$tdt' and x.patient_id=$patientid";
    
-  $data  = DB::select( DB::raw($query) );
+  $data  = DB::select($query);
 
   return Datatables::of($data)
       ->addIndexColumn()

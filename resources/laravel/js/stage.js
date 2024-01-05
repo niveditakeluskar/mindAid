@@ -103,14 +103,15 @@ var onUpdatestage = function (formObj, fields, response) {
     $('#addMenu, .addmenus').click(function () {
         $('#saveBtn').val("create-product");
         $('#product_id').val('');
-        $('#productForm').trigger("reset");
+        // $('#productForm').trigger("reset");
+        $('#create_stage').trigger("reset");
         $('#modelHeading1').html("Add Stage");
         $('#ajaxModel1').modal('show');
     });
 
-    $('body').on('click', '.editStage', function () {
+    $('body').on('click', '.editStage', function () { 
         var id = $(this).data('id');
-        $.get("ajax/editStage" +'/' + id +'/edit', function (data) {
+        $.get("ajax/editStage" +'/' + id +'/edit', function (data) { //alert(data.submodule_id);
             $('#modelHeading').html("Edit Stage");
             $('#saveBtn').val("edit-stage");
             $('#ajaxModel').modal('show');
@@ -118,9 +119,9 @@ var onUpdatestage = function (formObj, fields, response) {
             $('#description').val(data.description);
             $('#edit_service_id').val(data.module_id);
             $('#operation').val(data.operation);
-            $('#edit_component_id option:selected').val(data.submodule_id);
-            util.updateSubModuleList(parseInt(data[0].stage.module_id), $("#edit_sub_module"), parseInt(data[0].stage.submodule_id));
-            util.updateStageList(parseInt(data[0].stage.submodule_id), $("#edit_stages"), parseInt(data[0].stage_id));
+            $('#edit_component_id').val(data.submodule_id);
+            util.updateSubModuleList(parseInt(data.module_id), $("#edit_sub_module"), parseInt(data.submodule_id));
+            util.updateStageList(parseInt(data.submodule_id), $("#edit_stages"), parseInt(data.stage_id));
         })
     });
 

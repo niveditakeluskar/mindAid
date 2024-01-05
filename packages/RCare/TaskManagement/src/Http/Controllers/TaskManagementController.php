@@ -57,7 +57,7 @@ class TaskManagementController extends Controller {
          to_char(task_date at time zone '".$configTZ ."' at time zone '".$userTZ."','MM-DD-YYYY HH12:MI:SS')::timestamp as tt,userfname,userlname 
          from patients.SP_TO_DO_LIST($patient_id,$login_user,'".$configTZ ."','".$userTZ."')";
          // dd($data);
-        $query = DB::select( DB::raw($data) );
+        $query = DB::select($data);
         // dd($query);
         return view('TaskManagement::components.to-do-list',compact('query','patient_id'));
     }
@@ -68,7 +68,7 @@ class TaskManagementController extends Controller {
         {
             $practid = sanitizeVariable($request->practice);
             $query ="select * from patients.SP_NON_ASSIGNED_PATIENTS_DETAILS($practid)";  
-            $data = DB::select(DB::raw($query)); 
+            $data = DB::select($query); 
           
             return Datatables::of($data)
             ->addIndexColumn()            
@@ -85,7 +85,7 @@ class TaskManagementController extends Controller {
           
            $query = "select * from patients.SP_ASSIGNED_PATIENTS_DETAILS($practid)";  
           
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
           
             return Datatables::of($data)
             ->addIndexColumn()            
@@ -140,9 +140,11 @@ class TaskManagementController extends Controller {
         {            
             $practid = sanitizeVariable($request->practice);
 
-              $query = "select * from patients.SP_TOTAL_PATIENT_DEATILS_OF_ASSIGN_PATIENT($practid)";  
+            //   $query = "select * from patients.SP_TOTAL_PATIENT_DEATILS_OF_ASSIGN_PATIENT($practid)";  
             
-            $data = DB::select( DB::raw($query) );
+            $query = "select * from patients.patient_details($practid)";
+            
+            $data = DB::select($query);
           
             return Datatables::of($data)
             ->addIndexColumn()            

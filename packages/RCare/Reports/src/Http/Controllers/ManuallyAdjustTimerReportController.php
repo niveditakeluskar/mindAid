@@ -47,7 +47,7 @@ class ManuallyAdjustTimerReportController extends Controller
 
             // dd($query);
 
-            $data         = DB::select( DB::raw($query) );
+            $data         = DB::select($query);
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){

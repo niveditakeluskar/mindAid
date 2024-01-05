@@ -29,7 +29,7 @@ public function PatientMonthlyBillingReport(Request $request)
       $month = date('m', strtotime($monthly));
       
       $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
-      $diagnosis = DB::select( DB::raw($diagnosis) );    
+      $diagnosis = DB::select($diagnosis);    
       //dd($diagnosis);
       return view('Reports::monthly-biling-report.patients-monthly-billing-report');
       
@@ -75,7 +75,7 @@ if($practices!="" && $practices !='null'){
 $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -138,7 +138,7 @@ if($practices!="" && $practices !='null'){
 
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -193,7 +193,7 @@ if($practices!="" && $practices !='null'){
 $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -263,7 +263,7 @@ public function getPatientData(Request $request)
               // dd($practices,$provider,$module_id,$dt1,$dt2,$fromdate,$todate,$activedeactivestatus,$callstatus);  
 
     $querytotalcount="select * from patients.active_patient_count()"; 
-    $totalPatient=DB::select( DB::raw($querytotalcount));  
+    $totalPatient=DB::select($querytotalcount);  
 
     $querytotalbillablepatientsrpm = "select count(*) from patients.sp_monthly_billing_patients(null,null,2,null,null,null) sp
                                     left join (select distinct patient_id,count(*)as total,count(quali) as qualified,
@@ -300,18 +300,18 @@ public function getPatientData(Request $request)
                                    $querytotalbillablepatients .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
                                    
                                    
-    $querytotalbillablepatientscount=DB::select( DB::raw($querytotalbillablepatients));  
+    $querytotalbillablepatientscount=DB::select($querytotalbillablepatients);  
 
-    $querytotalbillablepatientsrpmcount=DB::select( DB::raw($querytotalbillablepatientsrpm)); 
+    $querytotalbillablepatientsrpmcount=DB::select($querytotalbillablepatientsrpm);
                                  
 
 
     $queryEnrolledActiveCcm ="select * from patients.sp_enrolled_in_ccm_active_detailscount()";    
-    $totalActiveCCMPatient =DB::select( DB::raw($queryEnrolledActiveCcm) );
+    $totalActiveCCMPatient =DB::select($queryEnrolledActiveCcm);
 
 
     $queryEnrolledActiveRpm ="select * from patients.sp_enrolled_in_rpm_active_detailscount()";
-    $totalActiveRPMPatient =DB::select( DB::raw($queryEnrolledActiveRpm) );
+    $totalActiveRPMPatient =DB::select($queryEnrolledActiveRpm);
 
      $data=array( 'Totalpatient'=>$totalPatient, 
                   'TotalbillablePatient'=>$querytotalbillablepatientscount,
@@ -412,17 +412,11 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
 
           //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
 
-       $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid  
-       
-       
-       ";
-       $data = DB::select( DB::raw($query) );
-      //  dd($query);
-      //  dd($data);
-      
-            
+       $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
+
+       $data = DB::select($query);            
        $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
-       $diagnosis = DB::select( DB::raw($diagnosis) );
+       $diagnosis = DB::select($diagnosis);
       //  dd($diagnosis);  
 
       
@@ -712,7 +706,7 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
                                   else if($get_cnt_quli >=2){
                                     // dd("second else if");  
                                   $k= $qualified_array;
-                                  //  dd(count($qualified_array),($total_diag*2) ); 
+                                  //  dd(count($qualified_array),($total_diag*2); 
 
                                   if( (count($qualified_array))<($total_diag*2) ){
                                     //  dd("inside if");

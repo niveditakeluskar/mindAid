@@ -168,7 +168,7 @@ class CaremanagerLoggedMinuteProductivityReport extends Controller
     }
     $query.="group by ptr.created_by,up.f_name,up.l_name,p.id,p.name";
     
-        $data = DB::select(DB::raw($query));    
+        $data = DB::select($query);    
         return Datatables::of($data)
         ->addIndexColumn()                      
         ->make(true);
