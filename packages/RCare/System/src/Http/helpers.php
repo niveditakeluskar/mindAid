@@ -1279,23 +1279,23 @@ function getNetTime($start_time, $end_time, $flag) {
     return $call_history;
 }*/
 
-    function getCallHistory($patient_id)
-    {
-        // $module_id = getPageModuleName();
-        // $submodule_id = getPageSubModuleName();
-        $dateS = Carbon::now()->startOfMonth()->subMonth(1);
-        $dateE = Carbon::now();
-        $a = RCare\Ccm\Models\CallStatus::select('call_status', 'phone_no', 'created_at', 'call_continue_status', 'ccm_answer_followup_date', 'ccm_answer_followup_time', 'ccm_call_followup_date', 'voice_mail', 'text_msg')->where('patient_id', $patient_id)
-            //->where('module_id',$module_id)->where('component_id',$submodule_id)
-            ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'));
-        $b = RCare\Messaging\Models\MessageLog::select('patient_id', 'status', 'created_at', 'module_id', 'message_date', 'status', 'message_date', 'id', 'message')->where('patient_id', $patient_id)->where('status', 'received')
-            ->whereBetween('created_at', [$dateS, $dateE]);
-        $c = RCare\Ccm\Models\CallStatus::select('call_status', 'phone_no', 'created_at', 'call_continue_status', 'ccm_answer_followup_date', 'ccm_answer_followup_time', 'ccm_call_followup_date', 'voice_mail', 'text_msg')->where('patient_id', $patient_id)
-            ->where('voice_mail', 3)
-            ->whereBetween('created_at', [$dateS, $dateE]);
-        $call_history = $a->union($c)->union($b)->orderBy('created_at', 'desc')->get();
-        return $call_history;
-    }
+function getCallHistory($patient_id)
+{
+    // $module_id = getPageModuleName();
+    // $submodule_id = getPageSubModuleName();
+    $dateS = Carbon::now()->startOfMonth()->subMonth(1);
+    $dateE = Carbon::now();
+    $a = RCare\Ccm\Models\CallStatus::select('call_status', 'phone_no', 'created_at', 'call_continue_status', 'ccm_answer_followup_date', 'ccm_answer_followup_time', 'ccm_call_followup_date', 'voice_mail', 'text_msg')->where('patient_id', $patient_id)
+        //->where('module_id',$module_id)->where('component_id',$submodule_id)
+        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'));
+    $b = RCare\Messaging\Models\MessageLog::select('patient_id', 'status', 'created_at', 'module_id', 'message_date', 'status', 'message_date', 'id', 'message')->where('patient_id', $patient_id)->where('status', 'received')
+        ->whereBetween('created_at', [$dateS, $dateE]);
+    $c = RCare\Ccm\Models\CallStatus::select('call_status', 'phone_no', 'created_at', 'call_continue_status', 'ccm_answer_followup_date', 'ccm_answer_followup_time', 'ccm_call_followup_date', 'voice_mail', 'text_msg')->where('patient_id', $patient_id)
+        ->where('voice_mail', 3)
+        ->whereBetween('created_at', [$dateS, $dateE]);
+    $call_history = $a->union($c)->union($b)->orderBy('created_at', 'desc')->get();
+    return $call_history;
+}
 
    function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid){
          $optCount = count((array) $treeObj);
