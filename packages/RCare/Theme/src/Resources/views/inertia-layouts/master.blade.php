@@ -219,14 +219,15 @@
     <!-- <script src="{{asset('assets/js/form.basic.script.js')}}"></script>-->
     {{-- theme javascript --}}
      <script defer src="{{asset('assets/js/script.js')}}"></script>
+     <script defer src="{{asset('assets/js/customizer.script.js')}}"></script>
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
- <!--    <script async src="{{asset('assets/js/laravel/iapp.js')}}"></script> -->
+<!--   <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>  -->
  	
 <!--  <script src="{{asset('assets/js/laravel/ccmMonthlyMonitoring.js')}}"></script>
 <script src="{{asset('assets/js/laravel/carePlanDevelopment.js')}}"></script> -->
     {{-- page specific javascript --}}
-    <script defer src="{{asset('assets/js/customizer.script.js')}}"></script>
+
     <script defer src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
 
 </body>

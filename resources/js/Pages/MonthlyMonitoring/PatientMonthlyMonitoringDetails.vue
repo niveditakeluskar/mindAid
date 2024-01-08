@@ -9,7 +9,7 @@
                   </div>
                </div>
                <div style="width: 90%; float: right;">
-                  <component :is="selectedComponent" v-bind="componentProps"></component>
+                  <component :is="selectedComponent" v-bind="componentProps" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid"></component>
                </div>
             </div>
          </div>
@@ -28,7 +28,8 @@
       props: {
          patientId: Number,
          moduleId: Number,
-         componentId: Number
+         componentId: Number,
+         stageid:Number,
       },
       components: {
          Preparation,
@@ -136,7 +137,8 @@
             this.componentProps = {
                patientId: this.patientId,
                moduleId: this.moduleId,
-               componentId: this.componentId
+               componentId: this.componentId,
+               stageid: this.stageid,
             };
          },
       },

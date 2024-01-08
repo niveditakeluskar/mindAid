@@ -1,17 +1,17 @@
 <template>
     <div class="card">
-        <form id="relationship_form" name="relationship_form" action="" method="post"> 
+        <form id="relationship_form" name="relationship_form" @submit.prevent="submitRelationshipForm"> 
                 <div class="card-body">
                     <input type="hidden" name="uid" />
-                    <input type="hidden" name="patient_id" />
+                    <input type="hidden" name="patient_id" :value="patientId"/>
                     <input type="hidden" name="start_time" value="00:00:00">
                     <input type="hidden" name="end_time" value="00:00:00">
-                    <input type="hidden" name="module_id" />
-                    <input type="hidden" name="component_id" />
-                    <input type="hidden" name="stage_id" />
+                    <input type="hidden" name="module_id" :value="moduleId"/>
+                    <input type="hidden" name="component_id" :value="componentId"/>
                     <input type="hidden" name="hid_stage_id" />
                     <input type="hidden" name="form_name" value="relationship_form">
-                    <div class="alert alert-success" id="success-alert" style="display: none;">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+                    <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
                         <strong> Relationship data saved successfully! </strong><span id="text"></span>
                     </div>
@@ -41,10 +41,15 @@ export default {
     data() {
         return {
             RelationshipQuestionnaire: null,
+            stageId: 0,
+            formErrors: {},
+			showAlert: false,
+            time:null,
         };
     },
     mounted() {
         this.fetchData();
+        this.time = document.getElementById('page_landing_times').value;
     },
     methods: {
         fetchData() {
@@ -56,6 +61,29 @@ export default {
                     console.error('Error fetching data:', error);
                 });
         },
+        async submitRelationshipForm(){
+            let myForm = document.getElementById('relationship_form'); 
+            let formData = new FormData(myForm);
+          axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+         try {
+				this.formErrors = {};
+				const response = await axios.post('/ccm/monthly-monitoring-call-relationship', formData);
+				if (response && response.status == 200) {
+					this.showAlert = true;
+                    updateTimer(this.patientId, 1, this.moduleId);
+					setTimeout(() => {
+						this.showAlert = false;
+					}, 3000);
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 422) {
+					this.formErrors = error.response.data.errors;
+				} else {
+					console.error('Error submitting form:', error);
+				}
+			}
+        },
     },
+
 };
 </script>

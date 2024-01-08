@@ -109,13 +109,13 @@
 					<div class="mr-3 d-inline-flex align-self-center">
 						<label :for="`${sectionName}_med_added_or_discon_yes`" class="radio radio-primary mr-3">
 							<input type="radio" name="med_added_or_discon" :id="`${sectionName}_med_added_or_discon_yes`"
-								value="1" formControlName="radio">
+								value="Yes" formControlName="radio" v-model="med_added_or_disconYesNo">
 							<span>Yes</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_med_added_or_discon_no`" class="radio radio-primary mr-3">
 							<input type="radio" name="med_added_or_discon" :id="`${sectionName}_med_added_or_discon_no`"
-								value="0" formControlName="radio">
+								value="No" formControlName="radio" v-model="med_added_or_disconYesNo">
 							<span>No</span>
 							<span class="checkmark"></span>
 						</label>
@@ -123,6 +123,7 @@
 				</div>
 				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
 			</div>
+			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
 				<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal"
 					data-target="#myModal" target="medication">Edit Medication</button>
@@ -133,6 +134,7 @@
 					:id="`${sectionName}_med_added_or_discon_notes`"></textarea>
 				<div :id="`${sectionName}_med_added_or_discon_notes`" class="invalid-feedback"></div>
 			</div>
+		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
 				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`"
 					class="btn btn-primary click_id allergiesclick" data-toggle="modal" data-target="#myModal"
@@ -173,35 +175,35 @@
 					<div class="mr-3 d-inline-flex align-self-center">
 						<label :for="`${sectionName}_report_requirnment_new_lab`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment1"
-								:id="`${sectionName}_report_requirnment_new_lab`" value="1" class="RRclass"
-								formControlName="checkbox">
+								:id="`${sectionName}_report_requirnment_new_lab`" v-model="report_requirnment1" class="RRclass"
+								formControlName="checkbox" @change="checkRequirnmentss()">
 							<span>New Labs</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_diag_img`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment2"
-								:id="`${sectionName}_report_requirnment_diag_img`" value="1" class="RRclass"
-								formControlName="checkbox">
+								:id="`${sectionName}_report_requirnment_diag_img`" v-model="report_requirnment2" class="RRclass"
+								formControlName="checkbox"  @change="checkRequirnmentss()">
 							<span>Diagnostic Imaging</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_health`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment4"
-								:id="`${sectionName}_report_requirnment_health`" value="1" class="RRclass"
-								formControlName="checkbox">
+								:id="`${sectionName}_report_requirnment_health`" v-model="report_requirnment4" class="RRclass"
+								formControlName="checkbox" @change="checkRequirnmentss()">
 							<span>Health Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_new_vitals`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment5"
-								:id="`${sectionName}_report_requirnment_new_vitals`" value="1" class="RRclass"
-								formControlName="checkbox">
+								:id="`${sectionName}_report_requirnment_new_vitals`" v-model="report_requirnment5" class="RRclass"
+								formControlName="checkbox" @change="checkRequirnmentss()">
 							<span>Vitals Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
-							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`"
-								value="1" class="RRclass" formControlName="checkbox">
+							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
+								 class="RRclass" formControlName="checkbox" @click="noneConditionRequireements()">
 							<span>None</span><span class="error">*</span>
 							<span class="checkmark"></span>
 							<!-- <span class="error">*</span> -->
@@ -210,7 +212,7 @@
 				</div>
 				<div :id="`${sectionName}_report_requirnment`" class="invalid-feedback" style="font-size: 13px;"></div>
 			</div>
-			<div :id="`${sectionName}_requirnment`" class="rep_req_note mb-4">
+			<div v-if="report_requirnment1 == true || report_requirnment2 ==true || report_requirnment4 == true || report_requirnment5 == true" :id="`${sectionName}_requirnment`" class="rep_req_note mb-4">
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
 						class="mr-3 mb-4"><!-- <b>Vitals and Health Data added or edit:</b> -->
@@ -289,26 +291,28 @@ export default {
 			conditionRequirnment2: false,
 			conditionRequirnment3: false,
 			conditionRequirnment4: false,
+			report_requirnment1: false,
+			report_requirnment2: false,
+			report_requirnment4: false,
+			report_requirnment5: false,
 			officeVisitYesNo:'No',
 			newDiagnosisYesNo:'No',
+			med_added_or_disconYesNo:'No',
 		};
 	},
 	mounted() {
      const script = document.createElement('script');
-    script.src = '/assets/js/laravel/ccmMonthlyMonitoring.js';
+    script.src = '/assets/js/laravel/iapp.js';
     script.async = true;
-
     // Listen to the script's onload event to ensure it's loaded properly
     script.onload = () => {
         console.log('Script has been loaded successfully.');
         // You can add logic here that relies on the loaded script
     };
-
     // Listen to any errors while loading the script
     script.onerror = () => {
         console.error('Error loading script.');
     };
-
     document.body.appendChild(script); 
 },
 	methods: {
@@ -320,6 +324,17 @@ export default {
 		checkRequirnments() {
 			if (this.conditionRequirnment1 === true || this.conditionRequirnment2 === true || this.conditionRequirnment3 === true) {
 				this.conditionRequirnment4 = false; // Uncheck conditionRequirnment4 if any other checkbox is checked
+			}
+		},
+		noneConditionRequireements() {
+			this.report_requirnment1 = false;
+			this.report_requirnment4 = false;
+			this.report_requirnment5 = false;
+			this.report_requirnment2 = false;
+		},
+		checkRequirnmentss() {
+			if (this.report_requirnment1 === true || this.report_requirnment2 === true || this.report_requirnment4 === true || this.report_requirnment5 === true) {
+				this.report_requirnment3 = false; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
 	},
