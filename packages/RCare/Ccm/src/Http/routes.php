@@ -34,8 +34,9 @@ Route::middleware(["auth", "web"])->group(function () {
         //Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listSpMonthlyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         Route::get('/monthly-monitoring/{id}', 'RCare\Ccm\Http\Controllers\CcmController@fetchMonthlyMonitoringPatientDetails')->name('monthly.monitoring.patient.details');
         
-
-        // Route::get("/monthly-monitoring/{id}", function(){
+        Route::get('/populate-preparation-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populatePreparationData')->name('populate.preparation.data');
+        
+        // Route::get("/monthly-monitoring/{id}", function(){ 
         //         return view('Ccm::monthly-monitoring.patient-details');
         //     })->name('monthly.monitoring.patient.details');
         

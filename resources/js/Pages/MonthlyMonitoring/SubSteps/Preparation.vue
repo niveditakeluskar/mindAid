@@ -36,19 +36,28 @@
 </template>
 
 <script>
-   import PreparationForm from '../Components/PreparationFollowUpForm.vue';
+import PreparationForm from '../Components/PreparationFollowUpForm.vue';
 // import stepWizard from 'js/app.js';
 export default {
+   props:{
+      patientId:Number,
+      moduleId :Number,
+      componentId:Number,
+   },
    data() {
-      return {
-         sectionName: 'call_preparation',
-      };
+
    },
    components: {
       PreparationForm
-   },
+   }, 
    mounted() {
       // console.log('Component mounted.');
+      // this.populateFuntion(); 
+   },
+   // /ccm/populate-preparation-data/${this.patientId}
+   methods: { 
+     
    }
+
 };
 </script>

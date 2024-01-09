@@ -261,21 +261,6 @@ const patientVeteranServiceModalDetails = async()=>{
     }
 }
 
-const populateSaveValue=async()=>{
-    try{
-        var patientId = $("#hidden_id").val();
-        const respose = await fetch(`/ccm/monthly-monitoring/${props.patientId}`);
-        if(!respose.ok){
-            throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        patientSaveDetails.value = data;
-        props.loading = "done";
-        console.log('Fetched Patient save details:', data);
-    }catch{
-
-    }
-}
 const patComDetails = async () => {
     try {
         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
@@ -332,7 +317,6 @@ const patComDetails = async () => {
 
 onMounted(async () => {
    await patComDetails();
-   await populateSaveValue();
 });
 
 

@@ -6,22 +6,30 @@
 		<div class="col-md-12 forms-element">
 			<div class="mr-3 d-inline-flex align-self-center">
 				<label :for="`${sectionName}_condition_requirnment_new`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment1" :id="`${sectionName}_condition_requirnment_new`" value="1" class="CRclass" formControlName="cehckbox">
+					<input type="checkbox" name="condition_requirnment1" :id="`${sectionName}_condition_requirnment_new`" value="1" class="CRclass" 
+					formControlName="checkbox" :checked="isChecked1">  
+
 					<span>New Hospitalization</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_er_visit`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment2" :id="`${sectionName}_condition_requirnment_er_visit`" value="1" class="CRclass" formControlName="checkbox">
+					<input type="checkbox" name="condition_requirnment2" :id="`${sectionName}_condition_requirnment_er_visit`" value="1" class="CRclass" 
+					formControlName="checkbox" :checked="isChecked2">  
+
 					<span>ER Visits</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_urgent_care`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment3" :id="`${sectionName}_condition_requirnment_urgent_care`" value="1" class="CRclass" formControlName="checkbox">
+					<input type="checkbox" name="condition_requirnment3" :id="`${sectionName}_condition_requirnment_urgent_care`" value="1" class="CRclass" 
+					formControlName="checkbox" :checked="isChecked3">  
+
 					<span>Urgent Care</span>
 					<span class="checkmark"></span>
 				</label>
 				<label :for="`${sectionName}_condition_requirnment_none`" class="checkbox  checkbox-primary mr-3">
-					<input type="checkbox" name="condition_requirnment4" :id="`${sectionName}_condition_requirnment_none`" value="1"  formControlName="checkbox"> 
+					<input type="checkbox" name="condition_requirnment4" :id="`${sectionName}_condition_requirnment_none`" value="1"  
+					formControlName="checkbox" :checked="isChecked4">  
+ 
 					<span>None</span>
 					<span class="checkmark"></span>
 					<span class="error">*</span>
@@ -32,7 +40,7 @@
 		</div> 
 		<div :id="`${sectionName}_note`" class="notes mb-4" >
 
-		<textarea class="form-control" name="condition_requirnment_notes" :id="`${sectionName}_condition_requirnment_notes`"></textarea>
+		<textarea class="form-control" name="condition_requirnment_notes" :id="`${sectionName}_condition_requirnment_notes`" :value="condition_requirnment_notes"></textarea>
 		<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
 		</div>
 		<!-- New Office Visit  -->
@@ -41,12 +49,12 @@
 				<span class="mr-3 mb-4"><b>New Office Visit(s): <span class="error">*</span></b></span>
 				<div class="mr-3 d-inline-flex align-self-center">
 					<label :for="`${sectionName}_newofficevisit_yes`" class="radio radio-primary mr-3">
-						<input type="radio"  formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_yes`" value="1">
-						<span>Yes</span>
+						<input type="radio"  formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_yes`" value="1" :checked ="newofficevisit=='1'">
+						<span>Yes</span> 
 						<span class="checkmark"></span>
 					</label>
 					<label :for="`${sectionName}_newofficevisit_no`" class="radio radio-primary mr-3">
-						<input type="radio" formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_no`" value="0">
+						<input type="radio" formControlName="radio" name="newofficevisit" :id="`${sectionName}_newofficevisit_no`" value="0" :checked ="newofficevisit=='0'">
 						<span>No</span>
 						<span class="checkmark"></span>
 					</label>
@@ -236,9 +244,52 @@
       type: String,
       required: true,
     },
+	
+  },
+  data() {
+    return {
+      // Initialize isChecked with the prop value
+         sectionName: 'call_preparation',
+         patientPrepSaveDetails:null,
+         isChecked1:'',
+         isChecked2:'',
+         isChecked3:'',
+         isChecked4:'',
+         condition_requirnment_notes:'',
+		 newofficevisit:'',
+     
+    };
   },
    mounted() {
     //   console.log('Component mounted.')
+	this.populateFuntion(); 
+   },
+   methods: {
+	    async populateFuntion(){ 
+			try{
+				const response = await fetch(`/ccm/populate-preparation-data/828433174`);
+				if(!response.ok){ 
+						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+				}
+				const data = await response.json();
+				this.patientPrepSaveDetails = data;
+				this.isChecked1 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment1;
+				this.isChecked2 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment2;
+				this.isChecked3 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment3;
+				this.isChecked4 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment4;
+
+				this.condition_requirnment_notes = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment_notes;
+				this.newofficevisit = this.patientPrepSaveDetails.populateCallPreparation[0].newofficevisit;
+					// if((this.isChecked1 != "" || this.isChecked2!="" || this.isChecked3!="") && this.isChecked4 == "") {
+					//    // alert('isSelected');
+					// }
+				console.log('Fetched Patient Preaparation details:', data);
+				
+			}catch(error){
+				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
+			}
+        }
    }
+   
   }
   </script>
