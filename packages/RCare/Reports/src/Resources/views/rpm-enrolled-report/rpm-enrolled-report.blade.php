@@ -277,8 +277,17 @@
                                             <label for="name" class="control-label">Device Code</label><span class="error">*</span>
                                             @text("device_code", ["id" => "device_code", "class" => "form-control capital-first ", "placeholder" => "Enter device code"])
                                         </div>
-                                        
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Partners<span class='error'>*</span></label>
+                                            @selectrpmenrolledpartner("partner_id",["id" => "partner_id"])
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Partner Devices<span class='error'>*</span></label>
+                                            @selectPartnerDevice("partner_devices_id",["id"=>"partner_devices_id"])
+                                        </div> 
+                                    </div>   
                                     <div class="mc-footer">             
                                         <div class="row">
                                             <div class="col-12 text-right form-group mb-4">
@@ -787,10 +796,10 @@ function getrefreshtable(){
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val(); 
 
-    if(check_enrolled_date == '1'){
+    if(check_enrolled_date == 'on'){  
         getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);     
-    }else{ 
-        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);   
+   }else{
+        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);
     }
 }
 function shippingdetail(rowid) {
