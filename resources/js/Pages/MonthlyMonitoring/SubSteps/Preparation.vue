@@ -22,7 +22,7 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
-                  <PreparationForm :sectionName="sectionName" />
+                  <PreparationForm :sectionName="sectionName" :patientId="patientId" />
                </div>
                <div class='loadscreen' id="preloader" v-show="isLoading">
         <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->

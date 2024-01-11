@@ -340,7 +340,7 @@ export default {
 			console.error('Error loading script.');
 		};
 		document.body.appendChild(script); 
-		this.populateFuntion(patientId); 
+		this.populateFuntion(this.patientId); 
 	},
 	methods: {
 		noneConditionRequireement() {
@@ -372,33 +372,34 @@ export default {
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation[0].submited_to_emr;
-				this.conditionRequirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment1;
-				this.conditionRequirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment2;
-				this.conditionRequirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment3;
-				this.conditionRequirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment4;
+				if(this.patientPrepSaveDetails.populateCallPreparation!=''){
+					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation[0].submited_to_emr;
+					this.conditionRequirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment1;
+					this.conditionRequirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment2;
+					this.conditionRequirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment3;
+					this.conditionRequirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment4;
 
-				this.condition_requirnment_notes = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment_notes;
-				this.officeVisitYesNo =  this.patientPrepSaveDetails.populateCallPreparation[0].newofficevisit;
-				this.officeVisitNotes =  this.patientPrepSaveDetails.populateCallPreparation[0].nov_notes; 
+					this.condition_requirnment_notes = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment_notes;
+					this.officeVisitYesNo =  this.patientPrepSaveDetails.populateCallPreparation[0].newofficevisit;
+					this.officeVisitNotes =  this.patientPrepSaveDetails.populateCallPreparation[0].nov_notes; 
 
-				this.newDiagnosisYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].newdiagnosis;
-				this.newDiagnosisNotes = this.patientPrepSaveDetails.populateCallPreparation[0].nd_notes;
-				
-				this.med_added_or_disconYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon;
-				this.med_added_or_disconNotes = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon_notes;
+					this.newDiagnosisYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].newdiagnosis;
+					this.newDiagnosisNotes = this.patientPrepSaveDetails.populateCallPreparation[0].nd_notes;
+					
+					this.med_added_or_disconYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon;
+					this.med_added_or_disconNotes = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon_notes;
 
-				this.pcpReviwewdYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].pcp_reviwewd;
-				
-				this.report_requirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment1;
-				this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment2;
-				this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
-				this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment3;
-				this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
-				
-				this.anything_else = this.patientPrepSaveDetails.populateCallPreparation[0].anything_else;
-				this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation[0].patient_relationship_building;
-
+					this.pcpReviwewdYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].pcp_reviwewd;
+					
+					this.report_requirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment1;
+					this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment2;
+					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
+					this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment3;
+					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
+					
+					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation[0].anything_else;
+					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation[0].patient_relationship_building;
+				}
 				console.log('Fetched Patient Preaparation details:', data);
 				
 			}catch(error){
