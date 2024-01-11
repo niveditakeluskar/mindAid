@@ -6,7 +6,7 @@
          <div class="col-lg-12 mb-4 ">
             <div class="card">
                <div class="card-body">
-                  <div class="alert alert-success" id="success-alert" style="display: none;">
+                     <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
                      <button type="button" class="close" data-dismiss="alert">x</button>
                      <strong>Call Preparation Completed! </strong><span id="text"></span>
                   </div>
@@ -22,6 +22,7 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
+                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
                   <PreparationForm :sectionName="sectionName" :patientId="patientId" />
                </div>
                <div class='loadscreen' id="preloader" v-show="isLoading">
@@ -98,13 +99,17 @@ export default {
       return {
          sectionName: 'call_preparation',
          csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-         isLoading: false // Initially hide the spinner
+         isLoading: false, // Initially hide the spinner
+         showAlert: false,
+         time:null,
       };
    },
    components: {
       PreparationForm
    }, 
    mounted() {
+      this.time = document.getElementById('page_landing_times').value;
+		
   },
   methods: {
     saveForm() {
@@ -114,6 +119,11 @@ export default {
       formData.append('_token', this.csrfToken);
       axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
         .then(response => {
+         this.showAlert = true;
+            updateTimer(this.patientId, 1, this.moduleId);
+					setTimeout(() => {
+						this.showAlert = false;
+					}, 3000);
           // Handle success response
           console.log('Form saved successfully', response.data);
           // Optionally, perform any additional actions on successful form submission

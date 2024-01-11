@@ -305,6 +305,8 @@ export default {
 
 	data() {
 		return {
+			// time:null,
+
 			conditionRequirnment1: false,
 			conditionRequirnment2: false,
 			conditionRequirnment3: false,
@@ -327,6 +329,8 @@ export default {
 		};
 	},
 	mounted() {
+        // this.time = document.getElementById('page_landing_times').value;
+
         const script = document.createElement('script');
 		script.src = '/assets/js/laravel/iapp.js';
 		script.async = true;
