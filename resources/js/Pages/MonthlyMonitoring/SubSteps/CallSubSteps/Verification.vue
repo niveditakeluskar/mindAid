@@ -103,7 +103,7 @@ export default {
 				start_time: "",
 				end_time: "",
 				verification: this.verification,
-				_token: document.querySelector('meta[name="csrf-token"]').content,
+				_token: document.querySelector('meta[name="csrf-token"]').content, 
 				timearr: {
 					"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
 					"form_save_time": "",

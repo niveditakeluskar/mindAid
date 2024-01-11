@@ -95,6 +95,7 @@ var onAdddeviceData = function (formObj, fields, response) {
 		setTimeout(function () {
 			$("#success").hide(); 
 		}, 3000); 
+		getrefreshtable();
 	}  
 	// else if (response.status == 400) {
     //     console.log(response); 

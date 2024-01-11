@@ -53,12 +53,13 @@ use RCare\Patients\Models\PatientLabRecs;
 use RCare\TaskManagement\Models\UserPatients;
 use RCare\Patients\Models\PatientHealthServices;
 use RCare\Ccm\src\Http\Requests\CallAddRequest;
-use RCare\Ccm\src\Http\Requests\HippaAddRequest;
+use RCare\Ccm\Http\Requests\HippaAddRequest;
 use RCare\Ccm\src\Http\Requests\HomeServicesAddRequest;
 use RCare\Ccm\Http\Requests\RelationshipAddRequest;
 use RCare\Ccm\src\Http\Requests\CallCloseAddRequest;
 use RCare\Ccm\src\Http\Requests\CallwrapAddRequest;
-use RCare\Ccm\src\Http\Requests\FollowupAddRequest;
+use RCare\Ccm\Http\Requests\FollowupAddRequest;
+use RCare\Ccm\Http\Requests\FollowupInertiaAddRequest;
 use RCare\Ccm\src\Http\Requests\TextAddRequest;
 use RCare\Ccm\src\Http\Requests\CarePlanSaveRequest;
 use RCare\Messaging\Models\MessageLog;
@@ -1106,7 +1107,8 @@ class CcmController extends Controller
     {
         $id    = sanitizeVariable($id);
         $year  = date('Y');
-        $month = '08'; //date('m');
+        // $month = '08';
+        $month = date('m');
 
         // $data  = DB::select(DB::raw( "(select id as \"DT_RowId\", topic, notes,  status, created_at, id, sequence, sub_sequence
         //     from ccm.ccm_topics
@@ -1172,7 +1174,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" id="deactive" onClick="deleteCallWrap"><i class="i-Closee i-Close"  title="Delete"></i></a>';
+                $btn = '<div href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" v-on:click="deleteCallWrapup(' . $row->id . ')"><i class="i-Closee i-Close"  title="Delete"></i></div>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -2191,8 +2193,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $uid          = sanitizeVariable($request->uid);
         $notes        = sanitizeVariable($request->notes);
         $verification = sanitizeVariable($request->verification);
-        $module_id    = sanitizeVariable($request->module);
-        $component_id = sanitizeVariable($request->component);
+        $module_id    = (isset($request->module_id)) ? sanitizeVariable($request->module_id) : sanitizeVariable($request->module);
+        $component_id = (isset($request->component_id)) ? sanitizeVariable($request->component_id) : sanitizeVariable($request->component);
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
         $stage_id     = sanitizeVariable($request->stage_id);
@@ -3289,7 +3291,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         }
     }
 
-
     public function SaveFollowup(FollowupAddRequest $request)
     {
         $patient_id            = sanitizeVariable($request->input('patient_id'));
@@ -3481,6 +3482,199 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             DB::rollBack();
             return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
+    }
+
+    public function SaveFollowUpInertia(FollowupInertiaAddRequest $request)
+    {
+        // dd($request);
+        $patient_id            = sanitizeVariable($request->input('patient_id'));
+        $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete);
+        $notes                 = sanitizeVariable($request->notes);
+        $start_time            = sanitizeVariable($request->start_time);
+        $end_time              = sanitizeVariable($request->end_time);
+        $uid                   = sanitizeVariable($request->uid);
+        $module_id             = sanitizeVariable($request->module_id);
+        $component_id          = sanitizeVariable($request->component_id);
+        $stage_id              = sanitizeVariable($request->stage_id);
+        $step_id               = sanitizeVariable($request->step_id);
+        $form_name             = sanitizeVariable($request->form_name);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $notes                 = sanitizeVariable($request->notes);
+        $billable              = 1;
+        $sequence              = 7;
+        $last_sub_sequence     = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+        $new_sub_sequence      = $last_sub_sequence + 1;
+        $folllowUpTaskData     = sanitizeVariable($request->folllowUpTaskData);
+        // DB::beginTransaction();
+        // try {
+        if ($folllowUpTaskData[0]['task_name'] != '') {
+        }
+
+        // if ($followupmaster_task[0] != '' && $emr_complete == '1') {
+        //     foreach ($followupmaster_task as $i => $value) {
+        //         if (!empty($status_flag[$i]) == '0') {
+        //             $status = 'Pending';
+        //             $task_completed_at = null;
+        //         }
+        //         if (!empty($status_flag[$i]) == '1') {
+        //             $status = 'Completed';
+        //             $task_completed_at = Carbon::now();
+        //         }
+        //         $to_do = array(
+        //             'uid'                         => $patient_id,
+        //             'module_id'                   => $module_id,
+        //             'component_id'                => $component_id,
+        //             'stage_id'                    => $stage_id,
+        //             'step_id'                     => $step_id,
+        //             'task_notes'                  => $task_name[$i],
+        //             'notes'                       => $notes[$i],
+        //             'assigned_to'                 => session()->get('userid'),
+        //             'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
+        //             'assigned_on'                 => Carbon::now(),
+        //             'status'                      => $status,
+        //             'task_completed_at'           => $task_completed_at,
+        //             'select_task_category'        => $followupmaster_task[$i],
+        //             'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
+        //             'created_by'                  => session()->get('userid'),
+        //             'patient_id'                  => $patient_id
+        //         );
+        //         if ($value != "") {
+        //             $insert = ToDoList::create($to_do);
+        //             $last_insert_id = $insert->id;
+        //             if (!empty($status_flag[$i]) == '1') {
+        //                 $status = 'Completed';
+        //                 $task_completed_at = Carbon::now();
+        //                 $callWrapUp = array(
+        //                     'uid'                 => $patient_id,
+        //                     'record_date'         => Carbon::now(),
+        //                     'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
+        //                     'notes'               => $notes[$i],
+        //                     'created_by'          => session()->get('userid'),
+        //                     'update_by'           => session()->get('userid'),
+        //                     'patient_id'          => $patient_id,
+        //                     'sequence'            => $sequence,
+        //                     'sub_sequence'        => $new_sub_sequence,
+        //                     'task_id'             => $last_insert_id
+        //                 );
+        //                 CallWrap::create($callWrapUp);
+        //             }
+        //         } //end value if
+        //     } //end foreach
+        //     //checkbox array
+        //     $data = array(
+        //         'uid'                 => $patient_id,
+        //         'rec_date'            => Carbon::now(),
+        //         'emr_complete'        => $emr_complete,
+        //         'patient_id'          => $patient_id,
+        //         'update_status'       => 1,
+        //     );
+        //     $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+        //     if ($check_id == true) {
+        //         $data['updated_by'] = session()->get('userid');
+        //         $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+        //     } else {
+        //         $data['created_by'] = session()->get('userid');
+        //         $insert_query = FollowUp::create($data);
+        //     }
+        //     //record time
+        //     $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+        // } else if ($followupmaster_task[0] != '' || $emr_complete == '1') {
+        //     if ($followupmaster_task[0] != '') {
+        //         foreach ($followupmaster_task as $i => $value) {
+        //             if (!empty($status_flag[$i]) == '0') {
+        //                 $status = 'Pending';
+        //                 $task_completed_at = null;
+        //             }
+        //             if (!empty($status_flag[$i]) == '1') {
+        //                 $status = 'Completed';
+        //                 $task_completed_at = Carbon::now();
+        //             }
+        //             $to_do = array(
+        //                 'uid'                         => $patient_id,
+        //                 'module_id'                   => $module_id,
+        //                 'component_id'                => $component_id,
+        //                 'stage_id'                    => $stage_id,
+        //                 'step_id'                     => $step_id,
+        //                 'task_notes'                  => $task_name[$i],
+        //                 'notes'                       => $notes[$i],
+        //                 'assigned_to'                 => session()->get('userid'),
+        //                 'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
+        //                 'assigned_on'                 => Carbon::now(),
+        //                 'status'                      => $status,
+        //                 'task_completed_at'           => $task_completed_at,
+        //                 'select_task_category'        => $followupmaster_task[$i],
+        //                 'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
+        //                 'created_by'                  => session()->get('userid'),
+        //                 'patient_id'                  => $patient_id
+        //             );
+        //             if ($value != "") {
+        //                 $insert = ToDoList::create($to_do);
+        //                 $last_insert_id = $insert->id;
+        //                 if (!empty($status_flag[$i]) == '1') {
+        //                     $status = 'Completed';
+        //                     $task_completed_at = Carbon::now();
+        //                     $callWrapUp = array(
+        //                         'uid'                 => $patient_id,
+        //                         'record_date'         => Carbon::now(),
+        //                         'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
+        //                         'notes'               => $notes[$i],
+        //                         'created_by'          => session()->get('userid'),
+        //                         'update_by'           => session()->get('userid'),
+        //                         'patient_id'          => $patient_id,
+        //                         'sequence'            => $sequence,
+        //                         'sub_sequence'        => $new_sub_sequence,
+        //                         'task_id'             => $last_insert_id
+        //                     );
+        //                     CallWrap::create($callWrapUp);
+        //                 }
+        //             } //end value if
+        //         } //end foreach
+        //         $data = array(
+        //             'uid'                 => $patient_id,
+        //             'rec_date'            => Carbon::now(),
+        //             'emr_complete'        => $emr_complete,
+        //             'patient_id'          => $patient_id,
+        //             'update_status'       => 1,
+        //         );
+        //         $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+        //         if ($check_id == true) {
+        //             $data['updated_by'] = session()->get('userid');
+        //             $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+        //         } else {
+        //             $data['created_by'] = session()->get('userid');
+        //             $insert_query = FollowUp::create($data);
+        //         }
+        //         //record time
+        //         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+        //     } else {
+        //         $data = array(
+        //             'uid'                 => $patient_id,
+        //             'rec_date'            => Carbon::now(),
+        //             'emr_complete'        => $emr_complete,
+        //             'patient_id'          => $patient_id,
+        //             'update_status'       => 1,
+        //         );
+        //         $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+        //         if ($check_id == true) {
+        //             $data['updated_by'] = session()->get('userid');
+        //             $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+        //         } else {
+        //             $data['created_by'] = session()->get('userid');
+        //             $insert_query = FollowUp::create($data);
+        //         }
+        //         //record time
+        //         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+        //     }
+        // } else {
+        //     return 'blank form';
+        // } //end else
+        //     DB::commit();
+        //     return response(['form_start_time' => $form_save_time]);
+        // } catch (\Exception $ex) {
+        //     DB::rollBack();
+        //     return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        // }
     }
 
     public function UpdateCallWrapUpInline(Request $request, $id)
@@ -4251,7 +4445,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } else {
                 CallWrap::create($note2);
             }
-        }
+        } 
         //return response()->json(['success' => "Added successfully."]);
         return response(['form_start_time' => $form_save_time]);
         /*  DB::commit();

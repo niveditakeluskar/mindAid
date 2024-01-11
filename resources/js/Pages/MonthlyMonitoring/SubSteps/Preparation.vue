@@ -23,26 +23,20 @@
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
                   <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
-                  <PreparationForm :sectionName="sectionName" :patientId="patientId" />
+                  <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"  />
                </div>
-               <div class='loadscreen' id="preloader" v-show="isLoading">
-        <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->
-            <img src="/images/loading.gif" width="150" height="150">
-        </div>
-    </div> <!-- Pre Loader end  -->
-               <div class="card-footer">
-                  <div class="mc-footer">
-                     <div class="row">
-                        <div class="col-lg-12 text-right">
-                           <button type="button" class="btn btn-primary m-1 draft_preparation" sid="draft_call_preparation"
-                              id="call_preparation_draft">Draft Save</button>
-                           <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
-                        </div>
+            <div class="card-footer">
+               <div class="mc-footer">
+                  <div class="row"> 
+                     <div class="col-lg-12 text-right">
+                        <button type="button" class="btn btn-primary m-1 draft_preparation">Draft Save</button>
+                        <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
                      </div>
                   </div>
                </div>
             </div>
          </div>
+      </div>
       </div>
    </form>
 </template>

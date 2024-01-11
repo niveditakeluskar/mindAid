@@ -46,13 +46,13 @@
         $themeMode = "dark-theme";
     }
     ?>
-     
+
     @inertiaHead
 </head>
 
 <body class="layout_2 text-left {{$themeMode}}">
-@vite('resources/js/appInertia.js')
-@php
+    @vite('resources/js/appInertia.js')
+    @php
     $layout = session('layout');
     @endphp
     <!-- Pre Loader Strat  -->
@@ -67,7 +67,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
-         
+
                 @inertia
             </div>
             @include('Theme::layouts_2.footer')
@@ -116,7 +116,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="patientalertdiv"></div>
-                    <form  method="post" name="active_deactive_form" id="active_deactive_form">
+                    <form method="post" name="active_deactive_form" id="active_deactive_form">
                         @csrf
                         <?php
                         $module_id    = getPageModuleName();
@@ -229,4 +229,5 @@
 
     <script defer src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
 </body>
+
 </html>

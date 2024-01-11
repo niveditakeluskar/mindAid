@@ -69,11 +69,11 @@
       mounted() {
          console.log('Patient Monthly Monitoring Details Component mounted.');
          // this.initCareManagerDataTable();
+         // this.updatePropsForComponent();
       },
       methods: {
          changeTab(index) {
             this.activeTab = index;
-            this.updatePropsForComponent();
          },
          // async initCareManagerDataTable() {
          //    // const columns = [
@@ -133,14 +133,13 @@
          //    //    console.error('DataTables library not loaded or initialized properly');
          //    // }
          // },
-         updatePropsForComponent() {
-            this.componentProps = {
-               patientId: this.patientId,
-               moduleId: this.moduleId,
-               componentId: this.componentId,
-               stageid: this.stageid,
-            };
-         },
+         // updatePropsForComponent() {
+         //    this.componentProps = {
+         //       patientId: this.patientId,
+         //       moduleId: this.moduleId,
+         //       componentId: this.componentId
+         //    };
+         // },
       },
    };
 </script>
