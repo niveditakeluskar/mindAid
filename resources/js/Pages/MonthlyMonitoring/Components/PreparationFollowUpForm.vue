@@ -285,6 +285,22 @@ export default {
 			type: String,
 			required: true,
 		},
+		patientId: {
+			type: Number,
+			required: true
+		},
+		moduleId: {
+			type: Number,
+			required: true
+		},
+		componentId: {
+			type: Number,
+			required: true
+		},
+		stageid:{
+			type: Number,
+			required: true
+		},
 	},
 
 	data() {
@@ -324,7 +340,7 @@ export default {
 			console.error('Error loading script.');
 		};
 		document.body.appendChild(script); 
-		this.populateFuntion(); 
+		this.populateFuntion(patientId); 
 	},
 	methods: {
 		noneConditionRequireement() {
@@ -348,9 +364,9 @@ export default {
 				this.report_requirnment3 = false; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
-		async populateFuntion(){ 
+		async populateFuntion(patientId){ 
 			try{
-				const response = await fetch(`/ccm/populate-monthly-monitoring-data/828433174`);
+				const response = await fetch(`/ccm/populate-monthly-monitoring-data/${patientId}`); 
 				if(!response.ok){ 
 						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
 				}

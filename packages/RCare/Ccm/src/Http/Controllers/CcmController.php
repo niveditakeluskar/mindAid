@@ -701,14 +701,12 @@ class CcmController extends Controller
     }
     
     public function populateMonthlyMonitoringData($patientId) {
-        $patientId   = 82109574; //sanitizeVariable($patientId);
+        $patientId   = sanitizeVariable($patientId);
         $module_id    = getPageModuleName();
         $configTZ = config('app.timezone');
         $userTZ   = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-        $callp    = CallPreparation::skip(0)->take(1)->orderBy('created_at','desc')->get();
-        $hippa    = CallHipaaVerification::skip(0)->take(1)->orderBy('created_at','desc')->get();
-        //(CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
-       // $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
+       $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
+       $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
         // dd($callp);
         $result['populateCallPreparation'] = $callp;
         $result['populateHippa'] = $hippa;
