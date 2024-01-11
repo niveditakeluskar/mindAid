@@ -36,8 +36,8 @@ use RCare\Patients\Models\PatientProvider;
 use RCare\TaskManagement\Models\ToDoList;
 use RCare\Org\OrgPackages\Roles\src\Models\RolesTypes;
 use Illuminate\Http\Request;
-use RCare\Ccm\src\Http\Requests\PreparationAddRequest;
-use RCare\Ccm\src\Http\Requests\PreparationDraftAddRequest;
+use RCare\Ccm\Http\Requests\PreparationAddRequest;
+use RCare\Ccm\Http\Requests\PreparationDraftAddRequest;
 use RCare\Patients\Models\PatientPartResearchStudy;
 use RCare\Patients\Models\PatientPersonalNotes;
 use RCare\Patients\Models\PatientMedication;
@@ -55,7 +55,7 @@ use RCare\Patients\Models\PatientHealthServices;
 use RCare\Ccm\src\Http\Requests\CallAddRequest;
 use RCare\Ccm\src\Http\Requests\HippaAddRequest;
 use RCare\Ccm\src\Http\Requests\HomeServicesAddRequest;
-use RCare\Ccm\src\Http\Requests\RelationshipAddRequest;
+use RCare\Ccm\Http\Requests\RelationshipAddRequest;
 use RCare\Ccm\src\Http\Requests\CallCloseAddRequest;
 use RCare\Ccm\src\Http\Requests\CallwrapAddRequest;
 use RCare\Ccm\src\Http\Requests\FollowupAddRequest;
@@ -700,23 +700,44 @@ class CcmController extends Controller
         return $result;
     }
     
-    public function populatePreparationData($patientId) {
+    public function populateMonthlyMonitoringData($patientId) {
         $patientId   = 82109574; //sanitizeVariable($patientId);
         $module_id    = getPageModuleName();
         $configTZ = config('app.timezone');
         $userTZ   = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         $callp    = CallPreparation::skip(0)->take(1)->orderBy('created_at','desc')->get();
+        $hippa    = CallHipaaVerification::skip(0)->take(1)->orderBy('created_at','desc')->get();
+        //(CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
        // $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
         // dd($callp);
         $result['populateCallPreparation'] = $callp;
+        $result['populateHippa'] = $hippa;
         return $result;
-        
     }
+    
+    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id){
+        $enrollinRPM = 1;
+        if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
+            $enrollinRPM = 2;
+         }
+         $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
+         $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+         $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
+         $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+         $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
+         if ($enrollinRPM > 1) {
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
+         }else{
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
+         }
+         return $genQuestion;
+    }
+
     public function fetchMonthlyMonitoringPatientDetails(Request $request)
     {
         $patient_id   = sanitizeVariable($request->route('id'));
         // $module_id    = getPageModuleName();
-        // $component_id = getPageSubModuleName();
+    
         // $SID = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'General Question');
 
         // $last_time_spend                = CommonFunctionController::getCcmNetTime($patient_id, $module_id);;
@@ -799,10 +820,15 @@ class CcmController extends Controller
         //     'moduleId' => 3,
         //     'componentId' => 19,
         // ]);
+        $module_id    = getPageModuleName();
+        $submodule_id = getPageSubModuleName();
+        $stage_id =  getFormStageId($module_id , $submodule_id, 'Preparation');
+
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
-            'moduleId' => 3,
-            'componentId' => 19,
+            'moduleId' => $module_id,
+            'componentId' => $submodule_id,
+            'stageid' =>$stage_id,
         ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
@@ -1504,30 +1530,30 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         $uid                           = sanitizeVariable($request->uid);
         $patient_id                    = sanitizeVariable($request->patient_id);
-        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : sanitizeVariable($request->condition_requirnment1);
-        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : sanitizeVariable($request->condition_requirnment2);
-        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : sanitizeVariable($request->condition_requirnment3);
-        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : sanitizeVariable($request->condition_requirnment4);
-        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : sanitizeVariable($request->report_requirnment1);
-        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : sanitizeVariable($request->report_requirnment2);
-        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : sanitizeVariable($request->report_requirnment3);
-        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : sanitizeVariable($request->report_requirnment4);
-        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : sanitizeVariable($request->report_requirnment5);
+        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : '1';
+        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : '1';
+        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : '1';
+        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : '1';
+        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : '1';
+        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : '1';
+        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : '1';
+        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : '1';
+        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = sanitizeVariable($request->newofficevisit);
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = sanitizeVariable($request->newdiagnosis);
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ? '0' :'1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = sanitizeVariable($request->med_added_or_discon);
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ?'0' :'1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
         $end_time                      = sanitizeVariable($request->end_time);
         // dd($request->timearr['form_start_time']);
         $form_start_time               = sanitizeVariable($request->timearr['form_start_time']);
-        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']); 
         // dd($form_save_time);
         $module_id                     = sanitizeVariable($request->module_id);
         $component_id                  = sanitizeVariable($request->component_id);
@@ -1816,23 +1842,23 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         $uid                           = sanitizeVariable($request->uid);
         $patient_id                    = sanitizeVariable($request->patient_id);
-        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : sanitizeVariable($request->condition_requirnment1);
-        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : sanitizeVariable($request->condition_requirnment2);
-        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : sanitizeVariable($request->condition_requirnment3);
-        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : sanitizeVariable($request->condition_requirnment4);
-        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : sanitizeVariable($request->report_requirnment1);
-        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : sanitizeVariable($request->report_requirnment2);
-        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : sanitizeVariable($request->report_requirnment3);
-        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : sanitizeVariable($request->report_requirnment4);
-        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : sanitizeVariable($request->report_requirnment5);
+        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : '1';
+        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : '1';
+        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : '1';
+        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : '1';
+        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : '1';
+        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : '1';
+        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : '1';
+        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : '1';
+        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = sanitizeVariable($request->newofficevisit);
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = sanitizeVariable($request->newdiagnosis);
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ?'0' :'1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = sanitizeVariable($request->med_added_or_discon);
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ? '0': '1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
@@ -2211,7 +2237,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     public function SaveCallRelationship(RelationshipAddRequest $request)
     {
         $patient_id   = sanitizeVariable($request->patient_id);
-        $uid          = sanitizeVariable($request->uid);
+        $uid          = sanitizeVariable($request->patient_id);
         $sequence     = 2;
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
@@ -2229,6 +2255,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $stage_id = sanitizeVariable($request->stage_id);
             $step_id      = sanitizeVariable($request->step_id);
         }
+        
         $steps        = StageCode::where('module_id', $module_id)->where('submodule_id', $component_id)->where('stage_id', $stage_id)->get();
         DB::beginTransaction();
         try {

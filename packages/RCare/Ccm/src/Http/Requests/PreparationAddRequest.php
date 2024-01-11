@@ -1,5 +1,5 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -39,8 +39,8 @@ class PreparationAddRequest extends FormRequest
             'report_requirnment1'                 => 'required_without_all:report_requirnment2,report_requirnment3',
             'report_requirnment2'                 => 'required_without_all:report_requirnment1,report_requirnment3',
             'report_requirnment3'                 => 'required_without_all:report_requirnment1,report_requirnment2',
-                'anything_else'                      => 'nullable|min:2|text_comments_slash',
-                'pcp_reviwewd'                        => 'nullable|required_if:this_month,1',
+            'anything_else'                      => 'nullable|min:2|text_comments_slash',
+            'pcp_reviwewd'                        => 'nullable|required_if:this_month,1',
             ]
             );
 

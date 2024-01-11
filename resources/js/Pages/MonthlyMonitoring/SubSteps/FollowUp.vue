@@ -71,7 +71,7 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" value="1"><span>EMR system entry completed</span><span class="checkmark"></span>
+										<input type="checkbox" name="emr_complete" id="emr_complete" value="1" v-model="emr_complete"><span>EMR system entry completed</span><span class="checkmark"></span>
 									</label>
 									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"></div>
 								</div>
@@ -159,6 +159,8 @@ import {
 } from '../../commonImports';
 import LayoutComponent from '../../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
+import { getCurrentInstance } from "vue";
+
 export default {
 	props: {
 		patientId: Number,
@@ -171,15 +173,6 @@ export default {
 	},
 	data() {
 		return {
-			uid: '', // Add default values or leave them as empty strings
-			patient_id: '',
-			start_time: '',
-			end_time: '',
-			module_id: '',
-			component_id: '',
-			stage_id: '',
-			step_id: '',
-			form_name: '',
 			items: [
 				{
 					task_name: '',
@@ -189,6 +182,20 @@ export default {
 					task_date: ''
 				}
 			],
+			uid: '', // Add default values or leave them as empty strings
+			patient_id: '',
+			module_id: '',
+			component_id: '',
+			followupStageId: 0,
+			stepId: 0,
+			start_time: '',
+			end_time: '',
+			form_name: '',
+			billable: '',
+			emr_complete: 0,
+			folllowUpTaskData: {},
+			formErrors: {},
+			showAlert: false,
 		};
 	},
 	methods: {
@@ -205,29 +212,6 @@ export default {
 			this.items.splice(index, 1);
 		},
 
-		submitFollowupFormData() {
-			const formData = {
-				uid: this.uid,
-				patient_id: this.patient_id,
-				start_time: this.start_time,
-				end_time: this.end_time,
-				module_id: this.module_id,
-				component_id: this.component_id,
-				stage_id: this.stage_id,
-				step_id: this.step_id,
-				form_name: this.form_name,
-				dynammicData: this.items.map(index => index.value),
-			};
-			console.log("formData==>>", formData);
-			// axios.post('/your-api-endpoint', this.formData)
-			// 	.then(response => {
-			// 		console.log('Form submitted successfully!', response.data);
-			// 	})
-			// 	.catch(error => {
-			// 		// Handle error response
-			// 		console.error('Error submitting form:', error);
-			// 	});
-		},
 	},
 	setup(props) {
 		const rowData = reactive({ value: [] }); // Initialize rowData as an empty array
@@ -344,6 +328,79 @@ export default {
 			}
 		};
 
+		let getStageID = async () => {
+			try {
+				let stageName = 'Follow_Up';
+				const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
+				this.followupStageId = response.data.stageID;
+			} catch (error) {
+				console.error('Error fetching stageID:', error);
+				throw new Error('Failed to fetch stageID');
+			}
+		};
+
+		const submitFollowupFormData = async () => {
+			const formData = {
+				uid: props.patientId,
+				patient_id: props.patientId,
+				module_id: props.moduleId,
+				component_id: props.componentId,
+				stage_id: getCurrentInstance().data.followupStageId,
+				step_id: this.stepId,
+				form_name: 'hippa_form',
+				billable: 1,
+				start_time: "",
+				end_time: "",
+				_token: document.querySelector('meta[name="csrf-token"]').content,
+				timearr: {
+					"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
+					"form_save_time": "",
+					"pause_start_time": "",
+					"pause_end_time": "",
+					"extra_time": ""
+				},
+				folllowUpTaskData: this.items.map(item => ({
+					task_name: item.task_name,
+					selectedFollowupMasterTask: item.selectedFollowupMasterTask,
+					status_flag: item.status_flag,
+					notes: item.notes,
+					task_date: item.task_date,
+				})),
+				emr_complete: this.emr_complete,
+			};
+			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+			try {
+				this.formErrors = {};
+				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
+				console.log('Form submitted successfully!', response);
+				if (response && response.status == 200) {
+					this.showAlert = true;
+					setTimeout(() => {
+						this.showAlert = false;
+					}, 3000);
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 422) {
+					// Handle validation errors (422 Unprocessable Entity)
+					// Set formErrors based on the response
+					this.formErrors = error.response.data.errors;
+				} else {
+					// Handle other types of errors
+					console.error('Error submitting form:', error);
+				}
+			}
+
+			console.log("formData==>>", formData);
+			// axios.post('/your-api-endpoint', this.formData)
+			// 	.then(response => {
+			// 		console.log('Form submitted successfully!', response.data);
+			// 	})
+			// 	.catch(error => {
+			// 		// Handle error response
+			// 		console.error('Error submitting form:', error);
+			// 	});
+		};
+
 		onBeforeMount(() => {
 			loadingCellRenderer.value = 'CustomLoadingCellRenderer';
 			loadingCellRendererParams.value = {
@@ -358,6 +415,7 @@ export default {
 			try {
 				fetchFollowupMasterTask();
 				fetchFollowupMasterTaskList();
+				getStageID();
 			} catch (error) {
 				console.error('Error on page load:', error);
 			}
@@ -372,6 +430,8 @@ export default {
 			fetchFollowupMasterTask,
 			fetchFollowupMasterTaskList,
 			followupMasterTaskList,
+			getStageID,
+			submitFollowupFormData,
 			// addNewItem,
 			// removeItem,
 		};

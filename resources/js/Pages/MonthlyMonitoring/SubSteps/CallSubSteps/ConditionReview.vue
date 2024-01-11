@@ -8,7 +8,7 @@
                <div class="alert alert-success" id="success-alert" style="display: none;">
                   <button type="button" class="close" data-dismiss="alert">x</button>
                   <strong>Research Follow up Completed!</strong><span id="text"></span>
-               </div>
+               </div> 
                <div class="card-title">Condition Review</div>
                <div class="form-row mb-4">
                <div class="card-title">Call Preparation</div>
@@ -24,12 +24,14 @@
                      <span class="mr-3 mb-4"><b>Call preparation completed?</b></span>
                      <div class="mr-3 d-inline-flex align-self-center"> 
                         <label for="_data_present_in_emr_yes" class="radio radio-primary mr-3">
-                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_yes" value="1">
+                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_yes" v-model="data_present_in_emrYesNO" 
+                            :checked = "data_present_in_emrYesNO=='1'" value="1">
                            <span>Yes</span>
                            <span class="checkmark"></span>
                         </label>
                         <label for="_data_present_in_emr_no" class="radio radio-primary mr-3">
-                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_no" value="0">
+                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_no" v-model="data_present_in_emrYesNO" 
+                            :checked = "data_present_in_emrYesNO=='0'" value="0">
                            <span>No</span>
                            <span class="checkmark"></span>
                         </label>
@@ -38,7 +40,7 @@
                   <div class="invalid-feedback">office visit</div>
                </div>
                <div id="data_present_in_emr_show">
-               <!-- <PreparationForm :sectionName="sectionName" /> -->
+               <PreparationForm :sectionName="sectionName" />
                </div>
             </div>
             <div class="card-footer">
@@ -57,8 +59,8 @@
 </form>
 </template>
 
-<!-- <script>
-   import PreparationForm from '../Components/PreparationFollowUpForm.vue';
+<script>
+   import PreparationForm from '../../Components/PreparationFollowUpForm.vue';
 // import stepWizard from 'js/app.js';
 export default {
    data() {
@@ -73,4 +75,4 @@ export default {
       // console.log('Component mounted.');
    }
 };
-</script> -->
+</script>

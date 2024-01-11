@@ -20,6 +20,12 @@ Route::middleware(["auth","roleAccess", "web"])->group(function () {
 Route::middleware(["auth", "web"])->group(function () {            
     Route::prefix('ccm')->group(function () {  
         
+
+        Route::get('/get-stepquestion/{module_id}/{stage_id}/{step_id}/question_list', function (string $module_id, string $stage_id, string $step_id) {
+            $d = getDecisionTree($module_id,$stage_id,$step_id);
+            return $d;
+        });
+        Route::get('/get-savedQuestion/{module_id}/{patient_id}/{step_id}/saved_question', 'RCare\Ccm\Http\Controllers\CcmController@getSavedGeneralQuestions')->name('get.saved.question');
         //     Route::get('/monthly-monitoring-patient-list', 'RCare\Ccm\Http\Controllers\CcmController@index')->name('monthly.monitoring.patient.list');
         ///////////////////////New Monthly Monitoring/////////////////////////////
         Route::get('/monthly-monitoring-call-wrap-up-activities/activities', 'RCare\Ccm\Http\Controllers\CcmController@callWrapUpActivities')->name('call.wrap.up.activities');  
@@ -34,7 +40,7 @@ Route::middleware(["auth", "web"])->group(function () {
         //Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listSpMonthlyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         Route::get('/monthly-monitoring/{id}', 'RCare\Ccm\Http\Controllers\CcmController@fetchMonthlyMonitoringPatientDetails')->name('monthly.monitoring.patient.details');
         
-        Route::get('/populate-preparation-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populatePreparationData')->name('populate.preparation.data');
+        Route::get('/populate-monthly-monitoring-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populateMonthlyMonitoringData')->name('populate.MonthlyMonitoring.data');
         
         // Route::get("/monthly-monitoring/{id}", function(){ 
         //         return view('Ccm::monthly-monitoring.patient-details');
@@ -47,7 +53,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/ajax/populate_research_followup_preparation_notes/{patientId}/{month}', 'RCare\Ccm\Http\Controllers\CcmController@getCcmMonthlyReasearchFollowupData')->name('populate.preparation.notes');
         Route::post('/monthly-monitoring-call-preparation-form', 'RCare\Ccm\Http\Controllers\CcmController@SaveCallPreparation')->name('monthly.monitoring.call.preparation');
 
-         Route::post('/monthly-monitoring-call-preparation-form-draft', 'RCare\Ccm\Http\Controllers\CcmController@DraftSaveCallPreparation')->name('monthly.monitoring.call.preparation.draft');
+        Route::post('/monthly-monitoring-call-preparation-form-draft', 'RCare\Ccm\Http\Controllers\CcmController@DraftSaveCallPreparation')->name('monthly.monitoring.call.preparation.draft');
 
         // preparation total time spent 
         Route::get("/getSpentTime/{patient_id}/{module_id}/{stage_id}/spent_total-time", "RCare\Ccm\Http\Controllers\CcmController@getTotalTimeSpent")->name("getSpentTime"); 

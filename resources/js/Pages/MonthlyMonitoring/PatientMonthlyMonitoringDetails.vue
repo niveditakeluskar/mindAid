@@ -1,27 +1,24 @@
 <template>
-   <LayoutComponent>
-      <div class="row mb-4">
-         <div class="col-md-12">
-            <div class="card">
-               <div class="card-body">
-                  <div style="width: 9%; float: left;">
-                     <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tab">
-                        {{ tab }}
-                     </div>
+   <div class="row mb-4">
+      <div class="col-md-12">
+         <div class="card">
+            <div class="card-body">
+               <div style="width: 9%; float: left;">
+                  <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tab">
+                     {{ tab }}
                   </div>
-                  <div style="width: 90%; float: right;">
-                     <component :is="selectedComponent" v-bind="componentProps"></component>
-                  </div>
+               </div>
+               <div style="width: 90%; float: right;">
+                  <component :is="selectedComponent" v-bind="componentProps" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid"></component>
                </div>
             </div>
          </div>
       </div>
-   </LayoutComponent>
+   </div>
 </template>
 
 <script>
    import axios from 'axios';
-   import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
    import Preparation from './SubSteps/Preparation.vue';
    import Call from './SubSteps/Call.vue';
    import FollowUp from './SubSteps/FollowUp.vue';
@@ -31,10 +28,10 @@
       props: {
          patientId: Number,
          moduleId: Number,
-         componentId: Number
+         componentId: Number,
+         stageid:Number,
       },
       components: {
-         LayoutComponent,
          Preparation,
          Call,
          FollowUp,
@@ -140,7 +137,8 @@
             this.componentProps = {
                patientId: this.patientId,
                moduleId: this.moduleId,
-               componentId: this.componentId
+               componentId: this.componentId,
+               stageid: this.stageid,
             };
          },
       },
