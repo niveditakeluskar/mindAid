@@ -1300,6 +1300,213 @@
         return $call_history;
     }
 
+    function getSendTextMessage($module_id, $patient_id, $submodule_id)
+    {
+        $conf = getSMSConfigue();
+        $stage_id = getFormStageId($module_id, $submodule_id, 'Call');
+        $call_not_answered_step_id = getFormStepId($module_id, $submodule_id, $stage_id, 'Call Not Answered');
+
+        $patient = RCare\Patients\Models\Patients::where('id', $patient_id)->get();
+        $patient_providers = RCare\Patients\Models\PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id', 1)
+            ->where('is_active', 1)->orderby('id', 'desc')->first();
+        if (isset($patient_providers->practice['practice_group'])) {
+            $org = getOrganization($patient_providers->practice['practice_group']);
+        }
+        $assign_message = isset($org[0]->assign_message) ? $org[0]->assign_message : '';
+        $consent_to_text = isset($patient[0]->consent_to_text) ? $patient[0]->consent_to_text : '';
+        $valid = 0;
+        if ($consent_to_text == '1' && isset($conf->configurations) && $assign_message == '1') {
+            $valid = 1;
+        } else if (!isset($conf->configurations)) {
+            $valid = 2;
+        } else if ($assign_message != '1') {
+            $valid = 3;
+        }
+        $mob_number = '';
+        $mobval = '';
+        $home_number = '';
+        $home_number_value =  '';
+        $mob = 0;
+        $home = 0;
+        if (isset($patient[0]->mob) && ($patient[0]->mob != "") && ($patient[0]->mob != null) && ($patient[0]->primary_cell_phone == "1")) {
+            $mob_number = $patient[0]->mob;
+            $mobval = $patient[0]->country_code . '' . $patient[0]->mob;
+            $mob = 1;
+        }
+        if (isset($patient[0]->home_number) && ($patient[0]->home_number != "") && ($patient[0]->home_number != null) && ($patient[0]->secondary_cell_phone == "1")) {
+            $home_number = $patient[0]->home_number;
+            $home_number_value =  $patient[0]->secondary_country_code . '' . $patient[0]->home_number;
+            $home = 1;
+        }
+        $data = array(
+            "valid" => $valid,
+            "mob_number" => $mob_number,
+            "mobval" => $mobval,
+            "home_number" => $home_number,
+            "home_number_value" => $home_number_value,
+            "mob" => $mob,
+            "home" => $home,
+        );
+        return $data;
+    }
+
+    function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid)
+    {
+        $optCount = count((array) $treeObj);
+        $javaObj = json_encode($treeObj);
+        $i = 1;
+        $content = "";
+        for ($i = 1; $i <= 25; $i++) {
+            if (property_exists($treeObj, $i)) {
+                $id = $val . '' . $i;
+                $label_str = str_replace("[q]", "", $lab);
+                $label = $label_str . "[opt][" . $i . "][val]";
+                $jobj =  str_replace("''", "&apos;", $javaObj);
+                $jobj =  str_replace("'", "&apos;", $jobj);
+                $treeobjval =  str_replace("'", "&#39;", $treeObj->$i->val);
+                if ($answarFormet == '1') {
+                    $content = $content . '<label class="checkbox  checkbox-primary mr-3">';
+                    $onchage = "onchange=ajaxRenderTree($jobj,'$label','$id','$i','$tree_key',$seq,$tempid)";
+                    $content = $content . "<input type='checkbox' name='" . $label . "' id='" . $id . "_" . $tree_key . "_" . $i . "' value='" . ($treeobjval ? $treeobjval : "") . "' onchange='ajaxRenderTree($jobj,this,$id,$i,$tree_key,$seq,$tempid)'>";
+                    //$content = $content . '<input type="checkbox" name="'.$label.'" id="'.$id . '_' . $tree_key.'_'.$i.'" value="'.($treeobjval ? $treeobjval : '' ).'"  onchange=ajaxRenderTree('.$jobj.','.$label.','.$id.','.$i.','.$tree_key.',$seq,$tempid)>';
+                    $content = $content . '<span>' . ($treeObj->$i->val ? $treeObj->$i->val : '') . '</span>';
+                    $content = $content . '<span class="checkmark"></span>';
+                    $content = $content . '</label>';
+                } else if ($answarFormet == '2' || $answarFormet == '5') {
+                    $content = $content . "<input type='text' class='form-control col-md-5' name='" . $label . "' id='" . $id . "_" . $tree_key . "_" . $i . "' value='' onkeyup='ajaxRenderTree($jobj,this,$id,$i,$tree_key,$seq,$tempid)'>";
+                    $content = $content . "<input type='hidden' class='form-control name='" . $label . "' col-md-5 firsttbox'  style='display:none' onclick='ajaxRenderTree($jobj,this,$id,$i,$tree_key,$seq,$tempid)'>";
+                } else {
+                    $content = $content . '<label class="radio radio-primary mr-3">';
+                    $content = $content . "<input type='radio' name='" . $label . "' id='" . $id . "_" . $tree_key . "_" . $i . "' value='" . ($treeobjval ? $treeobjval : "") . "' onchange='ajaxRenderTree($jobj,this,$id,$i,$tree_key,$seq,$tempid)'>";
+                    $content = $content . '<span>' . ($treeObj->$i->val ? $treeObj->$i->val : '') . '</span>';
+                    $content = $content . '<span class="checkmark"></span>';
+
+                    $content = $content . '</label>';
+                }
+            }
+        }
+        return $content;
+    }
+
+    function getDecisionTree($module_id, $patientId, $step_id)
+    {
+        $enrollinRPM = 1;
+        if (RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 3)->where('status', 1)->exists() && RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 2)->where('status', 1)->exists()) {
+            $enrollinRPM = 2;
+        }
+        $module_id = getPageModuleName();
+        $submodule_id = 19;
+        $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
+        $content = "";
+        $last_key = 0;
+        $skey = $step_id;
+        $ccmModule = RCare\Org\OrgPackages\Modules\src\Models\Module::where('module', 'CCM')->where('status', 1)->get('id');
+        $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+        $ccmSubModule = RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
+        $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+        $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
+        if ($enrollinRPM > 1) {
+            $stage_id = $ccmSID;
+            $dmodule_id = $ccmModule;
+            $dsubmodule_id = $ccmSubModule;
+            $decisionTree = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('module_id', $ccmModule)->where('status', 1)->where('stage_id', $ccmSID)->where('stage_code', $step_id)->orderBy('sequence', 'ASC')->get();
+            $genQuestion = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patientId)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
+        } else {
+            $stage_id = $stage_id;
+            $dmodule_id = $module_id;
+            $dsubmodule_id = $submodule_id;
+            $decisionTree = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('module_id', $module_id)->where('status', 1)->where('stage_id', $stage_id)->where('stage_code', $step_id)->orderBy('sequence', 'ASC')->get();
+            $genQuestion = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patientId)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
+        }
+
+        $off = 1;
+        foreach ($genQuestion as $key => $value) {
+            $editGq = json_decode($value['template']);
+            $javaObj = str_replace("'", "&#39;", json_encode($editGq));
+            $sc = $value["stage_code"];
+            // $content = $content . "<button type='button' id='RenderGeneralQuestion".$key."' onclick='checkQuestion($javaObj,$off,$sc)' style='display: none'></button>";
+            $off++;
+        }
+        //dd($decisionTree);
+        $content = $content . '<form name="general_question_form_' . $step_id . '" id="general_question_form_' . $step_id . '" >';
+        $content = $content . '<input type="hidden" name="uid" value="' . $patientId . '">';
+        $content = $content . '<input type="hidden" name="start_time" value="00:00:00">';
+        $content = $content . '<input type="hidden" name="end_time" value="00:00:00">';
+        $content = $content . '<div class="row">';
+        $content = $content . '<div class="col-lg-12 mb-3">';
+        $content = $content . '<div class="card">';
+        $content = $content . '<div class="card-body">';
+        $content = $content . '<input type="hidden" name="patient_id" value="' . $patientId . '">';
+        $content = $content . '<input type="hidden" name="m_id" value="' . $dmodule_id . '">';
+        $content = $content . '<input type="hidden" name="c_id" value="' . $dsubmodule_id . '">';
+        foreach ($decisionTree as $value) {
+            $months = json_decode($value['display_months']);
+            $queData = json_decode($value['question']);
+            if (empty($months)) {
+                $months = array("All");
+            }
+            if (in_array(date('F'), $months) || in_array("All", $months)) {
+                $content = $content . '<input type="hidden" name="module_id[' . $last_key . ']" value="' . $module_id . '">';
+                $content = $content . '<input type="hidden" name="component_id[' . $last_key . ']" value="' . $submodule_id . '">';
+
+                $content = $content . '<input type="hidden"  id ="stage_id" name="stage_id[' . $last_key . ']" value="' . $value['stage_id'] . '">';
+                $content = $content . '<input type="hidden" name="stage_code[' . $last_key . ']" value="' . $value['stage_code'] . '">';
+                $content = $content . '<input type="hidden" name="step_id" value="' . $value['stage_code'] . '">';
+                $content = $content . '<input type="hidden" name="form_name" value="general_question_form">';
+                if ($value['template_type_id'] == 6) {
+                    $content = $content . '<input type="hidden" name="template_id[' . $last_key . ']" value="' . $value['id'] . '">';
+                    $content = $content . '<div class="mb-4 radioVal" id="' . $last_key . 'general_question11">';
+                    $que_val = trim(preg_replace('/\s+/', ' ', $queData->question->qs->q));
+                    $content = $content . '<label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="DT' . $last_key . '[qs][q]" value="' . $que_val . '">' . $queData->question->qs->q . '</label>';
+                    $content = $content . '<input type="hidden" name="sq[' . $value['id'] . '][0]" value="0">';
+                    $content = $content . '<div class="d-inline-flex mb-2 col-md-12">';
+                    if (property_exists($queData->question->qs, 'opt')) {
+                        $rendOption = renderTree($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF, 0, $value['id']);
+                        $content = $content . $rendOption;
+                    }
+                    $content = $content . '</div>';
+                    $content = $content . '<p class="message" style="color:red"></p>';
+                    $content = $content . '</div>';
+                    $content = $content . '<div id="question' . $last_key . '"></div>';
+                    $content = $content . '<div id="in-pain">';
+                    $content = $content . '<label for="" class="mr-3">Current Monthly Notes:</label>';
+                    $content = $content . '<input type="hidden" name="monthly_topic[' . $last_key . ']" value="' . $value['content_title'] . ' Related Monthly Notes">';
+                    $content = $content . '<textarea class="form-control" placeholder="Monthly Notes" name="monthly_notes[' . $last_key . ']">';
+                    foreach ($genQuestion as $key => $val) {
+                        if ($val->template_id == $value['id']) {
+                            $content = $content . $val->monthly_notes;
+                        }
+                    }
+                    $content = $content . '</textarea>';
+                    $content = $content . '<p class="txtmsg" style="color:red"></p>';
+                    $content = $content . '</div>';
+                    $content = $content . '<hr>';
+                    $last_key++;
+                }
+            }
+        }
+        $last_key = $last_key;
+        $rendQ = getRelationshipQ($patientId, $skey, $dmodule_id, $dsubmodule_id, $stage_id);
+        $content = $content . $rendQ;
+        $content = $content . '</div>';
+        $content = $content . '<div class="card-footer">';
+        $content = $content . '<div class="mc-footer"> ';
+        $content = $content . '<div class="row">';
+        $content = $content . '<div class="col-lg-12 text-right">';
+        $content = $content . '<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"  :value="start_time">';
+        $content = $content . '<button type="button" class="btn  btn-primary m-1 office-visit-save" id="generalQue' . $skey . '" onclick="saveGeneralQuestions(' . $skey . ')">Save</button>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</div>';
+        $content = $content . '</form>';
+        return $content;
+    }
+
+
     function getRelationshipQ($patient_id, $stepid, $m, $sm, $s)
     {
         $module_id = getPageModuleName();
@@ -1554,7 +1761,7 @@
         echo '<div id="patient_build"></div>';
 
 
-        echo $content;
+        return $content;
     }
 
 
@@ -1566,6 +1773,7 @@
         $i = 0;
 
         $content = "";
+        $content = $content . '<input type="hidden" name="stage_id" value="' . $stage_id . '">';
         //$patientqut =  RCare\Patients\Models\PatientQuestionnaire::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
         // return " module_id==" . $module_id . "  submodule_id=="  . $submodule_id . "  stage_id==" .$stage_id;
         // $steps = DB::connection('ren_core')->select("SELECT * FROM ren_core.stage_codes WHERE module_id = '".$module_id."' AND submodule_id = '".$submodule_id."' AND stage_id ='".$stage_id."'");
@@ -1703,6 +1911,12 @@
                             $k = 0;
                             $qid = $step_name_trimmed . '' . $checkinc;
                             foreach ($q->label as $labels) {
+                                $checked = '';
+                                if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                                    if (array_key_exists(str_replace(' ', '_', $labels), $patient_questionnaire[$questionTitle])) {
+                                        $checked = 'checked';
+                                    }
+                                }
                                 if ($exist == 1) {
                                     $scoreid = $score[$k];
                                     $onclick = "onclick=add_score($scoreid,'$qid','check')";
@@ -1712,9 +1926,10 @@
                                 }
                                 //print_r($patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)]);
                                 //echo "--".str_replace(' ','_',$labels).'<br/>';
+
                                 $labelArray = str_replace(' ', '_', trim($labels));
                                 $content = $content . '<label class="checkbox checkbox-primary col-md-4 float-left" for="' . $questionTitle . '_' . $labelArray . '">
-                                                    <input ' . $onclick . ' class="form-check-input" value="' . $labels . '" type="checkbox" name="' . $step_name_trimmed . '[question][' . $questionTitle . '][' . $labelArray . ']" id="' . $questionTitle . '_' . $labelArray . '"  ' . ($questionExist && $patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)] == 1 ? 'checked' : '') . '>
+                                                    <input ' . $onclick . ' class="form-check-input" value="' . $labels . '" type="checkbox" name="' . $step_name_trimmed . '[question][' . $questionTitle . '][' . $labelArray . ']" id="' . $questionTitle . '_' . $labelArray . '"  ' . $checked . '>
                                                     <span>' . $labels . '</span>
                                                     <span class="checkmark"></span>
                                                 </label>';
@@ -1955,48 +2170,3 @@ function getDevice($id){
     {
         return sanitizeVariable($array);
     }
-
-    function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid)
-    {
-        $optCount = count((array) $treeObj);
-        $javaObj = json_encode($treeObj);
-        //echo $javaObj;
-        //echo "lab".$lab;
-        $i = 1;
-        for ($i = 1; $i <= 25; $i++) {
-            if (property_exists($treeObj, $i)) {
-                $id = $val . '' . $i;
-                $label_str = str_replace("[q]", "", $lab);
-                $label = $label_str . "[opt][" . $i . "][val]";
-                //echo $javaObj;
-                $jobj =  str_replace("''", "&apos;", $javaObj);
-                $jobj =  str_replace("'", "&apos;", $jobj);
-
-                //echo $treeObj->$i->val;
-                $treeobjval =  str_replace("'", "&#39;", $treeObj->$i->val);
-                //echo "treeobj".$treeobjval;
-                //$treeobjval = htmlspecialchars($treeObj->$i->val, ENT_QUOTES, 'UTF-8');
-
-                if ($answarFormet == '1') {
-    ?>
-	                <label class="checkbox  checkbox-primary mr-3">
-	                    <input type="checkbox" name="{{$label}}" id="<?php echo $id . '_' . $tree_key . '_' . $i; ?>" value="<?php echo ($treeobjval ? $treeobjval : ''); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
-	                    <span><?php echo ($treeObj->$i->val ? $treeObj->$i->val : ''); ?></span>
-	                    <span class="checkmark"></span>
-	                </label>
-	            <?php } else if ($answarFormet == '2' || $answarFormet == '5') { ?>
-	                <input type="text" class='form-control col-md-5' name="{{$label}}" id="<?php echo $id . '_' . $tree_key . '_' . $i; ?>" value="" onkeyup='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
-	                <input type="hidden" class='form-control col-md-5 firsttbox' style="display:none" onclick='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
-	            <?php } else { ?>
-	                <label class="radio radio-primary mr-3">
-	                    <input type="radio" name="{{$label}}" id="<?php echo $id . '_' . $tree_key . '_' . $i; ?>" value="<?php echo ($treeobjval ? $treeobjval : ''); ?>" onchange='ajaxRenderTree(<?php echo $jobj; ?>,"<?php echo $label; ?>","<?php echo $id; ?>","<?php echo $i; ?>","<?php echo $tree_key; ?>",<?php echo $seq; ?>,<?php echo $tempid; ?>)'>
-	                    <span><?php echo ($treeObj->$i->val ? $treeObj->$i->val : ''); ?></span>
-	                    <span class="checkmark"></span>
-
-	                </label>
-	<?php
-                }
-            }
-        }
-    }
-    ?>

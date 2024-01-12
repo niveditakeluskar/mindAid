@@ -57,10 +57,24 @@ class CommonFunctionController extends Controller
         $patient_id = sanitizeVariable($patientID);
         $module_id  = sanitizeVariable($moduleId);
         $billable   = sanitizeVariable($billable);
-        if ($billable == 1) {
-            return $this->getCcmMonthlyNetTime($patientID, $moduleId);
-        } else {
-            return $this->getNonBillabelTime($patientID, $moduleId);
+        $timeArray                      = [];
+
+        $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
+	    $checkBillableTime              = (isset($billableTime) && ($billableTime!='0')) ? $billableTime : '00:00:00';
+
+	    $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+	    $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime!='0')) ? $nonBillableTime : '00:00:00';
+	    
+        $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+        $returnTotalTime                = (isset($totalTime) && ($totalTime!='0')) ? $totalTime : '00:00:00';
+    	$timeArray['total_time']        = $returnTotalTime;
+
+        if($billable == 1){
+            $timeArray['billable_time']     = $checkBillableTime;
+            return $timeArray;
+        }else{
+            $timeArray['non_billable_time'] = $checkNonBillableTime;
+            return $timeArray;
         }
     }
 
