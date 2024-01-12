@@ -22,7 +22,7 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
-                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+                  <input type="text" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
                   <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"  />
                </div>
             <div class="card-footer">

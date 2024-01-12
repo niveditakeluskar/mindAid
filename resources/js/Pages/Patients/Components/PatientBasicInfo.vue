@@ -19,14 +19,12 @@
                                 <div class="form-row">
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Name">{{
-                                            patientDetails.patient[0].fname }} {{ patientDetails.patient[0].lname
-    }}</span><br />
+                                            patientDetails.patient[0].fname }} {{ patientDetails.patient[0].lname}}</span><br />
                                         <span data-toggle="tooltip" title="Gender (DOB)" data-original-title="Patient DOB">
                                             {{ (patientDetails.gender === 1) ? "Female" : "Male" }} /
                                         </span>
                                         <span data-toggle="tooltip" title="DOB" data-original-title="Patient DOB"> ({{
-                                            patientDetails.age }}) {{ format_date(patientDetails.patient[0].dob)
-    }}</span><br />
+                                            patientDetails.age }}) {{ format_date(patientDetails.patient[0].dob)}}</span><br />
                                         <span data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
                                             data-original-title="Patient FIN Number" style="padding-right:2px;">
                                             <i class="text-muted i-ID-Card"></i> :
@@ -98,6 +96,7 @@
                                             {{ 'From:' + format_date(patientDetails.patient_enroll_date[0].suspended_from) +
                                                 ' To ' + format_date(patientDetails.patient_enroll_date[0].suspended_to) }}
                                         </span>
+
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 2">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
@@ -207,8 +206,7 @@ const props = defineProps({
     patientId: Number,
     moduleId: Number,
     loading: "",
-    patientServices: [],
-    patientEnrollServices: []
+    enrolledServices:[]
 });
 const patientDetails = ref(null);
 var pause_stop_flag = 0;
@@ -318,7 +316,20 @@ const patientVeteranServiceModalDetails = async()=>{
     }
 }
 
-const patComDetails = async () => {
+const patientAlertThresholdsModalDetails = async()=>{ 
+    try {
+        const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
+        }
+        console.log('Fetched Patient alertThreshold details:', response.data); 
+    }catch (error) {
+        console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
+        // Handle the error appropriately
+    }
+}
+
+onMounted(async () => {
     try {
         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
         if (!response.ok) {
@@ -366,13 +377,13 @@ const patComDetails = async () => {
         } 
         props.enrolledServices = enrollServices;
         console.log(enrolledServices +"enrollServices");
-    } catch (error) {
+    } catch (error) { 
         console.error('Error fetching Patient details:', error.message); // Log specific error message
         // Handle the error appropriately
     }
     const start_time = document.getElementById('page_landing_times').value;
     countDownFunc(props.patientId, props.moduleId, start_time);
-};
+});
 
 function countDownFunc(patientId, moduleId, start_time) {
     axios({
