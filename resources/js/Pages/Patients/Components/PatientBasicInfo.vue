@@ -159,13 +159,11 @@ const props = defineProps({
 const patientDetails = ref(null);
 const showAddPatientDevices = ref(false);
 const patientServiceStatus = async()=>{
-    console.log("MERRY CHRISTMAS");
     var sPageURL = window.location.pathname;
     parts = sPageURL.split("/"),
     patientId = parts[parts.length - 1];
 }
 const veteranServicefunction = async() => {
-    console.log("u clicked me");
     const VeteranServiceModal = document.getElementById('vateran-service');
       if (VeteranServiceModal) { 
         $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
@@ -248,7 +246,6 @@ const researchstudyfunction = async() => {
 }
 
 const patientVeteranServiceModalDetails = async()=>{ 
-    console.log('yess you!'); 
     try {
         const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
         if (!response.ok) {
@@ -322,7 +319,7 @@ const patComDetails = async () => {
             }
             console.log("enrollServices", enrollServices);
         } 
-        props.enrolledServices = enrollServices;
+        this.enrolledServices = enrollServices;
         console.log(enrolledServices +"enrollServices");
     } catch (error) {
         console.error('Error fetching Patient details:', error.message); // Log specific error message

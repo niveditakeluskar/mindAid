@@ -52,7 +52,7 @@ use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsVitalsDataAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsProvidersAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsProviderSpecilistAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsMedicationAddRequest;
+use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
@@ -3749,55 +3749,55 @@ class CarePlanDevelopmentController extends Controller
         $billable             = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        DB::beginTransaction();
-        try {
-            if (isset($med_description)) {
-                $insert_med_id  = array(
-                    'description' => $med_description,
-                    'created_by'  => session()->get('userid')
-                );
-                $new_med_id     = Medication::create($insert_med_id);
-            }
-            if ($med_id == 'other') {
-                $med_id           = $new_med_id->id;
-            }
-            $insert_medicationData = array(
-                'patient_id'           => $patient_id,
-                'uid'                  => $uid,
-                'med_id'               => $med_id,
-                'purpose'              => $purpose,
-                'description'          => $description,
-                'strength'             => $strength,
-                'dosage'               => $dosage,
-                'frequency'            => $frequency,
-                'route'                => $route,
-                'duration'             => $duration,
-                'drug_reaction'        => $drug_reaction,
-                'pharmacy_name'        => $pharmacy_name,
-                'pharmacy_phone_no'    => $pharmacy_phone_no,
-                'pharmacogenetic_test' => $pharmacogenetic_test
+        // DB::beginTransaction();
+        // try {
+        if (isset($med_description)) {
+            $insert_med_id  = array(
+                'description' => $med_description,
+                'created_by'  => session()->get('userid')
             );
-            if ($tab == "review-medication") {
-                $insert_medicationData['review'] = 1;
-            }
-            //record time
-            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
-            $check_med_id = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
-            if ($check_med_id == true) {
-                $insert_medicationData['updated_by'] = session()->get('userid');
-                $update_query = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->orderBy('id', 'desc')->update($insert_medicationData);
-            } else {
-                $insert_medicationData['updated_by'] = session()->get('userid');
-                $insert_medicationData['created_by'] = session()->get('userid');
-                $insert_query                        = PatientMedication::create($insert_medicationData);
-            }
-            $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
-            DB::commit();
-            return response(['form_start_time' => $form_save_time]);
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+            $new_med_id     = Medication::create($insert_med_id);
         }
+        if ($med_id == 'other') {
+            $med_id           = $new_med_id->id;
+        }
+        $insert_medicationData = array(
+            'patient_id'           => $patient_id,
+            'uid'                  => $uid,
+            'med_id'               => $med_id,
+            'purpose'              => $purpose,
+            'description'          => $description,
+            'strength'             => $strength,
+            'dosage'               => $dosage,
+            'frequency'            => $frequency,
+            'route'                => $route,
+            'duration'             => $duration,
+            'drug_reaction'        => $drug_reaction,
+            'pharmacy_name'        => $pharmacy_name,
+            'pharmacy_phone_no'    => $pharmacy_phone_no,
+            'pharmacogenetic_test' => $pharmacogenetic_test
+        );
+        if ($tab == "review-medication") {
+            $insert_medicationData['review'] = 1;
+        }
+        //record time
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        $check_med_id = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+        if ($check_med_id == true) {
+            $insert_medicationData['updated_by'] = session()->get('userid');
+            $update_query = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->orderBy('id', 'desc')->update($insert_medicationData);
+        } else {
+            $insert_medicationData['updated_by'] = session()->get('userid');
+            $insert_medicationData['created_by'] = session()->get('userid');
+            $insert_query                        = PatientMedication::create($insert_medicationData);
+        }
+        $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
+        //     DB::commit();
+        //     return response(['form_start_time' => $form_save_time]);
+        // } catch (\Exception $ex) {
+        //     DB::rollBack();
+        //     return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        // }
     }
 
     public function saveHealthServices(ServicesAddRequest $request)
