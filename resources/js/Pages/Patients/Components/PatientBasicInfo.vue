@@ -35,7 +35,7 @@
                                               <span id="fin_number" class="patient_fin_number" ></span>
                                             </a>
                                         </span><br/>
-                                        <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#vateran-service" style="background-color:#27a7de;border:none;" id="vateran_service">
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
                                             <span v-if="patientDetails.military_status == 0">Yes</span>
                                             <span v-else-if="patientDetails.military_status == 1">No</span>
@@ -60,7 +60,7 @@
                                             {{ patientDetails.add_1 }}, {{ patientDetails.add_2 }}, {{ patientDetails.city
                                             }}, {{ patientDetails.state }}, {{ patientDetails.zipcode }}
                                         </span><br>
-                                        <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#patient-threshold" style="background-color:#27a7de;border:none;" id="patient_threshold">Alert Thresholds</a>
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Practice"
@@ -86,45 +86,35 @@
                                             data-original-title="Patient Enrollment Status" id="PatientStatus" value="">
                                             {{ patientDetails.patient_enroll_date[0].status_value }}
                                         </span>
-                                        <span v-if="patientDetails.patient_enroll_date[0].status == 1">
-                                            <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px;"
-                                                class="ActiveDeactiveClass" data-target="#active-deactive" id="active">
-                                                <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip"
-                                                    data-placement="top" data-original-title="Activate"></i>
+                                        <span  v-if="patientDetails.patient_enroll_date[0].status == 1" >
+                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
+                                                <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 0">
-                                            <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px;"
-                                                class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
-                                                <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip"
-                                                    data-placement="top" data-original-title="Suspended"></i>
+                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
+                                                <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>
                                             </a>
                                             {{ 'From:' + format_date(patientDetails.patient_enroll_date[0].suspended_from) +
                                                 ' To ' + format_date(patientDetails.patient_enroll_date[0].suspended_to) }}
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 2">
-                                            <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px;"
-                                                class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
-                                                <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip"
-                                                    data-placement="top" data-original-title="Deactivate"></i>
+                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
+                                                <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 3">
-                                            <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px;"
-                                                class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased">
-                                                <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip"
-                                                    data-placement="top" data-original-title="Deceased"></i>
+                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
+                                                <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>
                                             </a>
                                         </span>
-                                        <br />
-                                        <span data-toggle="tooltip" data-placement="right" title="Enrolled Services"
-                                            data-original-title="Patient Enrolled Services"><i
-                                                class="text-muted i-Library"></i> :
-                                            {{ patientEnrollServices }}
+                                        <br/>
+                                        <span data-toggle="tooltip" data-placement="right" title="Enrolled Services" data-original-title="Patient Enrolled Services">
+                                            <i class="text-muted i-Library"></i> :
+                                            <span v-for="(service, index) in enrolledServices" :key="index" v-html="service"></span>
+                                            {{ service }} 
                                         </span>
-
-                                        <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; font-size: 15px;" class="adddeviceClass"
-                                        data-target="#add-device"  id="deviceadd" >
+                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_additional_devicesfunction">
                                         <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
                                         <br/>
                                         <div id="newenrolldate">
@@ -217,15 +207,23 @@ const props = defineProps({
     patientId: Number,
     moduleId: Number,
     loading: "",
-    patientServices: [],
-    patientEnrollServices: []
+    // patientServices: [],
+    // patientEnrolledServices:[] 
+    enrolledServices:[]
 });
+
+
+// const enrolledServices = ref(null);
 const patientDetails = ref(null);
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
+const patientServiceStatus = async()=>{
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
+    patientId = parts[parts.length - 1];
+}
 const veteranServicefunction = async() => {
-    console.log("u clicked me");
     const VeteranServiceModal = document.getElementById('vateran-service');
       if (VeteranServiceModal) { 
         $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
@@ -237,7 +235,7 @@ const veteranServicefunction = async() => {
 
 
 function devicesclear() {  
-    alert('dadsadasdsa');
+    // alert('dadsadasdsa');
     $("#devices_form input[name='device_id']").val('');
     $('#partner_id').val(''); 
     $('#partner_devices_id').val('');
@@ -254,8 +252,18 @@ const add_devicesfunction = async() => {
       } else {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
       }
-    patientVeteranServiceModalDetails();
+    // patientVeteranServiceModalDetails();
 }
+
+const add_additional_devicesfunction = async() =>{
+    const AdditionalDeviceModal = document.getElementById('additional-device');
+      if (AdditionalDeviceModal) { 
+        $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
+      } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+      }
+}
+
 const patient_finnumber_function = async()=>{
     const FinNumberModal = document.getElementById('patient-finnumber');
       if (FinNumberModal) { 
@@ -263,6 +271,7 @@ const patient_finnumber_function = async()=>{
       } else {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
       }
+      patComDetails();
 
 }
 const alertThresholdfunction = async() => {
@@ -272,11 +281,8 @@ const alertThresholdfunction = async() => {
     } else {
     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
     }
-    patComDetails();
-    
+    patComDetails(); 
 }
-
-
 const personalnotesfunction = async() => {
     console.log('dadasdasdasdasdas'+personalnotesfunction);
     const PersonalNotesModal = document.getElementById('personal-notes');
@@ -300,12 +306,7 @@ const researchstudyfunction = async() => {
     
 }
 
-
-
-
-
 const patientVeteranServiceModalDetails = async()=>{ 
-    console.log('yess you!'); 
     try {
         const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
         if (!response.ok) {
@@ -318,16 +319,19 @@ const patientVeteranServiceModalDetails = async()=>{
     }
 }
 
-const patientAlertThresholdsModalDetails = async()=>{ 
-    try {
-        const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
+const populateSaveValue=async()=>{
+    try{
+        var patientId = $("#hidden_id").val();
+        const respose = await fetch(`/ccm/monthly-monitoring/${props.patientId}`);
+        if(!respose.ok){
+            throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
         }
-        console.log('Fetched Patient alertThreshold details:', response.data); 
-    }catch (error) {
-        console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
-        // Handle the error appropriately
+        const data = await response.json();
+        patientSaveDetails.value = data;
+        props.loading = "done";
+        console.log('Fetched Patient save details:', data);
+    }catch{
+
     }
 }
 
@@ -367,19 +371,18 @@ onMounted(async () => {
             }
 
             const module = patientServices[i].module.module;
-            const formattedService = `${module}-${patientEnrollServicesStatus}`;
-
-            enrollServices.push(formattedService);
-
-            if (module === 'RPM') {
+            // console.log (module+"module");  
+            // console.log(patientEnrollServicesStatus+"patientEnrollServicesStatus");
+            const fetchedServices = `${module}-${patientEnrollServicesStatus}`;
+            enrollServices.push(fetchedServices);
+            if (module === 'RPM') { 
                 // Toggle visibility using a reactive property
                 this.showAddPatientDevices = true;
             }
-
             console.log("enrollServices", enrollServices);
-        }
-        // props.patientEnrollServices = enrollServices;
-        props.patientEnrollServices = "";
+        } 
+        this.enrolledServices = enrollServices;
+        console.log(enrolledServices +"enrollServices");
     } catch (error) {
         console.error('Error fetching Patient details:', error.message); // Log specific error message
         // Handle the error appropriately
@@ -396,6 +399,7 @@ function countDownFunc(patientId, moduleId, start_time) {
         if(pause_stop_flag == 0){
         var data = response.data;
         var final_time = data['total_time'];
+        $("#ajax-message-history").html(data['history'])
         $("#time-containers").html(final_time);
         setTimeout(function () {
             const start_time = document.getElementById('page_landing_times').value;

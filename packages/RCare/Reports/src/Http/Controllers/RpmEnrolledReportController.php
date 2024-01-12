@@ -162,7 +162,7 @@ class RpmEnrolledReportController extends Controller
 			'shipping_status' => sanitizeVariable($request->shipping_status),
             // 'device_code' => sanitizeVariable($request->device_code),
             'created_by'=> session()->get('userid'),
-            'partner_id' => '3',
+            // 'partner_id' => '3',
             'status' => '1',
             'updated_by' => session()->get('userid') 
         );
@@ -189,28 +189,30 @@ class RpmEnrolledReportController extends Controller
                 $updatetodo = PatientDevices::where('patient_id',$patient_id)->where('id',$device_id)->update($data);
                 $updateservice = PatientServices::where('patient_id',$patient_id)->update($pateintservicedata);
             }
-       } else{ 
+        } else{ 
             $data['patient_id'] = sanitizeVariable($request->patient_id);
             PatientDevices::create($data);
 
             $updateservice = PatientServices::where('patient_id',$patient_id)->update($pateintservicedata);
-       }
+        }
        
        
-       if(sanitizeVariable($request->shipping_status) == "2"){
+        if(sanitizeVariable($request->shipping_status) == "2"){
             $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
             $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Shipping Status');
             $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
         } 
     }
 
-    public function devicedetailssave(RpmDeviceShippingRequest $request){ //dd($request);
+    public function devicedetailssave(RpmDeviceShippingRequest $request){ //dd($request->all());
         $patient_id = sanitizeVariable($request->patient_id);
-        $device_code = sanitizeVariable($request->device_code);  
+        $device_code = sanitizeVariable($request->device_code); 
+        $last12Digits = substr($device_code, -12); 
         $data = array(
-            'device_code' => sanitizeVariable($request->device_code),
+            'device_code' => $last12Digits,
             'created_by'=> session()->get('userid'),
-            'partner_id' => '3',
+            'partner_id' => sanitizeVariable($request->partner_id),
+            'partner_device_id'  => sanitizeVariable($request->partner_devices_id),
             'status' => '1',
             'patient_id'=> sanitizeVariable($request->patient_id),
             'updated_by' => session()->get('userid') 
@@ -218,7 +220,7 @@ class RpmEnrolledReportController extends Controller
         
         // dd($data);
         if($device_code!='' && $device_code!= 'null'){
-            $check_patient_d = PatientDevices::where('patient_id',$patient_id)->where('device_code',$device_code)->exists();
+            $check_patient_d = PatientDevices::where('patient_id',$patient_id)->where('device_code',$last12Digits)->exists();
             // dd($check_patient_d);
             if($check_patient_d==true){
                 // return response()->json(['error' => 'This Device Code already added'], 400);

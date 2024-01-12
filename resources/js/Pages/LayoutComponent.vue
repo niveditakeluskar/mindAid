@@ -16,7 +16,6 @@ import Header from './Header.vue'; // Import your header component
 import Footer from './Footer.vue'; // Import your footer component
 import axios from 'axios'; // Import Axios for HTTP requests
 
-
 export default {
   components: {
     Header,
@@ -40,76 +39,6 @@ export default {
     }
   },
   methods: {
-    callExternalFunctionWithParams(param1, param2) {
-      const activeDeactiveModal = document.getElementById('active-deactive');
-      if (activeDeactiveModal) {
-        $(activeDeactiveModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-
-      var sPageURL = window.location.pathname;
-      parts = sPageURL.split("/"),
-        patientId = parts[parts.length - 1];
-      if ($.isNumeric(patientId) == true) {
-        //patient list
-        var patientId = $("#hidden_id").val();
-        var module = $("input[name='module_id']").val();
-        var status = $("#service_status").val();
-        $('#enrolledservice_modules').val(module).trigger('change');
-        $('#enrolledservice_modules').change();
-      } else {
-        //worklist 
-        var patientId = param1;
-        var selmoduleId = $("#modules").val();
-        axios({
-        method: "GET",
-        url: `/patients/patient-module/${patientId}/patient-module`,
-    }).then(function (response) {
-        $('.enrolledservice_modules').html('');
-      const  enr = response.data;
-      var count_enroll = enr.length;
-        for (var i = 0; i < count_enroll; i++) {
-            $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
-        }
-        $("#enrolledservice_modules").val(selmoduleId).trigger('change');
-        // $("#patient-Ajaxdetails-model").html(response.data);
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-        var status = param2;
-        $("form[name='active_deactive_form'] #worklistclick").val("1");
-        $("form[name='active_deactive_form'] #patientid").val(patientId);
-        $("form[name='active_deactive_form'] #date_value").hide();
-        $("form[name='active_deactive_form'] #fromdate").hide();
-        $("form[name='active_deactive_form'] #todate").hide();
-        if (status == 0) {
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").hide();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").show();
-        }
-        if (status == 1) {
-          $("form[name='active_deactive_form'] #role1").hide();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").show();
-        }
-        if (status == 2) {
-          // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").hide();
-          $("form[name='active_deactive_form'] #role3").show();
-        }
-        if (status == 3) {
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").hide();
-        }
-      }
-    },
       async getPageModuleID() {
       try {
         var url = encodeURIComponent(window.location.href);

@@ -24,19 +24,23 @@
                   <input type="hidden" name="_token" :value="csrfToken" />
                   <PreparationForm :sectionName="sectionName" />
                </div>
-               <div class='loadscreen' id="preloader" v-show="isLoading">
-        <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->
-            <img src="/images/loading.gif" width="150" height="150">
-        </div>
-    </div> <!-- Pre Loader end  -->
-               <div class="card-footer">
-                  <div class="mc-footer">
-                     <div class="row">
-                        <div class="col-lg-12 text-right">
-                           <button type="button" class="btn btn-primary m-1 draft_preparation" sid="draft_call_preparation"
-                              id="call_preparation_draft">Draft Save</button>
-                           <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
-                        </div>
+               <div class="card-title">Call Preparation</div>
+               <input type="hidden" name="uid" />
+               <input type="hidden" name="patient_id" />
+               <input type="hidden" name="module_id" />
+               <input type="hidden" name="component_id" />
+               <input type="hidden" name="" />
+               <input type="hidden" name="form_name" value="call_preparation_followup_form" />
+               <input type="hidden" name="stage_id" />
+	            <input type="hidden" name="step_id"  value="0">
+               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+            </div>
+            <div class="card-footer">
+               <div class="mc-footer">
+                  <div class="row"> 
+                     <div class="col-lg-12 text-right">
+                        <button type="button" class="btn btn-primary m-1 draft_preparation">Draft Save</button>
+                        <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
                      </div>
                   </div>
                </div>
@@ -75,25 +79,11 @@ import { defineComponent } from 'vue';
 import axios from 'axios';
 // import stepWizard from 'js/app.js';
 export default {
-
    props: {
-    patientId: {
-      type: Number,
-      required: true
-    },
-    moduleId: {
-      type: Number,
-      required: true
-    },
-    componentId: {
-      type: Number,
-      required: true
-    },
-    stageid:{
-      type: Number,
-      required: true
-    },
-  },
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
    data() {
       return {
          sectionName: 'call_preparation',
@@ -105,29 +95,7 @@ export default {
       PreparationForm
    },
    mounted() {
-  },
-  methods: {
-    saveForm() {
-      this.isLoading = true;
-      const formData = new FormData(this.$refs.form); // Create FormData object
-
-      formData.append('_token', this.csrfToken);
-      axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
-        .then(response => {
-          // Handle success response
-          console.log('Form saved successfully', response.data);
-          // Optionally, perform any additional actions on successful form submission
-        })
-        .catch(error => {
-          // Handle error response
-          console.error('Error saving form', error);
-          // Optionally, perform any actions on failed form submission
-        })
-        .finally(() => {
-          // Hide the spinner when the request is complete (success or failure)
-          this.isLoading = false;
-        });
-    },
-  }
+      console.log('Component mounted.');
+   }
 };
 </script>

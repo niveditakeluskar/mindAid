@@ -1,17 +1,7 @@
 <template>
 	<div class="row">
 		<div class="col-lg-12 mb-3">
-
-			<form id="followup_form" ref="followupFormRef" name="followup_form" @submit.prevent="submitFollowupForm">
-				<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
-				<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
-				<input type="hidden" name="start_time" v-model="this.start_time" value="00:00:00">
-				<input type="hidden" name="end_time" v-model="this.end_time" value="00:00:00">
-				<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
-				<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
-				<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
-				<input type="hidden" name="step_id" v-model="this.step_id" value="0">
-				<input type="hidden" name="form_name" v-model="this.form_name" value="followup_form">
+			<form id="followup_form" name="followup_form" @submit.prevent="submitFollowupForm">
 				<div class="card">
 					<div class="card-body">
 						<div id='error-msg'></div>
@@ -37,18 +27,16 @@
 										</div>
 										<!-- <input type="hidden" name="selected_task_name[]" id="selected_task_name_0" /> -->
 										<div class="col-md-4 form-group">
-											<label class="radio radio-primary col-md-4 float-left">
-												<input type="radio" class="status_flag" :name="'status_flag['+index+']'" value="0"
-													formControlName="radio" checked v-model="item.status_flag" @change="handleScheduledSelected(item,index)">
-												<span>To be Scheduled</span>
-												<span class="checkmark"></span>
-											</label>
-											<label class="radio radio-primary col-md-4 float-left">
-												<input type="radio" class="status_flag" :name="'status_flag['+index+']'" value="1"
-													formControlName="radio" v-model="item.status_flag" @change="setCurrentDateIfCompleted(item,index)">
-												<span>Completed</span>
-												<span class="checkmark"></span>
-											</label>
+				                                <label class="radio radio-primary col-md-4 float-left">
+				                                    <input type="radio" class="status_flag" name="status_flag[]" value="0" formControlName="radio" checked v-model="item.status_flag">
+				                                    <span>To be Scheduled</span>
+				                                    <span class="checkmark"></span>
+				                                </label>
+				                                <label class="radio radio-primary col-md-4 float-left">
+				                                    <input type="radio" class="status_flag" name="status_flag[]" value="1" formControlName="radio" v-model="item.status_flag">
+				                                    <span>Completed</span>
+				                                    <span class="checkmark"></span>
+				                                </label>
 										</div>
 									</div>
 									<div class='row ml-1'>
@@ -79,9 +67,7 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" value="1"
-											v-model="emr_complete"><span>EMR system entry completed</span><span
-											class="checkmark"></span>
+										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete" @click="handleCheckboxChange"><span>EMR system entry completed</span><span class="checkmark"></span>
 									</label>
 									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"></div>
 								</div>
@@ -188,17 +174,9 @@ export default {
 					task_date: ''
 				}
 			],
-			uid: '', // Add default values or leave them as empty strings
-			patient_id: '',
-			module_id: '',
-			component_id: '',
-			stepId: 0,
-			start_time: '',
-			end_time: '',
-			form_name: '',
+			uid: '',
 			billable: '',
-			emr_complete: 0,
-			folllowUpTaskData: {},
+			// emr_complete: 0,
 			formErrors: {},
 			showAlert: false,
 		};
@@ -231,24 +209,30 @@ export default {
 
 	},
 	setup(props) {
-		const followupMasterTaskList = ref();
-		const followupStageId = ref();
 		const rowData = ref();
 		const loading = ref(false);
-		const gridApi = ref(null);
-    const gridColumnApi = ref(null);
-    const popupParent = ref(null);
-	const paginationPageSizeSelector = ref(null);
-    const paginationNumberFormatter = ref(null);
+		const loadingCellRenderer = ref(null);
+		const loadingCellRendererParams = ref(null);
+		const rowModelType = ref(null);
+		const cacheBlockSize = ref(null);
+		const maxBlocksInCache = ref(null);
+		const followupMasterTaskList = ref([]);
+		let followupStageId = ref(null);
+		let followupStepId = 0;
+		let formErrors = ref(null);
+		let showAlert = ref(false);
+		let emr_complete = ref(false);
 
-	const onGridReady = (params) => {
-      gridApi.value = params.api; // Set the grid API when the grid is ready
-      gridColumnApi.value = params.columnApi;
-	  paginationPageSizeSelector.value = [10, 20, 30,40,50,100];
-      paginationNumberFormatter.value = (params) => {
-        return '[' + params.value.toLocaleString() + ']';
-      };
-    };
+		const items = ref([
+			{
+				task_name: '',
+				selectedFollowupMasterTask: '',
+				status_flag: '',
+				notes: '',
+				task_date: ''
+			}
+		]);
+		// 
 
 	const onFilterTextBoxChanged = () => {
       if (gridApi.value) {
@@ -353,75 +337,66 @@ export default {
 			try {
 				let stageName = 'Follow_Up';
 				const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
-				followupStageId.value = response.data.stageID;
+				followupStageId = response.data.stageID;
 			} catch (error) {
 				console.error('Error fetching stageID:', error);
 				throw new Error('Failed to fetch stageID');
 			}
 		};
-		const followupFormRef = ref(null);
-		const submitFollowupForm = async () => {
-			console.log("i have entered in this ");
-			 // Access the form element using $refs
-			 const myForm = followupFormRef.value; // Access form reference directly
-			 if (!myForm || !(myForm instanceof HTMLFormElement)) {
-        console.error('Invalid form reference');
-        return;
-      }
-      // Create a FormData object from the form element
-      const formData = new FormData(myForm);
-	  
-		/* 	const formData = {
-				uid: props.patientId,
-				patient_id: props.patientId,
-				module_id: props.moduleId,
-				component_id: props.componentId,
-				stage_id: props.stageid,
-				step_id: this.step_id,
-				form_name: 'hippa_form',
-				billable: 1,
-				start_time: "",
-				end_time: "",
-				_token: document.querySelector('meta[name="csrf-token"]').content,
-				timearr: {
-					"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
-					"form_save_time": "",
-					"pause_start_time": "",
-					"pause_end_time": "",
-					"extra_time": ""
-				},
-				folllowUpTaskData: this.items.map(item => ({
-					task_name: item.task_name,
-					selectedFollowupMasterTask: item.selectedFollowupMasterTask,
-					status_flag: item.status_flag,
-					notes: item.notes,
-					task_date: item.task_date,
-				})),
-				emr_complete: this.emr_complete,
-			}; */
-			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-			try {
-			
-				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
-				console.log('Form submitted successfully!', response);
-				if (response && response.status == 200) {
-					this.showAlert = true;
-					setTimeout(() => {
-						this.showAlert = false;
-					}, 3000);
-				}
-			} catch (error) {
-				if (error.response && error.response.status === 422) {
-					// Handle validation errors (422 Unprocessable Entity)
-					// Set formErrors based on the response
-					this.formErrors = error.response.data.errors;
-				} else {
-					// Handle other types of errors
-					console.error('Error submitting form:', error);
-				}
-			}
 
-			console.log("formData==>>", formData);
+		const submitFollowupFormData = async () => {
+			items.value.forEach(field => {
+				console.log(JSON.stringify(field));
+				console.log(`${field.task_name}: ${field.selectedFollowupMasterTask}: ${field.status_flag}: ${field.notes}: ${field.task_date}`);
+			});
+			// const formData = {
+			// 	uid: props.patientId,
+			// 	patient_id: props.patientId,
+			// 	module_id: props.moduleId,
+			// 	component_id: props.componentId,
+			// 	stage_id: followupStageId,
+			// 	step_id: followupStepId,
+			// 	form_name: 'followup_form',
+			// 	billable: 1,
+			// 	start_time: "",
+			// 	end_time: "",
+			// 	_token: document.querySelector('meta[name="csrf-token"]').content,
+			// 	timearr: {
+			// 		"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
+			// 		"form_save_time": "",
+			// 		"pause_start_time": "",
+			// 		"pause_end_time": "",
+			// 		"extra_time": ""
+			// 	},
+			// 	folllowUpTaskData: items.map(item => ({
+			// 		task_name: item.task_name,
+			// 		selectedFollowupMasterTask: item.selectedFollowupMasterTask,
+			// 		status_flag: item.status_flag,
+			// 		notes: item.notes,
+			// 		task_date: item.task_date,
+			// 	})),
+			// 	emr_complete: emr_complete.value === true ? 1 : 0,
+			// };
+			// axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+			// try {
+			// 	formErrors = {};
+			// 	const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
+			// 	console.log('Form submitted successfully!', response);
+			// 	if (response && response.status == 200) {
+			// 		showAlert = true;
+			// 		setTimeout(() => {
+			// 			showAlert = false;
+			// 		}, 3000);
+			// 	}
+			// } catch (error) {
+			// 	if (error.response && error.response.status === 422) {
+			// 		formErrors = error.response.data.errors;
+			// 	} else {
+			// 		console.error('Error submitting form:', error);
+			// 	}
+			// }
+
+			// console.log("formData==>>", formData);
 			// axios.post('/your-api-endpoint', this.formData)
 			// 	.then(response => {
 			// 		console.log('Form submitted successfully!', response.data);
@@ -430,6 +405,10 @@ export default {
 			// 		// Handle error response
 			// 		console.error('Error submitting form:', error);
 			// 	});
+		};
+
+		const handleCheckboxChange = (event) => {
+			emr_complete.value = event.target.checked;
 		};
 
 		onBeforeMount(() => {
@@ -470,6 +449,11 @@ export default {
 			submitFollowupForm,
 			followupFormRef,
 			followupMasterTaskList,
+			getStageID,
+			submitFollowupFormData,
+			formErrors,
+			showAlert,
+			handleCheckboxChange,
 			// addNewItem,
 			// removeItem,
 		};
