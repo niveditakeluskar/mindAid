@@ -402,6 +402,7 @@ function countDownFunc(patientId, moduleId, start_time) {
         if(pause_stop_flag == 0){
         var data = response.data;
         var final_time = data['total_time'];
+        $("#ajax-message-history").html(data['history'])
         $("#time-containers").html(final_time);
         setTimeout(function () {
             const start_time = document.getElementById('page_landing_times').value;

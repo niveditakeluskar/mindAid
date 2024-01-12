@@ -3183,7 +3183,11 @@ class PatientController extends Controller
                     if ($callhistory->call_continue_status == 0) {
                         $patientCallHistoryHTML .= '<th>Call Follow-up date</th><th>Call Follow-up Time</th>';
                     }
-                    $patientCallHistoryHTML .= '</tr><tr><td>' . ($callhistory->call_continue_status == 0)  ? "No" : "Yes" . '</td>';
+                    $ccs = 'Yes';
+                    if($callhistory->call_continue_status == 0){
+                        $ccs = 'No';
+                    }
+                    $patientCallHistoryHTML .= '</tr><tr><td>' . $ccs . '</td>';
                     if ($callhistory->call_continue_status == 0) {
                         $patientCallHistoryHTML .= '<td>' . str_replace('00:00:00', '', $callhistory->ccm_answer_followup_date) . '</td><td>' . $callhistory->ccm_answer_followup_time . '</td>';
                     }

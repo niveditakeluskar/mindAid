@@ -1299,6 +1299,55 @@ function getCallHistory($patient_id)
     return $call_history;
 }
 
+function getSendTextMessage($module_id, $patient_id, $submodule_id){
+    $conf = getSMSConfigue();
+    $stage_id = getFormStageId($module_id, $submodule_id, 'Call');
+    $call_not_answered_step_id = getFormStepId($module_id, $submodule_id, $stage_id, 'Call Not Answered');
+    
+    $patient = RCare\Patients\Models\Patients::where('id',$patient_id)->get();
+    $patient_providers = RCare\Patients\Models\PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id',1)
+    ->where('is_active',1)->orderby('id','desc')->first(); 
+    if(isset($patient_providers->practice['practice_group'])){ 
+        $org = getOrganization($patient_providers->practice['practice_group']);   
+     }
+     $assign_message = isset($org[0]->assign_message)? $org[0]->assign_message :'';
+     $consent_to_text = isset($patient[0]->consent_to_text)?$patient[0]->consent_to_text:'';
+     $valid = 0;
+     if($consent_to_text == '1' && isset($conf->configurations) && $assign_message == '1'){
+        $valid = 1;
+     }else if(!isset($conf->configurations)){ 
+        $valid = 2;
+     }else if($assign_message !='1'){ 
+        $valid = 3;
+     }
+     $mob_number = '';
+     $mobval = '';
+     $home_number = '';
+     $home_number_value =  '';
+     $mob = 0;
+     $home =0;
+     if(isset($patient[0]->mob) && ($patient[0]->mob != "") && ($patient[0]->mob != null) && ($patient[0]->primary_cell_phone == "1")){
+        $mob_number = $patient[0]->mob;
+        $mobval = $patient[0]->country_code.''.$patient[0]->mob;
+        $mob = 1;
+     }
+     if(isset($patient[0]->home_number) && ($patient[0]->home_number != "") && ($patient[0]->home_number != null) && ($patient[0]->secondary_cell_phone == "1")){
+        $home_number = $patient[0]->home_number;
+        $home_number_value =  $patient[0]->secondary_country_code.''.$patient[0]->home_number;
+        $home = 1;
+     }
+     $data = array(
+        "valid" => $valid,
+        "mob_number" => $mob_number,
+        "mobval" => $mobval, 
+        "home_number" => $home_number,
+        "home_number_value" => $home_number_value,
+        "mob" => $mob,
+        "home" => $home,
+     );
+     return $data;
+}
+
    function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid){
          $optCount = count((array) $treeObj);
          $javaObj = json_encode($treeObj);
