@@ -10,7 +10,7 @@
   </LayoutComponent>
 </template>
 
-<script >
+<script>
   import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
   import PatientBasicInfo from '../Patients/Components/PatientBasicInfo.vue';
   import PatientMonthlyMonitoringDetails from './PatientMonthlyMonitoringDetails.vue';

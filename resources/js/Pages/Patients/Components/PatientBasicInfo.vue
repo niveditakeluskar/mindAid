@@ -30,10 +30,9 @@
                                         <span data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
                                             data-original-title="Patient FIN Number" style="padding-right:2px;">
                                             <i class="text-muted i-ID-Card"></i> :
-
                                             <a class="btn btn-info btn-sm patient_finnumber" @click="patient_finnumber_function"
                                              style="background-color:#27a7de;border:none;" id="patient_finnumber">
-                                                <span id="fin_number" class="patient_fin_number" ></span>
+                                              <span id="fin_number" class="patient_fin_number" ></span>
                                             </a>
                                         </span><br/>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal" @click="veteranServicefunction">
@@ -117,10 +116,6 @@
                                         </span>
                                         <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_additional_devicesfunction">
                                         <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <!-- ash -->
-                                        <a class="btn btn-info btn-sm add_patient_devices" @click="add_devicesfunction"
-                                        style="background-color:#27a7de;" id="add_patient_devices">Devices</a>  
-                                        <!-- !ash --> 
                                         <br/>
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
@@ -187,23 +182,23 @@
                                                 </div>
                                             </div>
 
+
                                                 <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="personal_notes" @click="personalnotesfunction">Personal Notes</a> |
                                                 <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="part_of_research_study" @click ="researchstudyfunction">Research Study</a>
                                         </div>
-                                    </div> 
-                                    <div style="padding-left: 823px;"> 
+                                    </div>
+                                    <div style="padding-left: 823px;">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
-<script setup>  
+<script setup>
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
@@ -340,7 +335,6 @@ const populateSaveValue=async()=>{
     }
 }
 
-
 onMounted(async () => {
     try {
         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
@@ -383,7 +377,7 @@ onMounted(async () => {
             enrollServices.push(fetchedServices);
             if (module === 'RPM') { 
                 // Toggle visibility using a reactive property
-                showAddPatientDevices.value = true;
+                this.showAddPatientDevices = true;
             }
             console.log("enrollServices", enrollServices);
         } 
@@ -503,12 +497,12 @@ function logTime(patientId, moduleId, subModuleId, stageId, billable, stepId, fo
     });
 }
 
+
 function format_date(value) {
     if (value) {
         return moment(String(value)).format('MM-DD-YYYY')
     }
 }
-
 
 $('.submit-add-patient-fin-number').on('click', function() {
     // Serialize the form data 
