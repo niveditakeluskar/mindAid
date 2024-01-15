@@ -58,6 +58,15 @@ export default {
     const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleID}/list`);
     $("#toDoList").html(taskMangeResp.data);
     $('.badge').html($('#count_todo').val());
+    const patientStatus =  await axios.get(`/patients/patient-status/${patientId}/${moduleID}/status`);
+    $("#status_blockcontent").html(patientStatus.data);
+    const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleID}/careplanstatus`);
+    $("#careplan_blockcontent").html(carePlanStatus.data);
+    let currentDate = new Date()
+    let year = currentDate.getFullYear();
+    let month =  currentDate.getMonth() + 1;
+    const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleID}/${month}/${year}/previousstatus`);
+    $("#previousMonthData").html(previousMonths.data);
   } catch (error) {
     console.error(error);
   }
