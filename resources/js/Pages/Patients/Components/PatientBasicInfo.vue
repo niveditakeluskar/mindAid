@@ -96,7 +96,6 @@
                                             {{ 'From:' + format_date(patientDetails.patient_enroll_date[0].suspended_from) +
                                                 ' To ' + format_date(patientDetails.patient_enroll_date[0].suspended_to) }}
                                         </span>
-
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 2">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
@@ -202,25 +201,40 @@ import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import axios from 'axios';
+
 const props = defineProps({
     patientId: Number,
     moduleId: Number,
     loading: "",
-    enrolledServices:[]
+    patientServices: [],
+    patientEnrolledServices:[],
+    // enrolledServices:[] 
 });
+
+
+// const enrolledServices = ref(null);
+const enrolledServices = ref([]);
 const patientDetails = ref(null);
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
+
 const patientServiceStatus = async()=>{
-    console.log("MERRY CHRISTMAS");
+    const patientServiceModal = document.getElementById('active-deactive');
     var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    patientId = parts[parts.length - 1];
+        parts = sPageURL.split("/"),
+        $(".patient_id").val(parts[parts.length - 1]);
+    if (patientServiceModal) { 
+        $(patientServiceModal).modal('show'); // Use jQuery to show the modal
+    } else {
+        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+    }
 }
 const veteranServicefunction = async() => {
-    console.log("u clicked me");
     const VeteranServiceModal = document.getElementById('vateran-service');
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
+    $(".patient_id").val(parts[parts.length - 1]);
       if (VeteranServiceModal) { 
         $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
       } else {
@@ -231,7 +245,7 @@ const veteranServicefunction = async() => {
 
 
 function devicesclear() {  
-    alert('dadsadasdsa');
+    // alert('dadsadasdsa');
     $("#devices_form input[name='device_id']").val('');
     $('#partner_id').val(''); 
     $('#partner_devices_id').val('');
@@ -244,6 +258,9 @@ function devicesclear() {
 const add_devicesfunction = async() => {
     const DeviceModal = document.getElementById('add-patient-devices');
       if (DeviceModal) { 
+        var sPageURL = window.location.pathname;
+        parts = sPageURL.split("/"),
+        $(".patient_id").val(parts[parts.length - 1]);
         $(DeviceModal).modal('show'); // Use jQuery to show the modal
       } else {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
@@ -254,6 +271,9 @@ const add_devicesfunction = async() => {
 const add_additional_devicesfunction = async() =>{
     const AdditionalDeviceModal = document.getElementById('additional-device');
       if (AdditionalDeviceModal) { 
+        var sPageURL = window.location.pathname;
+        parts = sPageURL.split("/"),
+        $(".patient_id").val(parts[parts.length - 1]);
         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
       } else {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
@@ -262,6 +282,9 @@ const add_additional_devicesfunction = async() =>{
 
 const patient_finnumber_function = async()=>{
     const FinNumberModal = document.getElementById('patient-finnumber');
+    var sPageURL = window.location.pathname;
+        parts = sPageURL.split("/"),
+        $(".patient_id").val(parts[parts.length - 1]);
       if (FinNumberModal) { 
         $(FinNumberModal).modal('show'); // Use jQuery to show the modal
       } else {
@@ -272,18 +295,26 @@ const patient_finnumber_function = async()=>{
 }
 const alertThresholdfunction = async() => {
     const AlertThresholdeModal = document.getElementById('patient-threshold');
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
+    $(".patient_id").val(parts[parts.length - 1]);
     if (AlertThresholdeModal) {
-    $(AlertThresholdeModal).modal('show'); // Use jQuery to show the modal
+        $(AlertThresholdeModal).modal('show'); 
+        patComDetails();
+        // Use jQuery to show the modal
     } else {
     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
     }
-    patComDetails(); 
+     
 }
 const personalnotesfunction = async() => {
     console.log('dadasdasdasdasdas'+personalnotesfunction);
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
+    $(".patient_id").val(parts[parts.length - 1]);
     const PersonalNotesModal = document.getElementById('personal-notes');
     if (PersonalNotesModal) {
-    $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
+        $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
     } else {
     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
     }
@@ -293,8 +324,11 @@ const personalnotesfunction = async() => {
 
 const researchstudyfunction = async() => { 
     const ResearchStudyModal = document.getElementById('part-of-research-study');
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
+    $(".patient_id").val(parts[parts.length - 1]);
     if (ResearchStudyModal) {
-    $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
+        $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
     } else {
     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
     }
@@ -303,7 +337,6 @@ const researchstudyfunction = async() => {
 }
 
 const patientVeteranServiceModalDetails = async()=>{ 
-    console.log('yess you!'); 
     try {
         const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
         if (!response.ok) {
@@ -329,7 +362,7 @@ const patientAlertThresholdsModalDetails = async()=>{
     }
 }
 
-onMounted(async () => {
+const patComDetails = async()=> {
     try {
         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
         if (!response.ok) {
@@ -371,16 +404,20 @@ onMounted(async () => {
             enrollServices.push(fetchedServices);
             if (module === 'RPM') { 
                 // Toggle visibility using a reactive property
-                this.showAddPatientDevices = true;
+                // this.showAddPatientDevices = true;
             }
             console.log("enrollServices", enrollServices);
-        } 
-        props.enrolledServices = enrollServices;
+        }
+        enrolledServices.value = enrollServices;
         console.log(enrolledServices +"enrollServices");
     } catch (error) { 
         console.error('Error fetching Patient details:', error.message); // Log specific error message
         // Handle the error appropriately
     }
+}
+
+onMounted(async () => {
+    patComDetails();
     const start_time = document.getElementById('page_landing_times').value;
     countDownFunc(props.patientId, props.moduleId, start_time);
 });
@@ -393,6 +430,7 @@ function countDownFunc(patientId, moduleId, start_time) {
         if(pause_stop_flag == 0){
         var data = response.data;
         var final_time = data['total_time'];
+        $("#ajax-message-history").html(data['history'])
         $("#time-containers").html(final_time);
         setTimeout(function () {
             const start_time = document.getElementById('page_landing_times').value;
@@ -500,6 +538,10 @@ function format_date(value) {
 $('.submit-add-patient-fin-number').on('click', function() {
     // Serialize the form data 
     const formData = $('#fin_number_form').serialize();
+    var timearr= document.getElementById('page_landing_times').value;
+    $('.timearr').val(timearr);
+    var patientId = $('input[name="patient_id"]').val();
+    var moduleId = $('input[name="module_id"]').val();
     // Make an AJAX POST request to the specified route
     $.ajax({
       type: 'POST',
@@ -507,40 +549,45 @@ $('.submit-add-patient-fin-number').on('click', function() {
       data: formData,
       success: function(response) { 
         // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
+        $('#devices_success').html('<div class="alert alert-success">' + response.message + '</div>');
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
-          $('#active-deactive').modal('hide');
+          $('#patient-finnumber').modal('hide');
         }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+        updateTimer(patientId, 1,moduleId);
       },
       error: function(xhr, status, error) {
         // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+        $('#devices_success').html('<div class="alert alert-danger">Error: ' + error + '</div>');
       }
     });
 });
 
-$('.submit-add-patient-devices').on('click', function() {
+$('.submit-patient-add_device').on('click', function() {
     // Serialize the form data 
-    const formData = $('#devices_form').serialize();
+    const formData = $('#patient_add_device_form').serialize();
     // Make an AJAX POST request to the specified route
+    var timearr= document.getElementById('page_landing_times').value;
+    $('.timearr').val(timearr);
+    var patientId = $('input[name="patient_id"]').val();
+    var moduleId = $('input[name="module_id"]').val();
     $.ajax({
       type: 'POST',
-      url: '/patients/master-devices',
+      url: '/ccm/additional-device-email',
       data: formData,
       success: function(response) { 
         // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
+        $('#alert-success-additional-device').show();
 
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
-          $('#active-deactive').modal('hide');
+          $('#additional-device').modal('hide');
         }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+        updateTimer(patientId, 1,moduleId);
       },
       error: function(xhr, status, error) {
         // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+        $('#alert-success-additional-device').hide();
       }
     });
 });
@@ -548,6 +595,10 @@ $('.submit-add-patient-devices').on('click', function() {
 
 $('.submit-patient-threshold').on('click', function() {
     // Serialize the form data 
+    var timearr= document.getElementById('page_landing_times').value;
+    $('.timearr').val(timearr);
+    var patientId = $('input[name="patient_id"]').val();
+    var moduleId = $('input[name="module_id"]').val();
     const formData = $('#patient_threshold_form').serialize();
     // Make an AJAX POST request to the specified route
     $.ajax({
@@ -555,25 +606,34 @@ $('.submit-patient-threshold').on('click', function() {
       url: '/patients/patient-threshold',
       data: formData,
       success: function(response) { 
+        debugger;
+        console.log(response +'Response'); 
         // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
+        $('.alert-success-threshold').show();
+        $('alert-danger-threshold').hide(); 
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
-          $('#active-deactive').modal('hide');
+          $('#patient-threshold').modal('hide');
         }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+        updateTimer(patientId, 1,moduleId);
       },
       error: function(xhr, status, error) {
         // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+        $('alert-danger-threshold').show();
+        $('.alert-success-threshold').hide();
+
       }
     });
 });
  
-$('.submit-personal-notes').on('click', function() {
+$('.submit-personal-notes').on('click', function() { 
     // Serialize the form data
     const formData = $('#personal_notes_form').serialize();
     // Make an AJAX POST request to the specified route
+    var timearr= document.getElementById('page_landing_times').value;
+    $('.timearr').val(timearr);
+    var patientId = $('input[name="patient_id"]').val();
+    var moduleId = $('input[name="module_id"]').val();
     $.ajax({
       type: 'POST',
       url: '/patients/patient-personal-notes',
@@ -584,8 +644,9 @@ $('.submit-personal-notes').on('click', function() {
 
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
-          $('#active-deactive').modal('hide');
+          $('#personal-notes').modal('hide');
         }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+        updateTimer(patientId, 1,moduleId);
       },
       error: function(xhr, status, error) {
         // Display error messages in case of failure
@@ -597,6 +658,10 @@ $('.submit-personal-notes').on('click', function() {
 $('.submit-part-of-research-study').on('click', function() {
     // Serialize the form data
     const formData = $('#part_of_research_study_form').serialize();
+    var timearr= document.getElementById('page_landing_times').value;
+    $('.timearr').val(timearr);
+    var patientId = $('input[name="patient_id"]').val();
+    var moduleId = $('input[name="module_id"]').val();
     // Make an AJAX POST request to the specified route
     $.ajax({
       type: 'POST', 
@@ -608,8 +673,10 @@ $('.submit-part-of-research-study').on('click', function() {
 
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
-          $('#active-deactive').modal('hide');
+          $('#part-of-research-study').modal('hide');
         }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
+        updateTimer(patientId, 1,moduleId);
+
       },
       error: function(xhr, status, error) {
         // Display error messages in case of failure

@@ -2,8 +2,8 @@
   <LayoutComponent>
     <div class="row text-align-center">
       <div class="col-md-12">
-          <input type="hidden" id="page_landing_times" name="timearr[form_start_time]" class="timearr form_start_time" :value='landingtime' v-model="page_landing_times">
-          <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" />
+          <input type="hidden" id="page_landing_times" name="timearr[form_start_time]" class="timearr form_start_time" :value='landingtime' v-model="page_landing_times"/>
+          <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" v-if ="basicinfo" />
           <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" :stageid="stageid" :componentId="componentId" />
       </div>
     </div>
@@ -30,6 +30,7 @@
     data() {
       return {
         landingtime: null,
+        basicinfo:false,
       };
     },
     mounted() {
@@ -41,6 +42,7 @@
           .then(response => {
             this.landingtime = response.data[['landing_time']];
             console.log(this.landingtime);
+            this.basicinfo = true;
           })
           .catch(error => {
             console.error('Error fetching data:', error);

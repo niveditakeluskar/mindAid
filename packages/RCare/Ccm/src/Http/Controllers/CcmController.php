@@ -52,15 +52,15 @@ use RCare\Patients\Models\PatientHealthData;
 use RCare\Patients\Models\PatientLabRecs;
 use RCare\TaskManagement\Models\UserPatients;
 use RCare\Patients\Models\PatientHealthServices;
-use RCare\Ccm\src\Http\Requests\CallAddRequest;
+use RCare\Ccm\Http\Requests\CallAddRequest;
 use RCare\Ccm\Http\Requests\HippaAddRequest;
-use RCare\Ccm\src\Http\Requests\HomeServicesAddRequest;
+use RCare\Ccm\Http\Requests\HomeServicesAddRequest;
 use RCare\Ccm\Http\Requests\RelationshipAddRequest;
-use RCare\Ccm\src\Http\Requests\CallCloseAddRequest;
-use RCare\Ccm\src\Http\Requests\CallwrapAddRequest;
+use RCare\Ccm\Http\Requests\CallCloseAddRequest;
+use RCare\Ccm\Http\Requests\CallwrapAddRequest;
 use RCare\Ccm\Http\Requests\FollowupAddRequest;
 use RCare\Ccm\Http\Requests\FollowupInertiaAddRequest;
-use RCare\Ccm\src\Http\Requests\TextAddRequest;
+use RCare\Ccm\Http\Requests\TextAddRequest;
 use RCare\Ccm\src\Http\Requests\CarePlanSaveRequest;
 use RCare\Messaging\Models\MessageLog;
 use RCare\Org\OrgPackages\CarePlanTemplate\src\Models\CarePlanTemplate;
@@ -718,18 +718,18 @@ class CcmController extends Controller
         $enrollinRPM = 1;
         if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
             $enrollinRPM = 2;
-         }
-         $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
-         $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
-         $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
-         $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
-         $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
-         if ($enrollinRPM > 1) {
-            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
-         }else{
-            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id',0)->where('stage_code',$step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();  
-         }
-         return $genQuestion;
+        }
+        $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
+        $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+        $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
+        $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+        $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
+        if ($enrollinRPM > 1) {
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
+        } else {
+            $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
+        }
+        return $genQuestion;
     }
 
     public function fetchMonthlyMonitoringPatientDetails(Request $request)
@@ -2255,7 +2255,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             $stage_id = sanitizeVariable($request->stage_id);
             $step_id      = sanitizeVariable($request->step_id);
         }
-        
+
         $steps        = StageCode::where('module_id', $module_id)->where('submodule_id', $component_id)->where('stage_id', $stage_id)->get();
         DB::beginTransaction();
         try {
@@ -3807,7 +3807,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $form_name = 'patient_add_device_form';
         $billable = 1;
         $to_email = Partner::where('category', '0')->orderBy('created_at', 'desc')->first();
-        $to = $to_email->email;
+        
+        $to = isset($to_email)? $to_email->email:'';
         $patient_device = PatientDevices::where('patient_id', $patientId)->where('status', 1)->latest()->first();
         $pdevices = array();
         $rpdevices = array();
