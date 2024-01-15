@@ -128,13 +128,13 @@
 						<div class="modal-body">
 							<input type="hidden" name="uid" />
 							<input type="hidden" name="patient_id" id="patient_id" v-model="this.patient_id" :value="`${patientId}`"/>
-							<input type="hidden" name="start_time" value="00:00:00">
+							<input type="hidden" name="start_time" id="timer_start" value="00:00:00">
 							<input type="hidden" name="end_time" value="00:00:00">
 							<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
 				<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
 				<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
 							<input type="hidden" name="step_id" value="0">
-							<input type="hidden" name="form_name" value="followup_task_edit_notes">
+							<input type="hidden" name="form_name" id="form_name" value="followup_task_edit_notes">
 							<input type="hidden" name="topic" id="topic" />
 							<input type="hidden" name="id" id="hiden_idhiden_id" />
 							<p><b>Task : </b><span id="task_notes"></span></p>
@@ -511,7 +511,7 @@ $('body').on('click', '.change_status_flag', function () {
     var timer_start = $("#timer_start").val();
     var timer_paused = $("#time-container").text();
     var startTime = $("form[name='followup_form'] .form_start_time").val();
-
+	var form_name = $("#form_name").val();
     if (confirm("Are you sure you want to change the Status")) {
       $.ajax({
         type: 'post',
