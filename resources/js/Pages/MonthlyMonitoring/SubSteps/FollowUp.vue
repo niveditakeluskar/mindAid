@@ -1,7 +1,16 @@
 <template>
 	<div class="row">
 		<div class="col-lg-12 mb-3">
-			<form id="followup_form" name="followup_form" @submit.prevent="submitFollowupForm">
+			<form id="followup_form" ref="followupFormRef" name="followup_form" @submit.prevent="submitFollowupForm">
+				<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
+				<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
+				<input type="hidden" name="start_time" v-model="this.start_time" value="00:00:00">
+				<input type="hidden" name="end_time" v-model="this.end_time" value="00:00:00">
+				<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
+				<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
+				<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
+				<input type="hidden" name="step_id" v-model="this.step_id" value="0">
+				<input type="hidden" name="form_name" v-model="this.form_name" value="followup_form">
 				<div class="card">
 					<div class="card-body">
 						<div id='error-msg'></div>
@@ -27,16 +36,20 @@
 										</div>
 										<!-- <input type="hidden" name="selected_task_name[]" id="selected_task_name_0" /> -->
 										<div class="col-md-4 form-group">
-				                                <label class="radio radio-primary col-md-4 float-left">
-				                                    <input type="radio" class="status_flag" name="status_flag[]" value="0" formControlName="radio" checked v-model="item.status_flag">
-				                                    <span>To be Scheduled</span>
-				                                    <span class="checkmark"></span>
-				                                </label>
-				                                <label class="radio radio-primary col-md-4 float-left">
-				                                    <input type="radio" class="status_flag" name="status_flag[]" value="1" formControlName="radio" v-model="item.status_flag">
-				                                    <span>Completed</span>
-				                                    <span class="checkmark"></span>
-				                                </label>
+											<label class="radio radio-primary col-md-4 float-left">
+												<input type="radio" class="status_flag" :name="'status_flag[' + index + ']'"
+													value="0" formControlName="radio" checked v-model="item.status_flag"
+													@change="handleScheduledSelected(item, index)">
+												<span>To be Scheduled</span>
+												<span class="checkmark"></span>
+											</label>
+											<label class="radio radio-primary col-md-4 float-left">
+												<input type="radio" class="status_flag" :name="'status_flag[' + index + ']'"
+													value="1" formControlName="radio" v-model="item.status_flag"
+													@change="setCurrentDateIfCompleted(item, index)">
+												<span>Completed</span>
+												<span class="checkmark"></span>
+											</label>
 										</div>
 									</div>
 									<div class='row ml-1'>
@@ -67,15 +80,17 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete" @click="handleCheckboxChange"><span>EMR system entry completed</span><span class="checkmark"></span>
+										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete"
+											@click="handleCheckboxChange"><span>EMR system entry completed</span><span
+											class="checkmark"></span>
 									</label>
 									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12 text-right">
-									<button type="submit" id="save-followup" class="btn  btn-primary m-1 office-visit-save"
-										>Save</button>
+									<button type="submit" id="save-followup"
+										class="btn  btn-primary m-1 office-visit-save">Save</button>
 								</div>
 
 							</div>
@@ -84,17 +99,21 @@
 					<hr>
 					<div class="col-md-12">
 						<div class="table-responsive">
-					<ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark" :gridOptions="gridOptions" 
-:defaultColDef="defaultColDef" :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady"                 :paginationPageSizeSelector="paginationPageSizeSelector" :paginationNumberFormatter="paginationNumberFormatter" :popupParent="popupParent" ></ag-grid-vue>
-</div>					
-</div>
+							<ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark"
+								:gridOptions="gridOptions" :defaultColDef="defaultColDef" :columnDefs="columnDefs"
+								:rowData="rowData" @grid-ready="onGridReady"
+								:paginationPageSizeSelector="paginationPageSizeSelector"
+								:paginationNumberFormatter="paginationNumberFormatter"
+								:popupParent="popupParent"></ag-grid-vue>
+						</div>
+					</div>
 
 					<div class="card-footer">
 						<div class="mc-footer"></div>
 					</div>
 				</div>
 			</form>
-		
+
 		</div>
 
 		<!--start edit model -->
@@ -157,7 +176,6 @@ export default {
 		patientId: Number,
 		moduleId: Number,
 		componentId: Number,
-		stageid: Number
 	},
 	components: {
 		LayoutComponent,
@@ -175,25 +193,33 @@ export default {
 				}
 			],
 			uid: '',
+			patient_id: '',
+			module_id: '',
+			component_id: '',
+			stepId: 0,
+			start_time: '',
+			end_time: '',
+			form_name: '',
 			billable: '',
-			// emr_complete: 0,
+			emr_complete: 0,
+			folllowUpTaskData: {},
 			formErrors: {},
 			showAlert: false,
 		};
 	},
 	methods: {
 		handleScheduledSelected(item, index) {
-    if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
-      item.task_date = ''; // Clear the task date
-    }
-  },
-  setCurrentDateIfCompleted(item, index) {
+			if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
+				item.task_date = ''; // Clear the task date
+			}
+		},
+		setCurrentDateIfCompleted(item, index) {
 			if (item.status_flag === '1') { // 'Completed' radio button is selected
-      item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
-    } else if (item.status_flag === '0') { // 'To be Scheduled' radio button is selected
-      item.task_date = ''; // Remove the date by assigning an empty string
-    }
-},
+				item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
+			} else if (item.status_flag === '0') { // 'To be Scheduled' radio button is selected
+				item.task_date = ''; // Remove the date by assigning an empty string
+			}
+		},
 		addNewItem() {
 			this.items.push({
 				task_name: '',
@@ -209,19 +235,15 @@ export default {
 
 	},
 	setup(props) {
+		const followupMasterTaskList = ref();
+		const followupStageId = ref();
 		const rowData = ref();
 		const loading = ref(false);
-		const loadingCellRenderer = ref(null);
-		const loadingCellRendererParams = ref(null);
-		const rowModelType = ref(null);
-		const cacheBlockSize = ref(null);
-		const maxBlocksInCache = ref(null);
-		const followupMasterTaskList = ref([]);
-		let followupStageId = ref(null);
-		let followupStepId = 0;
-		let formErrors = ref(null);
-		let showAlert = ref(false);
-		let emr_complete = ref(false);
+		const gridApi = ref(null);
+		const gridColumnApi = ref(null);
+		const popupParent = ref(null);
+		const paginationPageSizeSelector = ref(null);
+		const paginationNumberFormatter = ref(null);
 
 		const items = ref([
 			{
@@ -234,78 +256,80 @@ export default {
 		]);
 		// 
 
-	const onFilterTextBoxChanged = () => {
-      if (gridApi.value) {
-        gridApi.value.setGridOption(
-          'quickFilterText',
-          filterText.value
-        );
-      }
-    };
+		const onGridReady = (params) => {
+			gridApi.value = params.api; // Set the grid API when the grid is ready
+			gridColumnApi.value = params.columnApi;
+			paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
+			paginationNumberFormatter.value = (params) => {
+				return '[' + params.value.toLocaleString() + ']';
+			};
+		};
+	
+		let columnDefs = ref([
+			{
+				headerName: 'Sr. No.',
+				valueGetter: 'node.rowIndex + 1',
+			},
+			{ headerName: 'Task', field: 'task_notes', filter: true },
+			{ headerName: 'Category', field: 'task' },
+			{
+				headerName: 'Notes', field: 'notes',
+				cellRenderer: function (params) {
+    const row = params.data;
+    const link = document.createElement('a');
+    const icon = document.createElement('i');
+    icon.classList.add('editform', 'i-Pen-4');
+    
+    if (row && row.notes) {
+      link.appendChild(document.createTextNode(row.notes));
+    }
 
-    // Define a custom cell renderer function
-    const customCellRenderer = (params) => {
-      const row = params.data;
-      if (row && row.action) {
-        return row.action; // Returning the HTML content as provided from the controller
-      } else {
-        return ''; // Or handle the case where the 'action' value is not available
-      }
-    };
+    link.appendChild(icon);
+    link.classList.add('editfollowupnotes');
+    link.href = 'javascript:void(0)';
+    link.addEventListener('click', () => {
+      openEditModal(row.id); // 'this' refers to the Vue component instance
+    });
 
-		let columnDefs = ref( [
-				{
-					headerName: 'Sr. No.',
-					valueGetter: 'node.rowIndex + 1',
-				},
-				{ headerName: 'Task', field: 'task_notes', filter: true },
-				{ headerName: 'Category', field: 'task' },
-				{
-					headerName: 'Notes', field: 'notes',
-					cellRenderer: function (params) {
-						const row = params.data;
-						if (row && row.notes) {
-							return row.notes + '<a  data-toggle="tooltip" data-id="' + row.id + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; // Returning the HTML content as provided from the controller
-						} else {
-							return '<a  data-toggle="tooltip" data-id="' + row.id + '" data-original-title="Edit" class="editfollowupnotes" title="Edit"><i class=" editform i-Pen-4"></i></a>'; // Or handle the case where the 'action' value is not available
-						}
-					},
-				},
-				{ headerName: 'Date Scheduled', field: 'tt' },
-				{ headerName: 'Task Time', field: 'task_time' },
-				{
-					headerName: 'Mark as Complete', field: 'action',
-					cellRenderer: function (params) {
-						const row = params.data;
-						if (row && row.action) {
+    return link;
+  },
+
+			},
+			{ headerName: 'Date Scheduled', field: 'tt' },
+			{ headerName: 'Task Time', field: 'task_time' },
+			{
+				headerName: 'Mark as Complete', field: 'action',
+				cellRenderer: function (params) {
+					const row = params.data;
+					if (row && row.action) {
 							return row.action; // Returning the HTML content as provided from the controller
 						} else {
 							return ''; // Or handle the case where the 'action' value is not available
 						}
-					},
 				},
-				{ headerName: 'Task Completed Date', field: 'task_completed_at' },
-				{
-					headerName: 'Created By', field: 'created_by',
-					cellRenderer: function (params) {
-						const row = params.data;
-						return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
-					},
+			},
+			{ headerName: 'Task Completed Date', field: 'task_completed_at' },
+			{
+				headerName: 'Created By', field: 'created_by',
+				cellRenderer: function (params) {
+					const row = params.data;
+					return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
 				},
-			]);
-			const defaultColDef = ref({
-      sortable: true,
-	  filter: true,
-      flex: 1,
-      minWidth: 100,
-	  editable: false,
-    });
-    const gridOptions = reactive({
-      pagination: true,
-	  paginationPageSize: 10, // Set the number of rows per page
-	  domLayout: 'autoHeight',
-    });
-	
+			},
+		]);
+		const defaultColDef = ref({
+			sortable: true,
+			filter: true,
+			flex: 1,
+			minWidth: 100,
+			editable: false,
+		});
+		const gridOptions = reactive({
+			pagination: true,
+			paginationPageSize: 10, // Set the number of rows per page
+			domLayout: 'autoHeight',
+		});
+
 		const fetchFollowupMasterTask = async () => {
 			await axios.get(`/org/get_future_followup_task`)
 				.then(response => {
@@ -316,6 +340,17 @@ export default {
 				});
 		};
 
+	 	const openEditModal = (id) => {
+			console.log("u clicked me");
+			// Code to open the modal using jQuery or Vue methods
+			// You might need to adjust this based on your modal library or implementation
+			$('#edit_notes_modal').modal('show');
+
+			// Code to set data in the modal based on the row with the given ID
+			const rowData = this.gridOptions.api.getRowNode(id).data;
+			// Set data in the modal fields based on rowData
+			// Example: document.getElementById('task_notes').innerText = rowData.notes;
+		}; 
 		const fetchFollowupMasterTaskList = async () => {
 			try {
 				loading.value = true;
@@ -344,80 +379,89 @@ export default {
 			}
 		};
 
-		const submitFollowupFormData = async () => {
-			items.value.forEach(field => {
-				console.log(JSON.stringify(field));
-				console.log(`${field.task_name}: ${field.selectedFollowupMasterTask}: ${field.status_flag}: ${field.notes}: ${field.task_date}`);
-			});
-			// const formData = {
-			// 	uid: props.patientId,
-			// 	patient_id: props.patientId,
-			// 	module_id: props.moduleId,
-			// 	component_id: props.componentId,
-			// 	stage_id: followupStageId,
-			// 	step_id: followupStepId,
-			// 	form_name: 'followup_form',
-			// 	billable: 1,
-			// 	start_time: "",
-			// 	end_time: "",
-			// 	_token: document.querySelector('meta[name="csrf-token"]').content,
-			// 	timearr: {
-			// 		"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
-			// 		"form_save_time": "",
-			// 		"pause_start_time": "",
-			// 		"pause_end_time": "",
-			// 		"extra_time": ""
-			// 	},
-			// 	folllowUpTaskData: items.map(item => ({
-			// 		task_name: item.task_name,
-			// 		selectedFollowupMasterTask: item.selectedFollowupMasterTask,
-			// 		status_flag: item.status_flag,
-			// 		notes: item.notes,
-			// 		task_date: item.task_date,
-			// 	})),
-			// 	emr_complete: emr_complete.value === true ? 1 : 0,
-			// };
-			// axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-			// try {
-			// 	formErrors = {};
-			// 	const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
-			// 	console.log('Form submitted successfully!', response);
-			// 	if (response && response.status == 200) {
-			// 		showAlert = true;
-			// 		setTimeout(() => {
-			// 			showAlert = false;
-			// 		}, 3000);
-			// 	}
-			// } catch (error) {
-			// 	if (error.response && error.response.status === 422) {
-			// 		formErrors = error.response.data.errors;
-			// 	} else {
-			// 		console.error('Error submitting form:', error);
-			// 	}
-			// }
+		const followupFormRef = ref(null);
+		const submitFollowupForm = async () => {
+			// Access the form element using $refs
+			const myForm = followupFormRef.value; // Access form reference directly
+			if (!myForm || !(myForm instanceof HTMLFormElement)) {
+				console.error('Invalid form reference');
+				return;
+			}
+			// Create a FormData object from the form element
+			const formData = new FormData(myForm);
 
-			// console.log("formData==>>", formData);
+			/*  const formData = {
+				uid: props.patientId,
+				patient_id: props.patientId,
+				module_id: props.moduleId,
+				component_id: props.componentId,
+				stage_id: props.stageid,
+				step_id: this.step_id,
+				form_name: 'hippa_form',
+				billable: 1,
+				start_time: "",
+				end_time: "",
+				_token: document.querySelector('meta[name="csrf-token"]').content,
+				timearr: {
+				  "form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
+				  "form_save_time": "",
+				  "pause_start_time": "",
+				  "pause_end_time": "",
+				  "extra_time": ""
+				},
+				folllowUpTaskData: this.items.map(item => ({
+				  task_name: item.task_name,
+				  selectedFollowupMasterTask: item.selectedFollowupMasterTask,
+				  status_flag: item.status_flag,
+				  notes: item.notes,
+				  task_date: item.task_date,
+				})),
+				emr_complete: this.emr_complete,
+			  }; */
+			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+			try {
+				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
+				console.log('Form submitted successfully!', response);
+				if (response && response.status == 200) {
+					this.showAlert = true;
+					setTimeout(() => {
+						this.showAlert = false;
+					}, 3000);
+				}
+			} catch (error) {
+				if (error.response && error.response.status === 422) {
+					// Handle validation errors (422 Unprocessable Entity)
+					// Set formErrors based on the response
+					this.formErrors = error.response.data.errors;
+				} else {
+					// Handle other types of errors
+					console.error('Error submitting form:', error);
+				}
+			}
+
+			console.log("formData==>>", formData);
 			// axios.post('/your-api-endpoint', this.formData)
-			// 	.then(response => {
-			// 		console.log('Form submitted successfully!', response.data);
-			// 	})
-			// 	.catch(error => {
-			// 		// Handle error response
-			// 		console.error('Error submitting form:', error);
-			// 	});
+			//  .then(response => {
+			//    console.log('Form submitted successfully!', response.data);
+			//  })
+			//  .catch(error => {
+			//    // Handle error response
+			//    console.error('Error submitting form:', error);
+			//  });
 		};
+
 
 		const handleCheckboxChange = (event) => {
 			emr_complete.value = event.target.checked;
 		};
 
 		onBeforeMount(() => {
-      popupParent.value = document.body;
+			popupParent.value = document.body;
 
-    });
-	const onFirstDataRendered = (params) => {
-      params.api.paginationGoToPage(1);
-    };
+		});
+		const onFirstDataRendered = (params) => {
+			params.api.paginationGoToPage(1);
+		};
 		onMounted(async () => {
 			try {
 				fetchFollowupMasterTask();
@@ -429,7 +473,7 @@ export default {
 		});
 
 		return {
-		
+
 			followupStageId,
 			loading,
 			columnDefs,
@@ -438,11 +482,11 @@ export default {
 			gridOptions,
 			popupParent,
 			gridApi,
-      gridColumnApi,
-	  onGridReady,
-	  paginationPageSizeSelector,
-	  paginationNumberFormatter,
-	  onFirstDataRendered,
+			gridColumnApi,
+			onGridReady,
+			paginationPageSizeSelector,
+			paginationNumberFormatter,
+			onFirstDataRendered,
 			fetchFollowupMasterTask,
 			fetchFollowupMasterTaskList,
 			getStageID,
@@ -450,9 +494,6 @@ export default {
 			followupFormRef,
 			followupMasterTaskList,
 			getStageID,
-			submitFollowupFormData,
-			formErrors,
-			showAlert,
 			handleCheckboxChange,
 			// addNewItem,
 			// removeItem,
@@ -467,77 +508,78 @@ export default {
 
 .ag-theme-quartz,
 .ag-theme-quartz-dark {
-  --ag-foreground-color: rgb(63, 130, 154);
-  --ag-background-color: rgb(238, 238, 238);
-  --ag-header-foreground-color: rgb(63, 130, 154);
-  --ag-header-background-color: rgb(238, 238, 238);
-  --ag-odd-row-background-color: rgb(255, 255, 255);
-  --ag-header-column-resize-handle-color: rgb(63, 130, 154);
+	--ag-foreground-color: rgb(63, 130, 154);
+	--ag-background-color: rgb(238, 238, 238);
+	--ag-header-foreground-color: rgb(63, 130, 154);
+	--ag-header-background-color: rgb(238, 238, 238);
+	--ag-odd-row-background-color: rgb(255, 255, 255);
+	--ag-header-column-resize-handle-color: rgb(63, 130, 154);
 
-  --ag-font-size: 17px;
-  --ag-font-family: monospace;
+	--ag-font-size: 17px;
+	--ag-font-family: monospace;
 }
 
 .loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  /* Adjust as needed */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+	/* Adjust as needed */
 }
 
 .quick-filter {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .export-button {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .search-container {
-  display: inline-block;
-  position: relative;
-  border-radius: 50px;
-  /* To create an oval shape, use a large value for border-radius */
-  overflow: hidden;
-  width: 200px;
-  /* Adjust width as needed */
+	display: inline-block;
+	position: relative;
+	border-radius: 50px;
+	/* To create an oval shape, use a large value for border-radius */
+	overflow: hidden;
+	width: 200px;
+	/* Adjust width as needed */
 }
 
 .oval-search-container {
-  position: relative;
-  display: inline-block;
-  /*  border: 1px solid #ccc; */
-  /* Adding a visible border */
-  /* border-radius: 20px; */
-  /* Adjust border-radius for a rounded shape */
-  /* width: 200px; */
-  /* Adjust width as needed */
-  margin-right: 10px;
-  /* Adjust margin between the search box and icons */
+	position: relative;
+	display: inline-block;
+	/*  border: 1px solid #ccc; */
+	/* Adding a visible border */
+	/* border-radius: 20px; */
+	/* Adjust border-radius for a rounded shape */
+	/* width: 200px; */
+	/* Adjust width as needed */
+	margin-right: 10px;
+	/* Adjust margin between the search box and icons */
 }
 
 input[type="text"] {
-  width: calc(100% - 0px);
-  /* Adjust the input width considering the icon */
-  /*  border: none; */
-  outline: none;
-  border-radius: 10px;
+	width: calc(100% - 0px);
+	/* Adjust the input width considering the icon */
+	/*  border: none; */
+	outline: none;
+	border-radius: 10px;
 }
 
 .search-icon {
-  position: absolute;
-  top: 50%;
-  right: 1px;
-  transform: translateY(-50%);
-  width: 20px;
-  /* Adjust icon size as needed */
-  height: auto;
+	position: absolute;
+	top: 50%;
+	right: 1px;
+	transform: translateY(-50%);
+	width: 20px;
+	/* Adjust icon size as needed */
+	height: auto;
 }
 
 /* Align the export icons properly */
 .ml-auto img {
-  margin-right: 5px;
-  /* Adjust margin between the export icons */
-}</style>
+	margin-right: 5px;
+	/* Adjust margin between the export icons */
+}
+</style>

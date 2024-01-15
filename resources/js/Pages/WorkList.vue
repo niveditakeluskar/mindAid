@@ -150,6 +150,7 @@ import {
   onBeforeMount,
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
+import patientStatus from './Modals/patientStatus.vue'; // Import your layout component
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -161,6 +162,7 @@ export default {
     AgGridVue,
   },
   setup() {
+    const { callExternalFunctionWithParams } = patientStatus.setup();
     const layoutComponentRef = ref(null);
     const gridApi = ref(null);
     const gridColumnApi = ref(null);
@@ -422,12 +424,11 @@ export default {
     });
 
     const callExternalFunctionClick = (pid, pstatus) => {
-      if (layoutComponentRef.value) {
-        layoutComponentRef.value.callExternalFunctionWithParams(pid, pstatus);
-      } else {
-        console.error('LayoutComponent instance not found');
-      }
+
+        callExternalFunctionWithParams(pid, pstatus);
+
     };
+
 
     // Similarly, define other methods like fetchPractices, fetchPatients, etc.
 
@@ -622,11 +623,7 @@ export default {
       handleReset,
     };
   },
-
 };
-
-
-
 </script>
 <style>
 @import 'ag-grid-community/styles/ag-grid.css';

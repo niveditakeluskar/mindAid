@@ -22,17 +22,7 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
-                  <PreparationForm :sectionName="sectionName" />
                </div>
-               <div class="card-title">Call Preparation</div>
-               <input type="hidden" name="uid" />
-               <input type="hidden" name="patient_id" />
-               <input type="hidden" name="module_id" />
-               <input type="hidden" name="component_id" />
-               <input type="hidden" name="" />
-               <input type="hidden" name="form_name" value="call_preparation_followup_form" />
-               <input type="hidden" name="stage_id" />
-	            <input type="hidden" name="step_id"  value="0">
                <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
             </div>
             <div class="card-footer">

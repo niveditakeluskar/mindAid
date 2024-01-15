@@ -105,6 +105,53 @@
             </div>
         </div>
     </div>
+
+    <!--start edit model -->
+<div class="modal fade" id="edit_notes_modal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="modelHeading1">Modify Followup Task</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<form  action="{{ route("save.followup.edit.data") }}" method="post" name ="followup_task_edit_notes"  id="followup_task_edit_notes">
+				<div class="modal-body">
+					@csrf 
+					<?php 
+					   $module_id    = getPageModuleName();
+				       $submodule_id = getPageSubModuleName();
+				       $stage_id =  getFormStageId($module_id , $submodule_id, 'Follow Up');
+					?>
+		
+					<input type="hidden" name="start_time" value="00:00:00">
+					<input type="hidden" name="end_time" value="00:00:00">
+					<input type="hidden" name="module_id" value="{{ getPageModuleName() }}" />
+					<input type="hidden" name="component_id" value="{{ getPageSubModuleName() }}" />
+					<input type="hidden" name="stage_id" value="{{$stage_id}}" />
+					<input type="hidden" name="step_id" value="0">
+					<input type="hidden" name="form_name" value="followup_task_edit_notes">
+					<!-- <input type="hidden" name="id" id="hiden_id"> -->
+					@hidden('id',['id' =>'hiden_id'])
+					@hidden('topic',['id'=>'topic'])
+					<p><b>Task : </b><span id ="task_notes"></span></p>
+					<p><b>Category : </b><span id ="category"></span> </p>
+					<!-- <p><b>Date : </b><span id ="task_date"></span></p> -->
+					<p>@date('task_date',["id"=>"task_date_val"])</p>
+					<textarea id="notes" name ="notes" class="forms-element form-control"></textarea>
+					<div class="form-group col-md-12 mt-2">
+						<label class="forms-element checkbox checkbox-outline-primary">
+							<input type="checkbox" id="status_flag" name="status_flag"><span>Mark as completed</span><span class="checkmark"></span>
+						</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn  btn-primary m-1" >Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div> 
+<!--end edit model -->
     <!-- Modal for Deactivation-->
     <div id="active-deactive" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -870,6 +917,7 @@
         </div>
     </div>
     <!-- End Reasearch Study Modal -->
+    
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}

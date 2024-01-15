@@ -29,8 +29,7 @@
       props: {
          patientId: Number,
          moduleId: Number,
-         componentId: Number,
-         stageid:Number,
+         componentId: Number
       },
       components: {
          Preparation,
