@@ -127,12 +127,12 @@
 					<form action="" method="post" name="followup_task_edit_notes" id="followup_task_edit_notes">
 						<div class="modal-body">
 							<input type="hidden" name="uid" />
-							<input type="hidden" name="patient_id" id="patient_id" />
+							<input type="hidden" name="patient_id" id="patient_id" v-model="this.patient_id" :value="`${patientId}`"/>
 							<input type="hidden" name="start_time" value="00:00:00">
 							<input type="hidden" name="end_time" value="00:00:00">
-							<input type="hidden" name="module_id" />
-							<input type="hidden" name="component_id" />
-							<input type="hidden" name="stage_id" />
+							<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
+				<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
+				<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
 							<input type="hidden" name="step_id" value="0">
 							<input type="hidden" name="form_name" value="followup_task_edit_notes">
 							<input type="hidden" name="topic" id="topic" />
@@ -287,13 +287,14 @@ export default {
     link.appendChild(icon);
     link.classList.add('editfollowupnotes');
     link.href = 'javascript:void(0)';
+	link.setAttribute('data-id', row.id); // Add data-id attribute
+	link.setAttribute('data-original-title', 'Edit'); // Add data-original-title attribute
     link.addEventListener('click', () => {
       openEditModal(row.id); // 'this' refers to the Vue component instance
     });
 
     return link;
   },
-
 			},
 			{ headerName: 'Date Scheduled', field: 'tt' },
 			{ headerName: 'Task Time', field: 'task_time' },
@@ -344,10 +345,10 @@ export default {
 			console.log("u clicked me");
 			// Code to open the modal using jQuery or Vue methods
 			// You might need to adjust this based on your modal library or implementation
-			$('#edit_notes_modal').modal('show');
+			//$('#edit_notes_modal').modal('show');
 
 			// Code to set data in the modal based on the row with the given ID
-			const rowData = this.gridOptions.api.getRowNode(id).data;
+			//const rowData = this.gridOptions.api.getRowNode(id).data;
 			// Set data in the modal fields based on rowData
 			// Example: document.getElementById('task_notes').innerText = rowData.notes;
 		}; 
@@ -500,6 +501,66 @@ export default {
 		};
 	}
 }
+
+$('body').on('click', '.change_status_flag', function () {
+    var id = $(this).data('id');
+    var component_id = $("form[name='followup_form'] input[name='component_id']").val();
+    var module_id = $("form[name='followup_form'] input[name='module_id']").val();
+    var stage_id = $("form[name='followup_form'] input[name='stage_id']").val();
+    var step_id = $("form[name='followup_form'] input[name='step_id']").val();
+    var timer_start = $("#timer_start").val();
+    var timer_paused = $("#time-container").text();
+    var startTime = $("form[name='followup_form'] .form_start_time").val();
+
+    if (confirm("Are you sure you want to change the Status")) {
+      $.ajax({
+        type: 'post',
+        url: '/ccm/completeIncompleteTask',
+        data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name + '&startTime=' + startTime,
+        success: function success(response) {
+          util.getToDoListData($("#patient_id").val(), $("form[name='followup_form'] input[name='module_id']").val()); //util.getDataCalender($("#patient_id").val(), $("form[name='followup_form'] input[name='module_id']").val());
+
+          $(".form_start_time").val(response.form_start_time);
+          var table = $('#callwrap-list');
+          table.DataTable().ajax.reload();
+          var table1 = $('#task-list');
+          table1.DataTable().ajax.reload();
+          $("#time-container").val(AppStopwatch.pauseClock);
+          $("#timer_start").val(timer_paused);
+          $("#timer_end").val(timer_paused);
+          $("#time-container").val(AppStopwatch.startClock);
+          util.totalTimeSpentByCM();
+          util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
+        }
+      });
+    } else {
+      return false;
+    }
+  }); // $('.patient_data_allergies_tab').click(function (e) { 
+  //     // alert('patient_data_allergies_tab'); 
+  //     var target = $(e.target).attr("href") // activated tab  
+  //     var form = $(target).find("form").attr('name');
+  //     var allergy_type = $("form[name=" + form + "] input[name='allergy_type']").val();
+  //     var id = $("#patient_id").val();
+  //     util.refreshAllergyCountCheckbox(id, allergy_type, form);
+  // });
+
+  $('body').on('click', '.editfollowupnotes', function () {
+    $('#task_date').html('');
+    $('#topic').val('');
+    $('#task_date_val').val('');
+    $('#task_notes').html('');
+    $('#notes').html('');
+    $('#category').html('');
+    $("#followup_task_edit_notes")[0].reset();
+    var patientId = $("#patient_id").val();
+    var id = $(this).data('id');
+    $("#hiden_id").val(id);
+    $("#edit_notes_modal").modal('show');
+   var url = '/ccm/getFollowupListData-edit/' + id + '/' + patientId + '/followupnotespopulate';
+    populateForm(id, url);
+  });
+
 </script>
 <style>
 @import 'ag-grid-community/styles/ag-grid.css';
