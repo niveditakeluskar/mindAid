@@ -1651,7 +1651,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             'pcp_reviwewd'                  => $pcp_reviwewd,
             'submited_to_emr'               => $submited_to_emr
         );
-     dd($data);
         if (isset($cr1) || isset($cr2) || isset($cr3)) {
             $cr = $cr_1 . $cr_2 . $cr_3 . '. ' . $condition_requirnment_notes;
             $pos = strpos($cr, ', .');
