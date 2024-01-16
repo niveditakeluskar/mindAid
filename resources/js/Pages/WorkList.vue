@@ -633,14 +633,51 @@ export default {
 .ag-theme-quartz,
 .ag-theme-quartz-dark {
   --ag-foreground-color: rgb(63, 130, 154);
-  --ag-background-color: rgb(238, 238, 238);
+  --ag-background-color: rgb(243, 243, 243);
   --ag-header-foreground-color: rgb(63, 130, 154);
   --ag-header-background-color: rgb(238, 238, 238);
   --ag-odd-row-background-color: rgb(255, 255, 255);
   --ag-header-column-resize-handle-color: rgb(63, 130, 154);
-
+  --ag-borders: solid 1px rgb(255, 255, 255); /* Border color for regular cells */
+  --ag-borders-critical: solid 1px rgb(255, 255, 255);
+  --ag-borders-secondary: solid 1px rgb(255, 255, 255);
+  --ag-secondary-border-color: rgb(255, 255, 255);
+  --ag-row-border-style: solid 1px rgb(255, 255, 255); /* Border color for rows */
+  --ag-row-border-color: blue;
+  --ag-cell-horizontal-border: solid 1px #ddd; /* Border color for cells in the header */
+  --ag-border-color: rgb(255, 255, 255);
   --ag-font-size: 17px;
   --ag-font-family: monospace;
+}
+
+/* Borders for regular cells */
+.ag-cell {
+  border: var(--ag-borders);
+}
+
+/* Borders for header cells */
+.ag-header-cell {
+  border: var(--ag-borders);
+}
+
+/* Borders for rows */
+.ag-row {
+  border: var(--ag-row-border-style) var(--ag-row-border-color);
+}
+
+/* Borders for cells in the header */
+.ag-header-cell-label {
+  border-bottom: var(--ag-cell-horizontal-border);
+}
+
+/* Borders for column headers */
+.ag-header-row {
+  border-bottom: var(--ag-cell-horizontal-border);
+}
+
+/* Optional: Borders for the entire table */
+.ag-root-wrapper {
+  border: var(--ag-borders);
 }
 
 .loading-spinner {
