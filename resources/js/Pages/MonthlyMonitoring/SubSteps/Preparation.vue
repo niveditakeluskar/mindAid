@@ -1,8 +1,9 @@
 <template>
 <!--    <form id="call_preparation_preparation_followup_form" name="call_preparation_preparation_followup_form"
       action="{{ route('monthly.monitoring.call.preparation') }}" method="post"> -->
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <form id="call_preparation_preparation_followup_form" @submit.prevent="saveForm">
-      <div class="row call mb-4 ">
+         <div class="row call mb-4 ">
          <div class="col-lg-12 mb-4 ">
             <div class="card">
                <div class="card-body">
@@ -22,14 +23,15 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
+                  <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                </div>
-               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
             </div>
             <div class="card-footer">
                <div class="mc-footer">
                   <div class="row"> 
                      <div class="col-lg-12 text-right">
-                        <button type="button" class="btn btn-primary m-1 draft_preparation">Draft Save</button>
+                        <button type="button" class="btn btn-primary m-1 draft_preparation" sid="draft_call_preparation"
+                              id="call_preparation_draft">Draft Save</button>
                         <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
                      </div>
                   </div>
@@ -39,29 +41,6 @@
       </div>
    </form>
 </template>
-<style>
-/* Your spinner CSS */
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px; /* Adjust size as needed */
-}
-
-.spinner-inner {
-  border: 3px solid #ccc; /* Spinner color */
-  border-top: 3px solid #3498db; /* Spinner color */
-  border-radius: 50%;
-  width: 20px; /* Spinner size */
-  height: 20px; /* Spinner size */
-  animation: spin 1s linear infinite; /* Spinner animation */
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
 
 <script>
 import PreparationForm from '../Components/PreparationFollowUpForm.vue';
@@ -76,9 +55,9 @@ export default {
    },
    data() {
       return {
+         isLoading: false,
          sectionName: 'call_preparation',
          csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-         isLoading: false // Initially hide the spinner
       };
    },
    components: {
@@ -86,6 +65,42 @@ export default {
    },
    mounted() {
       console.log('Component mounted.');
-   }
+   },
+  methods: {
+   saveForm() {
+      this.isLoading = true;
+  const formData = new FormData();
+  const formElements = document.getElementById('call_preparation_preparation_followup_form').elements;
+
+  for (let i = 0; i < formElements.length; i++) {
+    const element = formElements[i];
+    // Check if the element is not a button or any other unwanted type
+    if (element.tagName !== 'BUTTON' && element.type !== 'button') {
+      formData.append(element.name, element.value);
+    }
+  }
+
+  formData.append('_token', this.csrfToken);
+
+  console.log(formData);
+
+  axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
+    .then(response => {
+      // Handle success response
+      console.log('Form saved successfully', response.data);
+      // Optionally, perform any additional actions on successful form submission
+    })
+    .catch(error => {
+      this.isLoading = false;
+      // Handle error response
+      console.error('Error saving form', error);
+      // Optionally, perform any actions on failed form submission
+    })
+    .finally(() => {
+      // Hide the spinner when the request is complete (success or failure)
+      this.isLoading = false;
+    });
+},
+  }
 };
 </script>

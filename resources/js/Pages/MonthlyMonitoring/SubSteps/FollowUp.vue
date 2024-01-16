@@ -1,6 +1,8 @@
 <template>
+	  <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="row">
 		<div class="col-lg-12 mb-3">
+
 			<form id="followup_form" ref="followupFormRef" name="followup_form" @submit.prevent="submitFollowupForm">
 				<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
 				<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
@@ -128,13 +130,13 @@
 						<div class="modal-body">
 							<input type="hidden" name="uid" />
 							<input type="hidden" name="patient_id" id="patient_id" v-model="this.patient_id" :value="`${patientId}`"/>
-							<input type="hidden" name="start_time" value="00:00:00">
+							<input type="hidden" name="start_time" id="timer_start" value="00:00:00">
 							<input type="hidden" name="end_time" value="00:00:00">
 							<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
 				<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
 				<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
 							<input type="hidden" name="step_id" value="0">
-							<input type="hidden" name="form_name" value="followup_task_edit_notes">
+							<input type="hidden" name="form_name" id="form_name" value="followup_task_edit_notes">
 							<input type="hidden" name="topic" id="topic" />
 							<input type="hidden" name="id" id="hiden_idhiden_id" />
 							<p><b>Task : </b><span id="task_notes"></span></p>
@@ -235,6 +237,7 @@ export default {
 
 	},
 	setup(props) {
+		const isLoading = ref(false);
 		const followupMasterTaskList = ref();
 		const followupStageId = ref();
 		const rowData = ref();
@@ -382,6 +385,7 @@ export default {
 
 		const followupFormRef = ref(null);
 		const submitFollowupForm = async () => {
+			isLoading.value = true;
 			// Access the form element using $refs
 			const myForm = followupFormRef.value; // Access form reference directly
 			if (!myForm || !(myForm instanceof HTMLFormElement)) {
@@ -430,6 +434,7 @@ export default {
 					}, 3000);
 				}
 			} catch (error) {
+				isLoading.value = false;
 				if (error.response && error.response.status === 422) {
 					// Handle validation errors (422 Unprocessable Entity)
 					// Set formErrors based on the response
@@ -439,8 +444,8 @@ export default {
 					console.error('Error submitting form:', error);
 				}
 			}
-
-			console.log("formData==>>", formData);
+			isLoading.value = false;
+		
 			// axios.post('/your-api-endpoint', this.formData)
 			//  .then(response => {
 			//    console.log('Form submitted successfully!', response.data);
@@ -474,7 +479,7 @@ export default {
 		});
 
 		return {
-
+			isLoading,
 			followupStageId,
 			loading,
 			columnDefs,
@@ -511,7 +516,7 @@ $('body').on('click', '.change_status_flag', function () {
     var timer_start = $("#timer_start").val();
     var timer_paused = $("#time-container").text();
     var startTime = $("form[name='followup_form'] .form_start_time").val();
-
+	var form_name = $("#form_name").val();
     if (confirm("Are you sure you want to change the Status")) {
       $.ajax({
         type: 'post',
