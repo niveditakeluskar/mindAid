@@ -78,7 +78,7 @@
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up date: </span> 
                                     <input type="date" name="answer_followup_date" id="answer_followup_date" class="forms-element form-control" />
-                                    <div id="call_continue_followup_date_error" class="invalid-feedback"></div>
+                                    <div id="call_continue_followup_date_error" class="invalid-feedback" v-if="formErrors.answer_followup_date" style="display: block;">{{ formErrors.answer_followup_date[0] }}</div>
                                  </div>
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up Time:</span>
@@ -115,7 +115,7 @@
                               <div class="mb-3">
                                  <span>Select Call Follow-up date: </span>
                                  <input type="date" name="call_followup_date" id="call_followup_date" class="forms-element form-control" />
-                                 <div id="call_followup_date_error" class="invalid-feedback"></div>
+                                 <div id="call_followup_date_error" class="invalid-feedback" v-if="formErrors.call_followup_date" style="display: block;">{{ formErrors.call_followup_date[0] }}</div>
                               </div>
                            </div>
                      </div>
@@ -179,6 +179,7 @@ export default {
    mounted() {
       //this.fetchCallAnswerContentScript();
       //this.fetchCallNotAnswerContentScript();
+      $("#preloader").show();
       this.time = document.getElementById('page_landing_times').value;
       this.getStageID();
    },
@@ -188,19 +189,13 @@ export default {
 				let stageName = 'Call';
 				let response = await axios.get(`/get_stage_id/${this.moduleId}/${this.componentId}/${stageName}`);
 				this.stageId = response.data.stageID;
-            this.getStepID(this.stageId);
-			} catch (error) {
-				throw new Error('Failed to fetch stageID');
-			}
-		},
-      async getStepID(sid) {
-			try {
-				let stepname = 'Call_Answered';
-            let stepname1 = 'Call_Not_Answered';
-				let response = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${sid}/${stepname}`);
-            let response1 = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${sid}/${stepname1}`);
-				this.callAnsStepId = response.data.stepID;
-            this.callNotAnsStepId = response1.data.stepID;
+            let stepname1 = 'Call_Answered';
+            let stepname2 = 'Call_Not_Answered';
+				let response1 = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname1}`);
+            let response2 = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname2}`);
+				this.callAnsStepId = response1.data.stepID;
+            this.callNotAnsStepId = response2.data.stepID;
+            $("#preloader").hide();
 			} catch (error) {
 				throw new Error('Failed to fetch stageID');
 			}
@@ -263,7 +258,9 @@ export default {
                this.renderComponent = true;
 					this.showAlert = true;
                     updateTimer(this.patientId, 1, this.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
+                  this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;
 					}, 3000);
 				}

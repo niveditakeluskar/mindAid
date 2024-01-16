@@ -104,6 +104,8 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-call-hippa', formData);
 				if (response && response.status == 200) {
 					this.showAlert = true;
+					updateTimer(this.patientId, 1, this.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
 						this.showAlert = false;
 					}, 3000);
