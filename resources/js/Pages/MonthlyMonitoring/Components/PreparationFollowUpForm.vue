@@ -7,7 +7,7 @@
 						<label :for="`${sectionName}_condition_requirnment_new`" class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment1"
 								:id="`${sectionName}_condition_requirnment_new`" class="CRclass" formControlName="checkbox"
-								v-model="conditionRequirnment1" @change="checkConditionRequirnments()"  :checked="conditionRequirnment1">
+								v-model="conditionRequirnment1" @change="checkConditionRequirnments()"  :checked="conditionRequirnment1" value="1">
 							<span>New Hospitalization</span>
 							<span class="checkmark"></span>
 						</label>
@@ -15,7 +15,7 @@
 							class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment2"
 								:id="`${sectionName}_condition_requirnment_er_visit`" class="CRclass"
-								formControlName="checkbox" v-model="conditionRequirnment2" @change="checkConditionRequirnments()"  :checked="conditionRequirnment2">
+								formControlName="checkbox" v-model="conditionRequirnment2" @change="checkConditionRequirnments()"  :checked="conditionRequirnment2" value="1">
 							<span>ER Visits</span>
 							<span class="checkmark"></span>
 						</label>
@@ -23,7 +23,7 @@
 							class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment3"
 								:id="`${sectionName}_condition_requirnment_urgent_care`" class="CRclass"
-								formControlName="checkbox" v-model="conditionRequirnment3" @change="checkConditionRequirnments()"  :checked="conditionRequirnment3">
+								formControlName="checkbox" v-model="conditionRequirnment3" @change="checkConditionRequirnments()"  :checked="conditionRequirnment3" value="1">
 							<span>Urgent Care</span>
 							<span class="checkmark"></span>
 						</label>
@@ -31,7 +31,7 @@
 						<label :for="`${sectionName}_condition_requirnment_none`" class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment4"
 								:id="`${sectionName}_condition_requirnment_none`" class="CRclass" formControlName="checkbox"
-								v-model="conditionRequirnment4" @click="noneConditionRequireement()"  :checked="conditionRequirnment4">
+								v-model="conditionRequirnment4" @click="noneConditionRequireement()"  :checked="conditionRequirnment4" value="0">
 							<span>None</span>
 							<span class="checkmark"></span>
 							<span class="error">*</span>
@@ -40,7 +40,7 @@
 				</div> 
 				<div :id="`${sectionName}_CPmsg`" class="invalid-feedback" style="font-size: 13px;"></div>
 			</div>
-			<div v-if="conditionRequirnment1 == true || conditionRequirnment2 == true || conditionRequirnment3 == true"
+			<div v-if="conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1"
 				:id="`${sectionName}_note`" class="notes mb-4">
 				<textarea class="form-control" name="condition_requirnment_notes"
 					:id="`${sectionName}_condition_requirnment_notes`" v-model="condition_requirnment_notes"></textarea>
@@ -53,13 +53,13 @@
 					<div class="mr-3 d-inline-flex align-self-center">
 						<label :for="`${sectionName}_newofficevisit_yes`" class="radio radio-primary mr-3">
 							<input type="radio" formControlName="radio" name="newofficevisit"
-								:id="`${sectionName}_newofficevisit_yes`" v-model="officeVisitYesNo" :checked ="officeVisitYesNo=='1'" value="Yes">
+								:id="`${sectionName}_newofficevisit_yes`" v-model="officeVisitYesNo" :checked ="officeVisitYesNo=='1'" value="1">
 							<span>Yes</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_newofficevisit_no`" class="radio radio-primary mr-3">
 							<input type="radio" formControlName="radio" name="newofficevisit"
-								:id="`${sectionName}_newofficevisit_no`" v-model="officeVisitYesNo" :checked ="officeVisitYesNo=='0'" value="No">
+								:id="`${sectionName}_newofficevisit_no`" v-model="officeVisitYesNo" :checked ="officeVisitYesNo=='0'" value="0">
 							<span>No</span>
 							<span class="checkmark"></span>
 						</label>
@@ -67,7 +67,7 @@
 				</div>
 				<div :id="`${sectionName}_newofficevisit`" class="invalid-feedback">office visit</div>
 			</div>
-			<div v-if="officeVisitYesNo == 'Yes'" :id="`${sectionName}_new-office-visit-note`" class="office_visit_note mb-4">
+			<div v-if="officeVisitYesNo == '1'" :id="`${sectionName}_new-office-visit-note`" class="office_visit_note mb-4">
 				<textarea class="form-control" name="nov_notes" :id="`${sectionName}_nov_notes`" v-model="officeVisitNotes"></textarea>
 				<div :id="`${sectionName}_nov_notes`" class="invalid-feedback"></div>
 			</div>
@@ -78,13 +78,13 @@
 					<span class="mr-3 mb-4"><b>New Condition(s)</b>: <span class="error">*</span></span>
 					<div class="mr-3 d-inline-flex align-self-center">
 						<label :for="`${sectionName}_newdiagnosis_yes`" class="radio radio-primary mr-3">
-							<input type="radio" name="newdiagnosis" :id="`${sectionName}_newdiagnosis_yes`" v-model="newDiagnosisYesNo" :checke="newDiagnosisYesNo=='1'" value="Yes"
+							<input type="radio" name="newdiagnosis" :id="`${sectionName}_newdiagnosis_yes`" v-model="newDiagnosisYesNo" :checked="newDiagnosisYesNo=='1'" value="1"
 								formControlName="radio">
 							<span>Yes</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_newdiagnosis_no`" class="radio radio-primary mr-3">
-							<input type="radio" name="newdiagnosis" :id="`${sectionName}_newdiagnosis_no`" v-model="newDiagnosisYesNo" :checke="newDiagnosisYesNo=='0'" value="No"
+							<input type="radio" name="newdiagnosis" :id="`${sectionName}_newdiagnosis_no`" v-model="newDiagnosisYesNo" :checked="newDiagnosisYesNo=='0'" value="0"
 								formControlName="radio">
 							<span>No</span>
 							<span class="checkmark"></span>
@@ -96,7 +96,7 @@
 			<div :id="`${sectionName}_new-dignosis-model`" class="new_diagnosis_note mb-4">
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
-			<div v-if="newDiagnosisYesNo == 'Yes'"  :id="`${sectionName}_new-dignosis`" class="new_diagnosis_note mb-4">
+			<div v-if="newDiagnosisYesNo == '1'"  :id="`${sectionName}_new-dignosis`" class="new_diagnosis_note mb-4">
 				<textarea class="form-control" name="nd_notes" :id="`${sectionName}_nd_notes`" v-model="newDiagnosisNotes"></textarea>
 				<div :id="`${sectionName}_nd_notes`" class="invalid-feedback"></div>
 			</div>
@@ -108,13 +108,13 @@
 					<div class="mr-3 d-inline-flex align-self-center">
 						<label :for="`${sectionName}_med_added_or_discon_yes`" class="radio radio-primary mr-3">
 							<input type="radio" name="med_added_or_discon" :id="`${sectionName}_med_added_or_discon_yes`"
-								value="Yes" formControlName="radio" v-model="med_added_or_disconYesNo" :checked = "med_added_or_disconYesNo=='1'">
+								value="1" formControlName="radio" v-model="med_added_or_disconYesNo" :checked = "med_added_or_disconYesNo=='1'">
 							<span>Yes</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_med_added_or_discon_no`" class="radio radio-primary mr-3">
 							<input type="radio" name="med_added_or_discon" :id="`${sectionName}_med_added_or_discon_no`"
-								value="No" formControlName="radio" v-model="med_added_or_disconYesNo" :checked = "med_added_or_disconYesNo=='0'">
+								value="0" formControlName="radio" v-model="med_added_or_disconYesNo" :checked = "med_added_or_disconYesNo=='0'">
 							<span>No</span>
 							<span class="checkmark"></span>
 						</label>
@@ -122,7 +122,7 @@
 				</div>
 				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
 			</div>
-			<div v-if="med_added_or_disconYesNo == 'Yes'">
+			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
 				<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal"
 					data-target="#myModal" target="medication">Edit Medication</button>
@@ -177,34 +177,34 @@
 						<label :for="`${sectionName}_report_requirnment_new_lab`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment1"
 								:id="`${sectionName}_report_requirnment_new_lab`" v-model="report_requirnment1" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment1">
+								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment1" >
 							<span>New Labs</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_diag_img`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment2"
 								:id="`${sectionName}_report_requirnment_diag_img`" v-model="report_requirnment2" class="RRclass"
-								formControlName="checkbox"  @change="checkReportRequirnments()" :checked="report_requirnment2">
+								formControlName="checkbox"  @change="checkReportRequirnments()" value="1" :checked="report_requirnment2" >
 							<span>Diagnostic Imaging</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_health`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment4"
 								:id="`${sectionName}_report_requirnment_health`" v-model="report_requirnment4" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment4">
+								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment4">
 							<span>Health Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_new_vitals`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment5"
 								:id="`${sectionName}_report_requirnment_new_vitals`" v-model="report_requirnment5" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment5">
+								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment5">
 							<span>Vitals Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
-								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()">
+								 class="RRclass" formControlName="checkbox" value="0" @click="noneReportRequirements()">
 							<span>None</span><span class="error">*</span>
 							<span class="checkmark"></span>
 							<!-- <span class="error">*</span> -->
@@ -213,7 +213,7 @@
 				</div>
 				<div :id="`${sectionName}_report_requirnment`" class="invalid-feedback" style="font-size: 13px;"></div>
 			</div>
-			<div v-if="report_requirnment1 == true || report_requirnment2 ==true || report_requirnment4 == true || report_requirnment5 == true"
+			<div v-if="report_requirnment1 == 1 || report_requirnment2 == 1 || report_requirnment4 == 1 || report_requirnment5 == 1"
 			 :id="`${sectionName}_requirnment`" class="rep_req_note mb-4">
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
@@ -307,23 +307,23 @@ export default {
 		return {
 			// time:null,
 
-			conditionRequirnment1: false,
-			conditionRequirnment2: false,
-			conditionRequirnment3: false,
-			conditionRequirnment4: false,
+			conditionRequirnment1: 0,
+			conditionRequirnment2: 0,
+			conditionRequirnment3: 0,
+			conditionRequirnment4: 0,
 
-			report_requirnment1: false,
-			report_requirnment2: false,
-			report_requirnment4: false,
-			report_requirnment5: false,
+			report_requirnment1: 0,
+			report_requirnment2: 0,
+			report_requirnment4: 0,
+			report_requirnment5: 0,
 
-			officeVisitYesNo:'No',
+			officeVisitYesNo: 0,
 
-			newDiagnosisYesNo:'No',
+			newDiagnosisYesNo: 0,
 
-			pcpReviwewdYesNo :'No',
+			pcpReviwewdYesNo : 0,
 
-			med_added_or_disconYesNo:'No',
+			med_added_or_disconYesNo: 0,
 			
 			data_present_in_emrYesNO:'',
 		};
@@ -348,24 +348,24 @@ export default {
 	},
 	methods: {
 		noneConditionRequireement() {
-			this.conditionRequirnment1 = false;
-			this.conditionRequirnment2 = false;
-			this.conditionRequirnment3 = false;
+			this.conditionRequirnment1 = 0;
+			this.conditionRequirnment2 = 0;
+			this.conditionRequirnment3 = 0;
 		},
 		checkConditionRequirnments() {
-			if (this.conditionRequirnment1 === true || this.conditionRequirnment2 === true || this.conditionRequirnment3 === true) {
-				this.conditionRequirnment4 = false; // Uncheck conditionRequirnment4 if any other checkbox is checked
+			if (this.conditionRequirnment1 === 1 || this.conditionRequirnment2 === 1 || this.conditionRequirnment3 === 1) {
+				this.conditionRequirnment4 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
 		noneReportRequirements() {
-			this.report_requirnment1 = false;
-			this.report_requirnment2 = false;
-			this.report_requirnment4 = false;
-			this.report_requirnment5 = false;
+			this.report_requirnment1 = 0;
+			this.report_requirnment2 = 0;
+			this.report_requirnment4 = 0;
+			this.report_requirnment5 = 0;
 		},
 		checkReportRequirnments() {
-			if (this.report_requirnment1 === true || this.report_requirnment2 === true || this.report_requirnment4 === true || this.report_requirnment5 === true) {
-				this.report_requirnment3 = false; // Uncheck conditionRequirnment4 if any other checkbox is checked
+			if (this.report_requirnment1 === 1 || this.report_requirnment2 === 1 || this.report_requirnment4 === 1 || this.report_requirnment5 === 1) {
+				this.report_requirnment3 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
 		async populateFuntion(patientId){ 
