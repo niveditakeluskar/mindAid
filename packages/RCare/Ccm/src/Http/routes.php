@@ -21,8 +21,8 @@ Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('ccm')->group(function () {  
         
 
-        Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/question_list', function (string $module_id, string $patient_id, string $step_id) {
-            $d = getDecisionTree($module_id,$patient_id,$step_id);
+        Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/{componentId}/question_list', function (string $module_id, string $patient_id, string $step_id, string $componentId) {
+            $d = getDecisionTree($module_id,$patient_id,$step_id,$componentId);
             return $d;
         });
         Route::get('/get-calltext/{module_id}/{patient_id}/{component_id}/call_message', function (string $module_id, string $patient_id, string $component_id) {

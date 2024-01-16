@@ -4,10 +4,10 @@
          <div class="col-md-12">
             <div class="card">
                <div class="card-body">
-                  <div style="width: 9%; float: left;">
-                     <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tab">
-                        {{ tab }}
-                     </div>
+                  <div class="tm" style="float: left; width: 10%;">
+                        <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tm-section">
+                           <div class="tm-tab">{{ tab }}</div>
+                        </div>
                   </div>
                   <div style="width: 90%; float: right;">
                      <component :is="selectedComponent" v-bind="componentProps"></component>
@@ -146,3 +146,78 @@
       },
    };
 </script>
+<style>
+.tm{
+  margin-top:20px;
+  position:relative;
+  
+}
+
+.tm:before{
+  position:absolute;
+  content:'';
+  width:5px;
+  height:calc(83% + 0px);
+background: #edeff0;
+/*background: -moz-linear-gradient(left, rgba(138,145,150,1) 0%, rgba(122,130,136,1) 60%, rgba(98,105,109,1) 100%);
+background: -webkit-linear-gradient(left, rgba(138,145,150,1) 0%,rgba(122,130,136,1) 60%,rgba(98,105,109,1) 100%);
+background: linear-gradient(to right, rgba(138,145,150,1) 0%,rgba(122,130,136,1) 60%,rgba(98,105,109,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8a9196', endColorstr='#62696d',GradientType=1 );*/
+  left:14px;
+  top:5px;
+  border-radius:4px;
+}
+.tm-section{
+  padding-left:35px;
+  display:block;
+  position:relative;
+  margin-bottom:20px;
+  counter-increment:inc;
+}
+
+.tm-tab{
+  margin-bottom:15px;
+  /*padding:2px 15px;
+  background:linear-gradient(#74cae3, #5bc0de 60%, #4ab9db);*/
+  position:relative;
+  display:inline-block;
+  border-radius:20px;
+  /*border:1px solid #17191B;*/
+  color:#2c3f4c;
+}
+.tm-section:before{
+  content:'';
+  position:absolute;
+  /*width:30px;*/
+  height:1px;
+  background-color:#444950;
+  top:12px;
+  left:20px;
+}
+
+.tm
+{
+    counter-reset:inc;
+}
+.tm-section:after{
+  content:counter(inc);
+  position:absolute;
+  width:20px;
+  height:20px;
+  background:#edeff0;/*linear-gradient(to bottom, rgba(138,145,150,1) 0%,rgba(122,130,136,1) 60%,rgba(112,120,125,1) 100%);*/
+  top:2px;
+  left:7px;
+  /*border:1px solid #17191B;*/
+  border-radius:100%;
+  z-index: 2;
+  text-align: center;
+}
+.tm .active .tm-tab{
+   color:#27a8de;
+}
+.tm div.active:after{
+   background:#27a8de;
+   color:white;
+}
+
+</style>

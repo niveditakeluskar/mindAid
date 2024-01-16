@@ -78,7 +78,7 @@
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up date: </span> 
                                     <input type="date" name="answer_followup_date" id="answer_followup_date" class="forms-element form-control" />
-                                    <div id="call_continue_followup_date_error" class="invalid-feedback"></div>
+                                    <div id="call_continue_followup_date_error" class="invalid-feedback" v-if="formErrors.answer_followup_date" style="display: block;">{{ formErrors.answer_followup_date[0] }}</div>
                                  </div>
                                  <div class="col-md-6">
                                     <span>Select Call Follow-up Time:</span>
@@ -115,7 +115,7 @@
                               <div class="mb-3">
                                  <span>Select Call Follow-up date: </span>
                                  <input type="date" name="call_followup_date" id="call_followup_date" class="forms-element form-control" />
-                                 <div id="call_followup_date_error" class="invalid-feedback"></div>
+                                 <div id="call_followup_date_error" class="invalid-feedback" v-if="formErrors.call_followup_date" style="display: block;">{{ formErrors.call_followup_date[0] }}</div>
                               </div>
                            </div>
                      </div>
