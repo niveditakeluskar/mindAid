@@ -10,7 +10,6 @@
             <div class="modal-body">
                 <div class="row mb-4" id="medications">
                     <div class="col-md-12 mb-4">
-                        <div class="success" id="success"></div>
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-12  mb-4">
@@ -25,7 +24,7 @@
                                             <div class="card-header mb-3">MEDICATION</div>
                                             <form id="medications_form" name="medications_form" @submit.prevent="submitMedicationForm">
                                                 <div class="card-body">
-                                                    <div class="alert alert-success" id="success-alert" style="display: none;">
+                                                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                                                         <button type="button" class="close" data-dismiss="alert">x</button>
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 
@@ -40,7 +39,7 @@
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
                                                         <input type="hidden" name="billable" value="1">
-                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
+                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime">
                                                         <div class="col-md-6 form-group mb-3 med_id">
                                                             <label for="medication_med_id">Select Medication<span class='error'>*</span></label> 
                                                             <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication">
@@ -178,12 +177,13 @@ export default {
 	props: {
 		patientId: Number,
 		moduleId: Number,
-		componentId: Number,
+        componentId: Number,
 	},
     data() {
         return {
             isOpen: false,
             formErrors: {},
+            showAlert: false,
         };
     },
     components: {
@@ -201,19 +201,20 @@ export default {
             let myForm = document.getElementById('medications_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-            console.log("formData====>>", formData);
-            let medicationTime = document.getElementById('page_landing_times').value;
-            console.log("submit med fun time", medicationTime);
-            formData["timearr[form_start_time]"]=medicationTime;
             try {
                 this.formErrors = {};
                 const response = await axios.post('/ccm/care-plan-development-medications', formData);
                 if (response && response.status == 200) {
                     this.showAlert = true;
-                    updateTimer(this.patientId, 1, this.moduleId);
-                    fetchPatientMedicationList();
+                    updateTimer(this.patientId, '1', this.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+                    this.fetchPatientMedicationList();
+                    document.getElementById("medications_form").reset();
+                    let select_box = document.getElementById("medication_med_id");
+                    select_box.selectedIndex = -1;
                     setTimeout(() => {
                         this.showAlert = false;
+                        this.medicationTime = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
             } catch (error) {
@@ -272,7 +273,7 @@ export default {
             paginationPageSize: 20, // Set the number of rows per page
             domLayout: 'autoHeight', // Adjust the layout as needed
         });
-        let medicationTime = ref('00:00:00');
+        let medicationTime = ref(null);
         let medicationStageId = ref(0);
         let stepID = ref(0);
 
@@ -345,7 +346,7 @@ export default {
 
         onMounted(async () => {
             try {
-                medicationTime = document.getElementById('page_landing_times').value;
+                medicationTime.value = document.getElementById('page_landing_times').value;
                 console.log("medication time", medicationTime);
             } catch (error) {
                 console.error('Error on page load:', error);
@@ -363,6 +364,7 @@ export default {
             medicationTime,
             medicationStageId,
             stepID,
+            fetchPatientMedicationList,
             // fetchMedicationList,
         };
     }

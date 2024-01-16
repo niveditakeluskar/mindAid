@@ -1,17 +1,12 @@
 <template>
-   <LayoutComponent>
-      <div class="row mb-4">
-         <div class="col-md-12">
-            <div class="card">
-               <div class="card-body">
-                  <div class="tm" style="float: left; width: 10%;">
-                        <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tm-section">
-                           <div class="tm-tab">{{ tab }}</div>
-                        </div>
-                  </div>
-                  <div style="width: 90%; float: right;">
-                     <component :is="selectedComponent" v-bind="componentProps"></component>
-                  </div>
+   <div class="row mb-4">
+      <div class="col-md-12">
+         <div class="card">
+            <div class="card-body">
+               <div class="tm" style="float: left; width: 10%;">
+                     <div v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ active: activeTab === index }" class="tm-section">
+                        <div class="tm-tab">{{ tab }}</div>
+                     </div>
                </div>
                <div style="width: 90%; float: right;">
                   <component :is="selectedComponent" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"></component>

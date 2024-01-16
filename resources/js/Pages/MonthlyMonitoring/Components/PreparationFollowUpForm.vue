@@ -124,8 +124,8 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
-				<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal"
-					data-target="#myModal" target="medication">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal">Edit Medication</button>
+	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
@@ -279,6 +279,7 @@
 </div></template>
 
 <script>
+import ModalForm from '../../Modals/Medication.vue';
 export default {
 	props: {
 		sectionName: {
@@ -302,7 +303,9 @@ export default {
 			required: true
 		},
 	},
-
+	components: {
+		ModalForm // Register the modal component
+	},
 	data() {
 		return {
 			// time:null,
@@ -409,7 +412,12 @@ export default {
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
-	    }
+		},
+		openModal() {
+			// Access the modal component through a ref
+			console.log("openMModel called");
+			this.$refs.modalForm.openModal();
+		}
 	},
 
 }
