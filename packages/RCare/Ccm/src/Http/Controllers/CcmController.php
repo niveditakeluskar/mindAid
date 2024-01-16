@@ -36,8 +36,8 @@ use RCare\Patients\Models\PatientProvider;
 use RCare\TaskManagement\Models\ToDoList;
 use RCare\Org\OrgPackages\Roles\src\Models\RolesTypes;
 use Illuminate\Http\Request;
-use RCare\Ccm\src\Http\Requests\PreparationAddRequest;
-use RCare\Ccm\src\Http\Requests\PreparationDraftAddRequest;
+use RCare\Ccm\Http\Requests\PreparationAddRequest;
+use RCare\Ccm\Http\Requests\PreparationDraftAddRequest;
 use RCare\Patients\Models\PatientPartResearchStudy;
 use RCare\Patients\Models\PatientPersonalNotes;
 use RCare\Patients\Models\PatientMedication;
@@ -724,7 +724,7 @@ class CcmController extends Controller
     {
         $patient_id   = sanitizeVariable($request->route('id'));
         // $module_id    = getPageModuleName();
-        // $component_id = getPageSubModuleName();
+    
         // $SID = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'General Question');
 
         // $last_time_spend                = CommonFunctionController::getCcmNetTime($patient_id, $module_id);;
@@ -807,10 +807,15 @@ class CcmController extends Controller
         //     'moduleId' => 3,
         //     'componentId' => 19,
         // ]);
+        $module_id    = getPageModuleName();
+        $submodule_id = getPageSubModuleName();
+        $stage_id =  getFormStageId($module_id , $submodule_id, 'Preparation');
+
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
-            'moduleId' => 3,
-            'componentId' => 19,
+            'moduleId' => $module_id,
+            'componentId' => $submodule_id,
+            'stageid' =>$stage_id,
         ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
