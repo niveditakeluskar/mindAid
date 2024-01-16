@@ -16,21 +16,14 @@ export default {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
       }
      
- 
-
-      var sPageURL = window.location.pathname;
-      const parts = sPageURL.split('/');
-      let patientId = parts[parts.length - 1];
-
-      if ($.isNumeric(patientId) == true) {
+      if ($.isNumeric(param1) == true) {
         //patient list
-         patientId = $("#hidden_id").val();
-        var module = $("input[name='module_id']").val();
-        var status = $("#service_status").val();
+      /*   var module = $("input[name='module_id']").val();
+        alert(module);
         $('#enrolledservice_modules').val(module).trigger('change');
         $('#enrolledservice_modules').change();
-      } else {
-        patientId = param1;
+      } else { */
+       let patientId = param1;
         //worklist
         var selmoduleId = $("#modules").val();
         axios({
@@ -77,6 +70,8 @@ export default {
           $("form[name='active_deactive_form'] #role2").show();
           $("form[name='active_deactive_form'] #role3").hide();
         }
+      }else{
+        $(activeDeactiveModal).modal('hide');
       }
     };
   // When the Submit button is clicked within the modal

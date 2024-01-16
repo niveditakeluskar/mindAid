@@ -244,7 +244,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-row mb-4" :id="`${sectionName}_relation_building`" style='display:none'>
+			<div class="form-row mb-4" :id="`${sectionName}_relation_building`">
 				<div class="col-md-12 forms-element">
 					<div :id="`${sectionName}_patient_relationship_building`" class="patient_relationship_building mb-4">
 						<span><b>Patient Relationship Building<span class='error'>*</span></b></span>

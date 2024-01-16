@@ -1,8 +1,9 @@
 <template>
 <!--    <form id="call_preparation_preparation_followup_form" name="call_preparation_preparation_followup_form"
       action="{{ route('monthly.monitoring.call.preparation') }}" method="post"> -->
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <form id="call_preparation_preparation_followup_form" @submit.prevent="saveForm">
-      <div class="row call mb-4 ">
+         <div class="row call mb-4 ">
          <div class="col-lg-12 mb-4 ">
             <div class="card">
                <div class="card-body">
@@ -40,29 +41,6 @@
       </div>
    </form>
 </template>
-<style>
-/* Your spinner CSS */
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px; /* Adjust size as needed */
-}
-
-.spinner-inner {
-  border: 3px solid #ccc; /* Spinner color */
-  border-top: 3px solid #3498db; /* Spinner color */
-  border-radius: 50%;
-  width: 20px; /* Spinner size */
-  height: 20px; /* Spinner size */
-  animation: spin 1s linear infinite; /* Spinner animation */
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
 
 <script>
 import PreparationForm from '../Components/PreparationFollowUpForm.vue';
@@ -77,9 +55,9 @@ export default {
    },
    data() {
       return {
+         isLoading: false,
          sectionName: 'call_preparation',
          csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-         isLoading: false // Initially hide the spinner
       };
    },
    components: {
@@ -90,8 +68,7 @@ export default {
    },
   methods: {
    saveForm() {
-  this.isLoading = true;
-
+      this.isLoading = true;
   const formData = new FormData();
   const formElements = document.getElementById('call_preparation_preparation_followup_form').elements;
 

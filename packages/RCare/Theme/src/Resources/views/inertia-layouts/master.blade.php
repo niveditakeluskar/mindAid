@@ -135,7 +135,7 @@
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
                         <input type="hidden" name="id">
-                        <input type="hidden" name="worklistclick" id="worklistclick">
+                        <input type="hidden" name="worklist" id="worklist">
                         <input type="hidden" name="patientid" id="patientid">
                         <div class="card-body">
                             <div class="row">

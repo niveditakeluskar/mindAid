@@ -1,6 +1,8 @@
 <template>
+	  <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="row">
 		<div class="col-lg-12 mb-3">
+
 			<form id="followup_form" ref="followupFormRef" name="followup_form" @submit.prevent="submitFollowupForm">
 				<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
 				<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
@@ -235,6 +237,7 @@ export default {
 
 	},
 	setup(props) {
+		const isLoading = ref(false);
 		const followupMasterTaskList = ref();
 		const followupStageId = ref();
 		const rowData = ref();
@@ -382,6 +385,7 @@ export default {
 
 		const followupFormRef = ref(null);
 		const submitFollowupForm = async () => {
+			isLoading.value = true;
 			// Access the form element using $refs
 			const myForm = followupFormRef.value; // Access form reference directly
 			if (!myForm || !(myForm instanceof HTMLFormElement)) {
@@ -430,6 +434,7 @@ export default {
 					}, 3000);
 				}
 			} catch (error) {
+				isLoading.value = false;
 				if (error.response && error.response.status === 422) {
 					// Handle validation errors (422 Unprocessable Entity)
 					// Set formErrors based on the response
@@ -439,8 +444,8 @@ export default {
 					console.error('Error submitting form:', error);
 				}
 			}
-
-			console.log("formData==>>", formData);
+			isLoading.value = false;
+		
 			// axios.post('/your-api-endpoint', this.formData)
 			//  .then(response => {
 			//    console.log('Form submitted successfully!', response.data);
@@ -474,7 +479,7 @@ export default {
 		});
 
 		return {
-
+			isLoading,
 			followupStageId,
 			loading,
 			columnDefs,

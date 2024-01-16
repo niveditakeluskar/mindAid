@@ -87,24 +87,24 @@
                                             {{ patientDetails.patient_enroll_date[0].status_value }}
                                         </span>
                                         <span  v-if="patientDetails.patient_enroll_date[0].status == 1" >
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
+                                            <a @click="patientServiceStatus(1)" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 0">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
+                                            <a @click="patientServiceStatus(0)" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>
                                             </a>
                                             {{ 'From:' + format_date(patientDetails.patient_enroll_date[0].suspended_from) +
                                                 ' To ' + format_date(patientDetails.patient_enroll_date[0].suspended_to) }}
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 2">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
+                                            <a @click="patientServiceStatus(2)" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span v-if="patientDetails.patient_enroll_date[0].status == 3">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
+                                            <a @click="patientServiceStatus(3)" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>
                                             </a>
                                         </span>
@@ -201,6 +201,7 @@
 <script setup>
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
+import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
 import moment from 'moment';
 import axios from 'axios';
 const props = defineProps({
@@ -214,14 +215,16 @@ const props = defineProps({
 
 
 // const enrolledServices = ref(null);
+const { callExternalFunctionWithParams } = patientStatus.setup();
 const patientDetails = ref(null);
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
-const patientServiceStatus = async()=>{
+const patientServiceStatus = (pstatus)=>{
     var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    patientId = parts[parts.length - 1];
+    parts = sPageURL.split("/");
+   let pid = parts[parts.length - 1];
+    callExternalFunctionWithParams(pid, pstatus);
 }
 const veteranServicefunction = async() => {
     const VeteranServiceModal = document.getElementById('vateran-service');
