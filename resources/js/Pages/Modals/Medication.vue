@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Medication</h4> 
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="row mb-4" id="medications">
@@ -382,6 +382,7 @@ export default {
   margin: 2%;
   opacity: 0;
   transition: opacity 0.3s ease;
+  overflow-y:auto;
 }
 
 /* Style the overlay */
@@ -404,10 +405,5 @@ export default {
 
 .overlay.open {
   display: block;
-}
-
-.modal-content {
-    overflow-y: auto !important;
-    height: 800px !important;
 }
 </style>
