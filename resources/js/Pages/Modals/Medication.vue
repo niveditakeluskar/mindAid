@@ -35,7 +35,7 @@
                                                         <input type="hidden" name="end_time" value="00:00:00">
                                                         <input type="hidden" name="module_id" :value="moduleId"/>
                                                         <input type="hidden" name="component_id" :value="componentId"/>
-                                                        <input type="hidden" name="stage_id" value="11"/><!-- :value="medicationStageId"/> -->
+                                                        <input type="hidden" name="stage_id" :value="medicationStageId"/>
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
                                                         <input type="hidden" name="billable" value="1">
@@ -256,7 +256,14 @@ export default {
                 { headerName: 'Created By', field: 'users'},
                 { headerName: 'Last Modified On', field: 'updated_at' },
                 { headerName: 'Reviewed Data', field: 'task_completed_at' },
-                { headerName: 'Action', field: 'action' },
+                { 
+                    headerName: 'Action',
+                    field: 'action',
+                    cellRenderer: function (params) {
+                        const row = params.data;
+                        return row && row.action ? row.action : '';
+                    },
+                },
             ]
         });
         const defaultColDef = ref({
@@ -312,9 +319,8 @@ export default {
             try {
                 let medicationSageName = 'Patient_Data';
                 let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${medicationSageName}`);
-                medicationStageId = response.data.stageID;
-                console.log("stageIdstageId", medicationStageId);
-                getStepID(medicationStageId);
+                medicationStageId.value = response.data.stageID;
+                getStepID(medicationStageId.value);
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
@@ -324,8 +330,7 @@ export default {
             try {
                 let stepname = 'Medication';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                stepID = response.data.stepID;
-                console.log("stepIDstepID", stepID);
+                stepID.value = response.data.stepID;
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
@@ -347,7 +352,6 @@ export default {
         onMounted(async () => {
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
