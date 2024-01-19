@@ -57,6 +57,7 @@ import {
     onMounted
 } from '../commonImports';
 import DME from './ServicesModals/DME.vue';
+import Other from './ServicesModals/Other.vue';
 import SubStepCall from '../MonthlyMonitoring/SubSteps/CallSubSteps/Call.vue';
 import axios from 'axios';
 export default {
@@ -67,6 +68,7 @@ export default {
     },
     components: {
         DME,
+        Other,
         SubStepCall,
     },
 	setup(props) {
@@ -77,7 +79,7 @@ export default {
             { label: 'Therapy', component: 'SubStepCall' },
             { label: 'Social Services', component: 'SubStepCall' },
             { label: 'Medical Supplies', component: 'SubStepCall' },
-            { label: 'Other', component: 'SubStepCall' }
+            { label: 'Other', component: 'Other' }
         ]);
 
         const activeTab = ref(0);
