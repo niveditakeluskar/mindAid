@@ -20,6 +20,7 @@
                     <input type="hidden" name="form_name" value="service_dme_form">
                     <input type="hidden" name="service_type" value="dme">
         		    <input type="hidden" name="hid" class="hid" value='1'>
+                    <input type="hidden" name="id" id="service_id">
                     <input type="hidden" name="billable" value="1">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="DMEServicesTime" />
                     <DMEForm :formErrors="formErrors" />
@@ -177,7 +178,6 @@ export default {
             });
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
-                console.log("in dme saveServicesResponse", saveServicesResponse);
                     showDMEAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
@@ -195,8 +195,6 @@ export default {
                 } else {
                     console.error('Error submitting form:', error);
                 }
-                console.error("Error in saveServices", formErrors.value);
-                // Handle the error here
             }
         }
 
@@ -204,15 +202,70 @@ export default {
             try {
                 let stepname = 'Service-Dme';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                dmeServicesStepId = response.data.stepID;
+                dmeServicesStepId.value = response.data.stepID;
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
         };
-
+        
         let deleteServices = async (id, obj) => {
-            alert("id==>", id);
+            if (window.confirm("Are you sure you want to delete this Service?")) {
+                const formData = {
+                    id: id,
+                    uid: props.patientId,
+                    patient_id: props.patientId,
+                    module_id: props.moduleId,
+                    component_id: props.componentId,
+                    stage_id: props.stageId,
+                    step_id: dmeServicesStepId.value,
+                    form_name: 'service_dme_form',
+                    billable: 1,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                };
+                try {
+                    const deleteServicesResponse = await deleteServiceDetails(formData);
+                    // showDMEAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(deleteServicesResponse.form_start_time);
+                    await fetchPatientDMEServiceList();
+                    document.getElementById("service_dme_form").reset();
+                    setTimeout(() => {
+                        // showDMEAlert.value = false;
+                        DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
         }
+
+        let editService = async (id) => {
+            try {
+                const serviceToEdit = dmeServiceRowData.value.find(service => service.id == id);
+                if (serviceToEdit) {
+                    const form = document.getElementById('service_dme_form');
+                    form.querySelector('#service_id').value = serviceToEdit.id;
+                    form.querySelector('#type').value = serviceToEdit.type;
+                    form.querySelector('#purpose').value = serviceToEdit.purpose;
+                    form.querySelector('#specify').value = serviceToEdit.specify;
+                    form.querySelector('#brand').value = serviceToEdit.brand;
+                    form.querySelector('#notes').value = serviceToEdit.notes;
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error editing service:', error);
+            }
+        };
+
+        const exposeDeleteServices = () => {
+            window.deleteServices = deleteServices;
+        };
+
+        const exposeEditServices = () => {
+            window.editService = editService;
+        };
 
         watch(() => props.stageId, (newValue, oldValue) => {
             getStepID(newValue);
@@ -237,6 +290,8 @@ export default {
         onMounted(async () => {
             try {
                 DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                exposeDeleteServices();
+                exposeEditServices();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -256,6 +311,7 @@ export default {
             gridOptions,
             fetchPatientDMEServiceList,
             deleteServices,
+            editService,
         };
     }
 };
