@@ -46,7 +46,7 @@ use RCare\Patients\Models\CarePlanUpdateLogs;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
 use RCare\Ccm\src\Http\Requests\AllergiesAddRequest;
-use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
+use RCare\Ccm\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsVitalsDataAddRequest;
@@ -446,7 +446,7 @@ class CarePlanDevelopmentController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=carePlanDevelopment.editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=carePlanDevelopment.deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
