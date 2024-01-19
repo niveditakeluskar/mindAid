@@ -57,6 +57,11 @@ import {
     onMounted
 } from '../commonImports';
 import DME from './ServicesModals/DME.vue';
+import HomeHealth from './ServicesModals/HomeHealth.vue';
+import Dialysis from './ServicesModals/Dialysis.vue';
+import Therapy from './ServicesModals/Therapy.vue';
+import SocialServices from './ServicesModals/SocialServices.vue';
+import MedicalSupplies from './ServicesModals/MedicalSupplies.vue';
 import Other from './ServicesModals/Other.vue';
 import SubStepCall from '../MonthlyMonitoring/SubSteps/CallSubSteps/Call.vue';
 import axios from 'axios';
@@ -68,17 +73,22 @@ export default {
     },
     components: {
         DME,
+        HomeHealth,
+        Dialysis,
+        Therapy,
+        SocialServices,
+        MedicalSupplies,
         Other,
         SubStepCall,
     },
 	setup(props) {
         const tabs = ref([
             { label: 'DME', component: 'DME' },
-            { label: 'Home Health (skilled)', component: 'SubStepCall' },
-            { label: 'Dialysis', component: 'SubStepCall' },
-            { label: 'Therapy', component: 'SubStepCall' },
-            { label: 'Social Services', component: 'SubStepCall' },
-            { label: 'Medical Supplies', component: 'SubStepCall' },
+            { label: 'Home Health (skilled)', component: 'HomeHealth' },
+            { label: 'Dialysis', component: 'Dialysis' },
+            { label: 'Therapy', component: 'Therapy' },
+            { label: 'Social Services', component: 'SocialServices' },
+            { label: 'Medical Supplies', component: 'MedicalSupplies' },
             { label: 'Other', component: 'Other' }
         ]);
 
