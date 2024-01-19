@@ -45,7 +45,7 @@ use RCare\Patients\Models\PatientImaging;
 use RCare\Patients\Models\CarePlanUpdateLogs;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
-use RCare\Ccm\src\Http\Requests\AllergiesAddRequest;
+use RCare\Ccm\Http\Requests\AllergiesAddRequest;
 use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
@@ -1435,8 +1435,8 @@ class CarePlanDevelopmentController extends Controller
         );
     }
 
-    public function saveAllergy(AllergiesAddRequest $request)
-    { //
+    public function saveAllergy(AllergiesAddRequest $request) //AllergiesAddRequest 
+    { 
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -1459,8 +1459,8 @@ class CarePlanDevelopmentController extends Controller
         $noallergymsg        = sanitizeVariable($request->noallergymsg);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        DB::beginTransaction();
-        try {
+        // DB::beginTransaction();
+        // try {
             if ($allergy_status == 'true') {
                 $noallergymsg = sanitizeVariable($request->noallergymsg);
             } else {
@@ -1499,12 +1499,13 @@ class CarePlanDevelopmentController extends Controller
                 $update_query                 = PatientAllergy::where('id', $allergyid)->where('status', 1)->where('allergy_type', $allergy_type)->update($insert_allergy);
             }
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
-            DB::commit();
+            // DB::commit();
             return response(['form_start_time' => $form_save_time]);
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+        // } catch (\Exception $ex) {
+            // DB::rollBack();
+            //  \Log::error('Exception: ' . $ex->getMessage());
+            // return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        // }
     }
 
     public function count_Allergies_Inside_Table($id, $allergy_type)

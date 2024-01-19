@@ -135,10 +135,9 @@
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
-				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`"
-					class="btn btn-primary click_id allergiesclick" data-toggle="modal" data-target="#myModal"
-					target="allergy-information">Edit Allergies</button>
-			</label>
+				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal">Edit Allergies</button>
+				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			<input type="hidden" name="this_month" value="1">
 			<!-- // $section == 'call_preparation' &&  -->
@@ -280,6 +279,7 @@
 
 <script>
 import ModalForm from '../../Modals/Medication.vue';
+import AllergiesModalForm from '../../Modals/Allergies.vue';
 export default {
 	props: {
 		sectionName: {
@@ -304,7 +304,8 @@ export default {
 		},
 	},
 	components: {
-		ModalForm // Register the modal component
+		ModalForm, // Register the modal component
+		AllergiesModalForm
 	},
 	data() {
 		return {
@@ -417,8 +418,15 @@ export default {
 			// Access the modal component through a ref
 			console.log("openMModel called");
 			this.$refs.modalForm.openModal();
+		},
+		openAllergiesModal() {
+			console.log("openAllergiesModal called");
+			this.$refs.allergiesModalForm.openModal();
 		}
 	},
 
 }
+
+
+
 </script>
