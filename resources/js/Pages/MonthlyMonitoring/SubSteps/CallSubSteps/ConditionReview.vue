@@ -38,7 +38,7 @@
                   <div class="invalid-feedback">office visit</div>
                </div>
                <div id="data_present_in_emr_show">
-               <PreparationForm :sectionName="sectionName" />
+               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                </div>
             </div>
             <div class="card-footer">
@@ -61,6 +61,11 @@
    import PreparationForm from '../../Components/PreparationFollowUpForm.vue';
 // import stepWizard from 'js/app.js';
 export default {
+   props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
    data() {
       return {
          sectionName: 'research_follow_up',
