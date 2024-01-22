@@ -7,6 +7,8 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { InertiaProgress } from '@inertiajs/progress';
 import LoadingSpinner from './Pages/LoadingSpinner.vue'; // Import the LoadingSpinner component
 
+
+
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,
   resolve: async (name) => {
@@ -31,8 +33,5 @@ createInertiaApp({
       .component('loading-spinner', LoadingSpinner) // Register the LoadingSpinner component locally
       .mount(el);
   },
+
 });
-
-
-
-

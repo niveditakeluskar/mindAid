@@ -10,7 +10,6 @@
             <div class="modal-body">
                 <div class="row mb-4" id="medications">
                     <div class="col-md-12 mb-4">
-                        <div class="success" id="success"></div>
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-12  mb-4">
@@ -25,7 +24,7 @@
                                             <div class="card-header mb-3">MEDICATION</div>
                                             <form id="medications_form" name="medications_form" @submit.prevent="submitMedicationForm">
                                                 <div class="card-body">
-                                                    <div class="alert alert-success" id="success-alert" style="display: none;">
+                                                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                                                         <button type="button" class="close" data-dismiss="alert">x</button>
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 

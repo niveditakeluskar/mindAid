@@ -257,7 +257,6 @@ export default {
 				task_date: ''
 			}
 		]);
-		// 
 
 		const onGridReady = (params) => {
 			gridApi.value = params.api; // Set the grid API when the grid is ready

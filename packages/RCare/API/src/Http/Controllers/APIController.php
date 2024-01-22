@@ -57,6 +57,7 @@ class APIController extends Controller {
     }
 
 
+
    public function PatientDevices(Request $request)
    {
          $user_id=sanitizeVariable($request->userId); 

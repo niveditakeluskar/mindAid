@@ -434,7 +434,7 @@
                                 <div class="wrapMulDropDevice">
                                     <button type="button" id="multiDropDevice" name="multiDropDevice" class="multiDropDevice form-control col-md-12">Select Device<i style="float:right;" class="icon ion-android-arrow-dropdown"></i></button>
                                     <ul>
-
+                                                                
                                     </ul>
                                 </div>
                             </div>
@@ -883,7 +883,7 @@
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
 <!--   <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>  -->
- 	
+<script src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script> 
 <!--  <script src="{{asset('assets/js/laravel/ccmMonthlyMonitoring.js')}}"></script>
 <script src="{{asset('assets/js/laravel/carePlanDevelopment.js')}}"></script> -->
     {{-- page specific javascript --}}
@@ -1229,7 +1229,12 @@
     console.error("Population Error:", result);
   });
 };
+
+
+
+           
 </script>
+
 </body>
 
 </html>

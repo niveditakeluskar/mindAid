@@ -122,10 +122,10 @@
 				</div>
 				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
 			</div>
-			<div v-if="med_added_or_disconYesNo == '1'">
+			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
-				<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal"
-					data-target="#myModal" target="medication">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal">Edit Medication</button>
+	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
@@ -219,8 +219,7 @@
 					<label :for="`${sectionName}_vitalsHealth-modal`"
 						class="mr-3 mb-4"><!-- <b>Vitals and Health Data added or edit:</b> -->
 						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary"
-							data-toggle="modal" data-target="#myModal" target="vitalsHealth">Modify Vitals & Health
-							Data</button>
+							data-toggle="modal" data-target="#myModal" target="vitalsHealth">Modify Vitals & Health Data</button>
 					</label>
 				</div>
 				<div :id="`${sectionName}_report_requirnment_notes`" class="invalid-feedback"></div>
@@ -258,19 +257,17 @@
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary createcareplanbutton"
 				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none">Create Care
 				Plan</button>&nbsp;&nbsp;
-			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton"
-				data-toggle="modal" data-target="#myModal" target="diagnosis-codes">Review Care Plan</button><mark
-				data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
+			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal">Review Care Plan</button>
+			<ReviewCarePlanModal ref="ReviewCarePlanModal" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
 				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
 
 			<div class="form- mt-3 mb-4">
 				<div class="col-md-12 forms-element">
 					<span>
 						<b>Print Care Plan : </b>
-						<a href="/ccm/{{\Request::segment(2)}}/patient-care-plan/{{$patient_id}}" class="btn btn-primary"
-							target="_blank">PDF</a>&nbsp;&nbsp;
-					<a href="/ccm/{{\Request::segment(2)}}/generate-docx/{{$patient_id}}" class="btn btn-primary"
-						target="_blank">Word</a>
+						<a :href="generatePdfUrl()" class="btn btn-primary" target="_blank">PDF</a>&nbsp;&nbsp;
+						<a :href="generateWordUrl() " class="btn btn-primary" target="_blank">Word</a>
 				</span>
 			</div>
 		</div>
@@ -279,34 +276,23 @@
 </div></template>
 
 <script>
+import ModalForm from '../../Modals/Medication.vue';
+import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
 export default {
 	props: {
-		sectionName: {
-			type: String,
-			required: true,
-		},
-		patientId: {
-			type: Number,
-			required: true
-		},
-		moduleId: {
-			type: Number,
-			required: true
-		},
-		componentId: {
-			type: Number,
-			required: true
-		},
-		stageid:{
-			type: Number,
-			required: true
-		},
+		sectionName: String,
+		patientId: Number,
+        moduleId: Number,
+        componentId: Number,
+    },
+	components: {
+		ModalForm ,
+		ReviewCarePlanModal,
 	},
-
 	data() {
 		return {
 			// time:null,
-
+			
 			conditionRequirnment1: 0,
 			conditionRequirnment2: 0,
 			conditionRequirnment3: 0,
@@ -330,7 +316,6 @@ export default {
 	},
 	mounted() {
         // this.time = document.getElementById('page_landing_times').value;
-
         const script = document.createElement('script');
 		script.src = '/assets/js/laravel/iapp.js';
 		script.async = true;
@@ -409,8 +394,30 @@ export default {
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
-	    }
+		},
+		openModal() {
+			// Access the modal component through a ref
+			console.log("openMModel called");
+			this.$refs.modalForm.openModal();
+		},
+		openReviewCarePlanModalModal() {
+			// Access the modal component through a ref
+			console.log("ReviewCarePlanModal called");
+			this.$refs.ReviewCarePlanModal.openModal();
+		},
 	},
+	setup(props){
+		const generatePdfUrl = () => {
+      return `/ccm/monthly-monitoring/patient-care-plan/${props.patientId}`;
+    };
+	const generateWordUrl = () => {
+      return `/ccm/monthly-monitoring/generate-docx/${props.patientId}`;
+    };
+		return{
+			generatePdfUrl,
+			generateWordUrl,
+		};
+	}
 
 }
 </script>
