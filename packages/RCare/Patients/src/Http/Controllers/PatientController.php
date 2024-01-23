@@ -303,30 +303,34 @@ class PatientController extends Controller
 
         if(isset($rpmDevices[0]->vital_devices)){
 
-         $data = json_decode($rpmDevices[0]->vital_devices);
-                $show_device="";
-               
-                for($j=0;$j<count($data);$j++){
-                   
-                    if (array_key_exists("vid",$data[$j]))
-                    {
-                        // dd($data); 
-                      $dev=  Devices::where('id',$data[$j]->vid)->where('status','1')->orderby('id','asc')->first();
-                      if(!empty($dev)){
-                        $parts = explode(" ", $dev->device_name);
-                        $devices = implode('-', $parts);
-
-                        $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
-                        // dd($data[$j]->vid);
-                        if (!empty($filename)) {
-                            $filenames = $filename->file_name;
-                            $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
-
-                            $show_device .= $dev->device_name . " (" . $btn . "), ";
+            $data = json_decode($rpmDevices[0]->vital_devices, true);
+            $show_device = "";
+            
+            if (is_array($data)) {
+                foreach ($data as $item) {
+                    if (array_key_exists("vid", $item)) {
+                        $dev = Devices::where('id', $item['vid'])
+                            ->where('status', '1')
+                            ->orderBy('id', 'asc')
+                            ->first();
+            
+                        if (!empty($dev)) {
+                            $parts = explode(" ", $dev->device_name);
+                            $devices = implode('-', $parts);
+            
+                            $filename = RPMProtocol::where("device_id", $item['vid'])
+                                ->where('status', '1')
+                                ->first();
+            
+                            if (!empty($filename)) {
+                                $filenames = $filename->file_name;
+                                $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
+                                $show_device .= $dev->device_name . " (" . $btn . "), ";
+                            }
                         }
                     }
                 }
-            }
+            }            
 
             $patient_assign_device = rtrim($show_device, ', ');
         } else {
@@ -1142,11 +1146,36 @@ class PatientController extends Controller
         //dd($rpmDevices[0]->vital_devices);
         //code by anand
         if (isset($rpmDevices[0]->vital_devices)) {
-
-            $data = json_decode($rpmDevices[0]->vital_devices);
+            $data = json_decode($rpmDevices[0]->vital_devices, true);
             $show_device = "";
+            
+            if (is_array($data)) {
+                foreach ($data as $item) {
+                    if (array_key_exists("vid", $item)) {
+                        $dev = Devices::where('id', $item['vid'])
+                            ->where('status', '1')
+                            ->orderBy('id', 'asc')
+                            ->first();
+            
+                        if (!empty($dev)) {
+                            $parts = explode(" ", $dev->device_name);
+                            $devices = implode('-', $parts);
+            
+                            $filename = RPMProtocol::where("device_id", $item['vid'])
+                                ->where('status', '1')
+                                ->first();
+            
+                            if (!empty($filename)) {
+                                $filenames = $filename->file_name;
+                                $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
+                                $show_device .= $dev->device_name . " (" . $btn . "), ";
+                            }
+                        }
+                    }
+                }
+            } 
 
-            for ($j = 0; $j < count($data); $j++) {
+          /*   for ($j = 0; $j < count($data); $j++) {
 
                 if (array_key_exists("vid", $data[$j])) {
                     $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
@@ -1164,7 +1193,7 @@ class PatientController extends Controller
                         }
                     }
                 }
-            }
+            } */
 
             $patient_assign_device = rtrim($show_device, ', ');
         } else {

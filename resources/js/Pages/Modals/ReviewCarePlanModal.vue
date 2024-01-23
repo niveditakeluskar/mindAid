@@ -544,25 +544,11 @@ export default {
                         throw new Error(`Failed to delete care plan - ${response.status} ${response.statusText}`);
                     }
                     const responseData = await response.json();
-                    /*   if (module === 'care-plan-development') {
-                        CompletedCheck();
-                        renderDiagnosisTable();
-                        util.getPatientCareplanNotes(props.patientId, props.moduleId);
-                        util.getPatientStatus(props.patientId, props.moduleId);
-                      } else {
-                        renderDiagnosisTableData();
-                        util.getPatientCareplanNotes(props.patientId, props.moduleId);
-                        util.getPatientStatus(props.patientId, props.moduleId);
-                      } */
                     clearGoals();
                     alert("Deleted Successfully");
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
-                    /* document.getElementById('time-container').textContent = AppStopwatch.pauseClock; */
-                    /*       document.getElementById('timer_start').value = timer_paused;
-                          document.getElementById('timer_end').value = timer_paused; */
-                    /*    document.getElementById('time-container').textContent = AppStopwatch.startClock; */
                 } catch (error) {
                     console.error('Error deleting care plan:', error.message);
                 }

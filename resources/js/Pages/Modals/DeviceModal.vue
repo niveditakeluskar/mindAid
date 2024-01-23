@@ -160,11 +160,11 @@ export default {
                 valueGetter: 'node.rowIndex + 1',
             },
             { headerName: 'Code', field: 'device_code' },
-            { headerName: 'Device Condition', field: 'status' },
-            { headerName: 'Partner', field: 'users.f_name' },
-            { headerName: 'Partner Device', field: 'partner_id' },
+            { headerName: 'Device Condition', field: 'device_name' },
+            { headerName: 'Partner', field: 'name' },
+            { headerName: 'Partner Device', field: 'device_name' },
             { headerName: 'Last Modifed By', field: 'updated_at' },
-            { headerName: 'Last Modifed On', field: 'update_date' },
+            { headerName: 'Last Modifed On', field: 'updated_at' },
             {
                 headerName: 'Action',
                 field: 'action',
@@ -172,24 +172,23 @@ export default {
                     const link = document.createElement('div');
                     const editIcon = document.createElement('i');
                     const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('text-20', 'i-yess');
 
                     const { data } = params;
-
                     let editIconColor = 'black';
                     let deleteIconColor = 'red';
-
-                    if (data.iconcolor === 'green') {
-                        editIconColor = 'green';
-                    } else if (data.iconcolor === 'yellow') {
-                        editIconColor = 'yellow';
+              
+                    if (data.status === 1) {
+                        deleteIcon.style.color = 'green';
+                        
+                    } else {
+                        deleteIcon.style.color = 'red';
                     }
 
-                    editIcon.classList.add('text-20', 'i-Closee', 'i-Data-Yes');
+                    editIcon.classList.add('text-20', 'i-Closee', 'i-Pen-4');
                     editIcon.style.color = editIconColor;
 
                     const space = document.createTextNode(' '); // Add space between icons
-
-                    deleteIcon.classList.add('text-20', 'i-Close');
                     deleteIcon.style.color = deleteIconColor;
 
                     link.appendChild(editIcon);
@@ -348,13 +347,13 @@ export default {
                 const response = await axios.post('/patients/master-devices', formData);
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
-                    clearGoals();
+                    fetchDeviceList();
                     alert("Saved Successfully");
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("devices_form").reset();
+                    showSuccessAlert.value = false;
                     setTimeout(() => {
-                        showSuccessAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
