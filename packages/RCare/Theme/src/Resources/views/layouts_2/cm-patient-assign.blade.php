@@ -1,7 +1,7 @@
 <!--============ Customizekar =============  to rotate text use spin in class  (click)="isOpen = !isOpen" -->
 <div class="assingpatient" id="customizer_id2" style="display:none;">
     <div class="handle" id="customizer_id2"  data-toggle="tooltip" data-placement="left" title="Search Patient">
-        <i class="i-Notepad spin"> <!-- <span> Current Month Notes </span> --> </i> 
+        <i class="i-Search-People"> <!-- <span> Current Month Notes </span> --> </i> 
         <!-- <span class="badge">0</span> -->
     </div>
     <div class="card">
