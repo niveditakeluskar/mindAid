@@ -4,8 +4,11 @@ namespace RCare\API\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+=======
+>>>>>>> 82f4c8ec4b3d441abee86b8b032d6165cd3a92ee
 use RCare\API\Models\VoipWebhook;
 use RCare\API\Models\Partner;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +21,7 @@ class VoipWebHookController extends Controller
 	 * @return json
 	 */
 
+<<<<<<< HEAD
 	/*protected $user;
  
     public function __construct()
@@ -25,6 +29,9 @@ class VoipWebHookController extends Controller
         $this->user = JWTAuth::parseToken()->authenticate();
     }*/
 
+=======
+	
+>>>>>>> 82f4c8ec4b3d441abee86b8b032d6165cd3a92ee
 
 	public function voipwebhookHandler(Request $request)
 	{
@@ -44,6 +51,7 @@ class VoipWebHookController extends Controller
 
 			$dtarr = preg_split('/\s+/', $datetime);;
 			//print_r($dtarr);
+<<<<<<< HEAD
 
 			$Y = substr($dtarr[0],  -4);
 			$M = substr($dtarr[0], 2, 2);
@@ -51,6 +59,19 @@ class VoipWebHookController extends Controller
 
 			$time = date("G:i", strtotime($dtarr[1]));
 			$dateString = $Y . '-' . $M . '-' . $D . ' ' . $time . ':00';
+=======
+			if(str_contains($dtarr[0],'-')){
+				$dateString = $datetime;
+			}else{
+				$Y = substr($dtarr[0],  -4);
+				$M = substr($dtarr[0], 2, 2);
+				$D = substr($dtarr[0], 0, 2);
+
+				$time = date("G:i", strtotime($dtarr[1]));
+				$dateString = $Y . '-' . $M . '-' . $D . ' ' . $time . ':00';
+			}	
+			
+>>>>>>> 82f4c8ec4b3d441abee86b8b032d6165cd3a92ee
 			$recordingfilename = $request->recordingfilename;
 			// dd($content); 
 			$newcontent = json_encode($content);

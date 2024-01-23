@@ -1083,7 +1083,7 @@ var init = function () {
         // dailyReadingFunction(patient_id, deviceids);
         getMonthlyReviewPatientList(patient_id, deviceids);
         util.getToDoListData(patient_id, module_id);
-
+        util.getAssignPatientListData(0, patient_id);
         var activedeviceid = $('#activedevice').val();
         document.getElementById('device-icon-tab_' + activedeviceid).click();
         
