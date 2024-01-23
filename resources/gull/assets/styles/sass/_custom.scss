@@ -1273,7 +1273,7 @@ label.patientname {
 .assingpatient {
   position: fixed;
   z-index: 88888;
-  top: 248px;
+  top:124px;
   right: -980px;
   transition: .3s all ease-in-out;
   width: 980px;
@@ -1286,7 +1286,7 @@ label.patientname {
 .assingpatient .handle {
   position: absolute;
   display: flex;
-  top: 6px;
+  top: 130px;
   left: -50px;
   background: #2cb8ea;
   cursor: pointer;
@@ -1310,6 +1310,7 @@ label.patientname {
   background: #fff;
   box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.08);
   max-height: calc(100vh - 140px);
+  height: 350px;
   overflow-y: scroll;
   overflow-x: visible;
 }

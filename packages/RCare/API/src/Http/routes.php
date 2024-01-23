@@ -23,16 +23,7 @@ use RCare\API\Http\Controllers\VoipWebHookController;
                 return view('API::device-order');
         })->name('order.form');
 		
-<<<<<<< HEAD
-        Route::post('register', [ApiUserController::class, 'register']);
-		Route::post('login', [ApiUserController::class, 'authenticate']);
-	    // Route::group(['middleware' => ['jwt.verify']], function() {
-           
-		// });
-        Route::post('voip_webhook', [VoipWebHookController::class, 'voipwebhookHandler']);
-=======
 		Route::post('voip_webhook', [VoipWebHookController::class, 'voipwebhookHandler']);
->>>>>>> 82f4c8ec4b3d441abee86b8b032d6165cd3a92ee
         Route::get('/test', 'RCare\API\Http\Controllers\APIController@test')->name('test');
         Route::post('/data_from_device', 'RCare\API\Http\Controllers\MioDeviceController@test_mio_webhook_observation')->name('test_mio_webhook_data_from_device'); 
         Route::post('/data_from_device/{id}', 'RCare\API\Http\Controllers\MioDeviceController@mio_webhook_observation')->name('mio_webhook_data_from_device'); 
