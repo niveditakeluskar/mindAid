@@ -2,6 +2,8 @@
 namespace RCare\System\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use RCare\TaskManagement\Models\UserPatients;
+use RCare\Org\OrgPackages\Users\src\Models\Users;
 use RCare\Patients\Models\PatientTimeRecords;
 use RCare\Patients\Models\PatientTimeButtonLogs;
 use RCare\System\Http\Requests\ManuallyAdjustTimeRequest;
@@ -1015,6 +1017,8 @@ class CommonFunctionController extends Controller
         $patient = Patients::where('id', $uid)->get();
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status',1)->latest()->first();
         $nin = array();
+        $assigncm = UserPatients::where('patient_id', $uid)->where('status',1)->get();
+        $usnumber = Users::where('id',$assigncm[0]->user_id)->get();
         if(isset($PatientDevices->vital_devices)){
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
@@ -1044,8 +1048,9 @@ class CommonFunctionController extends Controller
         $data_emr = str_replace("[EMR]",$patient_providers['practice_emr'],$replace_primary);
         $replace_secondary = str_replace("[secondary_contact_number]",$patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]",$device, $replace_secondary);
-        $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $replace_final = strip_tags($replace_final);
+        $replace_finals = str_replace("[devicecode]", $devicecode, $replace_devicelist);
+        $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_finals);
+        $replace_final = strip_tags($replace_usnumber);
 
         if($patient[0]->consent_to_text == 1){ 
             if($patient[0]->primary_cell_phone == 1){

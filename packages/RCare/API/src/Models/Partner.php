@@ -61,6 +61,10 @@ class Partner extends Authenticatable implements JWTSubject
     public function tokenExists($token)
     {
         // Check if at least one token exists for this partner
+<<<<<<< HEAD
         return self::where('token', $token)->exists();
+=======
+        return self::where('token', md5($token))->exists();
+>>>>>>> 82f4c8ec4b3d441abee86b8b032d6165cd3a92ee
     }
 }
