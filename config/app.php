@@ -123,7 +123,7 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-
+	
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -166,7 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+		'Tymon\JWTAuth\Providers\LaravelServiceProvider',
         /*
          * Application Service Providers...
          */
@@ -251,6 +251,8 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'Purifier' => Mews\Purifier\Facades\Purifier::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+		'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+		'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
     ],
 
 ];
