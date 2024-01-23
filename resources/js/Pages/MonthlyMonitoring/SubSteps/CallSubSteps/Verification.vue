@@ -14,9 +14,9 @@
 							<p class="mb-4"><b>Verify HIPAA script</b><br/></p>
 							<div class="forms-element form-group d-inline-flex mb-2">
 								<label class="radio radio-primary mr-4" for="verification">
-									<input type="radio" name="verification" id="verification" value="1" formControlName="radio" v-model="verification">
+									<input type="radio" name="verification" id="verification" value="1" formControlName="radio" v-model="verification" :checked="verification=='1'">
 									<span>HIPAA Verified<span class="error">*</span></span>
-									<span class="checkmark"></span>
+									<span class="checkmark"></span> 
 								</label> 
 							</div>
 							<div class="invalid-feedback" v-if="formErrors.verification" style="display: block;">{{ formErrors.verification[0] }}</div>
@@ -66,6 +66,7 @@ export default {
 	},
 	mounted() {
 		this.getStageID();
+		this.populateFuntion();
 	},
 	methods: {
 		async getStageID() {
@@ -76,6 +77,19 @@ export default {
 				throw new Error('Failed to fetch stageID');
 			}
 		},
+		async populateFuntion(){ 
+			try{
+				const response = await fetch(`/ccm/populate-monthly-monitoring-data/828433174`);
+				if(!response.ok){  
+						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+				}
+				const data = await response.json();
+				this.patientPrepSaveDetails = data;
+				this.verification = this.patientPrepSaveDetails.populateHippa[0].verification;
+			}catch(error){
+				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
+			}
+	    },
 		async submitVerificationForm() {
 			const formData = {
 				uid: this.patientId,
@@ -89,7 +103,7 @@ export default {
 				start_time: "",
 				end_time: "",
 				verification: this.verification,
-				_token: document.querySelector('meta[name="csrf-token"]').content,
+				_token: document.querySelector('meta[name="csrf-token"]').content, 
 				timearr: {
 					"form_start_time": document.getElementById('page_landing_times').value, //"12-27-2023 11:59:57",
 					"form_save_time": "",
