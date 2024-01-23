@@ -393,9 +393,15 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=carePlanDevelopment.editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=carePlanDevelopment.deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" 
+                onclick=editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit">
+                <i class=" editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" 
+                onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) 
+                data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
+
+               
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -1436,7 +1442,7 @@ class CarePlanDevelopmentController extends Controller
     }
 
     public function saveAllergy(AllergiesAddRequest $request) //AllergiesAddRequest 
-    { 
+    {  
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -1459,8 +1465,8 @@ class CarePlanDevelopmentController extends Controller
         $noallergymsg        = sanitizeVariable($request->noallergymsg);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             if ($allergy_status == 'true') {
                 $noallergymsg = sanitizeVariable($request->noallergymsg);
             } else {
@@ -1499,13 +1505,12 @@ class CarePlanDevelopmentController extends Controller
                 $update_query                 = PatientAllergy::where('id', $allergyid)->where('status', 1)->where('allergy_type', $allergy_type)->update($insert_allergy);
             }
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
-            // DB::commit();
+            DB::commit();
             return response(['form_start_time' => $form_save_time]);
-        // } catch (\Exception $ex) {
-            // DB::rollBack();
-            //  \Log::error('Exception: ' . $ex->getMessage());
-            // return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        // }
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
     }
 
     public function count_Allergies_Inside_Table($id, $allergy_type)

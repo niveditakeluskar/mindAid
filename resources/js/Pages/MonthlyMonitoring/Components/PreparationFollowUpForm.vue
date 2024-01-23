@@ -124,7 +124,7 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
-					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
 	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
@@ -227,8 +227,8 @@
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
 					<label :for="`${sectionName}_services-modal`" class="mr-3 mb-4"><b>Services added or edit: </b>
-						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary"
-							data-toggle="modal" data-target="#myModal" target="healthcare-services">Edit Services</button>
+						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal">Edit Services</button>
+		 				<ServicesModalForm ref="servicesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
 			</div>
@@ -280,6 +280,8 @@
 <script>
 import ModalForm from '../../Modals/Medication.vue';
 import AllergiesModalForm from '../../Modals/Allergies.vue';
+import ServicesModalForm from '../../Modals/Services.vue';
+
 export default {
 	props: {
 		sectionName: {
@@ -305,7 +307,8 @@ export default {
 	},
 	components: {
 		ModalForm, // Register the modal component
-		AllergiesModalForm
+		AllergiesModalForm,
+		ServicesModalForm,
 	},
 	data() {
 		return {
@@ -415,14 +418,15 @@ export default {
 			}
 		},
 		openModal() {
-			// Access the modal component through a ref
-			console.log("openMModel called");
 			this.$refs.modalForm.openModal();
 		},
 		openAllergiesModal() {
 			console.log("openAllergiesModal called");
 			this.$refs.allergiesModalForm.openModal();
-		}
+		},
+		openServicesModal() {
+			this.$refs.servicesModalForm.openModal();
+		},
 	},
 
 }
