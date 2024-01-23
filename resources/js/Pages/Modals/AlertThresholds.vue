@@ -12,7 +12,7 @@
                     <div class="row mb-4">
                         <div class="col-md-12 mb-4"> 
                             <ul class="nav nav-tabs">
-                                <li class="nav-nav-item" v-for="(tab, index) in tabs":key="index" @click="changeTab(index)" :class="{ 'active': activeTab === index }">
+                                <li class="nav-nav-item" v-for="(tab, index) in tabs" :key="index" @click="changeTab(index)" :class="{ 'active': activeTab === index }">
                                     <a class="nav-link" aria-current="page" href="#">
                                         {{ tab.label }}
                                     </a>

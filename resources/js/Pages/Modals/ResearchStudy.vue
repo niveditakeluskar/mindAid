@@ -26,7 +26,7 @@
                             <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="researchstudyTime">
                         <label>Part of Research Study<span class='error'>*</span></label>
                         <textarea name="part_of_research_study" class="form-control forms-element" v-model="research_study_data"></textarea>
-                        <div class="invalid-feedback"v-if="formErrors.part_of_research_study" style="display: block;">
+                        <div class="invalid-feedback" v-if="formErrors.part_of_research_study" style="display: block;">
                                 <span :textContent="formErrors. part_of_research_study[0]"></span>
                         </div>
                         </form>
