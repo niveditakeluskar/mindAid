@@ -396,7 +396,6 @@ var callMonthllyMonitoringInitFunctions = function () {
   util.getPatientStatus(patient_id, module_id);
   util.gatCaretoolData(patient_id, module_id);
   util.getToDoListData($("#patient_id").val(), module_id);
-	util.getAssignPatientListData(0, patient_id);
   //util.getDataCalender($("#patient_id").val(), module_id);
   getFollowupList($('#patient_id').val(), module_id);
   // Research followup data presentEMR

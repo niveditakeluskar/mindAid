@@ -197,24 +197,43 @@ class PatientController extends Controller
         $patient_id = sanitizeVariable($request->route('patient')); 
         $practice_id = sanitizeVariable($request->route('practice'));
 
-        $data = "select p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name  from patients.patient p
-        inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
-        inner join ren_core.users usr on usr.id=up.user_id 
-        LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
-        LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
-        where usr.id = $login_user";
+        // $data = "select distinct p.id,p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name, m.id ,m.module  from patients.patient p
+        // inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
+        // inner join ren_core.users usr on usr.id=up.user_id 
+        // LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+        // LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+        // inner join patients.patient_services ps on ps.patient_id = p.id and  ps.status in (0,1)
+        // inner join ren_core.modules as m on m.id = ps.module_id  
+        // where usr.id = $login_user";
+
+        //for rpm enrolled patient link 
+        $data ="SELECT * FROM (SELECT p.id,p.fname,p.lname,p.dob,p2.name AS practice,usr.id AS user_id,
+                usr.f_name AS user_fname,usr.l_name AS user_lname,m.id AS module_id, m.module,ROW_NUMBER() OVER(PARTITION BY p.id ORDER BY m.id) AS row_num
+                FROM patients.patient p
+                LEFT JOIN task_management.user_patients up ON up.patient_id = p.id AND up.status = 1
+                LEFT JOIN ren_core.users usr ON usr.id = up.user_id 
+                LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+                LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+                LEFT JOIN patients.patient_services ps ON ps.patient_id = p.id AND ps.status IN (0, 1)
+                INNER JOIN ren_core.modules AS m ON m.id = ps.module_id  
+                WHERE usr.id = $login_user";
+        
+
+
         if(($practice_id =="null" || $practice_id==0) && ($patient_id =="null" || $patient_id==0)){
-           
+            $query = [];
         }else if(($practice_id =="null" || $practice_id==0)){
-            $data .= "  and p.id = '".$patient_id."'";
+            $data .= "  and p.id = '".$patient_id."' ) AS subquery WHERE subquery.row_num = 1";
+            $query = DB::select( DB::raw($data) );
         }else if(($patient_id =="null" || $patient_id==0)){
-            $data .= "  and pp.practice_id = '".$practice_id."'";
+            $data .= "  and pp.practice_id = '".$practice_id."' ) AS subquery WHERE subquery.row_num = 1 ";
+            $query = DB::select( DB::raw($data) );
         } else{
-            $data .= "  and pp.practice_id = '".$practice_id."' and p.id = '".$patient_id."'";
+            $data .= "  and pp.practice_id = '".$practice_id."' and p.id = '".$patient_id."' ) AS subquery WHERE subquery.row_num = 1";
+            $query = DB::select( DB::raw($data) );
         }
-        //  dd($data);
-        $query = DB::select( DB::raw($data) );
-        // dd($query);
+
+        // dd($data);
         return view('Patients::patient.cm-assigned-patient-right',compact('query'));
     }
 

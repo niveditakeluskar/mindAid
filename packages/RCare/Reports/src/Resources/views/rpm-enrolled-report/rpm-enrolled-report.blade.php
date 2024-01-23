@@ -48,11 +48,11 @@
                             <label for="practicegrp">{{config('global.practice_group')}}</label>
                              @selectgrppractices("practicesgrp", ["class" => "select2","id" => "practicesgrp"]) 
                         </div> -->
-                        <div class="col-md-3 form-group mb-3">
+                        <div class="col-md-4 form-group mb-3">
                             <label for="practicename">Practice</label>                  
                             @selectworklistpractices("practices", ["id" => "practices", "class" => "select2"])   
                         </div>
-                        <div class="col-md-3 form-group mb-6">
+                        <div class="col-md-4 form-group mb-6">
                             <label for="practicename">Patient Name</label>
                             @selectallworklistccmpatient("Patient",["id" => "patient", "class" => "select2"])
                         </div>
@@ -60,7 +60,7 @@
                             <label for="provider">Provider</label>
                             @selectpracticesphysician("provider",["id" => "physician","class"=>"custom-select show-tick select2"])
                         </div>  -->
-                        <div class="col-md-2 form-group mb-2">
+                        <div class="col-md-4 form-group mb-2">
                             <label for="shippingstatus">Shipping Status</label>
                                 <select id="shippingstatus" class="custom-select show-tick" name="shippingstatus">
                                     <option value selected>(None,Shipped,Delivered,Not shipped)</option>
@@ -160,21 +160,21 @@
                                 @csrf
                                     <div class="row">    
                                         <input type="hidden" id="patientIdField" name="patient_id" value="">
-                                        <div class="col-md-6 form-group mb-3">
-                                            <label for="name" class="control-label">Courier Service Provider</label>
-                                            @text("courier_service_provider", ["id" => "courier_service_provider", "class" => "form-control capital-first ", "placeholder" => "Enter courier service provider"])
-                                        </div>
-                                        <div class="col-md-6 form-group mb-3">
-                                            <label for="name" class="control-label">Shipping Date</label>
-                                            @date('shipping_date',["id" => "shipping_date"])
-                                        </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-4 form-group mb-3">
                                             <label for="device_code" class="control-label">Device ID</label><span class="error">*</span>
                                             <!-- <input type="text" id="device_code" name="device_code" class="form-control capital-first"><br> -->
                                             @selectpatientDevice("device_id", ["id" => "device_id", "class" => "select2"]) 
                                         </div>
+                                        <div class="col-md-4 form-group mb-3">
+                                            <label for="name" class="control-label">Courier Service Provider</label>
+                                            @text("courier_service_provider", ["id" => "courier_service_provider", "class" => "form-control capital-first ", "placeholder" => "Enter courier service provider"])
+                                        </div>
+                                        <div class="col-md-4 form-group mb-3">
+                                            <label for="name" class="control-label">Shipping Date</label>
+                                            @date('shipping_date',["id" => "shipping_date"])
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-4 form-group mb-3">
                                             <label for="name" class="control-label">Shipping Status</label>
                                             <select id ="shipping_status" name="shipping_status" class="shipping_status custom-select show-tick">
@@ -281,7 +281,8 @@
                                     <div class="row">
                                         <div class="col-md-6 form-group">
                                             <label>Partners<span class='error'>*</span></label>
-                                            @selectrpmenrolledpartner("partner_id",["id" => "partner_id"])
+                                            <!-- @selectrpmenrolledpartner("partner_id",["id" => "partner_id"]) -->
+                                            @selectpartner("partner_id",["id" => "partner_id"])
                                         </div>
                                         <div class="col-md-6 form-group">
                                             <label>Partner Devices<span class='error'>*</span></label>
@@ -349,7 +350,6 @@
     <script type="text/javascript">   
         
         var getshippinglist = function(patient = null,shipping_status=null) { 
-            
             var columns =  [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: null, 
@@ -816,6 +816,24 @@ function devicedetails(rowid) {
     $("#device_form")[0].reset();
     $('#devicedetailsmodel').modal('show');  
     getdevicecode(rowid); 
+
+    var partner_id = document.getElementById("partner_id");
+    var defaultValue = "3"; 
+    for (var i = 0; i < partner_id.options.length; i++) {
+        if (partner_id.options[i].value === defaultValue) {
+            partner_id.selectedIndex = i;
+            break;
+        }
+    }
+
+    var partner_devices_id = document.getElementById("partner_devices_id");
+    var defaultValue1 = "17"; 
+    for (var i = 0; i < partner_devices_id.options.length; i++) {
+        if (partner_devices_id.options[i].value === defaultValue1) {
+            partner_devices_id.selectedIndex = i;
+            break;
+        }
+    }
 }
 
 
