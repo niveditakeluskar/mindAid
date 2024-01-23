@@ -124,5 +124,4 @@
 
     <script defer src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
 </body>
-
 </html>

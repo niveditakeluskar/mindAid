@@ -5,12 +5,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Medication</h4> 
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
                 <div class="row mb-4" id="medications">
                     <div class="col-md-12 mb-4">
-                        <div class="success" id="success"></div>
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-12  mb-4">
@@ -25,7 +24,7 @@
                                             <div class="card-header mb-3">MEDICATION</div>
                                             <form id="medications_form" name="medications_form" @submit.prevent="submitMedicationForm">
                                                 <div class="card-body">
-                                                    <div class="alert alert-success" id="success-alert" style="display: none;">
+                                                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                                                         <button type="button" class="close" data-dismiss="alert">x</button>
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 
@@ -36,11 +35,11 @@
                                                         <input type="hidden" name="end_time" value="00:00:00">
                                                         <input type="hidden" name="module_id" :value="moduleId"/>
                                                         <input type="hidden" name="component_id" :value="componentId"/>
-                                                        <input type="hidden" name="stage_id" value="11"/><!-- :value="medicationStageId"/> -->
+                                                        <input type="hidden" name="stage_id" :value="medicationStageId"/>
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
                                                         <input type="hidden" name="billable" value="1">
-                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
+                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime">
                                                         <div class="col-md-6 form-group mb-3 med_id">
                                                             <label for="medication_med_id">Select Medication<span class='error'>*</span></label> 
                                                             <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication">
@@ -178,12 +177,13 @@ export default {
 	props: {
 		patientId: Number,
 		moduleId: Number,
-		componentId: Number,
+        componentId: Number,
 	},
     data() {
         return {
             isOpen: false,
             formErrors: {},
+            showAlert: false,
         };
     },
     components: {
@@ -201,19 +201,20 @@ export default {
             let myForm = document.getElementById('medications_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-            console.log("formData====>>", formData);
-            let medicationTime = document.getElementById('page_landing_times').value;
-            console.log("submit med fun time", medicationTime);
-            formData["timearr[form_start_time]"]=medicationTime;
             try {
                 this.formErrors = {};
                 const response = await axios.post('/ccm/care-plan-development-medications', formData);
                 if (response && response.status == 200) {
                     this.showAlert = true;
-                    updateTimer(this.patientId, 1, this.moduleId);
-                    fetchPatientMedicationList();
+                    updateTimer(this.patientId, '1', this.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+                    this.fetchPatientMedicationList();
+                    document.getElementById("medications_form").reset();
+                    let select_box = document.getElementById("medication_med_id");
+                    select_box.selectedIndex = -1;
                     setTimeout(() => {
                         this.showAlert = false;
+                        this.medicationTime = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
             } catch (error) {
@@ -255,7 +256,14 @@ export default {
                 { headerName: 'Created By', field: 'users'},
                 { headerName: 'Last Modified On', field: 'updated_at' },
                 { headerName: 'Reviewed Data', field: 'task_completed_at' },
-                { headerName: 'Action', field: 'action' },
+                { 
+                    headerName: 'Action',
+                    field: 'action',
+                    cellRenderer: function (params) {
+                        const row = params.data;
+                        return row && row.action ? row.action : '';
+                    },
+                },
             ]
         });
         const defaultColDef = ref({
@@ -272,7 +280,7 @@ export default {
             paginationPageSize: 20, // Set the number of rows per page
             domLayout: 'autoHeight', // Adjust the layout as needed
         });
-        let medicationTime = ref('00:00:00');
+        let medicationTime = ref(null);
         let medicationStageId = ref(0);
         let stepID = ref(0);
 
@@ -311,9 +319,8 @@ export default {
             try {
                 let medicationSageName = 'Patient_Data';
                 let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${medicationSageName}`);
-                medicationStageId = response.data.stageID;
-                console.log("stageIdstageId", medicationStageId);
-                getStepID(medicationStageId);
+                medicationStageId.value = response.data.stageID;
+                getStepID(medicationStageId.value);
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
@@ -323,8 +330,7 @@ export default {
             try {
                 let stepname = 'Medication';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                stepID = response.data.stepID;
-                console.log("stepIDstepID", stepID);
+                stepID.value = response.data.stepID;
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
@@ -345,8 +351,7 @@ export default {
 
         onMounted(async () => {
             try {
-                medicationTime = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
+                medicationTime.value = document.getElementById('page_landing_times').value;
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -363,6 +368,7 @@ export default {
             medicationTime,
             medicationStageId,
             stepID,
+            fetchPatientMedicationList,
             // fetchMedicationList,
         };
     }
@@ -380,6 +386,7 @@ export default {
   margin: 2%;
   opacity: 0;
   transition: opacity 0.3s ease;
+  overflow-y:auto;
 }
 
 /* Style the overlay */
@@ -402,10 +409,5 @@ export default {
 
 .overlay.open {
   display: block;
-}
-
-.modal-content {
-    overflow-y: auto !important;
-    height: 800px !important;
 }
 </style>

@@ -124,8 +124,8 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
-				<button type="button" :id="`${sectionName}_medications-modal`" class="btn btn-primary" data-toggle="modal"
-					data-target="#myModal" target="medication">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
+	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
@@ -228,8 +228,8 @@
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
 					<label :for="`${sectionName}_services-modal`" class="mr-3 mb-4"><b>Services added or edit: </b>
-						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary"
-							data-toggle="modal" data-target="#myModal" target="healthcare-services">Edit Services</button>
+						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal">Edit Services</button>
+		 				<ServicesModalForm ref="servicesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
 			</div>
@@ -244,7 +244,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-row mb-4" :id="`${sectionName}_relation_building`" style='display:none'>
+			<div class="form-row mb-4" :id="`${sectionName}_relation_building`">
 				<div class="col-md-12 forms-element">
 					<div :id="`${sectionName}_patient_relationship_building`" class="patient_relationship_building mb-4">
 						<span><b>Patient Relationship Building<span class='error'>*</span></b></span>
@@ -279,6 +279,9 @@
 </div></template>
 
 <script>
+import ModalForm from '../../Modals/Medication.vue';
+import ServicesModalForm from '../../Modals/Services.vue';
+
 export default {
 	props: {
 		sectionName: {
@@ -302,7 +305,10 @@ export default {
 			required: true
 		},
 	},
-
+	components: {
+		ModalForm,
+		ServicesModalForm,
+	},
 	data() {
 		return {
 			// time:null,
@@ -409,7 +415,13 @@ export default {
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
-	    }
+		},
+		openModal() {
+			this.$refs.modalForm.openModal();
+		},
+		openServicesModal() {
+			this.$refs.servicesModalForm.openModal();
+		},
 	},
 
 }

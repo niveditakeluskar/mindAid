@@ -1388,14 +1388,14 @@
         return $content;
     }
 
-    function getDecisionTree($module_id, $patientId, $step_id)
+    function getDecisionTree($module_id, $patientId, $step_id, $componentId)
     {
         $enrollinRPM = 1;
         if (RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 3)->where('status', 1)->exists() && RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 2)->where('status', 1)->exists()) {
             $enrollinRPM = 2;
         }
         $module_id = getPageModuleName();
-        $submodule_id = 19;
+        $submodule_id = $componentId;
         $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
         $content = "";
         $last_key = 0;

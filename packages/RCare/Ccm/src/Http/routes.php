@@ -19,10 +19,16 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
 // Authenticated user only routes
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('ccm')->group(function () {
-        Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/question_list', function (string $module_id, string $patient_id, string $step_id) {
-            $d = getDecisionTree($module_id, $patient_id, $step_id);
+
+        Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/{componentId}/question_list', function (string $module_id, string $patient_id, string $step_id, string $componentId) {
+            $d = getDecisionTree($module_id,$patient_id,$step_id,$componentId);
             return $d;
         });
+        Route::get('/get-calltext/{module_id}/{patient_id}/{component_id}/call_message', function (string $module_id, string $patient_id, string $component_id) {
+            $d = getSendTextMessage($module_id,$patient_id,$component_id);
+            return $d;
+        });
+
         Route::get('/get-savedQuestion/{module_id}/{patient_id}/{step_id}/saved_question', 'RCare\Ccm\Http\Controllers\CcmController@getSavedGeneralQuestions')->name('get.saved.question');
         //     Route::get('/monthly-monitoring-patient-list', 'RCare\Ccm\Http\Controllers\CcmController@index')->name('monthly.monitoring.patient.list');
         ///////////////////////New Monthly Monitoring/////////////////////////////

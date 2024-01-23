@@ -1,8 +1,9 @@
 <template>
 <!--    <form id="call_preparation_preparation_followup_form" name="call_preparation_preparation_followup_form"
       action="{{ route('monthly.monitoring.call.preparation') }}" method="post"> -->
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <form id="call_preparation_preparation_followup_form" @submit.prevent="saveForm">
-      <div class="row call mb-4 ">
+         <div class="row call mb-4 ">
          <div class="col-lg-12 mb-4 ">
             <div class="card">
                <div class="card-body">
@@ -22,14 +23,15 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
-                  <input type="text" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
-                  <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"  />
+                  <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                </div>
+            </div>
             <div class="card-footer">
                <div class="mc-footer">
                   <div class="row"> 
                      <div class="col-lg-12 text-right">
-                        <button type="button" class="btn btn-primary m-1 draft_preparation">Draft Save</button>
+                        <button type="button" class="btn btn-primary m-1 draft_preparation" sid="draft_call_preparation"
+                              id="call_preparation_draft">Draft Save</button>
                         <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
                      </div>
                   </div>
@@ -37,32 +39,8 @@
             </div>
          </div>
       </div>
-      </div>
    </form>
 </template>
-<style>
-/* Your spinner CSS */
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px; /* Adjust size as needed */
-}
-
-.spinner-inner {
-  border: 3px solid #ccc; /* Spinner color */
-  border-top: 3px solid #3498db; /* Spinner color */
-  border-radius: 50%;
-  width: 20px; /* Spinner size */
-  height: 20px; /* Spinner size */
-  animation: spin 1s linear infinite; /* Spinner animation */
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
 
 <script>
 import PreparationForm from '../Components/PreparationFollowUpForm.vue';
@@ -70,68 +48,59 @@ import { defineComponent } from 'vue';
 import axios from 'axios';
 // import stepWizard from 'js/app.js';
 export default {
-
    props: {
-    patientId: {
-      type: Number,
-      required: true
-    },
-    moduleId: {
-      type: Number,
-      required: true
-    },
-    componentId: {
-      type: Number,
-      required: true
-    },
-    stageid:{
-      type: Number,
-      required: true
-    },
-  },
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+   },
    data() {
       return {
+         isLoading: false,
          sectionName: 'call_preparation',
          csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-         isLoading: false, // Initially hide the spinner
-         showAlert: false,
-         time:null,
       };
    },
    components: {
       PreparationForm
    }, 
    mounted() {
-      this.time = document.getElementById('page_landing_times').value;
-		
-  },
+      console.log('Component mounted.');
+   },
   methods: {
-    saveForm() {
+   saveForm() {
       this.isLoading = true;
-      const formData = new FormData(this.$refs.form); // Create FormData object
+  const formData = new FormData();
+  const formElements = document.getElementById('call_preparation_preparation_followup_form').elements;
 
-      formData.append('_token', this.csrfToken);
-      axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
-        .then(response => {
-         this.showAlert = true;
-            updateTimer(this.patientId, 1, this.moduleId);
-					setTimeout(() => {
-						this.showAlert = false;
-					}, 3000);
-          // Handle success response
-          console.log('Form saved successfully', response.data);
-          // Optionally, perform any additional actions on successful form submission
-        })
-        .catch(error => {
-          // Handle error response
-          console.error('Error saving form', error);
-          // Optionally, perform any actions on failed form submission
-        })
-        .finally(() => {
-          // Hide the spinner when the request is complete (success or failure)
-          this.isLoading = false;
-        });
-    },
+  for (let i = 0; i < formElements.length; i++) {
+    const element = formElements[i];
+    // Check if the element is not a button or any other unwanted type
+    if (element.tagName !== 'BUTTON' && element.type !== 'button') {
+      formData.append(element.name, element.value);
+    }
+  }
+
+  formData.append('_token', this.csrfToken);
+
+  console.log(formData);
+
+  axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
+    .then(response => {
+      // Handle success response
+      console.log('Form saved successfully', response.data);
+      // Optionally, perform any additional actions on successful form submission
+    })
+    .catch(error => {
+      this.isLoading = false;
+      // Handle error response
+      console.error('Error saving form', error);
+      // Optionally, perform any actions on failed form submission
+    })
+    .finally(() => {
+      // Hide the spinner when the request is complete (success or failure)
+      this.isLoading = false;
+    });
+},
   }
 };
 </script>

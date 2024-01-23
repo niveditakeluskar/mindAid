@@ -70,7 +70,7 @@ export default {
 		async fetchMonthlyQuestion(){
 			$("#preloader").show();
 			console.log('fetch questions'+this.selectedQuestionnaire);
-			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/question_list`)
+			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/${this.componentId}/question_list`)
 				.then(response => {
 					this.decisionTree = response.data;
 					console.log(document.getElementById('page_landing_times').value);

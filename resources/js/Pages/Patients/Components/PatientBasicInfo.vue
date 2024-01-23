@@ -162,7 +162,7 @@
                                                     non_billabel_time</span></span>
                                             <button class="button"
                                                 style="border: 0px none;background: #f7f7f7;outline: none;"><a
-                                                    href="/patients/registerd-patient-edit/" title="Edit Patient Info"
+                                                    :href="url" title="Edit Patient Info"
                                                     data-toggle="tooltip" data-placement="top"
                                                     data-original-title="Edit Patient Info"><i class=" editform i-Pen-4"
                                                         style="color: #2cb8ea;"></i></a></button>
@@ -224,6 +224,7 @@
 <script>
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
+import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
 import moment from 'moment';
 import axios from 'axios';
 import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
@@ -333,21 +334,75 @@ export default {
 // const enrolledServices = ref(null);
 const enrolledServices = ref([]);
 const patientDetails = ref(null);
+const url = '/patients/registerd-patient-edit/'+props.patientId+'/'+ props.moduleId+'/'+props.componentId+'/0';
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
-
-const patientServiceStatus = async()=>{
-    const patientServiceModal = document.getElementById('active-deactive');
+const patientServiceStatus = (pstatus)=>{
     var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-    if (patientServiceModal) { 
-        $(patientServiceModal).modal('show'); // Use jQuery to show the modal
-    } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-    }
+    parts = sPageURL.split("/");
+   let pid = parts[parts.length - 1];
+    callExternalFunctionWithParams(pid, pstatus);
 }
+// const veteranServicefunction = async() => {
+//     const VeteranServiceModal = document.getElementById('vateran-service');
+//       if (VeteranServiceModal) { 
+//         $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+//     patientVeteranServiceModalDetails();
+// }
+
+
+// function devicesclear() {  
+//     // alert('dadsadasdsa');
+//     $("#devices_form input[name='device_id']").val('');
+//     $('#partner_id').val(''); 
+//     $('#partner_devices_id').val('');
+//     $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
+//     $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
+
+// }
+
+
+// const add_devicesfunction = async() => {
+//     const DeviceModal = document.getElementById('add-patient-devices');
+//       if (DeviceModal) { 
+//         $(DeviceModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+//     // patientVeteranServiceModalDetails();
+// }
+
+// const add_additional_devicesfunction = async() =>{
+//     const AdditionalDeviceModal = document.getElementById('additional-device');
+//       if (AdditionalDeviceModal) { 
+//         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+// }
+
+// const patient_finnumber_function = async()=>{
+//     const FinNumberModal = document.getElementById('patient-finnumber');
+//       if (FinNumberModal) { 
+//         $(FinNumberModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+//       patComDetails();
+
+// }
+// const alertThresholdfunction = async() => {
+//     const AlertThresholdeModal = document.getElementById('patient-threshold');
+//     if (AlertThresholdeModal) {
+//     $(AlertThresholdeModal).modal('show'); // Use jQuery to show the modal
+//     } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//     }
+// }
     const veteranServicefunction = async() => {
         console.log("openMModelV called");
         veteranRef.value.openModal();

@@ -13,7 +13,7 @@
                 <input type="hidden" name="form_name" value="text_form">
                 <input type="hidden" name="content_title" value="text_form">
                 <input type="hidden" name="template_type_id" value="2"> 
-                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+                <input type="hidden" name="timearr[form_start_time]"  class="timearr form_start_time" :value="time">
                 <div class="card">
                     <div class="card-body">
                         <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
@@ -75,14 +75,16 @@ export default {
         async submitTextForm(){
             let myForm = document.getElementById('text_form'); 
             let formData = new FormData(myForm);
-          axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
           try {
 				this.formErrors = {};
 				const response = await axios.post('/ccm/monthly-monitoring-text', formData);
 				if (response && response.status == 200) {
 					this.showAlert = true;
                     updateTimer(this.patientId, 1, this.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
+                        this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;
 					}, 3000);
 				}
