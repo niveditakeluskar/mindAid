@@ -44,13 +44,17 @@ class VoipWebHookController extends Controller
 
 			$dtarr = preg_split('/\s+/', $datetime);;
 			//print_r($dtarr);
+			if(str_contains($dtarr[0],'-')){
+				$dateString = $datetime;
+			}else{
+				$Y = substr($dtarr[0],  -4);
+				$M = substr($dtarr[0], 2, 2);
+				$D = substr($dtarr[0], 0, 2);
 
-			$Y = substr($dtarr[0],  -4);
-			$M = substr($dtarr[0], 2, 2);
-			$D = substr($dtarr[0], 0, 2);
-
-			$time = date("G:i", strtotime($dtarr[1]));
-			$dateString = $Y . '-' . $M . '-' . $D . ' ' . $time . ':00';
+				$time = date("G:i", strtotime($dtarr[1]));
+				$dateString = $Y . '-' . $M . '-' . $D . ' ' . $time . ':00';
+			}	
+			
 			$recordingfilename = $request->recordingfilename;
 			// dd($content); 
 			$newcontent = json_encode($content);
