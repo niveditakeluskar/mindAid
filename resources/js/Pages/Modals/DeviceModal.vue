@@ -5,26 +5,28 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Add Devices</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" @click="closeModal">×</button>
             </div>
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
-                <form name="devices_form" id="devices_form">
+                <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
                         <input type="hidden" name="patient_id" :value="patientId" />
                         <input type="hidden" name="uid" :value="patientId">
                         <input type="hidden" name="start_time" :value="'00:00:00'" >
                         <input type="hidden" name="end_time" :value="'00:00:00'">
                         <input type="hidden" name="module_id" :value="moduleId" />
                         <input type="hidden" name="component_id" :value="componentId" />
-                        <input type="hidden" name="stage_id" value="" />
+                        <input type="hidden" name="stage_id" :value="deviceStageId" />
                         <input type="hidden" name="form_name" value="devices_form">
                         <input type="hidden" name="idd" id="idd">
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
                         <div class="row">
                             <div id="devices_success"></div>
                             <div class="col-md-12 form-group">
                                 <label>Devices ID<span class='error'>*</span></label>
                                 <input type="text" class="form-control" name="device_id" id="device_id">
                                 <div class="invalid-feedback"></div>
+                                <div class="invalid-feedback" v-if="formErrors.device_id" style="display: block;">{{ formErrors.device_id[0] }}</div>
                             </div>
                             <!-- <div class="col-md-6 form-group">
                                 <label>Devices<span class='error'>*</span></label>
@@ -34,16 +36,26 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>Partners<span class='error'>*</span></label>
-                              
+                                <select class="custom-select show-tick"  name="partner_id">
+                            <option v-for="item in partnersOption" :key="item.id" :value="item.id">
+                             {{ item.partner_id }}
+                            </option>
+                            </select>
+                            <div class="invalid-feedback" v-if="formErrors.partner_id" style="display: block;">{{ formErrors.partner_id[0] }}</div>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Partner Devices<span class='error'>*</span></label>
-                             
+                                <select class="custom-select show-tick"  name="partner_devices_id">
+                            <option v-for="item in partnersDeviceOption" :key="item.id" :value="item.id">
+                             {{ item.device_name }}
+                            </option>
+                            </select>
+                            <div class="invalid-feedback" v-if="formErrors.partner_devices_id" style="display: block;">{{ formErrors.partner_devices_id[0] }}</div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary float-right submit-add-patient-devices">Submit</button>
-                            <button type="button" class="btn btn-default float-left" onclick="devicesclear()" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary float-right submit-add-patient-devices">Submit</button>
+                            <button type="button" class="btn btn-default float-left" @click="closeModal">Close</button>
                         </div>
                     </form>
                 <div class="separator-breadcrumb border-top"></div>
@@ -101,6 +113,8 @@ export default {
         },
     },
     setup(props) {
+        const partnersOption = ref([]);
+        const partnersDeviceOption = ref([]);
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
         const selectedDiagnosisId = ref('');
@@ -115,11 +129,13 @@ export default {
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
         const goalsText = ref(''); // Use ref for the concatenated goals string
-        const selectedDiagnosis = ref('');
+        const selectedPartnerId = ref('');
         const selectedCode = ref('');
         const rowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
-        let diagnosisOptions = ref([]);
+        const medicationTime =ref('');
+        const deviceStageId = ref(0);
+
         let codeOptions = ref([]);
         let selectedMedication = ref('');
         const gridApi = ref(null);
@@ -212,16 +228,34 @@ export default {
             domLayout: 'autoHeight', // Adjust the layout as needed
         });
 
-        let medicationTime = ref(null);
-        let medicationStageId = ref(0);
-        let stepID = ref(0);
+        const fetchDeviceList = async () => {
+            try {
+                loading.value = true;
+                //await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                const response = await fetch(`/patients/device-deviceslist/${props.patientId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch followup task list');
+                }
+                loading.value = false;
+                const data = await response.json();
+                // Check if data.data is not undefined before assigning it to rowData
+                if (data.data) {
+                    rowData.value = data.data;
+                } else {
+                    console.error('Data is undefined in the response:', data);
+                }
+            } catch (error) {
+                console.error('Error fetching followup task list:', error);
+                loading.value = false;
+            }
+        };
 
         const editPatientDignosis = async (id) => {
             clearGoals();
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
-                //diagnosisOptions
+          
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
@@ -232,7 +266,7 @@ export default {
                     goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
                 }
                 selectedDiagnosisId.value = carePlanData.diagnosis;
-                selectedDiagnosis.value = carePlanData.diagnosis;
+                selectedPartnerId.value = carePlanData.diagnosis;
                 selectedCode.value = carePlanData.code;
                 selectedcondition.value = carePlanData.condition;
                 comments.value = carePlanData.comments;
@@ -290,19 +324,9 @@ export default {
                         throw new Error(`Failed to delete care plan - ${response.status} ${response.statusText}`);
                     }
                     const responseData = await response.json();
-                    /*   if (module === 'care-plan-development') {
-                        CompletedCheck();
-                        renderDiagnosisTable();
-                        util.getPatientCareplanNotes(props.patientId, props.moduleId);
-                        util.getPatientStatus(props.patientId, props.moduleId);
-                      } else {
-                        renderDiagnosisTableData();
-                        util.getPatientCareplanNotes(props.patientId, props.moduleId);
-                        util.getPatientStatus(props.patientId, props.moduleId);
-                      } */
-                    clearGoals();
+                  
                     alert("Deleted Successfully");
-                    fetchCarePlanFormList();
+            
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
                     /* document.getElementById('time-container').textContent = AppStopwatch.pauseClock; */
@@ -315,45 +339,20 @@ export default {
             }
         };
 
-
-        const fetchCarePlanFormList = async () => {
-            try {
-                loading.value = true;
-                //await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/patients/device-deviceslist/${props.patientId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch followup task list');
-                }
-                loading.value = false;
-                const data = await response.json();
-                // Check if data.data is not undefined before assigning it to rowData
-                console.log(data.data);
-                if (data.data) {
-                    rowData.value = data.data;
-                } else {
-                    console.error('Data is undefined in the response:', data);
-                }
-            } catch (error) {
-                console.error('Error fetching followup task list:', error);
-                loading.value = false;
-            }
-        };
-
-        const submitCarePlanForm = async () => {
+        const submitDeviceForm = async () => {
             isLoading.value = true;
-            let myForm = document.getElementById('care_plan_form');
+            let myForm = document.getElementById('devices_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
-                const response = await axios.post('/ccm/care-plan-development-diagnosis-save', formData);
+                const response = await axios.post('/patients/master-devices', formData);
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
-                    fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    document.getElementById("care_plan_form").reset();
+                    document.getElementById("devices_form").reset();
                     setTimeout(() => {
                         showSuccessAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
@@ -361,7 +360,6 @@ export default {
                 }
                 isLoading.value = false;
             } catch (error) {
-
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -372,261 +370,62 @@ export default {
             // this.closeModal();
         };
 
-        const handleDiagnosisChange = () => {
-            clearGoals();
-            nextTick(() => {
-                additionalgoals();
-                additionalsymptoms();
-                additionaltasks();
-                isSaveButtonDisabled.value = false;
-            });
-        };
 
-        const handleCodeAlert = () => {
-            alert("Are you sure you want to change the code?");
-            if (selectedDiagnosis.value === '') {
-                alert('please selecte condition!');
-            };
-        }
-        let fetchDiagnosis = async () => {
+      
+        const fetchPartnerId = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/diagnosis-conditions`);
+                const response = await fetch(`/patients/get-activePartner`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch diagnosis list');
                 }
-                const diagnosisData = await response.json();
-                const diagnosisArray = Object.entries(diagnosisData).map(([id, description]) => ({ id, description }));
-                diagnosisOptions.value = diagnosisArray;
+                const partnerData = await response.json();
+                partnersOption.value = Object.entries(partnerData).map(([id, partner_id]) => ({ id, partner_id }));
+               
             } catch (error) {
                 console.error('Error fetching diagnosis list:', error);
             }
         };
 
-        let fetchCode = async () => {
+        const fetchPartnerDeviceId = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/activediagnosis-code`);
+                const response = await fetch(`/patients/get-partner_devices`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch code list');
+                    throw new Error('Failed to fetch diagnosis list');
                 }
-                const codeData = await response.json();
-                const codeArray = Object.entries(codeData).map(([description, code]) => ({ description, code }));
-                codeOptions.value = codeArray;
-
+                const partnersDeviceOptionData = await response.json();
+                partnersDeviceOption.value = Object.entries(partnersDeviceOptionData).map(([id, device_name]) => ({ id, device_name }));
+        
             } catch (error) {
-                console.error('Error fetching code list:', error);
+                console.error('Error fetching diagnosis list:', error);
             }
         };
 
         let getStageID = async () => {
             try {
-                let medicationSageName = 'Preparation';
-                let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${medicationSageName}`);
-                medicationStageId = response.data.stageID;
-                console.log("care plan stage id", medicationStageId);
-                getStepID(medicationStageId);
+                const stageName = 'devices form';
+                let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
+                deviceStageId = response.data.stageID;
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
         };
 
-        let getStepID = async (sid) => {
-            try {
-                let stepname = 'Care Plan';
-                let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                stepID = response.data.stepID;
-                console.log("stepIDstepID", stepID);
-            } catch (error) {
-                throw new Error('Failed to fetch stageID');
-            }
-        };
-
-        const getDiagnosisIdfromPatientdiagnosisid = (editid, condition_name, code, formName, patientId) => {
-            if (!editid) {
-                return;
-            }
-            axios({
-                method: 'GET',
-                url: `/org/ajax/diagnosis/${editid}/${patientId}/${condition_name}/${code}/editpatientdiagnosisId`,
-            }).then(response => {
-
-                if (response.data > 0) {
-                    // Your code for when count is greater than 0
-                    alert(formName);
-                    $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", true);
-                    $("form[name='" + formName + "'] #goals_0").prop("disabled", true);
-                    $("form[name='" + formName + "'] #tasks_0").prop("disabled", true);
-                    $("form[name='" + formName + "']  .symptoms ").prop("disabled", true);
-                    $("form[name='" + formName + "']  .goals ").prop("disabled", true);
-                    $("form[name='" + formName + "']  .tasks  ").prop("disabled", true);
-                    $("form[name='" + formName + "']  #append_symptoms_icons  ").hide();
-                    $("form[name='" + formName + "']  #append_goals_icons  ").hide();
-                    $("form[name='" + formName + "']  #append_tasks_icons  ").hide();
-                    $("form[name='" + formName + "']  .removegoals  ").hide();
-                    $("form[name='" + formName + "']  .removesymptoms  ").hide();
-                    $("form[name='" + formName + "']  .removetasks  ").hide();
-                } else {
-                    // Your code for when count is 0
-                    $("form[name='" + formName + "'] #hiddenenablebutton").val(1);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #goals_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #tasks_0").prop("disabled", false);
-                    $("form[name='" + formName + "']  .symptoms ").prop("disabled", false);
-                    $("form[name='" + formName + "']  .goals ").prop("disabled", false);
-                    $("form[name='" + formName + "']  .tasks  ").prop("disabled", false);
-                    $("form[name='" + formName + "']  #append_symptoms_icons  ").show();
-                    $("form[name='" + formName + "']  #append_goals_icons  ").show();
-                    $("form[name='" + formName + "']  #append_tasks_icons  ").show();
-                    $("form[name='" + formName + "']  .removegoals  ").show();
-                    $("form[name='" + formName + "']  .removesymptoms  ").show();
-                    $("form[name='" + formName + "']  .removetasks  ").show();
-                }
-            }).catch(error => {
-                console.error(error, error.response);
-            });
-        };
-
-        let inc_tasks = 0;
-        let inc_symptoms = 0;
-        let inc_goals = 0;
-
-        const additionalgoals = () => {
-            if (goals.value.length > 0 && goals.value[0].trim() !== '') {
-                isInitialGoalFilled.value = true;
-            }
-            goals.value.push('');
-        };
-        const removeGoal = (index) => {
-            goals.value.splice(index, 1);
-        };
-        const clearGoals = () => {
-            goals.value = [];
-            tasks.value = [];
-            symptoms.value = [];
-        };
-
-        watchEffect(() => {
-            // Update goalsText whenever goals array changes
-            goals.value = goals.value.filter((goal) => goal.trim() !== '');
-            symptoms.value = symptoms.value.filter((symptom) => symptom.trim() !== '');
-            tasks.value = tasks.value.filter((task) => task.trim() !== '');
-        });
-
-        const additionalsymptoms = () => {
-            if (symptoms.value.length > 0 && symptoms.value[0].trim() !== '') {
-                isInitialSymptomFilled.value = true;
-            }
-            symptoms.value.push('');
-        }
-        const removeSymptoms = (index) => {
-            symptoms.value.splice(index, 1);
-        };
-        const clearSymptoms = () => {
-            symptoms.value = [];
-        };
-
-        const additionaltasks = () => {
-            if (tasks.value.length > 0 && tasks.value[0].trim() !== '') {
-                isInitialTaskFilled.value = true;
-            }
-            tasks.value.push('');
-        };
-
-        const removeTasks = (index) => {
-            tasks.value.splice(index, 1);
-        };
-        const clearTasks = () => {
-            tasks.value = [];
-        };
-
-        const changeCondition = (formName) => {
-            isLoading.value = true;
-            // Ensure formName is a string
-            if (typeof formName !== 'string') {
-                console.error('Invalid formName:', formName);
-                isLoading.value = false;
-                return;
-            }
-            $("form[name='" + formName + "'] #editdiagnoid").val();
-            var editid = $("form[name='" + formName + "'] #editdiagnoid").val();
-            $("form[name='diagnosis_code_form'] #editdiagnoid").val(editid);
-            $("form[name='care_plan_form'] #editdiagnoid").val(editid); // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
-            // $("form[name='" + formName + "'] #disable_diagnosis_button").hide();
-            let currentPatientId = props.patientId;
-            var id = selectedDiagnosis.value;
-            var condition_name = $("form[name='" + formName + "'] #diagnosis_condition option:selected").text();
-            var code = $("form[name='" + formName + "'] #diagnosis_code").val();
-            getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
-            $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
-            $("form[name='" + formName + "'] #diagnosis_code").val("");
-            $("form[name='" + formName + "'] #append_symptoms").html("");
-            $("form[name='" + formName + "'] #append_goals").html("");
-            $("form[name='" + formName + "'] #append_tasks").html("");
-            $("form[name='" + formName + "'] #symptoms_0").val("");
-            $("form[name='" + formName + "'] #goals_0").val("");
-            $("form[name='" + formName + "'] #tasks_0").val("");
-            $("form[name='" + formName + "'] #support").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").text('');
-            //let DiagnosisFormPopulateURL = '/ccm/get-all-code-by-id/' + id + '/' + currentPatientId + '/diagnosis';
-
-            if (typeof id === "string" && id.trim().length === 0) {
-                isLoading.value = false;
-                alert("Please select Condition options");
-            } else {
-                axios({
-                    method: 'GET',
-                    url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
-                }).then(response => {
-                    clearGoals();
-                    const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
-                    if (carePlanData && carePlanData.goals) {
-                        goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
-                    }
-                    if (carePlanData && carePlanData.tasks) {
-                        tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
-                    }
-                    if (carePlanData && carePlanData.symptoms) {
-                        symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
-                    }
-                    isLoading.value = false;
-                }).catch(error => {
-                    console.error(error, error.response);
-                });
-            }
-
-
-            //populateForm(currentPatientId, DiagnosisFormPopulateURL);
-
-            if (id == null || id == '' || id == "") {
-                isSaveButtonDisabled.value = true;
-
-                $("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", true);
-            } else {
-                isSaveButtonDisabled.value = false;
-                $("form[name='" + formName + "'] #save_diagnosis_form").prop("disabled", false);
-            }
-
-        };
-
+      
         onBeforeMount(() => {
             popupParent.value = document.body;
+   
         });
+
         const onFirstDataRendered = (params) => {
             params.api.paginationGoToPage(1);
         };
 
         onMounted(async () => {
-            fetchCarePlanFormList();
-            fetchDiagnosis();
-            fetchCode();
-            getStageID();
-            additionalgoals();
-            additionalsymptoms();
-            additionaltasks();
+            fetchPartnerId();  
+            fetchPartnerDeviceId();
+            fetchDeviceList();
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
                 console.log("medication time", medicationTime);
@@ -636,6 +435,10 @@ export default {
         });
 
         return {
+            partnersDeviceOption,
+            fetchPartnerDeviceId,
+            fetchPartnerId,
+            fetchDeviceList,
             isSaveButtonDisabled,
             selectedDiagnosisId,
             comments,
@@ -652,16 +455,13 @@ export default {
             onGridReady,
             paginationPageSizeSelector,
             paginationNumberFormatter,
-            diagnosisOptions,
+            partnersOption,
             codeOptions,
             selectedMedication,
             medicationTime,
-            medicationStageId,
-            selectedDiagnosis,
-            handleDiagnosisChange,
-            handleCodeAlert,
+            deviceStageId,
+            selectedPartnerId,
             formErrors,
-            stepID,
             goals,
             tasks,
             symptoms,
@@ -669,19 +469,7 @@ export default {
             isInitialTaskFilled,
             isInitialSymptomFilled,
             goalsText,
-            submitCarePlanForm,
-            fetchCarePlanFormList,
-            getDiagnosisIdfromPatientdiagnosisid,
-            changeCondition,
-            additionalgoals,
-            additionaltasks,
-            additionalsymptoms,
-            removeGoal,
-            clearGoals,
-            removeTasks,
-            clearTasks,
-            removeSymptoms,
-            clearSymptoms,
+            submitDeviceForm,
             isLoading,
             showSuccessAlert,
             selectedEditDiagnosId,

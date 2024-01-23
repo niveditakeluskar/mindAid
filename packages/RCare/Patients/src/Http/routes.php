@@ -201,6 +201,8 @@ Route::middleware(["auth", "web"])->group(function () {
         
         Route::get('/getcontent-template', 'RCare\Patients\Http\Controllers\PatientWorklistController@getContentTemplate');
 
+        Route::get("/get-partner_devices", "RCare\Patients\Http\Controllers\PatientWorklistController@partnerDevicesList");
+
 
         Route::get('/gettime', function () {
             $inputTimeData = Form::input('text', 'hh:mm:ss'); // worklistPractices() fetches practices

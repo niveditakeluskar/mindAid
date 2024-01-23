@@ -275,9 +275,8 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]"
-                                                                            class="timearr form_start_time"
-                                                                            value="01-17-2024 08:50:16"><input type="hidden"
+                                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
+                                                                            <input type="hidden"
                                                                             name="timearr['form_save_time']"
                                                                             class="form_save_time"><input type="hidden"
                                                                             name="timearr['pause_start_time']"><input

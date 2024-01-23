@@ -38,7 +38,7 @@ use Inertia\Inertia;
 use RCare\Org\OrgPackages\Partner\src\Models\Partner;
 use Auth;
 use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
-
+use RCare\Rpm\Models\Partner_Devices;
 class PatientWorklistController extends Controller
 {
 
@@ -73,6 +73,19 @@ class PatientWorklistController extends Controller
         return response()->json($options);
     }
 
+    public function partnerDevicesList()
+    {
+        $options = [];
+
+        foreach (Partner_Devices::all() as $partnerdevice) {
+            $options[$partnerdevice->id] = $partnerdevice->device_name;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+    
     public function getUserListData(Request $request)
     {
 

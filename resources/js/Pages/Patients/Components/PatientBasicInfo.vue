@@ -37,7 +37,7 @@
                                             Veteran Service -
                                             <span>Unknown</span>
                                         </a>
-                                        <Veteran ref="veteranRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        
                                         
                                     </div>
                                     <div class="col-md-3 right-divider">
@@ -54,8 +54,8 @@
                                             title="Address" style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress" ></span>
                                         </span><br>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
-                                        <AlertThresholds ref="alertThresholdsRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1">Alert Thresholds</a>
+                                       
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Practice"
@@ -81,25 +81,25 @@
                                             data-original-title="Patient Enrollment Status" id="PatientStatus">
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='1'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
+                                            <a @click="() => patientServiceStatus('1')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
                                         
                                         <span patient_enroll_date v-if = "patient_module_status=='0'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
+                                            <a @click="() => patientServiceStatus('0')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>
                                             </a>
                                             Form :  <span :textContent="suspended_from_date"></span>
                                             To :    <span :textContent="suspended_to_date"></span>
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='2'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
+                                            <a @click="() => patientServiceStatus('2')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='3'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
+                                            <a @click="() => patientServiceStatus('3')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>
                                             </a>
                                         </span>
@@ -108,13 +108,14 @@
                                             <i class="text-muted i-Library"></i> :
                                             <span v-for="(service, index) in enrolledServices" :key="index" v-html="service"></span>
                                         </span>
-                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_additional_devicesfunction">
+                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_devicesfunction">
                                         <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <AddDevicezModalz ref="AddDevicezModalzRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
                                         <br/>
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="add-patient-devices" @click="add_devicesfunction">Devices</a>
-                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
+                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        
                                         
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
@@ -204,13 +205,9 @@ import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import axios from 'axios';
-import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
-import Veteran from '../../Modals/VeteranService.vue';
 import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
-import AddDevicezModalz from '../../Modals/AddDevicezModalz.vue';
-import AdditionalDevices from '../../Modals/AdditionalDevices.vue';
-import PersonalNotes from '../../Modals/PersonalNotes.vue'; 
-import ResearchStudy from '../../Modals/ResearchStudy.vue';
+import DeviceModal from '../../Modals/DeviceModal.vue';
+import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
 export default {
     props: {
 		patientId: Number,
@@ -222,23 +219,16 @@ export default {
     patientEnrolledServices:[],
 	},
   components: {
-    AlertThresholds,
-    Veteran,
-    PersonalNotes,
-    ResearchStudy,
-    AdditionalDevices,
     AddDeviceModal,
-    AddDevicezModalz,
+    DeviceModal,
   },
   setup(props) {
-    const alertThresholdsRef = ref();
+    const { callExternalFunctionWithParams } = patientStatus.setup();
     const veteranRef = ref();
     const add_devicesRef = ref();
     const additional_devicesRef = ref();
     const AddDeviceModalRef =ref();
-    const AddDevicezModalzRef =ref();
-    const personalnotesRef = ref();
-    const researchstudyRef = ref();
+    const DeviceModalRef =ref();
     const patientName = ref();
     const patientGender = ref();
     const patientAge = ref();
@@ -273,42 +263,11 @@ var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
 
-const patientServiceStatus = async()=>{
-    const patientServiceModal = document.getElementById('active-deactive');
-    var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-    if (patientServiceModal) { 
-        $(patientServiceModal).modal('show'); // Use jQuery to show the modal
-    } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-    }
-}
-    const veteranServicefunction = async() => {
-        console.log("openMModelV called");
-        veteranRef.value.openModal();
-        // patComDetails();
-    }
+    const patientServiceStatus = async(pstatus)=>{
+        callExternalFunctionWithParams(props.patientId,pstatus);
+        }
 
-    const alertThresholdfunction = async() => {
-      // Access the modal component through the ref
-      console.log("openMModel called");
-      alertThresholdsRef.value.openModal();
-    //   patComDetails();
-    };
 
-    
-    const personalnotesfunction = async() => {
-        console.log("openMModelpersonal notes called");
-        personalnotesRef.value.openModal();
-        // patComDetails();
-    };
-    
-    const researchstudyfunction = async() =>{
-        console.log("openModelResearchStudy");
-        researchstudyRef.value.openModal();
-        // patComDetails();
-    };
 
     const add_devicesfunction = async() =>{
         console.log("openModeladdDevices");
@@ -317,65 +276,9 @@ const patientServiceStatus = async()=>{
 
     const add_additional_devicesfunction = async() =>{
         //additional_devicesRef.value.openModal();
-        AddDevicezModalzRef.value.openModal();
+        DeviceModalRef.value.openModal();
     };
 
-
-//     const add_additional_devicesfunction = async() =>{
-//     const AdditionalDeviceModal = document.getElementById('additional-device');
-//       if (AdditionalDeviceModal) { 
-//         var sPageURL = window.location.pathname;
-//         parts = sPageURL.split("/"),
-//         $(".patient_id").val(parts[parts.length - 1]);
-//         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-// }
-
-const patient_finnumber_function = async()=>{
-    const FinNumberModal = document.getElementById('patient-finnumber');
-    var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-      if (FinNumberModal) { 
-        $(FinNumberModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-      patComDetails();
-
-}
-
-// const personalnotesfunction = async() => {
-    
-//     console.log('dadasdasdasdasdas'+personalnotesfunction);
-//     var sPageURL = window.location.pathname;
-//     parts = sPageURL.split("/"),
-//     $(".patient_id").val(parts[parts.length - 1]);
-//     const PersonalNotesModal = document.getElementById('personal-notes');
-//     if (PersonalNotesModal) {
-//         $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
-//     } else {
-//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//     }
-//     patComDetails();
-    
-// }
-
-// const researchstudyfunction = async() => { 
-//     const ResearchStudyModal = document.getElementById('part-of-research-study');
-//     var sPageURL = window.location.pathname;
-//     parts = sPageURL.split("/"),
-//     $(".patient_id").val(parts[parts.length - 1]);
-//     if (ResearchStudyModal) {
-//         $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
-//     } else {
-//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//     }
-//     patComDetails();
-    
-// }
 
 const patientVeteranServiceModalDetails = async()=>{ 
     try {
@@ -483,20 +386,14 @@ onMounted(async () => {
 });
 
     return {
+        patientServiceStatus,
         AddDeviceModalRef,
-        AddDevicezModalzRef,
-      alertThresholdfunction,
-      alertThresholdsRef,
-      veteranServicefunction,
+        DeviceModalRef,
       veteranRef,
       add_devicesfunction,
       add_devicesRef,
       add_additional_devicesfunction,
       additional_devicesRef,
-      personalnotesfunction,
-      personalnotesRef,
-      researchstudyfunction,
-      researchstudyRef,
       patientName,
       patientGender,
       patientAge,
@@ -520,18 +417,6 @@ onMounted(async () => {
 };
 
 
-// const add_devicesfunction = async() => {
-//     const DeviceModal = document.getElementById('add-patient-devices');
-//       if (DeviceModal) { 
-//         var sPageURL = window.location.pathname;
-//         parts = sPageURL.split("/"),
-//         $(".patient_id").val(parts[parts.length - 1]);
-//         $(DeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//     // patientVeteranServiceModalDetails();
-// }
 /* 
 function countDownFunc(patientId, moduleId, start_time) {
     axios({

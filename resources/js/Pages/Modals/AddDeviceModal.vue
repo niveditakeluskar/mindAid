@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Add Devices</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
@@ -143,7 +143,6 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     alert("Saved Successfully");
-             
                 /*     updateTimer(props.patientId, '1', props.moduleId); */
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("patient_add_device_form").reset();
@@ -257,8 +256,6 @@ export default {
                 let templateName = 'Email';
                 let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${templateName}`);
                 emailStageId.value = response.data.stageID;
-                console.log("care plan stage id", medicationStageId);
-                getStepID(medicationStageId);
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
