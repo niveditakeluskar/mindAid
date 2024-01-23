@@ -1,5 +1,5 @@
 <template>
-  <LayoutComponent>
+  <LayoutComponent ref="layoutComponentRef">
     <div>
       <div class="breadcrusmb">
         <div class="row" style="margin-top: 10px">
@@ -94,51 +94,46 @@
       <div class="row mb-4">
         <div class="col-md-12 mb-4">
           <div class="card text-left">
-          <div class="card-body">
+            <div class="card-body">
 
-         <div v-if="loading" class="table-responsive loading-spinner">
-              <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
-      <i class="fas fa-spinner fa-pulse"></i> <span>One Moment Please...............</span>
-      </div>
+              <div v-if="loading" class="table-responsive loading-spinner">
+                <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
+                  <i class="fas fa-spinner fa-pulse"></i> <span>One Moment Please...............</span>
+                </div>
               </div>
-              <div  v-else  style="height: 100vh;">
+              <div v-else style="height: 100vh;">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="quick-filter"></div>
+                  <div class="quick-filter"></div>
 
-            <div class="ml-auto"> <!-- This div aligns elements to the right -->
-              <div class="oval-search-container">
-                <input type="text" id="filter-text-box" placeholder="Search..." v-model="filterText" @input="onFilterTextBoxChanged">
-                <img src="/assets/images/search.png" class="search-icon" alt="search">
-              </div>
-              <img src="/assets/images/excel_icon.png" width="20" v-on:click="onBtnExport()" alt="excel">
-              <img src="/assets/images/pdf_icon.png" width="20" @click="exportAsPDF" alt="export pdf" data-toggle="tooltip" data-placement="top" title="pdf" data-original-title="PDF">
-              <img src="/assets/images/copy_icon.png" width="20" @click="copySelectedRows" alt="copy" data-toggle="tooltip" data-placement="top" title="copy" data-original-title="Copy">
-            </div>
-          </div>
-              <!--   <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
+                  <div class="ml-auto"> <!-- This div aligns elements to the right -->
+                    <div class="oval-search-container">
+                      <input type="text" id="filter-text-box" placeholder="Search..." v-model="filterText"
+                        @input="onFilterTextBoxChanged">
+                      <img src="/assets/images/search.png" class="search-icon" alt="search">
+                    </div>
+                    <img src="/assets/images/excel_icon.png" width="20" v-on:click="onBtnExport()" alt="excel">
+                    <img src="/assets/images/pdf_icon.png" width="20" @click="exportAsPDF" alt="export pdf"
+                      data-toggle="tooltip" data-placement="top" title="pdf" data-original-title="PDF">
+                    <img src="/assets/images/copy_icon.png" width="20" @click="copySelectedRows" alt="copy"
+                      data-toggle="tooltip" data-placement="top" title="copy" data-original-title="Copy">
+                  </div>
+                </div>
+                <!--   <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
                   style="width:100%">
                 </table> -->
                 <!-- Ag-Grid Vue component -->
-                <ag-grid-vue
-      style="width: 100%; height: 95%;"
-      class="ag-theme-quartz-dark"
-      :gridOptions="gridOptions"
-      :defaultColDef="defaultColDef"
-      :columnDefs="columnDefs"
-      :rowData="rowData"
-      @grid-ready="onGridReady"
-                :suppressExcelExport="true"
-                :popupParent="popupParent"
-                ></ag-grid-vue>
+                <ag-grid-vue style="width: 100%; height: 95%;" class="ag-theme-quartz-dark" :gridOptions="gridOptions"
+                  :defaultColDef="defaultColDef" :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady"
+                  :suppressExcelExport="true" :popupParent="popupParent"></ag-grid-vue>
               </div>
 
-        </div>
-      </div> <!--End of card-->
+            </div>
+          </div> <!--End of card-->
 
         </div>
       </div>
- 
+
     </div>
 
   </LayoutComponent>
@@ -155,6 +150,7 @@ import {
   onBeforeMount,
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
+import patientStatus from './Modals/patientStatus.vue'; // Import your layout component
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -166,6 +162,8 @@ export default {
     AgGridVue,
   },
   setup() {
+    const { callExternalFunctionWithParams } = patientStatus.setup();
+    const layoutComponentRef = ref(null);
     const gridApi = ref(null);
     const gridColumnApi = ref(null);
     const filterText = ref('');
@@ -209,7 +207,7 @@ export default {
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
-  
+
       } catch (error) {
         console.error('Error on page load:', error);
       }
@@ -219,27 +217,28 @@ export default {
     const onBtnExport = () => {
       const fileName = 'Renova Healthcare'; // Replace 'custom_filename' with your desired file name
       const params = {
-    fileName: fileName,
-    processCellCallback: (params) => {
-      // Remove HTML tags from cell values
-      if (params.value && typeof params.value === 'string') {
-        const div = document.createElement('div');
-        div.innerHTML = params.value;
-        return div.textContent || div.innerText || '';
-      }
-      return params.value;
-    },
-  };
-  gridApi.value.exportDataAsCsv(params);
+        fileName: fileName,
+        processCellCallback: (params) => {
+          // Remove HTML tags from cell values
+          if (params.value && typeof params.value === 'string') {
+            const div = document.createElement('div');
+            div.innerHTML = params.value;
+            return div.textContent || div.innerText || '';
+          }
+          return params.value;
+        },
+      };
+      gridApi.value.exportDataAsCsv(params);
     };
     const onBtnUpdate = () => {
       document.querySelector('#csvResult').value = gridApi.value.getDataAsCsv();
-      
+
     };
 
     const onGridReady = (params) => {
       gridApi.value = params.api; // Set the grid API when the grid is ready
       gridColumnApi.value = params.columnApi;
+	  params.api.sizeColumnsToFit(); 
     };
 
     const copySelectedRows = () => {
@@ -271,54 +270,54 @@ export default {
     };
 
     function sanitizeDataForPDFExport(data) {
-  if (typeof data === 'string') {
-    // Remove HTML tags from the string
-    return data.replace(/<[^>]*>?/gm, '');
-  }
-  return data;
-};
-
-function exportAsPDF() {
-  const doc = new jsPDF();
-
-  // Extracting column headers
-  const columns = columnDefs.value.map((columnDef) => columnDef.headerName);
-
-  // Extracting row data in a format compatible with autoTable
-  const rows = rowData.value.map((row) => {
-    // Generating an array containing values for each column in the row
-    const rowDataArray = columns.map((col) => {
-      switch (col) {
-        case 'Sr. No.':
-          return rowData.value.indexOf(row) + 1;
-        case 'Patient Name':
-          return `${row['pfname']} ${row['plname']}`;
-        case 'DOB':
-          // Assuming 'pdob' contains a date string
-          const date = row['pdob'];
-          if (!date) return null;
-          return new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          });
-        // You can add cases for other columns as required
-        default:
-          // For other columns, sanitize the data and return
-          return sanitizeDataForPDFExport(row[col.toLowerCase()]);
+      if (typeof data === 'string') {
+        // Remove HTML tags from the string
+        return data.replace(/<[^>]*>?/gm, '');
       }
-    });
+      return data;
+    };
 
-    return rowDataArray;
-  });
+    function exportAsPDF() {
+      const doc = new jsPDF();
 
-  doc.autoTable({
-    head: [columns],
-    body: rows,
-  });
+      // Extracting column headers
+      const columns = columnDefs.value.map((columnDef) => columnDef.headerName);
 
-  doc.save('Renova_Healthcare.pdf');
-};
+      // Extracting row data in a format compatible with autoTable
+      const rows = rowData.value.map((row) => {
+        // Generating an array containing values for each column in the row
+        const rowDataArray = columns.map((col) => {
+          switch (col) {
+            case 'Sr. No.':
+              return rowData.value.indexOf(row) + 1;
+            case 'Patient Name':
+              return `${row['pfname']} ${row['plname']}`;
+            case 'DOB':
+              // Assuming 'pdob' contains a date string
+              const date = row['pdob'];
+              if (!date) return null;
+              return new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              });
+            // You can add cases for other columns as required
+            default:
+              // For other columns, sanitize the data and return
+              return sanitizeDataForPDFExport(row[col.toLowerCase()]);
+          }
+        });
+
+        return rowDataArray;
+      });
+
+      doc.autoTable({
+        head: [columns],
+        body: rows,
+      });
+
+      doc.save('Renova_Healthcare.pdf');
+    };
 
 
 
@@ -326,106 +325,111 @@ function exportAsPDF() {
     const onFilterTextBoxChanged = () => {
       if (gridApi.value) {
         gridApi.value.setGridOption(
-        'quickFilterText',
-        filterText.value
-      );
+          'quickFilterText',
+          filterText.value
+        );
       }
     };
 
     // Define a custom cell renderer function
-const customCellRenderer = (params) => {
-  const row = params.data;
-  if (row && row.action) {
-    return row.action; // Returning the HTML content as provided from the controller
-  } else {
-    return ''; // Or handle the case where the 'action' value is not available
-  }
-};
+    const customCellRenderer = (params) => {
+      const row = params.data;
+      if (row && row.action) {
+        return row.action; // Returning the HTML content as provided from the controller
+      } else {
+        return ''; // Or handle the case where the 'action' value is not available
+      }
+    };
 
     // Define a custom cell renderer function
     const customCellRendererstatus = (params) => {
-  const row = params.data;
-  if (row && row.activedeactive) {
-    return row.activedeactive; // Returning the HTML content as provided from the controller
-  } else {
-    return ''; // Or handle the case where the 'action' value is not available
-  }
-};
-    const columnDefs  = ref([
+      const row = params.data;
+      if (row && row.activedeactive) {
+        return row.activedeactive; // Returning the HTML content as provided from the controller
+      } else {
+        return ''; // Or handle the case where the 'action' value is not available
+      }
+    };
+    const columnDefs = ref([
       {
-      headerName: 'Sr. No.',
-      valueGetter: 'node.rowIndex + 1',
-    },
-      { headerName: 'EMR No.', field: 'pppracticeemr',filter: true },
+        headerName: 'Sr. No.',
+        valueGetter: 'node.rowIndex + 1',
+		width:20
+      },
+      { headerName: 'EMR No.', field: 'pppracticeemr', filter: true },
       {
         headerName: 'Patient Name',
         field: 'pfname',
-        valueGetter: function (params) {
+        cellRenderer: function (params) {
           const row = params.data;
           return row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
         },
       },
       {
-    headerName: 'DOB',
-    field: 'pdob',
-    valueFormatter: function (params) {
-      const date = params.value; // Assuming pdob contains a date string
-      if (!date) return null;
+        headerName: 'DOB',
+        field: 'pdob',
+        cellRenderer: function (params) {
+          const date = params.value; // Assuming pdob contains a date string
+          if (!date) return null;
 
-      const formattedDate = new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      });
+          const formattedDate = new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          });
 
-      return formattedDate; // Returns the date in MM-DD-YYYY format
-    },
-  },
+          return formattedDate; // Returns the date in MM-DD-YYYY format
+        },
+      },
       { headerName: 'Practice', field: 'pracpracticename' },
       { headerName: 'Last contact Date', field: 'csslastdate' },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
-      { headerName: 'Action', field: 'action' , cellRenderer: customCellRenderer, },
+      { headerName: 'Action', field: 'action', cellRenderer: customCellRenderer, },
       {
         headerName: 'Patient Status',
         field: 'activedeactive'
         , cellRenderer: (params) => {
-        const link = document.createElement('a');
-        const icon = document.createElement('i');
-        icon.classList.add('text-20', 'i-Stopwatch');
-        const { data } = params;
-        if (data.pstatus === 1) {
-          icon.style.color = 'green';
-        } else {
-          icon.style.color = 'red';
-        }
-        link.appendChild(icon);
-        link.classList.add('ActiveDeactiveClass');
-        link.href = 'javascript:void(0)';
-        link.addEventListener('click', () => {
-          callExternalFunctionWithParams(data.pid, data.pstatus);
-        });
-        return link;
-      },
+          const link = document.createElement('a');
+          const icon = document.createElement('i');
+          icon.classList.add('text-20', 'i-Stopwatch');
+          const { data } = params;
+          if (data.pstatus === 1) {
+            icon.style.color = 'green';
+          } else {
+            icon.style.color = 'red';
+          }
+          link.appendChild(icon);
+          link.classList.add('ActiveDeactiveClass');
+          link.href = 'javascript:void(0)';
+          link.addEventListener('click', () => {
+            callExternalFunctionClick(data.pid, data.pstatus); // 'this' refers to the Vue component instance
+          });
+          return link;
+        },
       },
       { headerName: 'Call Score', field: 'pssscore' },
     ]);
 
     const defaultColDef = ref({
-      sortable:true,
-      flex:1,
+      sortable: true,
+      flex: 1,
     });
     const gridOptions = ref({
-        pagination: true,
-        paginationAutoPageSize: true,
-});
-     
+      pagination: true,
+      paginationAutoPageSize: true,
+    });
 
-// Watch for changes in selectedPractice
+
+    // Watch for changes in selectedPractice
     watch(selectedPractice, (newPracticeId) => {
       fetchPatients(newPracticeId);
     });
 
-   
+    const callExternalFunctionClick = (pid, pstatus) => {
+
+        callExternalFunctionWithParams(pid, pstatus);
+
+    };
 
 
     // Similarly, define other methods like fetchPractices, fetchPatients, etc.
@@ -544,146 +548,51 @@ const customCellRenderer = (params) => {
 
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
-  try {
-    const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch patient list');
-    }
-    
-    const reader = response.body.getReader();
-    const contentLength = +response.headers.get('content-length');
-    let receivedLength = 0;
-    let chunks = [];
+      try {
+        const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
 
-    while (true) {
-      const { done, value } = await reader.read();
-      
-      if (done) {
-        break;
-      }
-
-      chunks.push(value);
-      receivedLength += value.length;
-
-      // Process chunks if necessary or concatenate them
-    }
-
-    const concatenated = new Uint8Array(receivedLength);
-    let position = 0;
-
-    for (const chunk of chunks) {
-      concatenated.set(chunk, position);
-      position += chunk.length;
-    }
-
-    // Process or parse the concatenated data
-    const data = JSON.parse(new TextDecoder('utf-8').decode(concatenated));
-
-    // Do something with the data (e.g., assign it to rowData)
-    rowData.value = data.data || [];
-
-  } catch (error) {
-    console.error('Error fetching patient list:', error);
-    loading.value = false;
-  }
-};
-
-    const callExternalFunctionWithParams = (param1, param2) => {
-      const activeDeactiveModal = document.getElementById('active-deactive');
-      if (activeDeactiveModal) {
-        $(activeDeactiveModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-
-      var sPageURL = window.location.pathname;
-      parts = sPageURL.split("/"),
-        patientId = parts[parts.length - 1];
-      if ($.isNumeric(patientId) == true) {
-        //patient list
-        var patientId = $("#hidden_id").val();
-        var module = $("input[name='module_id']").val();
-        var status = $("#service_status").val();
-        $('#enrolledservice_modules').val(module).trigger('change');
-        $('#enrolledservice_modules').change();
-      } else {
-        //worklist 
-        var patientId = param1;
-        var selmoduleId = $("#modules").val();
-        axios({
-        method: "GET",
-        url: `/patients/patient-module/${patientId}/patient-module`,
-    }).then(function (response) {
-        $('.enrolledservice_modules').html('');
-      const  enr = response.data;
-      var count_enroll = enr.length;
-        for (var i = 0; i < count_enroll; i++) {
-            $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch patient list');
         }
-        $("#enrolledservice_modules").val(selmoduleId).trigger('change');
-        // $("#patient-Ajaxdetails-model").html(response.data);
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-        var status = param2;
-        $("form[name='active_deactive_form'] #worklistclick").val("1");
-        $("form[name='active_deactive_form'] #patientid").val(patientId);
-        $("form[name='active_deactive_form'] #date_value").hide();
-        $("form[name='active_deactive_form'] #fromdate").hide();
-        $("form[name='active_deactive_form'] #todate").hide();
-        if (status == 0) {
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").hide();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").show();
+
+        const reader = response.body.getReader();
+        const contentLength = +response.headers.get('content-length');
+        let receivedLength = 0;
+        let chunks = [];
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          chunks.push(value);
+          receivedLength += value.length;
+
+          // Process chunks if necessary or concatenate them
         }
-        if (status == 1) {
-          $("form[name='active_deactive_form'] #role1").hide();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").show();
+
+        const concatenated = new Uint8Array(receivedLength);
+        let position = 0;
+
+        for (const chunk of chunks) {
+          concatenated.set(chunk, position);
+          position += chunk.length;
         }
-        if (status == 2) {
-          // $("form[name='active_deactive_form'] #status-title").text('Activate/Suspend Or Deceased Patient');
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").hide();
-          $("form[name='active_deactive_form'] #role3").show();
-        }
-        if (status == 3) {
-          $("form[name='active_deactive_form'] #role1").show();
-          $("form[name='active_deactive_form'] #role0").show();
-          $("form[name='active_deactive_form'] #role2").show();
-          $("form[name='active_deactive_form'] #role3").hide();
-        }
+
+        // Process or parse the concatenated data
+        const data = JSON.parse(new TextDecoder('utf-8').decode(concatenated));
+
+        // Do something with the data (e.g., assign it to rowData)
+        rowData.value = data.data || [];
+
+      } catch (error) {
+        console.error('Error fetching patient list:', error);
+        loading.value = false;
       }
     };
- // When the Submit button is clicked within the modal
- $('.submit-active-deactive').on('click', function() {
-    // Serialize the form data
-    const formData = $('#active_deactive_form').serialize();
 
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST',
-      url: '/patients/patient-active-deactive',
-      data: formData,
-      success: function(response) {
-        // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#active-deactive').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-  });
     return {
       loading,
       tableInstance,
@@ -704,27 +613,23 @@ const customCellRenderer = (params) => {
       filterText,
       popupParent,
       gridColumnApi,
+      layoutComponentRef,
       exportAsPDF,
       onBtnExport,
       onBtnUpdate,
       onGridReady,
       onFilterTextBoxChanged,
       handleSubmit,
-      callExternalFunctionWithParams,
       handleChange,
       copySelectedRows,
       handleReset,
     };
   },
-
 };
-
-
-
 </script>
 <style>
 @import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css'; /* Use the theme you prefer */
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 .ag-theme-quartz,
 .ag-theme-quartz-dark {
@@ -734,63 +639,17 @@ const customCellRenderer = (params) => {
   --ag-header-background-color: rgb(238, 238, 238);
   --ag-odd-row-background-color: rgb(255, 255, 255);
   --ag-header-column-resize-handle-color: rgb(63, 130, 154);
+  
+  --ag-font-family: Ubuntu,sans-serif;
 
-  --ag-font-size: 17px;
-  --ag-font-family: monospace;
 }
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  /* Adjust as needed */
+.ag-header-cell, .ag-header-group-cell{
+	border-bottom: 2px solid #dee2e6;
 }
-.quick-filter {
-  display: flex;
-  align-items: center;
+.ag-header-cell-label .ag-header-cell-text {
+      word-break: break-word !important;
+	  white-space: normal !important;
+	  text-overflow: clip;
+    overflow: visible;
 }
-
-.export-button {
-  cursor: pointer;
-}
-
-.search-container {
-  display: inline-block;
-  position: relative;
-  border-radius: 50px; /* To create an oval shape, use a large value for border-radius */
-  overflow: hidden;
-  width: 200px; /* Adjust width as needed */
-}
-
-.oval-search-container {
-  position: relative;
-  display: inline-block;
- /*  border: 1px solid #ccc; */ /* Adding a visible border */
-  /* border-radius: 20px; */ /* Adjust border-radius for a rounded shape */
-  /* width: 200px; */ /* Adjust width as needed */
-  margin-right: 10px; /* Adjust margin between the search box and icons */
-}
-
-input[type="text"] {
-  width: calc(100% - 0px); /* Adjust the input width considering the icon */
- /*  border: none; */
-  outline: none;
-  border-radius:10px;
-}
-
-.search-icon {
-  position: absolute;
-  top: 50%;
-  right: 1px;
-  transform: translateY(-50%);
-  width: 20px; /* Adjust icon size as needed */
-  height: auto;
-}
-
-/* Align the export icons properly */
-.ml-auto img {
-  margin-right: 5px; /* Adjust margin between the export icons */
-}
-
 </style>

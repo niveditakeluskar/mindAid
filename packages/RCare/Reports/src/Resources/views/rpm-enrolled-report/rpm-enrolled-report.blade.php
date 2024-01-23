@@ -15,6 +15,12 @@
       text-align: center;    
   }*/
 
+  input.larger {
+        width: 30px;
+        height: 30px;
+        border-color: lightblue;
+      }
+
 </style>
  @section('page-title')
 
@@ -65,10 +71,15 @@
                                 </select>
                         </div>
                         <div class="col-md-2 form-group mb-2">
+                            <label for="enrolled_date_filter">Filter Enrollment Date</label> <br>
+                            <input type="checkbox" class="larger" name="check_enrolled_date" id="check_enrolled_date">
+                            <span class="checkmark"></span>
+                        </div>
+                        <div id="fromDateField" class="col-md-2 form-group mb-2" style="display: none;">
                             <label for="date">From Date</label>
                             @date('date',["id" => "fromdate"])          
                         </div>
-                        <div class="col-md-2 form-group mb-3">
+                        <div id="toDateField" class="col-md-2 form-group mb-3" style="display: none;">
                             <label for="date">To Date</label>
                             @date('date',["id" => "todate"])                     
                         </div>
@@ -266,8 +277,17 @@
                                             <label for="name" class="control-label">Device Code</label><span class="error">*</span>
                                             @text("device_code", ["id" => "device_code", "class" => "form-control capital-first ", "placeholder" => "Enter device code"])
                                         </div>
-                                        
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Partners<span class='error'>*</span></label>
+                                            @selectrpmenrolledpartner("partner_id",["id" => "partner_id"])
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <label>Partner Devices<span class='error'>*</span></label>
+                                            @selectPartnerDevice("partner_devices_id",["id"=>"partner_devices_id"])
+                                        </div> 
+                                    </div>   
                                     <div class="mc-footer">             
                                         <div class="row">
                                             <div class="col-12 text-right form-group mb-4">
@@ -706,7 +726,7 @@ $(document).ready(function(){
     $('#todate').val(currentdate);
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val();
-    getrpmenrolledpatientlist(null,null,null,fromdate1,todate1);    
+    getrpmenrolledpatientlist(null,null,null,null,null);    
 }); 
 
 $("[name='practices']").on("change", function () {
@@ -719,36 +739,68 @@ $("[name='practices']").on("change", function () {
         }else { 
             // util.updatePatientList(parseInt($(this).val()),parseInt(module_id), $("#patient"));
         }
-    });
+});
+
+$('input[type="checkbox"]').click(function(){
+    const toDateField = document.getElementById("toDateField");
+    const fromDateField = document.getElementById("fromDateField");
+    if($(this).prop("checked") == true){
+       $('#check_enrolled_date').val(0);   
+        toDateField.style.display = "block";
+        fromDateField.style.display = "block"; 
+    } else {
+        $('#check_enrolled_date').val(1); 
+        toDateField.style.display = "none";
+        fromDateField.style.display = "none";
+    }
+});
 
 $('#searchbutton').click(function(){
     var practice=$('#practices').val();
     var patient=$('#patient').val();
     var shipping_status=$('#shippingstatus').val();
-    // alert(shipping_status);
+    var check_enrolled_date=$('#check_enrolled_date').val();
     var fromdate1=$('#fromdate').val();
-    var todate1=$('#todate').val(); 
-    getrpmenrolledpatientlist(practice,patient,shipping_status,fromdate1,todate1);   
+    var todate1=$('#todate').val();
+    if(check_enrolled_date == '0'){  
+        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);  
+    }else if(check_enrolled_date == '1') {
+        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);    
+    }else{
+        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);  
+    }
+
+
+    
 });
+
 
 $("#month-reset").click(function(){   
     $('#practices').val('').trigger('change');
     $('#patient').val('').trigger('change'); 
-    var shipping_status=$('#shippingstatus').val();
+    $('#shippingstatus').val('').trigger('change'); 
+    // var shipping_status=$('#shippingstatus').val();
     $('#fromdate').val(firstDayWithSlashes);                         
     $('#todate').val(currentdate);
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val();
-    getrpmenrolledpatientlist(null,null,null,fromdate1,todate1);   
+    getrpmenrolledpatientlist(null,null,null,null,fromdate1,todate1);   
 });
 
 function getrefreshtable(){
     var practice=$('#practices').val();
     var patient=$('#patient').val();
     var shipping_status=$('#shippingstatus').val();
+    var shipping_status=$('#shippingstatus').val();
+    var check_enrolled_date=$('#check_enrolled_date').val();
     var fromdate1=$('#fromdate').val();
     var todate1=$('#todate').val(); 
-    getrpmenrolledpatientlist(practice,patient,shipping_status,fromdate1,todate1);  
+
+    if(check_enrolled_date == 'on'){  
+        getrpmenrolledpatientlist(practice, patient, shipping_status, null, null);     
+   }else{
+        getrpmenrolledpatientlist(practice, patient, shipping_status, fromdate1, todate1);
+    }
 }
 function shippingdetail(rowid) {
     // Set the patient_id value in the hidden field

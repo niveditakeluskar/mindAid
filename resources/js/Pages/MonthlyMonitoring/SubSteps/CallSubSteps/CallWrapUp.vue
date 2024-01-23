@@ -202,6 +202,7 @@
                             </div>
                         </div>
                     </form>
+                    <div v-on:click="deleteCallWrapup(1)">testing</div>
                 </div>
             </div>
         </div>
@@ -265,8 +266,17 @@ export default {
             // 		console.error('Error submitting form:', error);
             // 	});
         },
-        deleteCallWrap() {
-            console.log("deleteCallWrap==========>>>");
+        deleteCallWrapup(callWrapId) {
+            // Perform deletion logic here using axios or any other method
+            // Example:
+            // axios.delete(`/api/callwrap/${callWrapId}`)
+            //     .then(response => {
+            //         // Handle success
+            //     })
+            //     .catch(error => {
+            //         // Handle error
+            //     });
+            console.log(`Deleting call wrap with ID ${callWrapId}`);
         },
     },
     setup(props) {
@@ -380,3 +390,7 @@ export default {
     /* Adjust as needed */
 }
 </style>
+
+
+
+

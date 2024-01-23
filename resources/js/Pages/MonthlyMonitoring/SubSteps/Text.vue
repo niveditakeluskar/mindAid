@@ -82,7 +82,7 @@ export default {
 				if (response && response.status == 200) {
 					this.showAlert = true;
                     updateTimer(this.patientId, 1, this.moduleId);
-                    $('.form_start_time').val(response.data.form_start_time);
+                    $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
                         this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;

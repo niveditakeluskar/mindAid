@@ -83,7 +83,6 @@ Route::middleware("web")->group(function () {
             $stepID = getFormStepId($module_id, $component_id, $stage_id, $step_name);
             return response()->json(['stepID' => $stepID]);
         });
-
         //manually record time
         Route::post("/system/log-time/time", "RCare\System\Http\Controllers\CommonFunctionController@recordTimeSpentManually")->name("manually-log-time");
         Route::get("/system/get-updated-time/{patientID}/{billable}/{moduleId}/total-time", "RCare\System\Http\Controllers\CommonFunctionController@recordUpdatedTime")->name("update-log-time");

@@ -38,7 +38,7 @@
                   <div class="invalid-feedback">office visit</div>
                </div>
                <div id="data_present_in_emr_show">
-               <!-- <PreparationForm :sectionName="sectionName" /> -->
+               <PreparationForm :sectionName="sectionName" />
                </div>
             </div>
             <div class="card-footer">
@@ -57,8 +57,8 @@
 </form>
 </template>
 
-<!-- <script>
-   import PreparationForm from '../Components/PreparationFollowUpForm.vue';
+<script>
+   import PreparationForm from '../../Components/PreparationFollowUpForm.vue';
 // import stepWizard from 'js/app.js';
 export default {
    data() {
@@ -73,4 +73,4 @@ export default {
       // console.log('Component mounted.');
    }
 };
-</script> -->
+</script>
