@@ -769,7 +769,7 @@
             $st = explode(" ", $start_time);
             $et = explode(" ", $end_time);
             $startdate = explode('-', $st[0]);
-            //-dd($startdate);
+            // dd($startdate);
             $month = $startdate[0];
             $day   = $startdate[1];
             $year  = $startdate[2];

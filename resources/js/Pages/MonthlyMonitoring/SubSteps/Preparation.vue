@@ -7,7 +7,7 @@
          <div class="col-lg-12 mb-4 ">
             <div class="card">
                <div class="card-body">
-                  <div class="alert alert-success" id="success-alert" style="display: none;">
+                     <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
                      <button type="button" class="close" data-dismiss="alert">x</button>
                      <strong>Call Preparation Completed! </strong><span id="text"></span>
                   </div>
@@ -62,7 +62,7 @@ export default {
    },
    components: {
       PreparationForm
-   },
+   }, 
    mounted() {
       console.log('Component mounted.');
    },

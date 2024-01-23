@@ -456,7 +456,6 @@ export default {
 			//  });
 		};
 
-
 		const handleCheckboxChange = (event) => {
 			emr_complete.value = event.target.checked;
 		};

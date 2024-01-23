@@ -26,7 +26,7 @@ export default {
     try {
       var str = window.location.href;
       var patientId = 0;
-      str = str.split("/");
+      str = str.split("/"); 
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
@@ -37,7 +37,7 @@ export default {
     } catch (error) {
       console.error('Error fetching moduleID:', error);
     }
-  },
+  }, 
   methods: {
     async getPageModuleID() {
       try {
@@ -189,9 +189,6 @@ export default {
         localStorage.setItem("systemDate", currentDate);
       };
 
-
-
-
       //end of initializeScripts
       $("#logout_yes").click(function (e) {
         $("#sign-out-btn")[0].click();
@@ -199,11 +196,7 @@ export default {
 
       $("#logout_no").click(function (e) {
         $('#logout_modal').modal('hide');
-      });
-
-
-
-    
+      });    
     }
   },
   // Include your script tags here as an array of objects

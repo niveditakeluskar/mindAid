@@ -43,9 +43,10 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listMonthalyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         //Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listSpMonthlyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         Route::get('/monthly-monitoring/{id}', 'RCare\Ccm\Http\Controllers\CcmController@fetchMonthlyMonitoringPatientDetails')->name('monthly.monitoring.patient.details');
-
-
-        // Route::get("/monthly-monitoring/{id}", function(){
+        
+        Route::get('/populate-monthly-monitoring-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populateMonthlyMonitoringData')->name('populate.MonthlyMonitoring.data');
+        
+        // Route::get("/monthly-monitoring/{id}", function(){ 
         //         return view('Ccm::monthly-monitoring.patient-details');
         //     })->name('monthly.monitoring.patient.details');
 
@@ -55,7 +56,9 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/ajax/populate_preparation_notes/{patientId}/{month}', 'RCare\Ccm\Http\Controllers\CcmController@getCcmMonthlyData')->name('populate.preparation.notes');
         Route::get('/ajax/populate_research_followup_preparation_notes/{patientId}/{month}', 'RCare\Ccm\Http\Controllers\CcmController@getCcmMonthlyReasearchFollowupData')->name('populate.preparation.notes');
         Route::post('/monthly-monitoring-call-preparation-form', 'RCare\Ccm\Http\Controllers\CcmController@SaveCallPreparation')->name('monthly.monitoring.call.preparation');
-
+        Route::post('/patient-threshold', 'RCare\Patients\Http\Controllers\PatientController@savePatientThreshold')->name('patient.threshold');
+        Route::get('/systemThresholdTab/{patient_id}/{module_id}', 'RCare\Patients\Http\Controllers\PatientController@fetchSystemThreshold')->name('system_threshold_tab');
+        Route::post('/save-patient-fin-number', 'RCare\Patients\Http\Controllers\PatientController@savepatientfinnumber')->name('patient.savefinnumber');
         Route::post('/monthly-monitoring-call-preparation-form-draft', 'RCare\Ccm\Http\Controllers\CcmController@DraftSaveCallPreparation')->name('monthly.monitoring.call.preparation.draft');
 
         // preparation total time spent 
