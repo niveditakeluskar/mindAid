@@ -103,25 +103,25 @@
                                             data-original-title="Patient Enrollment Status" id="PatientStatus">
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='1'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
+                                            <a @click="() => patientServiceStatus('1')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
                                         
                                         <span patient_enroll_date v-if = "patient_module_status=='0'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
+                                            <a @click="() => patientServiceStatus('0')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>
                                             </a>
                                             Form :  <span :textContent="suspended_from_date"></span>
                                             To :    <span :textContent="suspended_to_date"></span>
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='2'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
+                                            <a @click="() => patientServiceStatus('2')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span patient_enroll_date v-if = "patient_module_status=='3'">
-                                            <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
+                                            <a @click="() => patientServiceStatus('3')" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>
                                             </a>
                                         </span>
@@ -130,13 +130,14 @@
                                             <i class="text-muted i-Library"></i> :
                                             <span v-for="(service, index) in enrolledServices" :key="index" v-html="service"></span>
                                         </span>
-                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_additional_devicesfunction">
+                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_devicesfunction">
                                         <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <!-- <AdditionalDevices ref="additional_devicesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" /> -->
+                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
                                         <br/>
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="add-patient-devices" @click="add_devicesfunction">Devices</a>
-                                        <AddDevices ref="add_devicesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
+                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        
                                         
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
@@ -224,9 +225,11 @@
 <script>
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
-import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
 import moment from 'moment';
 import axios from 'axios';
+import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
+import DeviceModal from '../../Modals/DeviceModal.vue';
+import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
 import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
 import Veteran from '../../Modals/VeteranService.vue';
 import AddDevices from '../../Modals/AddDevices.vue';
@@ -239,9 +242,6 @@ export default {
 		moduleId: Number,
         stageid: Number,
 		componentId: Number,
-        loading: "",
-    patientServices: [],
-    patientEnrolledServices:[],
     personal_notes_data: String,
     research_study_data: String,
     patient_systolichigh: Number,
@@ -262,9 +262,13 @@ export default {
     patient_spirometerfevlow: Number, 
     patient_spirometerpefhigh: Number, 
     patient_spirometerpeflow: Number, 
-
+    loading: "",
+    patientServices: [],
+    patientEnrolledServices:[],
 	},
   components: {
+    AddDeviceModal,
+    DeviceModal,
     AlertThresholds,
     Veteran,
     FinNumber,
@@ -272,11 +276,15 @@ export default {
     ResearchStudy,
     AddDevices,
     // AdditionalDevices,
-  },
+},
   setup(props) {
-    const alertThresholdsRef = ref();
+    const { callExternalFunctionWithParams } = patientStatus.setup();
     const veteranRef = ref();
     const add_devicesRef = ref();
+    const additional_devicesRef = ref();
+    const AddDeviceModalRef =ref();
+    const DeviceModalRef =ref();
+    const alertThresholdsRef = ref();
     // const additional_devicesRef = ref();
     const finnumberRef = ref();
     const personalnotesRef = ref();
@@ -321,14 +329,6 @@ export default {
     const patient_spirometerpefhigh = ref(); 
     const patient_spirometerpeflow = ref(); 
 
-/*     const props = defineProps({
-    patientId: Number,
-    moduleId: Number, 
-    loading: "",
-    patientServices: [],
-    patientEnrolledServices:[],
-    // enrolledServices:[] 
-}); */
 
 
 // const enrolledServices = ref(null);
@@ -338,71 +338,49 @@ const url = '/patients/registerd-patient-edit/'+props.patientId+'/'+ props.modul
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);
-const patientServiceStatus = (pstatus)=>{
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/");
-   let pid = parts[parts.length - 1];
-    callExternalFunctionWithParams(pid, pstatus);
+
+    const patientServiceStatus = async(pstatus)=>{
+        callExternalFunctionWithParams(props.patientId,pstatus);
+        }
+
+
+    const add_devicesfunction = async() =>{
+        console.log("openModeladdDevices");
+        AddDeviceModalRef.value.openModal();
+    };
+
+    const add_additional_devicesfunction = async() =>{
+        //additional_devicesRef.value.openModal();
+        DeviceModalRef.value.openModal();
+    };
+
+
+const patientVeteranServiceModalDetails = async()=>{ 
+    try {
+        const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
+        }
+        console.log('Fetched Patient VeteranService details:', response.data);
+    }catch (error) {
+        console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
+        // Handle the error appropriately
+    }
 }
-// const veteranServicefunction = async() => {
-//     const VeteranServiceModal = document.getElementById('vateran-service');
-//       if (VeteranServiceModal) { 
-//         $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//     patientVeteranServiceModalDetails();
-// }
 
+const patientAlertThresholdsModalDetails = async()=>{ 
+    try {
+        const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
+        }
+        console.log('Fetched Patient alertThreshold details:', response.data); 
+    }catch (error) {
+        console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
+        // Handle the error appropriately
+    }
+}
 
-// function devicesclear() {  
-//     // alert('dadsadasdsa');
-//     $("#devices_form input[name='device_id']").val('');
-//     $('#partner_id').val(''); 
-//     $('#partner_devices_id').val('');
-//     $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
-//     $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
-
-// }
-
-
-// const add_devicesfunction = async() => {
-//     const DeviceModal = document.getElementById('add-patient-devices');
-//       if (DeviceModal) { 
-//         $(DeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//     // patientVeteranServiceModalDetails();
-// }
-
-// const add_additional_devicesfunction = async() =>{
-//     const AdditionalDeviceModal = document.getElementById('additional-device');
-//       if (AdditionalDeviceModal) { 
-//         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-// }
-
-// const patient_finnumber_function = async()=>{
-//     const FinNumberModal = document.getElementById('patient-finnumber');
-//       if (FinNumberModal) { 
-//         $(FinNumberModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//       patComDetails();
-
-// }
-// const alertThresholdfunction = async() => {
-//     const AlertThresholdeModal = document.getElementById('patient-threshold');
-//     if (AlertThresholdeModal) {
-//     $(AlertThresholdeModal).modal('show'); // Use jQuery to show the modal
-//     } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//     }
-// }
     const veteranServicefunction = async() => {
         console.log("openMModelV called");
         veteranRef.value.openModal();
@@ -429,100 +407,9 @@ const patientServiceStatus = (pstatus)=>{
         // patComDetails();
     };
 
-    const add_devicesfunction = async() =>{
-        console.log("openModeladdDevices");
-        add_devicesRef.value.openModal();
-    };
-    // const add_additional_devicesfunction = async() =>{
-    //     additional_devicesRef.value.openModal();
-        
-    // };
     const patient_finnumber_function = async()=>{
         finnumberRef.value.openModal();
     }
-
-
-//     const add_additional_devicesfunction = async() =>{
-//     const AdditionalDeviceModal = document.getElementById('additional-device');
-//       if (AdditionalDeviceModal) { 
-//         var sPageURL = window.location.pathname;
-//         parts = sPageURL.split("/"),
-//         $(".patient_id").val(parts[parts.length - 1]);
-//         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-// }
-
-// const patient_finnumber_function = async()=>{
-//     const FinNumberModal = document.getElementById('patient-finnumber');
-//     var sPageURL = window.location.pathname;
-//         parts = sPageURL.split("/"),
-//         $(".patient_id").val(parts[parts.length - 1]);
-//       if (FinNumberModal) { 
-//         $(FinNumberModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//       patComDetails();
-
-// }
-
-// const personalnotesfunction = async() => {
-    
-//     console.log('dadasdasdasdasdas'+personalnotesfunction);
-//     var sPageURL = window.location.pathname;
-//     parts = sPageURL.split("/"),
-//     $(".patient_id").val(parts[parts.length - 1]);
-//     const PersonalNotesModal = document.getElementById('personal-notes');
-//     if (PersonalNotesModal) {
-//         $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
-//     } else {
-//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//     }
-//     patComDetails();
-    
-// }
-
-// const researchstudyfunction = async() => { 
-//     const ResearchStudyModal = document.getElementById('part-of-research-study');
-//     var sPageURL = window.location.pathname;
-//     parts = sPageURL.split("/"),
-//     $(".patient_id").val(parts[parts.length - 1]);
-//     if (ResearchStudyModal) {
-//         $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
-//     } else {
-//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//     }
-//     patComDetails();
-    
-// }
-
-// const patientVeteranServiceModalDetails = async()=>{ 
-//     try {
-//         const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
-//         if (!response.ok) {
-//             throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
-//         }
-//         console.log('Fetched Patient VeteranService details:', response.data);
-//     }catch (error) {
-//         console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
-//         // Handle the error appropriately
-//     }
-// }
-
-// const patientAlertThresholdsModalDetails = async()=>{ 
-//     try {
-//         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-//         if (!response.ok) {
-//             throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
-//         }
-//         console.log('Fetched Patient alertThreshold details:', response.data); 
-//     }catch (error) {
-//         console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
-//         // Handle the error appropriately
-//     }
-// }
 
 const patComDetails = async()=> {
     try {
@@ -537,6 +424,7 @@ const patComDetails = async()=> {
         patientAge.value = data.age;
         patientDob.value =  data.patient[0].dob;
         patientMob.value = data.patient[0].mob;
+        consent_to_text.value = data.consent_to_text;   
         finNumber.value = data.patient[0].fin_number;
         consent_to_text.value = data.consent_to_text;   
         military_status.value = data.military_status;
@@ -550,11 +438,11 @@ const patComDetails = async()=> {
         patient_module_status.value = data.patient_services[0].module.status;
         suspended_from_date.value = data.patient_services[0].suspended_from;
         suspended_to_date.value = data.patient_services[0].suspended_to;
+        patient_device.value = data.device_code +' '+data.patient_assign_device+' '+data.device_status 
         patient_device.value = data.device_code +' '+data.patient_assign_device+' '+data.device_status;
     
         personal_notes_data.value = data.personal_notes;
         research_study_data.value = data.research_study_data;
-        console.log(research_study_data,'research_study_data');
         
         patient_systolichigh.value = data.systolichigh;
         patient_systoliclow.value = data.systoliclow;
@@ -574,11 +462,7 @@ const patComDetails = async()=> {
         patient_spirometerfevlow.value = data.temperaturelow;
         patient_spirometerpefhigh.value = data.spirometerpefhigh;
         patient_spirometerpeflow.value = data.spirometerpeflow;
-
-        // console.log(data.add_1+ "PATIENT FNAME");
-        console.log(data.patient_services[0].module.module+'date_enrolled');
         props.loading = "done";
-        console.log('Fetched Patient details:', data);
         const patientServices = data.patient_services;
         const countEnrollServices = patientServices.length;
         const enrollServices = [];
@@ -604,18 +488,16 @@ const patComDetails = async()=> {
             }
 
             const module = patientServices[i].module.module;
-            // console.log (module+"module");  
-            // console.log(patientEnrollServicesStatus+"patientEnrollServicesStatus");
+            
             const fetchedServices = `${module}-${patientEnrollServicesStatus}`;
             enrollServices.push(fetchedServices);
             if (module === 'RPM') { 
                 // Toggle visibility using a reactive property
                 // this.showAddPatientDevices = true;
             }
-            console.log("enrollServices", enrollServices);
         }
         enrolledServices.value = enrollServices;
-        console.log(enrolledServices +"enrollServices");
+       
     } catch (error) { 
         console.error('Error fetching Patient details:', error.message); // Log specific error message
         // Handle the error appropriately
@@ -630,6 +512,14 @@ onMounted(async () => {
 });
 
     return {
+        patientServiceStatus,
+        AddDeviceModalRef,
+        DeviceModalRef,
+      veteranRef,
+      add_devicesfunction,
+      add_devicesRef,
+      add_additional_devicesfunction,
+      additional_devicesRef,
       alertThresholdfunction,
       alertThresholdsRef,
       veteranServicefunction,
@@ -649,6 +539,7 @@ onMounted(async () => {
       patientAge,
       patientDob,
       patientMob,
+      consent_to_text,
       finNumber,
       consent_to_text,
       military_status,
@@ -689,247 +580,4 @@ onMounted(async () => {
   },
 };
 
-
-// const add_devicesfunction = async() => {
-//     const DeviceModal = document.getElementById('add-patient-devices');
-//       if (DeviceModal) { 
-//         var sPageURL = window.location.pathname;
-//         parts = sPageURL.split("/"),
-//         $(".patient_id").val(parts[parts.length - 1]);
-//         $(DeviceModal).modal('show'); // Use jQuery to show the modal
-//       } else {
-//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-//       }
-//     // patientVeteranServiceModalDetails();
-// }
-/* 
-function countDownFunc(patientId, moduleId, start_time) {
-    axios({
-        method: "GET",
-        url: `/system/get-total-time/${patientId}/${moduleId}/${start_time}/total-time`,
-    }).then(function (response) {
-        if(pause_stop_flag == 0){
-        var data = response.data;
-        var final_time = data['total_time'];
-        $("#ajax-message-history").html(data['history'])
-        $("#time-containers").html(final_time);
-        setTimeout(function () {
-            const start_time = document.getElementById('page_landing_times').value;
-            countDownFunc(patientId, moduleId, start_time);
-    }, 60000);}
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-    
-}
-
-function logTimeStart(patientId, moduleId, subModuleId, stageId, billable, stepId, formName){
-    var timerStart = $('.form_start_time').val();
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-    axios({
-        method: "POST",
-        url: `/system/log-time/time`,
-        data: {
-            timerStart: '00:00:00',
-            timerEnd: '00:00:00',
-            patientId: patientId,
-            moduleId: moduleId,
-            subModuleId: subModuleId,
-            stageId: stageId,
-            billable: billable,
-            uId: patientId,
-            stepId: stepId,
-            formName: formName,
-            form_start_time: timerStart,
-            pause_start_time: timerStart
-        }
-    }).then(function (response) {
-        $("#timer_runing_status").val(0);
-        $('.form_start_time').val(response.data.form_start_time);
-        $("form").find(":submit").attr("disabled", false);
-        $("form").find(":button").attr("disabled", false);
-        $("#pause").show();
-        $("#stop").show();
-        $("#start").hide();
-        pause_next_stop_flag = 0;
-        setTimeout(function () {
-            pause_stop_flag = 0;
-            if(pause_next_stop_flag == 0){
-                countDownFunc(patientId, moduleId, response.data.form_start_time);
-            }
-        }, 60000);
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-}
-
-function logTime(patientId, moduleId, subModuleId, stageId, billable, stepId, formName) {
-    var form_start_time = $('.form_start_time').val();
-    pause_stop_flag = 1;
-    pause_next_stop_flag = 1;
-    var timerStart = '00:00:00';
-    var timerEnd = '00:00:00';
-    $("#timer_runing_status").val(1);
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-    axios({
-        method: "POST",
-        url: `/system/log-time/time`,
-        data: {
-            timerStart: timerStart,
-            timerEnd: timerEnd,
-            patientId: patientId,
-            moduleId: moduleId,
-            subModuleId: subModuleId,
-            stageId: stageId,
-            billable: billable,
-            uId: patientId,
-            stepId: stepId,
-            formName: formName,
-            form_start_time: form_start_time,
-        }
-    }).then(function (response) {
-        if (JSON.stringify(response.data.end_time) != "" && JSON.stringify(response.data.end_time) != null && JSON.stringify(response.data.end_time) != undefined) {
-            $("#timer_start").val(response.data.end_time);
-            $("#timer_end").val(response.data.end_time);
-            $("#start").show();
-            $("#pause").hide();
-            $("#stop").hide();
-            updateTimer(patientId, billable, moduleId);
-            $("form").find(":submit").attr("disabled", true);
-            $("form").find(":button").attr("disabled", true);
-            //$(".last_time_spend").html(response.data.end_time);
-            $('.form_start_time').val(response.data.form_start_time);
-            alert("Timer paused and Time Logged successfully.");
-        } else {
-            alert("Unable to log time, please try after some time.");
-        }
-
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-}
-
-
-function format_date(value) {
-    if (value) {
-        return moment(String(value)).format('MM-DD-YYYY')
-    }
-}
-$('.submit-add-patient-fin-number').on('click', function() {
-    // Serialize the form data 
-    const formData = $('#fin_number_form').serialize();
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST',
-      url: '/patients/save-patient-fin-number',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#devices_success').html('<div class="alert alert-success">' + response.message + '</div>');
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#patient-finnumber').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#devices_success').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
-
-$('.submit-patient-add_device').on('click', function() {
-    // Serialize the form data 
-    const formData = $('#patient_add_device_form').serialize();
-    // Make an AJAX POST request to the specified route
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    $.ajax({
-      type: 'POST',
-      url: '/ccm/additional-device-email',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#alert-success-additional-device').show();
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#additional-device').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#alert-success-additional-device').hide();
-      }
-    });
-});
-
-
- 
-$('.submit-personal-notes').on('click', function() { 
-    // Serialize the form data
-    const formData = $('#personal_notes_form').serialize();
-    // Make an AJAX POST request to the specified route
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    $.ajax({
-      type: 'POST',
-      url: '/patients/patient-personal-notes',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#personal-notes').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
-
-$('.submit-part-of-research-study').on('click', function() {
-    // Serialize the form data
-    const formData = $('#part_of_research_study_form').serialize();
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST', 
-      url: '/patients/patient-research-study',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#part-of-research-study').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
- */</script> 
+</script> 

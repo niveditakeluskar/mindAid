@@ -35,11 +35,57 @@ use RCare\Patients\Models\PatientServices;
 use RCare\Patients\Models\PatientCareplanLastUpdateandReview;
 use RCare\Patients\Models\View_Patient_Diagnosis;
 use Inertia\Inertia;
-
+use RCare\Org\OrgPackages\Partner\src\Models\Partner;
 use Auth;
-
+use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
+use RCare\Rpm\Models\Partner_Devices;
 class PatientWorklistController extends Controller
 {
+
+    public function getContentTemplate()
+    {
+        $options = [];
+        $module_id = 2; //getPageModuleName();
+        $submodule_id = 58; //getPageSubModuleName();
+         $stage_id = getFormStageId($module_id, $submodule_id, 'Email');
+        $step_id =  getFormStepId($module_id, $submodule_id, $stage_id, 'Additional Device');
+        $template_id = 0;
+
+        foreach (ContentTemplate::getContentScripts($module_id, $submodule_id, $stage_id, $step_id, $device_id=null) as $contenttemplate) {
+            $options[$contenttemplate->id] = $contenttemplate->content_title;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+
+    public function activePartnerList()
+    {
+        $options = [];
+
+        foreach (Partner::activePartner() as $partnerlist) {
+            $options[$partnerlist->id] = $partnerlist->name;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+
+    public function partnerDevicesList()
+    {
+        $options = [];
+
+        foreach (Partner_Devices::all() as $partnerdevice) {
+            $options[$partnerdevice->id] = $partnerdevice->device_name;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+    
     public function getUserListData(Request $request)
     {
 
@@ -1641,8 +1687,6 @@ class PatientWorklistController extends Controller
                 $schedule_day_pref = 0;
                 $schedule_time_pref = 0;
 
-
-
                 foreach ($scheduleSQLresult as $pr) {
 
                     $d = explode(" ", $pr->date_actual);
@@ -1708,7 +1752,6 @@ class PatientWorklistController extends Controller
                         $converted_task_date = $d1 . " " . $pr->workinghour;
                         // $newtask_date = $pr->date_actual." ".$pr->workinghour;
                         // $converted_task_date = DatesTimezoneConversion::userToConfigTimeStamp($newtask_date);
-
 
                         $data = array(
                             'uid'                         => $patient_id,

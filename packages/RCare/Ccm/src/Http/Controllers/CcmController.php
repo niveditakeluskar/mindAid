@@ -65,6 +65,7 @@ use RCare\Ccm\src\Http\Requests\CarePlanSaveRequest;
 use RCare\Messaging\Models\MessageLog;
 use RCare\Org\OrgPackages\CarePlanTemplate\src\Models\CarePlanTemplate;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
+use RCare\Org\OrgPackages\Diagnosis\src\Models\Diagnosis;
 use RCare\Org\OrgPackages\Activity\src\Models\Activity;
 use RCare\Org\OrgPackages\Partner\src\Models\Partner;
 use RCare\TaskManagement\Models\PatientActivity;
@@ -104,6 +105,32 @@ class CcmController extends Controller
 
         // return view('Ccm::monthly-monitoring.sub-steps.call-sub-steps.call-wrap-up', compact('routineresponsedata'));
 
+    }
+
+    public function getDiagnosisConditions()
+    {
+        $options = [];
+
+        foreach (Diagnosis::activeDiagnosis() as $diagnosis) {
+            $options[$diagnosis->id] = $diagnosis->condition;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+
+    public function getActiveDiagnosiscode()
+    {
+        $options = [];
+
+        foreach (DiagnosisCode::activeDiagnosiscode() as $DiagnosisCode) {
+            $options[$DiagnosisCode->code] = $DiagnosisCode->code;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
     }
 
 
@@ -298,7 +325,6 @@ class CcmController extends Controller
         
         return view('Ccm::previous-month-data', compact('prev_topics'));
     }
-
 
     public function PatientPreviousMonthCalender($patient_id, $module_id)
     {
