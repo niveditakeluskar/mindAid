@@ -87,7 +87,7 @@
     @include('Theme::layouts_2.to-list-customizer')
     <!-- ============ Horizontal Layout End ============= -->
 
-    <!-- LAModel Started here -->
+    <!-- Model Started here -->
     <div class="modal fade" id="logout_modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

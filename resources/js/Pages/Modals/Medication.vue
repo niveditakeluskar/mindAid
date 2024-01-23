@@ -29,6 +29,7 @@
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 
                                                     <div class="form-row col-md-12">
+                                                        <input type="hidden" name="id" id="medication_id"/>
                                                         <input type="hidden" name="uid" :value="patientId"/>
                                                         <input type="hidden" name="patient_id" :value="patientId"/>
                                                         <input type="hidden" name="start_time" value="00:00:00"> 
@@ -315,6 +316,7 @@ export default {
                 loading.value = false;
             }
         };
+        
         let getStageID = async () => {
             try {
                 let medicationSageName = 'Patient_Data';
@@ -324,6 +326,79 @@ export default {
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
+        };
+
+        let deleteMedications = async (id, obj) => {
+            if (window.confirm("Are you sure you want to delete this Medication?")) {
+                const formData = {
+                    id: id,
+                    uid: props.patientId,
+                    patient_id: props.patientId,
+                    module_id: props.moduleId,
+                    component_id: props.componentId,
+                    stage_id: medicationStageId.value,
+                    step_id: stepID.value,
+                    form_name: 'medications_form',
+                    billable: 1,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                };
+                axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+                try {
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                    const response = await axios.post(`/ccm/delete-medications_patient-by-id`, formData);
+                    if (response && response.status == 200) {
+                        // showMedicalSuppliesAlert.value = true;
+                        updateTimer(props.patientId, '1', props.moduleId);
+                        $(".form_start_time").val(response.data.form_start_time);
+                        await fetchPatientMedicationList();
+                        setTimeout(() => {
+                            // showMedicalSuppliesAlert.value = false;
+                            medicationTime.value = document.getElementById('page_landing_times').value;
+                        }, 3000);
+                    }
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
+        }
+
+        const exposeDeleteMedication = () => {
+            window.deleteMedications = deleteMedications;
+        };
+
+        let editMedications = async (id) => {
+            // console.log("edit medication id==>", id);
+            try {
+                const serviceToEdit = rowData.value.find(service => service.id == id);
+                if (serviceToEdit) {
+                    const form = document.getElementById('medications_form');
+                    form.querySelector('#medication_id').value = serviceToEdit.id;
+                    const medicationIdDropdown = form.querySelector('#medication_med_id');
+                    medicationIdDropdown.value = serviceToEdit.med_id;
+                    form.querySelector('#medication_description').value = serviceToEdit.description;
+                    form.querySelector('#medication_purpose').value = serviceToEdit.purpose;
+                    form.querySelector('#medication_strength').value = serviceToEdit.strength;
+                    form.querySelector('#medication_dosage').value = serviceToEdit.dosage;
+                    form.querySelector('#medication_route').value = serviceToEdit.route;
+                    form.querySelector('#medication_frequency').value = serviceToEdit.frequency;
+                    form.querySelector('#duration').value = serviceToEdit.duration;
+                    form.querySelector('#pharmacy_name').value = serviceToEdit.pharmacy_name;
+                    form.querySelector('#pharmacy_phone_no').value = serviceToEdit.pharmacy_phone_no;
+                    form.querySelector('#medication_drug_reaction').value = serviceToEdit.id;
+                    form.querySelector('#medication_pharmacogenetic_test').value = serviceToEdit.id;
+                    console.log("medication_id medications_form-->>", medications_form);
+                    // selectedMedication = serviceToEdit.med_id;
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error editing service:', error);
+            }
+        }
+
+        const exposeEditMedication = () => {
+            window.editMedications = editMedications;
         };
 
         let getStepID = async (sid) => {
@@ -352,6 +427,8 @@ export default {
         onMounted(async () => {
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
+                exposeDeleteMedication();
+                exposeEditMedication();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -369,6 +446,7 @@ export default {
             medicationStageId,
             stepID,
             fetchPatientMedicationList,
+            editMedications,
             // fetchMedicationList,
         };
     }

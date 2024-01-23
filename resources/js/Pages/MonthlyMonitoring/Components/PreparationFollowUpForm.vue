@@ -218,8 +218,8 @@
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
 						class="mr-3 mb-4"><!-- <b>Vitals and Health Data added or edit:</b> -->
-						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary"
-							data-toggle="modal" data-target="#myModal" target="vitalsHealth">Modify Vitals & Health Data</button>
+						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary" @click="openVitalsHealthDataModalForm">Modify Vitals & Health Data</button>
+		 				<vitalsHealthDataModalForm ref="vitalsHealthDataModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
 				<div :id="`${sectionName}_report_requirnment_notes`" class="invalid-feedback"></div>
@@ -279,7 +279,7 @@
 import ModalForm from '../../Modals/Medication.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
 import ServicesModalForm from '../../Modals/Services.vue';
-
+import vitalsHealthDataModalForm from '../../Modals/VitalsHealthData.vue';
 export default {
 	props: {
 		sectionName: String,
@@ -294,6 +294,8 @@ export default {
 	components: {
 		ModalForm,
 		ServicesModalForm,
+		vitalsHealthDataModalForm,
+		ReviewCarePlanModal
 	},
 	data() {
 		return {
@@ -414,6 +416,10 @@ export default {
 		},
 		openServicesModal() {
 			this.$refs.servicesModalForm.openModal();
+		},
+
+		openVitalsHealthDataModalForm() {
+			this.$refs.vitalsHealthDataModalForm.openModal();
 		},
 	},
 	setup(props){

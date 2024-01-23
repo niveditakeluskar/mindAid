@@ -30,14 +30,18 @@
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber" @click="patient_finnumber_function"
                                              style="background-color:#27a7de;border:none;" id="patient_finnumber">
-                                              <span id="fin_number" class="patient_fin_number" ></span>
+                                              <span id="fin_number" class="patient_fin_number" :textContent="finNumber"></span>
                                             </a>
+                                            <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
                                         </span><br/>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
-                                            <span>Unknown</span>
+                                            <span v-if="military_status == 0">Yes</span>
+                                            <span v-else-if="military_status == 1">No</span>
+                                            <span v-else-if="military_status == 2">Unknown</span>
+                                            <span v-else="military_status==''"></span>
                                         </a>
-                                        
+                                        <Veteran ref="veteranRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
                                         
                                     </div>
                                     <div class="col-md-3 right-divider">
@@ -54,8 +58,26 @@
                                             title="Address" style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress" ></span>
                                         </span><br>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1">Alert Thresholds</a>
-                                       
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
+                                        <AlertThresholds ref="alertThresholdsRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" 
+                                        :patient_systolichigh="patient_systolichigh"
+                                        :patient_systoliclow="patient_systoliclow"
+                                        :patient_diastolichigh="patient_diastolichigh" 
+                                        :patient_diastoliclow="patient_diastoliclow" 
+                                        :patient_bpmhigh="patient_bpmhigh" 
+                                        :patient_bpmlow="patient_bpmlow" 
+                                        :patient_oxsathigh="patient_oxsathigh" 
+                                        :patient_oxsatlow="patient_oxsatlow" 
+                                        :patient_glucosehigh="patient_glucosehigh" 
+                                        :patient_glucoselow="patient_glucoselow" 
+                                        :patient_temperaturehigh="patient_temperaturehigh" 
+                                        :patient_temperaturelow="patient_temperaturelow" 
+                                        :patient_weighthigh="patient_weighthigh" 
+                                        :patient_weightlow="patient_weightlow" 
+                                        :patient_spirometerfevhigh="patient_spirometerfevhigh" 
+                                        :patient_spirometerfevlow="patient_spirometerfevlow" 
+                                        :patient_spirometerpefhigh="patient_spirometerpefhigh" 
+                                        :patient_spirometerpeflow="patient_spirometerpeflow" />
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Practice"
@@ -183,10 +205,10 @@
                                                 </div>
                                             </div>
                                                 <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="personal_notes" @click="personalnotesfunction">Personal Notes</a> 
-                                                <PersonalNotes ref="personalnotesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />|
+                                                <PersonalNotes ref="personalnotesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :personal_notes_data="personal_notes_data" />|
                                                 <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="part_of_research_study"
                                                 @click ="researchstudyfunction">Research Study</a>
-                                                <ResearchStudy ref="researchstudyRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                                <ResearchStudy ref="researchstudyRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :research_study_data="research_study_data" /> 
                                         </div>
                                     </div>
                                     <div style="padding-left: 823px;">
@@ -208,20 +230,53 @@ import axios from 'axios';
 import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
 import DeviceModal from '../../Modals/DeviceModal.vue';
 import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
+import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
+import Veteran from '../../Modals/VeteranService.vue';
+import AddDevices from '../../Modals/AddDevices.vue';
+import FinNumber from '../../Modals/FinNumber.vue';
+import PersonalNotes from '../../Modals/PersonalNotes.vue'; 
+import ResearchStudy from '../../Modals/ResearchStudy.vue';     
 export default {
     props: {
 		patientId: Number,
 		moduleId: Number,
         stageid: Number,
 		componentId: Number,
-        loading: "",
+    personal_notes_data: String,
+    research_study_data: String,
+    patient_systolichigh: Number,
+    patient_systoliclow: Number,
+    patient_diastolichigh: Number, 
+    patient_diastoliclow: Number, 
+    patient_bpmhigh: Number, 
+    patient_bpmlow: Number, 
+    patient_oxsathigh: Number, 
+    patient_oxsatlow: Number, 
+    patient_glucosehigh: Number, 
+    patient_glucoselow: Number, 
+    patient_temperaturehigh: Number, 
+    patient_temperaturelow: Number, 
+    patient_weighthigh: Number, 
+    patient_weightlow: Number, 
+    patient_spirometerfevhigh: Number, 
+    patient_spirometerfevlow: Number, 
+    patient_spirometerpefhigh: Number, 
+    patient_spirometerpeflow: Number, 
+    loading: "",
     patientServices: [],
     patientEnrolledServices:[],
 	},
   components: {
     AddDeviceModal,
     DeviceModal,
-  },
+    AlertThresholds,
+    Veteran,
+    FinNumber,
+    PersonalNotes,
+    ResearchStudy,
+    AddDevices,
+    // AdditionalDevices,
+},
   setup(props) {
     const { callExternalFunctionWithParams } = patientStatus.setup();
     const veteranRef = ref();
@@ -229,12 +284,19 @@ export default {
     const additional_devicesRef = ref();
     const AddDeviceModalRef =ref();
     const DeviceModalRef =ref();
+    const alertThresholdsRef = ref();
+    // const additional_devicesRef = ref();
+    const finnumberRef = ref();
+    const personalnotesRef = ref();
+    const researchstudyRef = ref();
     const patientName = ref();
     const patientGender = ref();
     const patientAge = ref();
     const patientDob = ref();
     const patientMob = ref();
+    const finNumber = ref();
     const consent_to_text = ref();
+    const military_status = ref();
     const patientAddress = ref();
     const practice_name = ref();
     const provider_name = ref();
@@ -245,16 +307,28 @@ export default {
     const patient_module_status = ref();
     const suspended_from_date = ref();
     const suspended_to_date = ref();
-    const patient_device = ref(); 
-/*     const props = defineProps({
-    patientId: Number,
-    moduleId: Number,
-    componentId:Number,
-    loading: "",
-    patientServices: [],
-    patientEnrolledServices:[],
-    // enrolledServices:[] 
-}); */
+    const patient_device = ref();
+    const personal_notes_data =ref();
+    const research_study_data =ref();
+    const patient_systolichigh = ref();
+    const patient_systoliclow = ref();
+    const patient_diastolichigh = ref(); 
+    const patient_diastoliclow = ref(); 
+    const patient_bpmhigh = ref(); 
+    const patient_bpmlow = ref(); 
+    const patient_oxsathigh = ref(); 
+    const patient_oxsatlow = ref(); 
+    const patient_glucosehigh = ref(); 
+    const patient_glucoselow = ref(); 
+    const patient_temperaturehigh = ref(); 
+    const patient_temperaturelow = ref(); 
+    const patient_weighthigh = ref(); 
+    const patient_weightlow = ref(); 
+    const patient_spirometerfevhigh = ref(); 
+    const patient_spirometerfevlow = ref(); 
+    const patient_spirometerpefhigh = ref(); 
+    const patient_spirometerpeflow = ref(); 
+
 
 
 // const enrolledServices = ref(null);
@@ -268,7 +342,6 @@ const showAddPatientDevices = ref(false);
     const patientServiceStatus = async(pstatus)=>{
         callExternalFunctionWithParams(props.patientId,pstatus);
         }
-
 
 
     const add_devicesfunction = async() =>{
@@ -308,6 +381,36 @@ const patientAlertThresholdsModalDetails = async()=>{
     }
 }
 
+    const veteranServicefunction = async() => {
+        console.log("openMModelV called");
+        veteranRef.value.openModal();
+        // patComDetails();
+    }
+
+    const alertThresholdfunction = async() => {
+      // Access the modal component through the ref
+      console.log("openMModel called");
+      alertThresholdsRef.value.openModal();
+    //   patComDetails();
+    };
+
+    
+    const personalnotesfunction = async() => {
+        console.log("openMModelpersonal notes called");
+        personalnotesRef.value.openModal();
+        // patComDetails();
+    };
+    
+    const researchstudyfunction = async() =>{
+        console.log("openModelResearchStudy");
+        researchstudyRef.value.openModal();
+        // patComDetails();
+    };
+
+    const patient_finnumber_function = async()=>{
+        finnumberRef.value.openModal();
+    }
+
 const patComDetails = async()=> {
     try {
         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
@@ -322,6 +425,9 @@ const patComDetails = async()=> {
         patientDob.value =  data.patient[0].dob;
         patientMob.value = data.patient[0].mob;
         consent_to_text.value = data.consent_to_text;   
+        finNumber.value = data.patient[0].fin_number;
+        consent_to_text.value = data.consent_to_text;   
+        military_status.value = data.military_status;
         patientAddress.value = data.PatientAddress.add_1 +','+ data.PatientAddress.add_2 +','+data.PatientAddress.city+','+data.PatientAddress.state+','+data.PatientAddress.zipcode;
         practice_name.value = data.practice_name;
         provider_name.value = data.provider_name;
@@ -333,10 +439,30 @@ const patComDetails = async()=> {
         suspended_from_date.value = data.patient_services[0].suspended_from;
         suspended_to_date.value = data.patient_services[0].suspended_to;
         patient_device.value = data.device_code +' '+data.patient_assign_device+' '+data.device_status 
-        // console.log(data.add_1+ "PATIENT FNAME");
-        console.log(data.patient_services[0].module.module+'date_enrolled');
+        patient_device.value = data.device_code +' '+data.patient_assign_device+' '+data.device_status;
+    
+        personal_notes_data.value = data.personal_notes;
+        research_study_data.value = data.research_study_data;
+        
+        patient_systolichigh.value = data.systolichigh;
+        patient_systoliclow.value = data.systoliclow;
+        patient_diastolichigh.value = data.diastolichigh;
+        patient_diastoliclow.value = data.diastoliclow;
+        patient_bpmhigh.value = data.bpmhigh;
+        patient_bpmlow.value = data.bpmlow;
+        patient_oxsathigh.value = data.oxsathigh;
+        patient_oxsatlow.value = data.oxsatlow;
+        patient_glucosehigh.value = data.glucosehigh;
+        patient_glucoselow.value = data.glucoselow;
+        patient_temperaturehigh.value = data.temperaturehigh;
+        patient_temperaturelow.value = data.temperaturelow;
+        patient_weighthigh.value = data.weighthigh;
+        patient_weightlow.value = data.weightlow;
+        patient_spirometerfevhigh.value = data.spirometerfevhigh;
+        patient_spirometerfevlow.value = data.temperaturelow;
+        patient_spirometerpefhigh.value = data.spirometerpefhigh;
+        patient_spirometerpeflow.value = data.spirometerpeflow;
         props.loading = "done";
-        console.log('Fetched Patient details:', data);
         const patientServices = data.patient_services;
         const countEnrollServices = patientServices.length;
         const enrollServices = [];
@@ -362,18 +488,16 @@ const patComDetails = async()=> {
             }
 
             const module = patientServices[i].module.module;
-            // console.log (module+"module");  
-            // console.log(patientEnrollServicesStatus+"patientEnrollServicesStatus");
+            
             const fetchedServices = `${module}-${patientEnrollServicesStatus}`;
             enrollServices.push(fetchedServices);
             if (module === 'RPM') { 
                 // Toggle visibility using a reactive property
                 // this.showAddPatientDevices = true;
             }
-            console.log("enrollServices", enrollServices);
         }
         enrolledServices.value = enrollServices;
-        console.log(enrolledServices +"enrollServices");
+       
     } catch (error) { 
         console.error('Error fetching Patient details:', error.message); // Log specific error message
         // Handle the error appropriately
@@ -396,12 +520,29 @@ onMounted(async () => {
       add_devicesRef,
       add_additional_devicesfunction,
       additional_devicesRef,
+      alertThresholdfunction,
+      alertThresholdsRef,
+      veteranServicefunction,
+      veteranRef,
+      add_devicesfunction,
+      add_devicesRef,
+    //   add_additional_devicesfunction,
+    // additional_devicesRef
+      patient_finnumber_function,
+      finnumberRef,
+      personalnotesfunction,
+      personalnotesRef,
+      researchstudyfunction,
+      researchstudyRef,
       patientName,
       patientGender,
       patientAge,
       patientDob,
       patientMob,
       consent_to_text,
+      finNumber,
+      consent_to_text,
+      military_status,
       patientAddress,
       practice_name,
       provider_name,
@@ -414,239 +555,29 @@ onMounted(async () => {
       suspended_to_date,
       patient_device,
       enrolledServices,
+      personal_notes_data,
+      research_study_data,
+      patient_systolichigh,
+      patient_systoliclow,
+      patient_diastolichigh, 
+      patient_diastoliclow, 
+      patient_bpmhigh, 
+      patient_bpmlow, 
+      patient_oxsathigh, 
+      patient_oxsatlow, 
+      patient_glucosehigh, 
+      patient_glucoselow, 
+      patient_temperaturehigh, 
+      patient_temperaturelow, 
+      patient_weighthigh, 
+      patient_weightlow, 
+      patient_spirometerfevhigh, 
+      patient_spirometerfevlow, 
+      patient_spirometerpefhigh, 
+      patient_spirometerpeflow, 
+
     };
   },
 };
 
-
-/* 
-function countDownFunc(patientId, moduleId, start_time) {
-    axios({
-        method: "GET",
-        url: `/system/get-total-time/${patientId}/${moduleId}/${start_time}/total-time`,
-    }).then(function (response) {
-        if(pause_stop_flag == 0){
-        var data = response.data;
-        var final_time = data['total_time'];
-        $("#ajax-message-history").html(data['history'])
-        $("#time-containers").html(final_time);
-        setTimeout(function () {
-            const start_time = document.getElementById('page_landing_times').value;
-            countDownFunc(patientId, moduleId, start_time);
-    }, 60000);}
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-    
-}
-
-function logTimeStart(patientId, moduleId, subModuleId, stageId, billable, stepId, formName){
-    var timerStart = $('.form_start_time').val();
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-    axios({
-        method: "POST",
-        url: `/system/log-time/time`,
-        data: {
-            timerStart: '00:00:00',
-            timerEnd: '00:00:00',
-            patientId: patientId,
-            moduleId: moduleId,
-            subModuleId: subModuleId,
-            stageId: stageId,
-            billable: billable,
-            uId: patientId,
-            stepId: stepId,
-            formName: formName,
-            form_start_time: timerStart,
-            pause_start_time: timerStart
-        }
-    }).then(function (response) {
-        $("#timer_runing_status").val(0);
-        $('.form_start_time').val(response.data.form_start_time);
-        $("form").find(":submit").attr("disabled", false);
-        $("form").find(":button").attr("disabled", false);
-        $("#pause").show();
-        $("#stop").show();
-        $("#start").hide();
-        pause_next_stop_flag = 0;
-        setTimeout(function () {
-            pause_stop_flag = 0;
-            if(pause_next_stop_flag == 0){
-                countDownFunc(patientId, moduleId, response.data.form_start_time);
-            }
-        }, 60000);
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-}
-
-function logTime(patientId, moduleId, subModuleId, stageId, billable, stepId, formName) {
-    var form_start_time = $('.form_start_time').val();
-    pause_stop_flag = 1;
-    pause_next_stop_flag = 1;
-    var timerStart = '00:00:00';
-    var timerEnd = '00:00:00';
-    $("#timer_runing_status").val(1);
-    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-    axios({
-        method: "POST",
-        url: `/system/log-time/time`,
-        data: {
-            timerStart: timerStart,
-            timerEnd: timerEnd,
-            patientId: patientId,
-            moduleId: moduleId,
-            subModuleId: subModuleId,
-            stageId: stageId,
-            billable: billable,
-            uId: patientId,
-            stepId: stepId,
-            formName: formName,
-            form_start_time: form_start_time,
-        }
-    }).then(function (response) {
-        if (JSON.stringify(response.data.end_time) != "" && JSON.stringify(response.data.end_time) != null && JSON.stringify(response.data.end_time) != undefined) {
-            $("#timer_start").val(response.data.end_time);
-            $("#timer_end").val(response.data.end_time);
-            $("#start").show();
-            $("#pause").hide();
-            $("#stop").hide();
-            updateTimer(patientId, billable, moduleId);
-            $("form").find(":submit").attr("disabled", true);
-            $("form").find(":button").attr("disabled", true);
-            //$(".last_time_spend").html(response.data.end_time);
-            $('.form_start_time').val(response.data.form_start_time);
-            alert("Timer paused and Time Logged successfully.");
-        } else {
-            alert("Unable to log time, please try after some time.");
-        }
-
-    }).catch(function (error) {
-        console.error(error, error.response);
-    });
-}
-
-
-function format_date(value) {
-    if (value) {
-        return moment(String(value)).format('MM-DD-YYYY')
-    }
-}
-$('.submit-add-patient-fin-number').on('click', function() {
-    // Serialize the form data 
-    const formData = $('#fin_number_form').serialize();
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST',
-      url: '/patients/save-patient-fin-number',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#devices_success').html('<div class="alert alert-success">' + response.message + '</div>');
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#patient-finnumber').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#devices_success').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
-
-$('.submit-patient-add_device').on('click', function() {
-    // Serialize the form data 
-    const formData = $('#patient_add_device_form').serialize();
-    // Make an AJAX POST request to the specified route
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    $.ajax({
-      type: 'POST',
-      url: '/ccm/additional-device-email',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#alert-success-additional-device').show();
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#additional-device').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#alert-success-additional-device').hide();
-      }
-    });
-});
-
-
- 
-$('.submit-personal-notes').on('click', function() { 
-    // Serialize the form data
-    const formData = $('#personal_notes_form').serialize();
-    // Make an AJAX POST request to the specified route
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    $.ajax({
-      type: 'POST',
-      url: '/patients/patient-personal-notes',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#personal-notes').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
-
-$('.submit-part-of-research-study').on('click', function() {
-    // Serialize the form data
-    const formData = $('#part_of_research_study_form').serialize();
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST', 
-      url: '/patients/patient-research-study',
-      data: formData,
-      success: function(response) { 
-        // Display the response message within the modal
-        $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#part-of-research-study').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-      }
-    });
-});
- */</script> 
+</script> 
