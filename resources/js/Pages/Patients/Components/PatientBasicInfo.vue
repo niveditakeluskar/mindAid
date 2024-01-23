@@ -141,7 +141,7 @@
                                                     non_billabel_time</span></span>
                                             <button class="button"
                                                 style="border: 0px none;background: #f7f7f7;outline: none;"><a
-                                                    href="/patients/registerd-patient-edit/" title="Edit Patient Info"
+                                                    :href="url" title="Edit Patient Info"
                                                     data-toggle="tooltip" data-placement="top"
                                                     data-original-title="Edit Patient Info"><i class=" editform i-Pen-4"
                                                         style="color: #2cb8ea;"></i></a></button>
@@ -248,7 +248,8 @@ export default {
     const patient_device = ref(); 
 /*     const props = defineProps({
     patientId: Number,
-    moduleId: Number, 
+    moduleId: Number,
+    componentId:Number,
     loading: "",
     patientServices: [],
     patientEnrolledServices:[],
@@ -259,6 +260,7 @@ export default {
 // const enrolledServices = ref(null);
 const enrolledServices = ref([]);
 const patientDetails = ref(null);
+const url = '/patients/registerd-patient-edit/'+props.patientId+'/'+ props.moduleId+'/'+props.componentId+'/0';
 var pause_stop_flag = 0;
 var pause_next_stop_flag = 0;
 const showAddPatientDevices = ref(false);

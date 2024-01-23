@@ -124,7 +124,7 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == 'Yes'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
-					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication"  @click="openModal">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
 	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
@@ -227,8 +227,8 @@
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
 					<label :for="`${sectionName}_services-modal`" class="mr-3 mb-4"><b>Services added or edit: </b>
-						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary"
-							data-toggle="modal" data-target="#myModal" target="healthcare-services">Edit Services</button>
+						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal">Edit Services</button>
+		 				<ServicesModalForm ref="servicesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
 			</div>
@@ -278,6 +278,8 @@
 <script>
 import ModalForm from '../../Modals/Medication.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
+import ServicesModalForm from '../../Modals/Services.vue';
+
 export default {
 	props: {
 		sectionName: String,
@@ -288,6 +290,10 @@ export default {
 	components: {
 		ModalForm ,
 		ReviewCarePlanModal,
+	},
+	components: {
+		ModalForm,
+		ServicesModalForm,
 	},
 	data() {
 		return {
@@ -404,6 +410,10 @@ export default {
 			// Access the modal component through a ref
 			console.log("ReviewCarePlanModal called");
 			this.$refs.ReviewCarePlanModal.openModal();
+			this.$refs.modalForm.openModal();
+		},
+		openServicesModal() {
+			this.$refs.servicesModalForm.openModal();
 		},
 	},
 	setup(props){

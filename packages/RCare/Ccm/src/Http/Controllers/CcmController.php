@@ -215,19 +215,13 @@ class CcmController extends Controller
                                 AND status = 1
                                 order by sequence, sub_sequence ASC)");
 
+                                foreach($emr_table_summary_notes as $n){
+                                    if($n!=''){
+                                        array_push($prev_topics,$n);
+                                    } 
+                                }
 
-    //                     $prev_topics = DB::select("(select topic,notes from ccm.ccm_topics
-    //                         where id in (select max(id)
-    //                         FROM ccm.ccm_topics
-    //                         WHERE patient_id='" . $patient_id . "'
-    //                         AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                         AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                         AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%'
-    //                         group by topic)
-    //                         order by sequence, sub_sequence ASC)
-    //                         ");
 
-    //                     if($month == date('m') && $year == date('Y')){
 
                             }
                             
@@ -279,102 +273,59 @@ class CcmController extends Controller
                             order by sequence, sub_sequence ASC)");
                             }
 
-    //                         foreach($emr_table as $e){
-    //                             if($e!=''){
-    //                                 array_push($prev_topics,$e);
-    //                             }
+                            if(count($emr_table_summary_notes) > 0){
+                                foreach($emr_table_summary_notes as $notes){
+                                    array_push($prev_topics,$notes);  
+                                }
+                               
 
-    //                         }
+                            }
 
-    //                         if(count($emr_table)==0){
-    //                             $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
-    //                             where id in (select max(id)
-    //                             FROM ccm.ccm_topics
-    //                             WHERE patient_id='" . $patient_id . "'
-    //                             AND topic LIKE 'EMR Monthly Summary%'
-    //                             AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                             AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                             group by topic)
-    //                             order by sequence, sub_sequence ASC)");
+                            
+                        }
 
-    //             foreach ($emr_table as $e) {
-    //                 if ($e != '') {
-    //                     array_push($prev_topics, $e);
-    //                 }
-    //             }
+                        
+                        // dd($prev_topics);
+                        
+        
+        // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+        //                 where id in (select max(id)
+        //                 FROM ccm.ccm_topics
+        //                 WHERE patient_id='".$patient_id."'
+        //                 AND EXTRACT(Month from record_date) = '".$month."'  
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' 
+        //                 AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
+        //                 group by topic)
+        //                 order by sequence, sub_sequence ASC) 
+        //                 union
+        //                 (select topic, notes
+        //                 from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
+        //                 AND EXTRACT(Month from record_date) = '".$month."' 
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
+                        
+        //                 ") ); 
 
-    //                             $emr_table_summary_notes =  DB::select("(select topic,notes
-    //                             from ccm.ccm_topics
-    //                             WHERE patient_id='" . $patient_id . "'
-    //                             AND topic LIKE 'Summary notes added on%'
-    //                             AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                             AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                             AND status = 1
-    //                             order by sequence, sub_sequence ASC)");
+                        // dd($prev_topics);                
 
-    //                             foreach($emr_table_summary_notes as $n){
-    //                                 if($n!=''){
-    //                                     array_push($prev_topics,$n);
-    //                                 }
-    //                             }
+        
+        // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
+        //                 where id in (select max(id)
+        //                 FROM ccm.ccm_topics
+        //                 WHERE patient_id='".$patient_id."'
+        //                 AND EXTRACT(Month from record_date) = '".$month."'  
+        //                 AND EXTRACT(YEAR from record_date) = '".$year."' 
+        //                 group by topic)
+        //                 order by sequence, sub_sequence ASC) ") );
 
+        //  $prev_checklist_topics = DB::select(DB::raw(" ( select schedule_office_appointment,
+        //                             resources_for_medication, medical_renewal, called_office_patientbehalf, referral_support, no_other_services 
+        //                             from ccm.callwrapup_checklist where patient_id = '".$patient_id."' order by id desc limit 1  ) ")       );
 
-
-    //                         }
-
-    //                     }else{
-    //                         $emr_table = DB::select("(select topic,notes from ccm.ccm_emr_monthly_summary
-    //                                          WHERE patient_id='".$patient_id."'
-    //                                          AND topic LIKE 'EMR Monthly Summary%'
-    //                                          AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                                          AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                                          And status = 1
-    //                                          order by sequence, sub_sequence ASC)");
-
-    //                         if(count($emr_table)==0){
-    //                             $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
-    //                             where id in (select max(id)
-    //                             FROM ccm.ccm_topics
-    //                             WHERE patient_id='" . $patient_id . "'
-    //                             AND topic LIKE 'EMR Monthly Summary%'
-    //                             AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                             AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                             group by topic)
-    //                             order by sequence, sub_sequence ASC)");
-
-
-    //                         $emr_table_summary_notes =  DB::select("(select topic,notes
-    //                         from ccm.ccm_emr_monthly_summary
-    //                         WHERE patient_id='" . $patient_id . "'
-    //                         AND topic LIKE 'Summary notes added on%'
-    //                         AND EXTRACT(Month from record_date) = '" . $month . "'
-    //                         AND EXTRACT(YEAR from record_date) = '" . $year . "'
-    //                         AND status = 1
-    //                         order by sequence, sub_sequence ASC)");
-
-    //                         if(count($emr_table_summary_notes)==0){
-    //                         $emr_table_summary_notes =  DB::select("(select topic,notes
-    //                         from ccm.ccm_topics
-    //                         WHERE patient_id='" . $patient_id . "'
-    //                         AND topic LIKE 'Summary notes added on%'
-    //                         AND EXTRACT(Month from record_date) = '".$month."'
-    //                         AND EXTRACT(YEAR from record_date) = '".$year."'
-    //                         order by sequence, sub_sequence ASC)");
-    //                         }
-
-
-    //         if (count($emr_table_summary_notes) > 0) {
-    //             foreach ($emr_table_summary_notes as $notes) {
-    //                 array_push($prev_topics, $notes);
-    //             }
-    //         }
-    //     }
-
-
-    //     return view('Ccm::previous-month-data', compact('prev_topics'));
-    // }
+        // dd($patient_id,$prev_checklist_topics);  
+        
+        return view('Ccm::previous-month-data', compact('prev_topics'));
     }
-}
+
     public function PatientPreviousMonthCalender($patient_id, $module_id)
     {
         $patient_id   = sanitizeVariable($patient_id);
