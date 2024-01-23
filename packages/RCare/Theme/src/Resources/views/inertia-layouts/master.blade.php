@@ -24,6 +24,7 @@
 
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
+    
     {{-- theme css --}}
     <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
@@ -707,6 +708,8 @@
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
     <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>
+    <script defer src="{{asset(mix('assets/js/laravel/commonHighchart.js'))}}"></script>
+
     {{-- page specific javascript --}}
 
 </body>

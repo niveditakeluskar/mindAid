@@ -142,7 +142,7 @@ class ReviewDataLinkController extends Controller
         effdate as csseffdate  
         from patients.sp_patientdetailvitalalertsdevicelink($pat,'".$u."',timestamp '".$dt1."',timestamp '".$dt2."')";       
 //dd($query);
-        $data = DB::select( DB::raw($query) ); 
+        $data = DB::select($query); 
         // dd( $data) ; 
         return Datatables::of($data) 
             ->addIndexColumn()
@@ -162,7 +162,7 @@ class ReviewDataLinkController extends Controller
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
         $component_id = sanitizeVariable($request->component_id); 
-        $stage_id     = sanitizeVariable($request->stage_id);
+        $stage_id     = 0; //sanitizeVariable($request->stage_id);
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
         $step_id      = sanitizeVariable($request->step_id); 
