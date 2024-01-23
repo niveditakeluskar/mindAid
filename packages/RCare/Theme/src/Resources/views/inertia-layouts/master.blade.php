@@ -105,7 +105,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal for Deactivation-->
     <div id="active-deactive" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -135,7 +134,7 @@
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
                         <input type="hidden" name="id">
-                        <input type="hidden" name="worklist" id="worklist">
+                        <input type="hidden" name="worklistclick" id="worklistclick">
                         <input type="hidden" name="patientid" id="patientid">
                         <div class="card-body">
                             <div class="row">
@@ -264,36 +263,6 @@
         </div>
     </div>
     <!-- Fin Number -->
-    <!-- Vatran Service -->
-    <div id="vateran-service" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="vateran_service_title">Veteran Services</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" name="vateran_service_form" id="vateran_service_form">
-                        @csrf
-                        <?php
-                        if (isset($patient[0]->id)) {
-                            echo $patient[0]->id;
-                            getVTreeData($patient[0]->id);
-                        } else {
-                            echo "No Veteran Service.";
-                        }
-                        ?>
-
-                        <div class="modal-footer">
-                            <!--button type="button" class="btn btn-primary float-right submit-vateran-service">Submit</button-->
-                            <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Vatran Service -->
 
     <!-- patient devices -->
     <div id="add-patient-devices" class="modal fade" role="dialog">
@@ -464,7 +433,7 @@
     </div>
     <!-- End Additional Device -->
     <!-- Model for patient threshold -->
-    <div id="patient-threshold" class="modal fade" role="dialog">
+    <!-- <div id="patient-threshold" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -763,7 +732,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Patient Threshold Ends -->
     <!-- Personal Notes Modal -->
     <div id="personal-notes" class="modal fade" role="dialog">
@@ -871,7 +840,6 @@
         </div>
     </div>
     <!-- End Reasearch Study Modal -->
-    
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}
@@ -882,354 +850,9 @@
     <script defer src="{{asset('assets/js/customizer.script.js')}}"></script>
     <!--<script src="{{asset('assets/js/sidebar-horizontal.script.js')}}"></script>-->
     {{-- laravel js --}}
-<!--   <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>  -->
- 	
-<!--  <script src="{{asset('assets/js/laravel/ccmMonthlyMonitoring.js')}}"></script>
-<script src="{{asset('assets/js/laravel/carePlanDevelopment.js')}}"></script> -->
+    <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     {{-- page specific javascript --}}
 
-    <script defer src="{{asset('assets/js/laravel/ccmcpdcommonJS.js')}}"></script>
-<script>
-    var populateForm = function populateForm(data, url) {
-  $.get(url, data, function (result) {
-    for (var key in result) {
-      if (key == 'hippa_form') {
-        if (result[key] != null && typeof result[key] != "undefined" && result[key] != "") {
-          var hippa_vf = result[key]['static']['verification'];
-
-          if (hippa_vf = 1) {
-            $('#ccm-relationship-icon-tab').removeClass('disabled');
-            $('#ccm-research-follow-up-icon-tab').removeClass('disabled');
-            $('#ccm-general-questions-icon-tab').removeClass('disabled');
-            $('#ccm-call-close-icon-tab').removeClass('disabled'); // $('#ccm-call-wrapup-icon-tab').removeClass('disabled');
-          }
-        } else {
-          $('#ccm-relationship-icon-tab').addClass('disabled');
-          $('#ccm-research-follow-up-icon-tab').addClass('disabled');
-          $('#ccm-general-questions-icon-tab').addClass('disabled');
-          $('#ccm-call-close-icon-tab').addClass('disabled'); // $('#ccm-call-wrapup-icon-tab').addClass('disabled');
-
-          $("#ccm-relationship-icon-tab").css("background-color", "#c0c0c047");
-          $('#ccm-research-follow-up-icon-tab').css("background-color", "#c0c0c047");
-          $('#ccm-general-questions-icon-tab').css("background-color", "#c0c0c047");
-          $('#ccm-call-close-icon-tab').css("background-color", "#c0c0c047"); // $('#ccm-call-wrapup-icon-tab').css("background-color","#c0c0c047");
-        }
-      }
-
-      if (key == 'callwrapup_form') {
-        if (result[key] != null && typeof result[key] != "undefined" && result[key] != "") {
-          var emr_monthly_summarys = result[key]["static"]['emr_monthly_summary'];
-          var summarys = result[key]["static"]['summary'];
-
-          if (summarys != null && summarys != undefined && summarys != "") {
-            var summaryslength = result[key]["static"]['summary'].length;
-          } else {
-            var summaryslength = "";
-          }
-
-          var checklist_data = result[key]["static"]['checklist_data'];
-
-          if (result[key]["static"]['additional_services'] != null && typeof result[key]["static"]['additional_services'] != "undefined" && result[key]["static"]['additional_services'] != "") {
-            var additionalservices = result[key]["static"]['additional_services'][0]['notes'];
-            var resultnew = additionalservices.split(';').map(function (e) {
-              return e.split(':');
-            });
-
-            for (var i = 0; i < resultnew.length; i++) {
-              var servicedata = resultnew[i];
-
-              for (var k = 0; k < servicedata.length; k++) {
-                var maindivname = servicedata[0];
-                var lwercase = maindivname.toLowerCase();
-                var trimcase = lwercase.trim();
-                newtrimcase = trimcase.replace('/', '');
-                var mymaindiv = newtrimcase.replace(/ /g, "");
-                var finalservicedata = servicedata[k];
-
-                if (finalservicedata == 'No Additional Services Provided ' || finalservicedata == "No Additional Services Provided ") {
-                  // alert('if');
-                  // alert(finalservicedata);
-                  if (finalservicedata != '') {
-                    $("form[name='callwrapup_form'] #no_additional_services_provided").prop('checked', true);
-                  }
-                } else {
-                  if (finalservicedata.indexOf(',') > -1) {
-                    var additionaldata = finalservicedata.split(',');
-
-                    for (var n = 0; n < additionaldata.length; n++) {
-                      w = additionaldata[n];
-                      var y = w.trim();
-                      var y_old = y.replace(/ /g, "_");
-                      var mydata = y_old.replace(/\//g, "_");
-
-                      if (mydata != '') {
-                        var addname = "RRclass " + mydata;
-                        var checkboxid = mymaindiv + '_' + mydata;
-                        $("form[name='callwrapup_form'] #" + checkboxid).prop('checked', true); // $("form[name='callwrapup_form'] #"+mydata).prop('checked', true);
-                        // $('input:checkbox[name="urgentemergentresponse[Interaction_with_Office_Staff]"][value="1"]').prop('checked',true);
-                      }
-                    }
-                  } else {
-                    var f_lowercase = finalservicedata.toLowerCase();
-                    var x = f_lowercase.trim();
-                    x = x.replace('/', ' ');
-                    var n_lowercase_old = x.replace(/ /g, "_");
-                    var n_lowercase = n_lowercase_old.replace(/\//g, "_");
-
-                    if (n_lowercase != '') {
-                      $("form[name='callwrapup_form'] #" + n_lowercase).prop('checked', true);
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-          callWrapUpShowHide();
-
-          if (emr_monthly_summarys != null && emr_monthly_summarys != "") {
-            $("textarea#callwrap_up_emr_monthly_summary").html(emr_monthly_summarys[0]['notes']);
-          }
-
-          var newwwchildrenlength = $("div#additional_monthly_notes").children().length;
-          var inc_notes = 0;
-
-          if (newwwchildrenlength == summaryslength) {} else {
-            for (var summary in summarys) {
-              var summarys1 = summarys[summary]['record_date'];
-
-              if (summarys1 != null && summarys1 != undefined && summarys1 != "") {
-                var e_date = summarys[summary]['record_date'];
-                edate = e_date.split(' '); // console.log(edate);
-
-                var enew_date = edate[0];
-                var echange_date_format = enew_date.split('-');
-                var e_set_date = echange_date_format[2] + '-' + echange_date_format[0] + '-' + echange_date_format[1];
-                console.log(e_set_date); // alert(e_set_date);  
-
-                $('#additional_monthly_notes').append('<div class="additionalfeilds additionalfeilds row"  style="margin-left: 0.05rem !important;  margin-bottom: 0.5rem; "><div class="col-md-4"><input type="date" class="form-control" id="emr_monthly_summary_date_' + inc_notes + '" name="emr_monthly_summary_date[]" ><div class="invalid-feedback"></div></div><div class="col-md-8"><textarea  class="form-control " cols="90" style="margin-bottom: 1.1rem !important;"  name="emr_monthly_summary[]" onfocusout="saveEMR()">' + summarys[summary]['notes'] + '</textarea><div class="invalid-feedback"></div><i type="button" class="removenotes  i-Remove" style="color: #f44336;  font-size: 22px;margin-top: -37px;margin-right: -51px;float: right;"></i></div></div>');
-                $("form[name='callwrapup_form'] #emr_monthly_summary_date_" + inc_notes).val(e_set_date);
-                inc_notes++;
-              }
-            }
-          }
-
-          if (checklist_data && checklist_data['emr_entry_completed'] != null) {
-            var emr_entry_completed = checklist_data['emr_entry_completed'];
-
-            if (emr_entry_completed == 1) {
-              $('#emr_entry_completed').prop('checked', true); // Checks it
-            } else {
-              $('#emr_entry_completed').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['called_office_patientbehalf'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var called_office_patientbehalf = checklist_data['called_office_patientbehalf'];
-
-            if (called_office_patientbehalf == 1) {
-              $('#called_office_patientbehalf').prop('checked', true); // Checks it
-            } else {
-              $('#called_office_patientbehalf').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['schedule_office_appointment'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var schedule_office_appointment = checklist_data['schedule_office_appointment'];
-
-            if (schedule_office_appointment == 1) {
-              $('#schedule_office_appointment').prop('checked', true); // Checks it
-            } else {
-              $('#schedule_office_appointment').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['resources_for_medication'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var resources_for_medication = checklist_data['resources_for_medication'];
-
-            if (resources_for_medication == 1) {
-              $('#resources_for_medication').prop('checked', true); // Checks it
-            } else {
-              $('#resources_for_medication').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['medical_renewal'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var medical_renewal = checklist_data['medical_renewal'];
-
-            if (medical_renewal == 1) {
-              $('#medical_renewal').prop('checked', true); // Checks it
-            } else {
-              $('#medical_renewal').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['referral_support'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var referral_support = checklist_data['referral_support'];
-
-            if (referral_support == 1) {
-              $('#referral_support').prop('checked', true); // Checks it
-            } else {
-              $('#referral_support').prop('checked', false); // Unchecks it
-            }
-          }
-
-          if (checklist_data && checklist_data['no_other_services'] != null) {
-            var checklist_data = result[key]["static"]['checklist_data'];
-            var no_other_services = checklist_data['no_other_services'];
-
-            if (no_other_services == 1) {
-              $('#no_other_services').prop('checked', true); // Checks it
-            } else {
-              $('#no_other_services').prop('checked', false); // Unchecks it
-            }
-          }
-        }
-      } else {
-
-        var form = {
-  dynamicFormPopulate: function(key, value) {
-    // Your implementation here
-    console.log(key, value);
-  }
-};
-
-        form.dynamicFormPopulate(key, result[key]);
-
-        if (key == 'call_close_form') {
-          if (result[key] != '') {
-            //debugger;
-            var date_enrolled = result[key]["static"]['q2_datetime'];
-
-            if (date_enrolled != undefined) {
-              var a = date_enrolled.split(" ")[0];
-              var day = a.split("-");
-              $mydate = day[2] + '-' + day[0] + '-' + day[1];
-              document.getElementById("next_month_call_date").value = $mydate;
-            }
-          }
-        }
-
-        if (key == 'followup_task_edit_notes') {
-          if (result[key][0].notes != null) {
-            var notes = result[key][0].notes;
-            $('#notes').html(notes);
-          }
-
-          if (result[key][0].task_notes != null) {
-            var task_notes = result[key][0].task_notes;
-            $('#task_notes').html(task_notes);
-            $('#topic').val(task_notes);
-          }
-
-          if (result[key][0].task_date != null) {
-            var task_date = result[key][0].task_date;
-
-            if (task_date != '') {
-              date = task_date.split(' ');
-              var new_date = date[0];
-              var change_date_format = new_date.split('-');
-              var set_date = change_date_format[2] + '-' + change_date_format[0] + '-' + change_date_format[1];
-              $('#task_date').html(date[0]);
-              document.getElementById("task_date_val").value = set_date;
-            }
-          }
-
-          if (result[key][0].master_followuptask != null) {
-            var category = result[key][0].master_followuptask['task'];
-            $('#category').html(category);
-          }
-
-          if (result[key][0].status_flag == 1) {
-            $('#status_flag').prop('checked', true);
-          } else {
-            $('#status_flag').prop('checked', false);
-          }
-        }
-
-        if (key == 'call_preparation_preparation_followup_form' && result[key].hasOwnProperty("static")) {
-          if (result[key]["static"]['condition_requirnment1'] != null) {
-            var CR1 = result[key]["static"]['condition_requirnment1'];
-          } else {
-            var CR1 = "";
-          }
-
-          if (result[key]["static"]['condition_requirnment2'] != null) {
-            var CR2 = result[key]["static"]['condition_requirnment2'];
-          } else {
-            var CR2 = "";
-          }
-
-          if (result[key]["static"]['condition_requirnment3'] != null) {
-            var CR3 = result[key]["static"]['condition_requirnment3'];
-          } else {
-            var CR3 = "";
-          }
-
-          if (result[key]["static"]['report_requirnment1'] != null) {
-            var RR1 = result[key]["static"]['report_requirnment1'];
-          } else {
-            var RR1 = "";
-          }
-
-          if (result[key]["static"]['report_requirnment2'] != null) {
-            var RR2 = result[key]["static"]['report_requirnment2'];
-          } else {
-            var RR2 = "";
-          }
-
-          if (result[key]["static"]['report_requirnment4'] != null) {
-            var RR4 = result[key]["static"]['report_requirnment4'];
-          } else {
-            var RR4 = "";
-          }
-
-          if (result[key]["static"]['report_requirnment5'] != null) {
-            var RR5 = result[key]["static"]['report_requirnment5'];
-          } else {
-            var RR5 = "";
-          }
-
-          if (CR1 == 1 || CR2 == 1 || CR3 == 1) {
-            $('form[name="call_preparation_preparation_followup_form"] #call_preparation_note').css('display', 'block');
-            $('form[name="research_follow_up_preparation_followup_form"] #research_follow_up_note').css('display', 'block');
-          } else {
-            $('form[name="call_preparation_preparation_followup_form"] #call_preparation_note').css('display', 'none');
-            $('form[name="research_follow_up_preparation_followup_form"] #research_follow_up_note').css('display', 'none');
-          }
-
-          if (RR1 == 1 || RR2 == 1 || RR4 == 1 || RR5 == 1) {
-            $('form[name="call_preparation_preparation_followup_form"] #call_preparation_requirnment').css('display', 'block');
-            $('form[name="research_follow_up_preparation_followup_form"] #research_follow_up_requirnment').css('display', 'block');
-          } else {
-            $('form[name="call_preparation_preparation_followup_form"] #call_preparation_requirnment').css('display', 'none');
-            $('form[name="research_follow_up_preparation_followup_form"] #research_follow_up_requirnment').css('display', 'none');
-          }
-
-          if (result[key]["static"]['condition_requirnment4'] != null) {
-            var CR4 = result[key]["static"]['condition_requirnment4'];
-          } else {
-            var CR4 = "";
-          }
-
-          if (CR1 == 1 || CR2 == 1 || CR3 == 1 || CR4 == 1) {
-            $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_yes").prop("checked", true);
-          } else {
-            $("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
-          }
-        }
-      }
-    }
-  }).fail(function (result) {
-    console.error("Population Error:", result);
-  });
-};
-</script>
 </body>
 
 </html>
