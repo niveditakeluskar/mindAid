@@ -760,9 +760,21 @@ class CcmController extends Controller
         $result['enrolleddateform'] = $activitydata;
         return $result;
     }
-
-    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id)
-    {
+    
+    public function populateMonthlyMonitoringData($patientId) {
+        $patientId   = sanitizeVariable($patientId);
+        $module_id    = getPageModuleName();
+        $configTZ = config('app.timezone');
+        $userTZ   = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+       $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
+       $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
+        // dd($callp);
+        $result['populateCallPreparation'] = $callp;
+        $result['populateHippa'] = $hippa;
+        return $result;
+    }
+    
+    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id){
         $enrollinRPM = 1;
         if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
             $enrollinRPM = 2;
@@ -1634,30 +1646,30 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         $uid                           = sanitizeVariable($request->uid);
         $patient_id                    = sanitizeVariable($request->patient_id);
-        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : sanitizeVariable($request->condition_requirnment1);
-        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : sanitizeVariable($request->condition_requirnment2);
-        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : sanitizeVariable($request->condition_requirnment3);
-        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : sanitizeVariable($request->condition_requirnment4);
-        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : sanitizeVariable($request->report_requirnment1);
-        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : sanitizeVariable($request->report_requirnment2);
-        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : sanitizeVariable($request->report_requirnment3);
-        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : sanitizeVariable($request->report_requirnment4);
-        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : sanitizeVariable($request->report_requirnment5);
+        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : '1';
+        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : '1';
+        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : '1';
+        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : '1';
+        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : '1';
+        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : '1';
+        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : '1';
+        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : '1';
+        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = sanitizeVariable($request->newofficevisit);
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = sanitizeVariable($request->newdiagnosis);
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ? '0' :'1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = sanitizeVariable($request->med_added_or_discon);
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ?'0' :'1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
         $end_time                      = sanitizeVariable($request->end_time);
         // dd($request->timearr['form_start_time']);
         $form_start_time               = sanitizeVariable($request->timearr['form_start_time']);
-        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']); 
         // dd($form_save_time);
         $module_id                     = sanitizeVariable($request->module_id);
         $component_id                  = sanitizeVariable($request->component_id);
@@ -1946,23 +1958,23 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         $uid                           = sanitizeVariable($request->uid);
         $patient_id                    = sanitizeVariable($request->patient_id);
-        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : sanitizeVariable($request->condition_requirnment1);
-        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : sanitizeVariable($request->condition_requirnment2);
-        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : sanitizeVariable($request->condition_requirnment3);
-        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : sanitizeVariable($request->condition_requirnment4);
-        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : sanitizeVariable($request->report_requirnment1);
-        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : sanitizeVariable($request->report_requirnment2);
-        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : sanitizeVariable($request->report_requirnment3);
-        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : sanitizeVariable($request->report_requirnment4);
-        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : sanitizeVariable($request->report_requirnment5);
+        $condition_requirnment1        = empty(sanitizeVariable($request->condition_requirnment1)) ? '0' : '1';
+        $condition_requirnment2        = empty(sanitizeVariable($request->condition_requirnment2)) ? '0' : '1';
+        $condition_requirnment3        = empty(sanitizeVariable($request->condition_requirnment3)) ? '0' : '1';
+        $condition_requirnment4        = empty(sanitizeVariable($request->condition_requirnment4)) ? '0' : '1';
+        $report_requirnment1           = empty(sanitizeVariable($request->report_requirnment1)) ? '0' : '1';
+        $report_requirnment2           = empty(sanitizeVariable($request->report_requirnment2)) ? '0' : '1';
+        $report_requirnment3           = empty(sanitizeVariable($request->report_requirnment3)) ? '0' : '1';
+        $report_requirnment4           = empty(sanitizeVariable($request->report_requirnment4)) ? '0' : '1';
+        $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = sanitizeVariable($request->newofficevisit);
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = sanitizeVariable($request->newdiagnosis);
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ?'0' :'1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = sanitizeVariable($request->med_added_or_discon);
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ? '0': '1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
@@ -3911,7 +3923,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $form_name = 'patient_add_device_form';
         $billable = 1;
         $to_email = Partner::where('category', '0')->orderBy('created_at', 'desc')->first();
-        $to = $to_email->email;
+        
+        $to = isset($to_email)? $to_email->email:'';
         $patient_device = PatientDevices::where('patient_id', $patientId)->where('status', 1)->latest()->first();
         $pdevices = array();
         $rpdevices = array();
@@ -4549,7 +4562,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } else {
                 CallWrap::create($note2);
             }
-        }
+        } 
         //return response()->json(['success' => "Added successfully."]);
         return response(['form_start_time' => $form_save_time]);
         /*  DB::commit();

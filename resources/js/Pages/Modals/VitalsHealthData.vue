@@ -4,7 +4,7 @@
     <div class="modal fade" :class="{ 'open': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Services</h4> 
+                <h4 class="modal-title">Vitals & Health Data</h4> 
                 <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
@@ -20,14 +20,14 @@
                                         @click="changeTab(index)"
                                         :class="{ 'active': activeTab === index }"
                                         >
-                                            <a class="nav-link tabClick serviceslist" id="dme-services-icon-pill" data-toggle="pill" href="#dme" role="tab" aria-controls="dme-services" aria-selected="false" value="1">
+                                            <a class="nav-link tabClick serviceslist" id="vitals-icon-pill" data-toggle="pill" href="#vitals" role="tab" aria-controls="vitals" aria-selected="false" value="1">
                                                 <i class="nav-icon color-icon-2 i-Home1 mr-1"></i>
                                                 {{ tab.label }}
                                             </a>
                                         </li>
                                     </ul>
                                     <div class="tab-content">
-                                        <component :is="tabs[activeTab].component" v-bind="componentServicesProps" />
+                                        <component :is="tabs[activeTab].component" v-bind="componentVitalsHealthDataProps" />
                                     </div>
                                 </div>
                             </div>
@@ -56,14 +56,10 @@ import {
     onBeforeMount,
     onMounted
 } from '../commonImports';
-import DME from './ServicesModals/DME.vue';
+import Vitals from './VitalsHealthDataModals/Vitals.vue';
+import Labs from './VitalsHealthDataModals/Labs.vue';
 import HomeHealth from './ServicesModals/HomeHealth.vue';
 import Dialysis from './ServicesModals/Dialysis.vue';
-import Therapy from './ServicesModals/Therapy.vue';
-import SocialServices from './ServicesModals/SocialServices.vue';
-import MedicalSupplies from './ServicesModals/MedicalSupplies.vue';
-import Other from './ServicesModals/Other.vue';
-import SubStepCall from '../MonthlyMonitoring/SubSteps/CallSubSteps/Call.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -72,24 +68,17 @@ export default {
         componentId: Number,
     },
     components: {
-        DME,
-        HomeHealth,
+        Vitals,
+        Labs,
         Dialysis,
-        Therapy,
-        SocialServices,
-        MedicalSupplies,
-        Other,
-        SubStepCall,
+        HomeHealth,
     },
 	setup(props) {
         const tabs = ref([
-            { label: 'DME', component: 'DME' },
-            { label: 'Home Health (skilled)', component: 'HomeHealth' },
-            { label: 'Dialysis', component: 'Dialysis' },
-            { label: 'Therapy', component: 'Therapy' },
-            { label: 'Social Services', component: 'SocialServices' },
-            { label: 'Medical Supplies', component: 'MedicalSupplies' },
-            { label: 'Other', component: 'Other' }
+            { label: 'Vitals', component: 'Vitals' },
+            { label: 'Labs', component: 'Labs' },
+            { label: 'Imaging', component: 'Dialysis' },
+            { label: 'Health Data', component: 'HomeHealth' },
         ]);
 
         const activeTab = ref(0);
@@ -106,28 +95,28 @@ export default {
         let closeModal = () => {
             isOpen.value = false;
         };
-        let servicesStageId = ref(0);
+        let VitalsHealthDataStageId = ref(0);
 
-        let componentServicesProps = ref({
+        let componentVitalsHealthDataProps = ref({
             patientId: props.patientId,
             moduleId: props.moduleId,
             componentId: props.componentId,
-            stageId: servicesStageId,
+            stageId: VitalsHealthDataStageId,
         });
 
         let getStageID = async () => {
             try {
-                let servicesStageName = 'Patient_Data';
-                let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${servicesStageName}`);
-                servicesStageId.value = response.data.stageID;
-                componentServicesProps.value = {
+                let VitalsHealthDataStageName = 'Patient_Data';
+                let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${VitalsHealthDataStageName}`);
+                VitalsHealthDataStageId.value = response.data.stageID;
+                componentVitalsHealthDataProps.value = {
                     patientId: props.patientId,
                     moduleId: props.moduleId,
                     componentId: props.componentId,
-                    stageId: servicesStageId.value,
+                    stageId: VitalsHealthDataStageId.value,
                 };
             } catch (error) {
-                console.error('Error fetching Services stageID:', error);
+                console.error('Error fetching Vitals & Health Data stageID:', error);
             }
         };
 
@@ -143,7 +132,7 @@ export default {
             isOpen,
             openModal,
             closeModal,
-            componentServicesProps,
+            componentVitalsHealthDataProps,
         };
     }
 };

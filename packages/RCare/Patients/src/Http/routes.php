@@ -293,10 +293,12 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/view-more-part-of-research-study/{id}', 'RCare\Patients\Http\Controllers\PatientController@viewMorePartOfResearchStudy')->name('view.more.part.of.research.study');
         Route::get('/patient-status/{patient_id}/{module_id}/status', 'RCare\Patients\Http\Controllers\PatientController@patientStatus')->name('patient_status');
         Route::get('/patient-details/{patient_id}/{module_id}/patient-details', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientDetails')->name('patient_details');
-        Route::get('/patient-VeteranServiceData/{patient_id}/patient-VeteranServiceData', function (string $patient_id) {
-           return getVTreeData($patient_id);
-        }); 
- 
+        // Route::get('/patient-VeteranServiceData/{patientId}/patient-VeteranServiceData', function (string $patientId) {
+        //    $a =  getVTreeData($patientId); 
+        //    return $a; 
+        // }); 
+        Route::get('/patient-VeteranServiceData/{patientId}/patient-VeteranServiceData','RCare\Patients\Http\Controllers\PatientController@fetchVeteranServiceData')
+        ->name("fetchVeteranServiceData"); 
         Route::get('/device-deviceslist/{id}', 'RCare\Patients\Http\Controllers\PatientController@getdeviceslist')->name('devices_list');
 
         // Route::get('/patient_details_model/{patient_id}/{module_id}/patient_details_model', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientDetailsinModel')->name('patient_details_model');

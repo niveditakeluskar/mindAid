@@ -10,9 +10,8 @@
                   </div>
                </div>
                <div style="width: 90%; float: right;">
-                  <component :is="selectedComponent" :patientId="patientId" :moduleId="moduleId"
-                     :componentId="componentId"></component>
-                  <!-- v-bind="componentProps" -->
+                  <component :is="selectedComponent" v-bind="componentProps" :patientId="patientId" :moduleId="moduleId"
+                     :componentId="componentId" :stageid="stageid"></component>
                </div>
             </div>
          </div>

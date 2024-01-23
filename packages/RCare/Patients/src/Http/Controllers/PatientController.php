@@ -125,13 +125,76 @@ class PatientController extends Controller
         return response(['form_start_time' => $form_save_time]);
     }
 
-    public function populateFinNumberData($id)
+    public function fetchVeteranServiceData($patientId)
     {
-        $id = sanitizeVariable($id);
-        $data = DB::select("select fin_number from patients.patient where id = '" . $id . "'");
-        $result['fin_number_form'] = $data;
-        return $result;
+        // return getVTreeData($patientId);
+        $id = $patientId;
+        $module_id    = getPageModuleName();
+        $SID = getFormStageId(8, 9, 'Veteran');
+        $patient_demographics = PatientDemographics::where('patient_id', $id)->get();
+        // dd($patient_demographics);
+        if (isset($patient_demographics[0]->template)) {
+            $patient_questionnaire1 = json_decode($patient_demographics[0]->template, true);
+            if (isset($patient_questionnaire1["template_id"])) {
+                $veteranQuestion = QuestionnaireTemplate::where('id', $patient_questionnaire1["template_id"])->where('stage_id', $SID)->where('template_type_id', 5)->latest()->first();
+            } else {
+                $veteranQuestion = QuestionnaireTemplate::where('status', 1)->where('stage_id', $SID)->where('template_type_id', 5)->latest()->first();
+            }
+        } else {
+            $veteranQuestion = QuestionnaireTemplate::where('status', 1)->where('stage_id', $SID)->where('template_type_id', 5)->latest()->first();
+        }
+
+        // dd($veteranQuestion);
+
+        if ($veteranQuestion != null) {
+            $queData = json_decode($veteranQuestion['question']);
+            if (isset($queData->question->q)) {
+                $questionnaire = $queData->question->q;
+
+                if (isset($patient_demographics[0]->template)) {
+                    $patient_questionnaire = json_decode($patient_demographics[0]->template, true);
+                    foreach ($questionnaire as $value) {
+                        $questionTitle = trim($value->questionTitle);
+                        $questionExist = 0;
+                        if ($patient_questionnaire != '' || $patient_questionnaire != null) {
+                            if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                                $questionExist = 1;
+                            }
+                        }
+                        $que_val = trim(preg_replace('/\s+/', ' ', $value->questionTitle));
+                        echo '<label>' . $value->questionTitle . '</label> : ';
+                        echo '<b>';
+                        if ($questionExist == 1) {
+                            if (property_exists($value, 'label') && $value->answerFormat == '4') {
+                                foreach ($value->label as $labels) {
+                                    if (isset($patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)])) {
+                                        if ($patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)] == 1) {
+                                            echo $labels;
+                                        }
+                                    }
+                                }
+                            } else {
+                                echo $patient_questionnaire[$questionTitle];
+                            }
+                        }
+
+                        echo '</b>';
+                        echo '<br>';
+                    }
+                } else {
+                    return '';
+                }
+            }
+        }
     }
+
+    // public function populateFinNumberData($id)
+    // {
+    //     $id = sanitizeVariable($id);
+    //     $data = DB::select("select fin_number from patients.patient where id = '" . $id . "'");
+    //     $result['fin_number_form'] = $data;
+    //     return $result;
+    // }
 
     public function getPatientRegistrationForm()
     {
@@ -149,20 +212,26 @@ class PatientController extends Controller
         $module_id = sanitizeVariable($request->route('module_id'));
         //dd($uid);
         $patient_providers = PatientProvider::where('patient_id', $uid)
-            //->with('practice')->with('provider')->with('users')
+            // ->with('practice')->with('provider')->with('users')
             ->where('provider_type_id', 1)->where('is_active', 1)->orderby('id', 'desc')
-            ->first();
+            ->first(); 
+            // dd($patient_providers);
         $practice_id = empty($patient_providers->practice_id) ? '' : $patient_providers->practice_id;
+        
+        if(!empty($practice_id)){
+            $practices= Practices::where('id',$practice_id)->where('is_active', 1)->orderby('id', 'desc')
+            ->first(); 
+            $practice_group_id = empty($practices)?'':$practices->practice_group;
+        }else{
+            $practice_group_id='';
+        }
 
         if (!empty($practice_id)) {   //dd("hii"); 
             $practice_threshold_exist = PracticeThreshold::where('practice_id', $practice_id)->orderby('id', 'desc')->limit(1)->first();
-
-            $org_threshold_exist = Practices::where('practice_group', $practice_id)->orderby('id', 'desc')->limit(1)->first();
-        } else {
-            $practice_threshold_exist = "";
-            $org_threshold_exist = "";
+        }else if(!empty($practice_group_id)){
+         $org_threshold_exist = org_threshold::where('org_id', $practice_group_id)->orderby('id', 'desc')->limit(1)->first();
         }
-
+        // dd($practice_threshold_exist);
         if (!empty($practice_threshold_exist)) {
             $threshold = $practice_threshold_exist;
             $heading = "Practice Threshold";
@@ -174,8 +243,11 @@ class PatientController extends Controller
             $threshold = $admin_threshold_exist;
             $heading = "Renova Threshold";
         }
-        //dd($threshold);
-        return response()->json([$threshold, $heading]);
+        // dd($threshold);
+        return['heading'=>$heading,
+        'threshold'=>$threshold,
+        ];
+        // return response()->json([$threshold, $heading]);
     }
 
     public function getOrgName($id)
@@ -252,10 +324,12 @@ class PatientController extends Controller
         $billable_time_db                = CommonFunctionController::getCcmMonthlyNetTime($uid, $module_id);
         $non_billabel_time = empty($non_billabel_time_db) ? '00:00:00' : $non_billabel_time_db;
         $billable_time = empty($billable_time_db) ? '00:00:00' : $billable_time_db;
-        $personal_notes = (PatientPersonalNotes::latest($uid, 'patient_id') ? PatientPersonalNotes::latest($uid, 'patient_id')->population() : "");
-        $research_study = (PatientPartResearchStudy::latest($uid, 'patient_id') ? PatientPartResearchStudy::latest($uid, 'patient_id')->population() : "");
+        $personal_notes_data = (PatientPersonalNotes::latest($uid, 'patient_id') ? PatientPersonalNotes::latest($uid, 'patient_id')->population() : "");
+        $research_study_data = (PatientPartResearchStudy::latest($uid, 'patient_id') ? PatientPartResearchStudy::latest($uid, 'patient_id')->population() : "");
         $patient_threshold = (PatientThreshold::latest($uid, 'patient_id') ? PatientThreshold::latest($uid, 'patient_id')->population() : "");
         //dd($patient_threshold);
+        $personal_notes = empty($personal_notes_data)? '' : $personal_notes_data['static']['personal_notes'];
+        $research_study = empty($research_study_data)? '' : $research_study_data['static']['part_of_research_study'];
         $systolichigh = empty($patient_threshold) ? '' : $patient_threshold['static']['systolichigh'];
         $systoliclow = empty($patient_threshold) ? '' : $patient_threshold['static']['systoliclow'];
 
@@ -296,16 +370,16 @@ class PatientController extends Controller
         $device_status = empty($PatientDevices->shipping_status)?'':$PatientDevices->shipping_status;
 
  
-        $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
-
+        $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? 
+        PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
+        // dd($rpmDevices);
         if(isset($rpmDevices[0]->vital_devices)){
 
          $data = json_decode($rpmDevices[0]->vital_devices);
                 $show_device="";
-               
                 for($j=0;$j<count($data);$j++){
-                   
-                    if (array_key_exists("vid",$data[$j]))
+                    // dd($data[$j]);
+                    if (array_key_exists("vid",$data[$j])) //
                     {
                         // dd($data); 
                       $dev=  Devices::where('id',$data[$j]->vid)->where('status','1')->orderby('id','asc')->first();
@@ -339,17 +413,17 @@ class PatientController extends Controller
         }
 
    return [
-           'patient'               =>$patient,
-           'patient_services'      =>$patient_services,
-           'gender'                =>$gender,
-           'military_status'       =>$military_status,
-           'age'                   =>$age,
+           'patient'               => $patient,
+           'patient_services'      => $patient_services,
+           'gender'                => $gender,
+           'military_status'       => $military_status,
+           'age'                   => $age,
            'PatientAddress'        => $PatientAddress,
-           'add_1'                 =>$add_1,
-           'add_2'                 =>$add_2,
-           'city'                  =>$city,
-           'state'                 =>$state, 
-           'zipcode'               =>$zipcode,
+           'add_1'                 => $add_1,
+           'add_2'                 => $add_2,
+           'city'                  => $city,
+           'state'                 => $state, 
+           'zipcode'               => $zipcode,
            'date_enrolled'         => $date_enrolled,
            'suspended_from'        => $suspended_from,
            'suspended_to'          => $suspended_to,
@@ -362,9 +436,9 @@ class PatientController extends Controller
            'device_code'           => $device_code,
            'device_status'         => $device_status,
            'non_billabel_time'     => $non_billabel_time,
-           'billable_time'         =>$billable_time,
-           'personal_notes'        =>$personal_notes,
-           'research_study'        =>$research_study,
+           'billable_time'         => $billable_time,
+           'personal_notes'        => $personal_notes,
+           'research_study'        => $research_study,
            // 'patient_threshold'=>$patient_threshold
            'systolichigh'          => $systolichigh,
            'systoliclow'           => $systoliclow,
@@ -384,13 +458,14 @@ class PatientController extends Controller
            'spirometerfevlow'      => $spirometerfevlow,
            'spirometerpefhigh'     => $spirometerpefhigh,
            'spirometerpeflow'      => $spirometerpeflow,
-           'patient_assign_device' =>$patient_assign_device,
+           'patient_assign_device' => $patient_assign_device,
            'consent_to_text'       => $consent_to_text,
            'allreadydevice'        => $allreadydevice,
            'billable'              => $billable,
            'enroll_in_rpm'         => $enroll_in_rpm
         ];
     }
+
 
     // public function fetchPatientDetailsinModel($patient_id,$module_id){ 
     //     $uid       = sanitizeVariable($patient_id);
@@ -1227,7 +1302,7 @@ class PatientController extends Controller
 
     public function savePatientPartResearchStudy(PatientResearchstudyAddRequest $request)
     {
-        $id           = sanitizeVariable($request->uid);
+        $id           = sanitizeVariable($request->patient_id);
         $patient_id   = sanitizeVariable($request->patient_id);
         $currentMonth = date('m');
         $currentYear  = date('Y');
@@ -1276,7 +1351,8 @@ class PatientController extends Controller
 
     public function savePatientPersonalNotes(PatientPersonalNotesAddRequest $request)
     {
-        $id             = sanitizeVariable($request->uid);
+        // dd('dasdasdsadas');
+        $id             = sanitizeVariable($request->patient_id);
         $patient_id     = sanitizeVariable($request->patient_id);
         $module_id      = sanitizeVariable($request->module_id);
         $personal_notes = sanitizeVariable($request->personal_notes);
@@ -1486,7 +1562,7 @@ class PatientController extends Controller
     //public function savePatientThreshold(PatientThresholdAddRequest $request){
     public function savePatientThreshold(Request $request)
     {    //dd('dadasdasdasd');
-        $id             = sanitizeVariable($request->uid);
+        $id             = sanitizeVariable($request->patient_id);
         $patient_id     = sanitizeVariable($request->patient_id);
         $bpmhigh        = sanitizeVariable($request->bpmhigh);
         $bpmlow         = sanitizeVariable($request->bpmlow);
@@ -1554,7 +1630,6 @@ class PatientController extends Controller
         $vital = array("BPM", "Glucose", "Diastolic", "Systolic", "Oxygen", "Thermometer");
         //dd(count($vital));
         for ($i = 0; $i < count($vital); $i++) {
-
             if ($vital[$i] == "BPM") {
                 $max = $bpmhigh;
                 $min = $bpmlow;

@@ -189,9 +189,6 @@ export default {
         localStorage.setItem("systemDate", currentDate);
       };
 
-
-
-
       //end of initializeScripts
       $("#logout_yes").click(function (e) {
         $("#sign-out-btn")[0].click();
@@ -200,10 +197,6 @@ export default {
       $("#logout_no").click(function (e) {
         $('#logout_modal').modal('hide');
       });
-
-
-
-
     }
   },
   // Include your script tags here as an array of objects
