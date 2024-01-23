@@ -202,7 +202,7 @@ export default {
       success: function(response) {
         // Display the response message within the modal
         $('#patientalertdiv').html('<div class="alert alert-success">' + response.message + '</div>');
-
+        
         // Optionally, close the modal after a certain delay
         setTimeout(function() {
           $('#active-deactive').modal('hide');

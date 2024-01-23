@@ -3,7 +3,7 @@
     <div class="row text-align-center">
       <div class="col-md-12">
           <input type="hidden" id="page_landing_times" name="timearr[form_start_time]" class="timearr form_start_time" :value='landingtime' v-model="page_landing_times"/>
-          <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" v-if ="basicinfo" />
+          <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" v-if ="basicinfo" />
           <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" :stageid="stageid" :componentId="componentId" />
       </div>
     </div>
@@ -14,6 +14,7 @@
   import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
   import PatientBasicInfo from '../Patients/Components/PatientBasicInfo.vue';
   import PatientMonthlyMonitoringDetails from './PatientMonthlyMonitoringDetails.vue';
+  
   import axios from 'axios';
   export default {
     props: {

@@ -18,90 +18,109 @@
                             <div class="col-md-11">
                                 <div class="form-row">
                                     <div class="col-md-2 right-divider">
-                                        <span data-toggle="tooltip" data-placement="top" title="Name">{{
-                                            patientDetails.patient[0].fname }} {{ patientDetails.patient[0].lname}}</span><br />
-                                        <span data-toggle="tooltip" title="Gender (DOB)" data-original-title="Patient DOB">
-                                            {{ (patientDetails.gender === 1) ? "Female" : "Male" }} /
+                                        <span data-toggle="tooltip" data-placement="top" title="Name" :textContent="patientName"></span><br />
+                                        <span data-toggle="tooltip" title="Gender">
+                                            <span v-if="patientGender == '0'">Male | <span :textContent="patientAge"></span></span>
+                                            <span v-else-if="patientGender == '1'">Female |( <span :textContent="patientAge"></span> )</span>
+                                            <span v-else>'| '</span>
                                         </span>
-                                        <span data-toggle="tooltip" title="DOB" data-original-title="Patient DOB"> ({{
-                                            patientDetails.age }}) {{ format_date(patientDetails.patient[0].dob)}}</span><br />
+                                        <span data-toggle="tooltip" title="DOB" :textContent="patientDob"></span><br />
                                         <span data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
                                             data-original-title="Patient FIN Number" style="padding-right:2px;">
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber" @click="patient_finnumber_function"
                                              style="background-color:#27a7de;border:none;" id="patient_finnumber">
-                                              <span id="fin_number" class="patient_fin_number" ></span>
+                                              <span id="fin_number" class="patient_fin_number" :textContent="finNumber"></span>
                                             </a>
+                                            <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
                                         </span><br/>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
-                                            <span v-if="patientDetails.military_status == 0">Yes</span>
-                                            <span v-else-if="patientDetails.military_status == 1">No</span>
-                                            <span v-else>Unknown</span>
+                                            <span v-if="military_status == 0">Yes</span>
+                                            <span v-else-if="military_status == 1">No</span>
+                                            <span v-else-if="military_status == 2">Unknown</span>
+                                            <span v-else="military_status==''"></span>
                                         </a>
+                                        <Veteran ref="veteranRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        
                                     </div>
                                     <div class="col-md-3 right-divider">
-                                        <span data-toggle="tooltip" data-placement="right" title="Contact Number"
-                                            data-original-title="Patient Phone No."><i
-                                                class="text-muted i-Old-Telephone"></i> : <b>{{
-                                                    patientDetails.patient[0].mob }}</b></span><br>
+                                        <span data-toggle="tooltip" data-placement="right" title="Contact Number"><i class="text-muted i-Old-Telephone"></i> : <b></b><span :textContent="patientMob"></span></span><br>
                                         <span data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text"
                                             data-original-title="Consent Text" style="padding-right:2px;"><i
                                                 class="text-muted i-Speach-Bubble-Dialog"></i> : <span id="concent_to_text"
-                                                class="patient_concent_to_text">
-                                                {{ (patientDetails.consent_to_text === 1) ? "Consent to text - Yes" :
-                                                    "Consent to text - No" }}
+                                                class="patient_concent_to_text"> Consent to text -
+                                                <span v-if="consent_to_text == '0'">NO </span>
+                                                <span v-else-if="consent_to_text == '1'">Yes </span>
+                                                <span v-else>''</span>
                                             </span></span><br />
-                                        <span data-toggle="tooltip" data-placement="right" id="basix-info-address"
-                                            title="Address" data-original-title="Patient Address"
-                                            style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i> :
-                                            {{ patientDetails.add_1 }}, {{ patientDetails.add_2 }}, {{ patientDetails.city
-                                            }}, {{ patientDetails.state }}, {{ patientDetails.zipcode }}
+                                        <span data-toggle="tooltip" data-placement="right"
+                                            title="Address" style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i>:
+                                            <span id="basic-info-address" :textContent="patientAddress" ></span>
                                         </span><br>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
+                                        <AlertThresholds ref="alertThresholdsRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" 
+                                        :patient_systolichigh="patient_systolichigh"
+                                        :patient_systoliclow="patient_systoliclow"
+                                        :patient_diastolichigh="patient_diastolichigh" 
+                                        :patient_diastoliclow="patient_diastoliclow" 
+                                        :patient_bpmhigh="patient_bpmhigh" 
+                                        :patient_bpmlow="patient_bpmlow" 
+                                        :patient_oxsathigh="patient_oxsathigh" 
+                                        :patient_oxsatlow="patient_oxsatlow" 
+                                        :patient_glucosehigh="patient_glucosehigh" 
+                                        :patient_glucoselow="patient_glucoselow" 
+                                        :patient_temperaturehigh="patient_temperaturehigh" 
+                                        :patient_temperaturelow="patient_temperaturelow" 
+                                        :patient_weighthigh="patient_weighthigh" 
+                                        :patient_weightlow="patient_weightlow" 
+                                        :patient_spirometerfevhigh="patient_spirometerfevhigh" 
+                                        :patient_spirometerfevlow="patient_spirometerfevlow" 
+                                        :patient_spirometerpefhigh="patient_spirometerpefhigh" 
+                                        :patient_spirometerpeflow="patient_spirometerpeflow" />
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <span data-toggle="tooltip" data-placement="top" title="Practice"
                                             data-original-title="Patient Practice">
-                                            <i class="text-muted i-Hospital"></i> : {{ patientDetails.practice_name }}
+                                            <i class="text-muted i-Hospital"></i> :<sapn :textContent="practice_name"> </sapn>
                                         </span><br>
                                         <span data-toggle="tooltip" data-placement="top" title="Provider"
                                             data-original-title="Patient Provider">
-                                            <i class="text-muted i-Doctor"></i> : {{ patientDetails.provider_name }}
+                                            <i class="text-muted i-Doctor"></i> :<sapn :textContent="provider_name"> </sapn>
                                         </span><br>
                                         <span data-toggle="tooltip" data-placement="top" title="EMR"
                                             data-original-title="Patient EMR">
-                                            <i class="text-muted i-ID-Card"></i> : {{ patientDetails.practice_emr }}
+                                            <i class="text-muted i-ID-Card"></i> :<sapn :textContent="practice_emr"> </sapn>
                                         </span>
                                         <br><span data-toggle="tooltip" data-placement="top" title="Assign CM"
                                             data-original-title="Assign CM">
-                                            <i class="text-muted i-Talk-Man"></i> : {{ patientDetails.caremanager_name }}
+                                            <i class="text-muted i-Talk-Man"></i> :<sapn :textContent="caremanager_name"> </sapn>
                                         </span>
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <i class="text-muted i-Search-People"></i>
-                                        <span data-toggle="tooltip" data-placement="right" title="Enrollment Status"
-                                            data-original-title="Patient Enrollment Status" id="PatientStatus" value="">
-                                            {{ patientDetails.patient_enroll_date[0].status_value }}
+                                        <span data-toggle="tooltip" data-placement="right" title="Enrollment Status" :textContent="patient_module"
+                                            data-original-title="Patient Enrollment Status" id="PatientStatus">
                                         </span>
-                                        <span  v-if="patientDetails.patient_enroll_date[0].status == 1" >
+                                        <span patient_enroll_date v-if = "patient_module_status=='1'">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="active" >
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
-                                        <span v-if="patientDetails.patient_enroll_date[0].status == 0">
+                                        
+                                        <span patient_enroll_date v-if = "patient_module_status=='0'">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>
                                             </a>
-                                            {{ 'From:' + format_date(patientDetails.patient_enroll_date[0].suspended_from) +
-                                                ' To ' + format_date(patientDetails.patient_enroll_date[0].suspended_to) }}
+                                            Form :  <span :textContent="suspended_from_date"></span>
+                                            To :    <span :textContent="suspended_to_date"></span>
                                         </span>
-                                        <span v-if="patientDetails.patient_enroll_date[0].status == 2">
+                                        <span patient_enroll_date v-if = "patient_module_status=='2'">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
-                                        <span v-if="patientDetails.patient_enroll_date[0].status == 3">
+                                        <span patient_enroll_date v-if = "patient_module_status=='3'">
                                             <a @click="patientServiceStatus()" data-toggle="modal" style="margin-left: 15px;" class="ActiveDeactiveClass" data-target="#active-deactive" id="deceased" >
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>
                                             </a>
@@ -110,19 +129,24 @@
                                         <span data-toggle="tooltip" data-placement="right" title="Enrolled Services" data-original-title="Patient Enrolled Services">
                                             <i class="text-muted i-Library"></i> :
                                             <span v-for="(service, index) in enrolledServices" :key="index" v-html="service"></span>
-                                            {{ service }} 
                                         </span>
                                         <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd" @click="add_additional_devicesfunction">
                                         <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i></a>
+                                        <!-- <AdditionalDevices ref="additional_devicesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" /> -->
                                         <br/>
+                                        <!-- add-patient-devices -->
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="add-patient-devices" @click="add_devicesfunction">Devices</a>
+                                        <AddDevices ref="add_devicesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
+                                        
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
                                                 data-original-title="Enrolled Date"><i class="text-muted i-Over-Time"></i> :
-                                                {{ (patientDetails.date_enrolled) }} </span>
+                                                <span :textContent="date_enrolled"></span></span>
                                         </div>
                                         <span data-toggle="tooltip" data-placement="right" title="Device Code"
                                             data-original-title="Patient Device Code.">
-                                            <i class="text-muted i-Hospital"></i> : PatientDevices
+                                            <i class="text-muted i-Hospital"></i> : 
+                                            <span :textContent="patient_device"></span>
                                         </span>
                                         <input type="hidden" name="device_code" value="PatientDevices">
                                     </div>
@@ -130,12 +154,12 @@
                                         <div class="col-md-11 careplan">
                                             <span data-toggle="tooltip" data-placement="right" title="Billable Time"
                                                 data-original-title="Billable Time"><i class="text-muted i-Clock-4"></i> :
-                                                <span class="last_time_spend"> {{ patientDetails.billable_time }}
+                                                <span class="last_time_spend">billable_time
                                                 </span></span>
                                             <span data-toggle="tooltip" data-placement="right" title="Non Billable Time"
                                                 data-original-title="Non Billable Time"> / <span
                                                     class="non_billabel_last_time_spend">
-                                                    {{ patientDetails.non_billabel_time }} </span></span>
+                                                    non_billabel_time</span></span>
                                             <button class="button"
                                                 style="border: 0px none;background: #f7f7f7;outline: none;"><a
                                                     href="/patients/registerd-patient-edit/" title="Edit Patient Info"
@@ -179,10 +203,11 @@
 
                                                 </div>
                                             </div>
-
-
-                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="personal_notes" @click="personalnotesfunction">Personal Notes</a> |
-                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="part_of_research_study" @click ="researchstudyfunction">Research Study</a>
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="personal_notes" @click="personalnotesfunction">Personal Notes</a> 
+                                                <PersonalNotes ref="personalnotesRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :personal_notes_data="personal_notes_data" />|
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="part_of_research_study"
+                                                @click ="researchstudyfunction">Research Study</a>
+                                                <ResearchStudy ref="researchstudyRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :research_study_data="research_study_data" /> 
                                         </div>
                                     </div>
                                     <div style="padding-left: 823px;">
@@ -196,20 +221,113 @@
         </div>
     </div>
 </template>
-<script setup>
+<script>
 import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import axios from 'axios';
+import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
+import Veteran from '../../Modals/VeteranService.vue';
+import AddDevices from '../../Modals/AddDevices.vue';
+import FinNumber from '../../Modals/FinNumber.vue';
+import PersonalNotes from '../../Modals/PersonalNotes.vue'; 
+import ResearchStudy from '../../Modals/ResearchStudy.vue';     
+export default {
+    props: {
+		patientId: Number,
+		moduleId: Number,
+        stageid: Number,
+		componentId: Number,
+        loading: "",
+    patientServices: [],
+    patientEnrolledServices:[],
+    personal_notes_data: String,
+    research_study_data: String,
+    patient_systolichigh: Number,
+    patient_systoliclow: Number,
+    patient_diastolichigh: Number, 
+    patient_diastoliclow: Number, 
+    patient_bpmhigh: Number, 
+    patient_bpmlow: Number, 
+    patient_oxsathigh: Number, 
+    patient_oxsatlow: Number, 
+    patient_glucosehigh: Number, 
+    patient_glucoselow: Number, 
+    patient_temperaturehigh: Number, 
+    patient_temperaturelow: Number, 
+    patient_weighthigh: Number, 
+    patient_weightlow: Number, 
+    patient_spirometerfevhigh: Number, 
+    patient_spirometerfevlow: Number, 
+    patient_spirometerpefhigh: Number, 
+    patient_spirometerpeflow: Number, 
 
-const props = defineProps({
+	},
+  components: {
+    AlertThresholds,
+    Veteran,
+    FinNumber,
+    PersonalNotes,
+    ResearchStudy,
+    AddDevices,
+    // AdditionalDevices,
+  },
+  setup(props) {
+    const alertThresholdsRef = ref();
+    const veteranRef = ref();
+    const add_devicesRef = ref();
+    // const additional_devicesRef = ref();
+    const finnumberRef = ref();
+    const personalnotesRef = ref();
+    const researchstudyRef = ref();
+    const patientName = ref();
+    const patientGender = ref();
+    const patientAge = ref();
+    const patientDob = ref();
+    const patientMob = ref();
+    const finNumber = ref();
+    const consent_to_text = ref();
+    const military_status = ref();
+    const patientAddress = ref();
+    const practice_name = ref();
+    const provider_name = ref();
+    const practice_emr = ref();
+    const caremanager_name = ref();
+    const date_enrolled = ref();
+    const patient_module = ref();
+    const patient_module_status = ref();
+    const suspended_from_date = ref();
+    const suspended_to_date = ref();
+    const patient_device = ref();
+    const personal_notes_data =ref();
+    const research_study_data =ref();
+    const patient_systolichigh = ref();
+    const patient_systoliclow = ref();
+    const patient_diastolichigh = ref(); 
+    const patient_diastoliclow = ref(); 
+    const patient_bpmhigh = ref(); 
+    const patient_bpmlow = ref(); 
+    const patient_oxsathigh = ref(); 
+    const patient_oxsatlow = ref(); 
+    const patient_glucosehigh = ref(); 
+    const patient_glucoselow = ref(); 
+    const patient_temperaturehigh = ref(); 
+    const patient_temperaturelow = ref(); 
+    const patient_weighthigh = ref(); 
+    const patient_weightlow = ref(); 
+    const patient_spirometerfevhigh = ref(); 
+    const patient_spirometerfevlow = ref(); 
+    const patient_spirometerpefhigh = ref(); 
+    const patient_spirometerpeflow = ref(); 
+
+/*     const props = defineProps({
     patientId: Number,
-    moduleId: Number,
+    moduleId: Number, 
     loading: "",
     patientServices: [],
     patientEnrolledServices:[],
     // enrolledServices:[] 
-});
+}); */
 
 
 // const enrolledServices = ref(null);
@@ -230,137 +348,126 @@ const patientServiceStatus = async()=>{
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
     }
 }
-const veteranServicefunction = async() => {
-    const VeteranServiceModal = document.getElementById('vateran-service');
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    $(".patient_id").val(parts[parts.length - 1]);
-      if (VeteranServiceModal) { 
-        $(VeteranServiceModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-    patientVeteranServiceModalDetails();
-}
-
-
-function devicesclear() {  
-    // alert('dadsadasdsa');
-    $("#devices_form input[name='device_id']").val('');
-    $('#partner_id').val(''); 
-    $('#partner_devices_id').val('');
-    $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
-    $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
-
-}
-
-
-const add_devicesfunction = async() => {
-    const DeviceModal = document.getElementById('add-patient-devices');
-      if (DeviceModal) { 
-        var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-        $(DeviceModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-    // patientVeteranServiceModalDetails();
-}
-
-const add_additional_devicesfunction = async() =>{
-    const AdditionalDeviceModal = document.getElementById('additional-device');
-      if (AdditionalDeviceModal) { 
-        var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-        $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-}
-
-const patient_finnumber_function = async()=>{
-    const FinNumberModal = document.getElementById('patient-finnumber');
-    var sPageURL = window.location.pathname;
-        parts = sPageURL.split("/"),
-        $(".patient_id").val(parts[parts.length - 1]);
-      if (FinNumberModal) { 
-        $(FinNumberModal).modal('show'); // Use jQuery to show the modal
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-      patComDetails();
-
-}
-const alertThresholdfunction = async() => {
-    const AlertThresholdeModal = document.getElementById('patient-threshold');
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    $(".patient_id").val(parts[parts.length - 1]);
-    if (AlertThresholdeModal) {
-        $(AlertThresholdeModal).modal('show'); 
-        patComDetails();
-        // Use jQuery to show the modal
-    } else {
-    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+    const veteranServicefunction = async() => {
+        console.log("openMModelV called");
+        veteranRef.value.openModal();
+        // patComDetails();
     }
-     
-}
-const personalnotesfunction = async() => {
-    console.log('dadasdasdasdasdas'+personalnotesfunction);
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    $(".patient_id").val(parts[parts.length - 1]);
-    const PersonalNotesModal = document.getElementById('personal-notes');
-    if (PersonalNotesModal) {
-        $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
-    } else {
-    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-    }
-    patComDetails();
+
+    const alertThresholdfunction = async() => {
+      // Access the modal component through the ref
+      console.log("openMModel called");
+      alertThresholdsRef.value.openModal();
+    //   patComDetails();
+    };
+
     
-}
-
-const researchstudyfunction = async() => { 
-    const ResearchStudyModal = document.getElementById('part-of-research-study');
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    $(".patient_id").val(parts[parts.length - 1]);
-    if (ResearchStudyModal) {
-        $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
-    } else {
-    console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-    }
-    patComDetails();
+    const personalnotesfunction = async() => {
+        console.log("openMModelpersonal notes called");
+        personalnotesRef.value.openModal();
+        // patComDetails();
+    };
     
-}
+    const researchstudyfunction = async() =>{
+        console.log("openModelResearchStudy");
+        researchstudyRef.value.openModal();
+        // patComDetails();
+    };
 
-const patientVeteranServiceModalDetails = async()=>{ 
-    try {
-        const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
-        }
-        console.log('Fetched Patient VeteranService details:', response.data);
-    }catch (error) {
-        console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
-        // Handle the error appropriately
+    const add_devicesfunction = async() =>{
+        console.log("openModeladdDevices");
+        add_devicesRef.value.openModal();
+    };
+    // const add_additional_devicesfunction = async() =>{
+    //     additional_devicesRef.value.openModal();
+        
+    // };
+    const patient_finnumber_function = async()=>{
+        finnumberRef.value.openModal();
     }
-}
 
-const patientAlertThresholdsModalDetails = async()=>{ 
-    try {
-        const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
-        }
-        console.log('Fetched Patient alertThreshold details:', response.data); 
-    }catch (error) {
-        console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
-        // Handle the error appropriately
-    }
-}
+
+//     const add_additional_devicesfunction = async() =>{
+//     const AdditionalDeviceModal = document.getElementById('additional-device');
+//       if (AdditionalDeviceModal) { 
+//         var sPageURL = window.location.pathname;
+//         parts = sPageURL.split("/"),
+//         $(".patient_id").val(parts[parts.length - 1]);
+//         $(AdditionalDeviceModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+// }
+
+// const patient_finnumber_function = async()=>{
+//     const FinNumberModal = document.getElementById('patient-finnumber');
+//     var sPageURL = window.location.pathname;
+//         parts = sPageURL.split("/"),
+//         $(".patient_id").val(parts[parts.length - 1]);
+//       if (FinNumberModal) { 
+//         $(FinNumberModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+//       patComDetails();
+
+// }
+
+// const personalnotesfunction = async() => {
+    
+//     console.log('dadasdasdasdasdas'+personalnotesfunction);
+//     var sPageURL = window.location.pathname;
+//     parts = sPageURL.split("/"),
+//     $(".patient_id").val(parts[parts.length - 1]);
+//     const PersonalNotesModal = document.getElementById('personal-notes');
+//     if (PersonalNotesModal) {
+//         $(PersonalNotesModal).modal('show'); // Use jQuery to show the modal 
+//     } else {
+//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//     }
+//     patComDetails();
+    
+// }
+
+// const researchstudyfunction = async() => { 
+//     const ResearchStudyModal = document.getElementById('part-of-research-study');
+//     var sPageURL = window.location.pathname;
+//     parts = sPageURL.split("/"),
+//     $(".patient_id").val(parts[parts.length - 1]);
+//     if (ResearchStudyModal) {
+//         $(ResearchStudyModal).modal('show'); // Use jQuery to show the modal 
+//     } else {
+//     console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//     }
+//     patComDetails();
+    
+// }
+
+// const patientVeteranServiceModalDetails = async()=>{ 
+//     try {
+//         const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
+//         if (!response.ok) {
+//             throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
+//         }
+//         console.log('Fetched Patient VeteranService details:', response.data);
+//     }catch (error) {
+//         console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
+//         // Handle the error appropriately
+//     }
+// }
+
+// const patientAlertThresholdsModalDetails = async()=>{ 
+//     try {
+//         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+//         if (!response.ok) {
+//             throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
+//         }
+//         console.log('Fetched Patient alertThreshold details:', response.data); 
+//     }catch (error) {
+//         console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
+//         // Handle the error appropriately
+//     }
+// }
 
 const patComDetails = async()=> {
     try {
@@ -370,12 +477,56 @@ const patComDetails = async()=> {
         }
         const data = await response.json();
         patientDetails.value = data;
+        patientName.value =  data.patient[0].fname + data.patient[0].lname;
+        patientGender.value = data.gender;
+        patientAge.value = data.age;
+        patientDob.value =  data.patient[0].dob;
+        patientMob.value = data.patient[0].mob;
+        finNumber.value = data.patient[0].fin_number;
+        consent_to_text.value = data.consent_to_text;   
+        military_status.value = data.military_status;
+        patientAddress.value = data.PatientAddress.add_1 +','+ data.PatientAddress.add_2 +','+data.PatientAddress.city+','+data.PatientAddress.state+','+data.PatientAddress.zipcode;
+        practice_name.value = data.practice_name;
+        provider_name.value = data.provider_name;
+        practice_emr.value = data.practice_emr;
+        caremanager_name.value = data.caremanager_name;
+        date_enrolled.value = data.date_enrolled; 
+        patient_module.value = data.patient_services[0].module.module;
+        patient_module_status.value = data.patient_services[0].module.status;
+        suspended_from_date.value = data.patient_services[0].suspended_from;
+        suspended_to_date.value = data.patient_services[0].suspended_to;
+        patient_device.value = data.device_code +' '+data.patient_assign_device+' '+data.device_status;
+    
+        personal_notes_data.value = data.personal_notes;
+        research_study_data.value = data.research_study_data;
+        console.log(research_study_data,'research_study_data');
+        
+        patient_systolichigh.value = data.systolichigh;
+        patient_systoliclow.value = data.systoliclow;
+        patient_diastolichigh.value = data.diastolichigh;
+        patient_diastoliclow.value = data.diastoliclow;
+        patient_bpmhigh.value = data.bpmhigh;
+        patient_bpmlow.value = data.bpmlow;
+        patient_oxsathigh.value = data.oxsathigh;
+        patient_oxsatlow.value = data.oxsatlow;
+        patient_glucosehigh.value = data.glucosehigh;
+        patient_glucoselow.value = data.glucoselow;
+        patient_temperaturehigh.value = data.temperaturehigh;
+        patient_temperaturelow.value = data.temperaturelow;
+        patient_weighthigh.value = data.weighthigh;
+        patient_weightlow.value = data.weightlow;
+        patient_spirometerfevhigh.value = data.spirometerfevhigh;
+        patient_spirometerfevlow.value = data.temperaturelow;
+        patient_spirometerpefhigh.value = data.spirometerpefhigh;
+        patient_spirometerpeflow.value = data.spirometerpeflow;
+
+        // console.log(data.add_1+ "PATIENT FNAME");
+        console.log(data.patient_services[0].module.module+'date_enrolled');
         props.loading = "done";
         console.log('Fetched Patient details:', data);
         const patientServices = data.patient_services;
         const countEnrollServices = patientServices.length;
         const enrollServices = [];
-
         for (let i = 0; i < countEnrollServices; i++) {
             const enrollServicesStatus = patientServices[i].status;
             let patientEnrollServicesStatus = '';
@@ -418,10 +569,85 @@ const patComDetails = async()=> {
 
 onMounted(async () => {
     patComDetails();
-    const start_time = document.getElementById('page_landing_times').value;
-    countDownFunc(props.patientId, props.moduleId, start_time);
+    // alert(props.componentId+"componentId");
+/*     const start_time = document.getElementById('page_landing_times').value;
+    countDownFunc(props.patientId, props.moduleId, start_time); */
 });
 
+    return {
+      alertThresholdfunction,
+      alertThresholdsRef,
+      veteranServicefunction,
+      veteranRef,
+      add_devicesfunction,
+      add_devicesRef,
+    //   add_additional_devicesfunction,
+    // additional_devicesRef
+      patient_finnumber_function,
+      finnumberRef,
+      personalnotesfunction,
+      personalnotesRef,
+      researchstudyfunction,
+      researchstudyRef,
+      patientName,
+      patientGender,
+      patientAge,
+      patientDob,
+      patientMob,
+      finNumber,
+      consent_to_text,
+      military_status,
+      patientAddress,
+      practice_name,
+      provider_name,
+      practice_emr,
+      caremanager_name, 
+      date_enrolled,
+      patient_module,
+      patient_module_status,
+      suspended_from_date,
+      suspended_to_date,
+      patient_device,
+      enrolledServices,
+      personal_notes_data,
+      research_study_data,
+      patient_systolichigh,
+      patient_systoliclow,
+      patient_diastolichigh, 
+      patient_diastoliclow, 
+      patient_bpmhigh, 
+      patient_bpmlow, 
+      patient_oxsathigh, 
+      patient_oxsatlow, 
+      patient_glucosehigh, 
+      patient_glucoselow, 
+      patient_temperaturehigh, 
+      patient_temperaturelow, 
+      patient_weighthigh, 
+      patient_weightlow, 
+      patient_spirometerfevhigh, 
+      patient_spirometerfevlow, 
+      patient_spirometerpefhigh, 
+      patient_spirometerpeflow, 
+
+    };
+  },
+};
+
+
+// const add_devicesfunction = async() => {
+//     const DeviceModal = document.getElementById('add-patient-devices');
+//       if (DeviceModal) { 
+//         var sPageURL = window.location.pathname;
+//         parts = sPageURL.split("/"),
+//         $(".patient_id").val(parts[parts.length - 1]);
+//         $(DeviceModal).modal('show'); // Use jQuery to show the modal
+//       } else {
+//         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
+//       }
+//     // patientVeteranServiceModalDetails();
+// }
+/* 
 function countDownFunc(patientId, moduleId, start_time) {
     axios({
         method: "GET",
@@ -534,7 +760,6 @@ function format_date(value) {
         return moment(String(value)).format('MM-DD-YYYY')
     }
 }
-
 $('.submit-add-patient-fin-number').on('click', function() {
     // Serialize the form data 
     const formData = $('#fin_number_form').serialize();
@@ -593,38 +818,6 @@ $('.submit-patient-add_device').on('click', function() {
 });
 
 
-$('.submit-patient-threshold').on('click', function() {
-    // Serialize the form data 
-    var timearr= document.getElementById('page_landing_times').value;
-    $('.timearr').val(timearr);
-    var patientId = $('input[name="patient_id"]').val();
-    var moduleId = $('input[name="module_id"]').val();
-    const formData = $('#patient_threshold_form').serialize();
-    // Make an AJAX POST request to the specified route
-    $.ajax({
-      type: 'POST',
-      url: '/patients/patient-threshold',
-      data: formData,
-      success: function(response) { 
-        debugger;
-        console.log(response +'Response'); 
-        // Display the response message within the modal
-        $('.alert-success-threshold').show();
-        $('alert-danger-threshold').hide(); 
-        // Optionally, close the modal after a certain delay
-        setTimeout(function() {
-          $('#patient-threshold').modal('hide');
-        }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
-        updateTimer(patientId, 1,moduleId);
-      },
-      error: function(xhr, status, error) {
-        // Display error messages in case of failure
-        $('alert-danger-threshold').show();
-        $('.alert-success-threshold').hide();
-
-      }
-    });
-});
  
 $('.submit-personal-notes').on('click', function() { 
     // Serialize the form data
@@ -684,4 +877,4 @@ $('.submit-part-of-research-study').on('click', function() {
       }
     });
 });
-</script> 
+ */</script> 
