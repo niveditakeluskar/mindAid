@@ -64,10 +64,11 @@
 // import stepWizard from 'js/app.js';
 export default {
    props: {
-      patientId: Number,
-      moduleId: Number,
-      componentId: Number,
-   },
+		sectionName: String,
+		patientId: Number,
+        moduleId: Number,
+        componentId: Number,
+    },
    data() {
       return {
          sectionName: 'research_follow_up',

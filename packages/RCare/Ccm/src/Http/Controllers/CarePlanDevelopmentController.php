@@ -56,7 +56,7 @@ use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
+use RCare\Ccm\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\src\Http\Requests\PatientsLabRequest;
 use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
@@ -1905,7 +1905,13 @@ class CarePlanDevelopmentController extends Controller
         $form_name          = sanitizeVariable($request->form_name);
         $createdby          = session()->get('userid');
         $hiddenenablebutton = sanitizeVariable($request->hiddenenablebutton);
-        $editdiagnoid       = sanitizeVariable($request->editdiagnoid);
+        if(!empty($request->editdiagnoid)){
+            $editdiagnoid = sanitizeVariable($request->editdiagnoid);
+        }else{
+            $editdiagnoid = "";
+        }
+        
+        
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($editdiagnoid);
@@ -2029,7 +2035,6 @@ class CarePlanDevelopmentController extends Controller
                         ->where('id', $editdiagnoid) //added for updating only particular diagnosis on 7th september 2022--mail from juliet It created duplicates of my previous Diabetes entries, kept the previous entries, and overwrote all their dates and times to today
                         ->update($diagnosisData);
 
-
                     $latestrecord = PatientDiagnosis::where('diagnosis', $hidden_id)
                         ->where('patient_id', $patient_id)
                         ->where('status', 1)
@@ -2037,7 +2042,6 @@ class CarePlanDevelopmentController extends Controller
                         ->where('id', $editdiagnoid) //added for updating only particular diagnosis on 7th september 2022--mail from juliet It created duplicates of my previous Diabetes entries, kept the previous entries, and overwrote all their dates and times to today
                         ->orderBy('created_at', 'desc')
                         ->skip(0)->take(1)->get();
-
 
                     $patient_diagnosis_id = $latestrecord[0]->id;
                     $new_diagnosis_id = $latestrecord[0]->diagnosis;

@@ -12,7 +12,7 @@
                         </ul>
                     </div>
                     <div class="tab-content">
-                        <component :is="selectedCallComponent" v-bind="componentCallProps"></component>
+                        <component :is="selectedCallComponent" v-bind="componentCallProps" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"></component>
                     </div>
                 </div>
             </div>

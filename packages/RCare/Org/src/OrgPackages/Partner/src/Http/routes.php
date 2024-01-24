@@ -22,6 +22,7 @@ Route::prefix('org')->group(function () {
          Route::get("/partner", function(){
                 return view('Partner::partner_list');
             })->name("partner");
+         
         Route::get("/partner-list", "RCare\Org\OrgPackages\Partner\src\Http\Controllers\PartnerController@PartnerList")->name("partner_list");
         Route::post("/create-partner", "RCare\Org\OrgPackages\Partner\src\Http\Controllers\PartnerController@addPartner")->name("create_partner");
         Route::post('editMedication', 'RCare\Org\OrgPackages\Medication\src\Http\Controllers\MedicationController@editMedication')->name("editMedication");

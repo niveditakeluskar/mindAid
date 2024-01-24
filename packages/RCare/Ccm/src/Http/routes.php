@@ -20,6 +20,9 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('ccm')->group(function () {
 
+        Route::get('/diagnosis-conditions', 'RCare\Ccm\Http\Controllers\CcmController@getDiagnosisConditions');
+         Route::get('/activediagnosis-code', 'RCare\Ccm\Http\Controllers\CcmController@getActiveDiagnosiscode');
+
         Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/{componentId}/question_list', function (string $module_id, string $patient_id, string $step_id, string $componentId) {
             $d = getDecisionTree($module_id,$patient_id,$step_id,$componentId);
             return $d;
