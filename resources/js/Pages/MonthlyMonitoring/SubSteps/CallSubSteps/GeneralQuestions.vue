@@ -15,7 +15,6 @@
 			<strong> General question data saved successfully! </strong><span id="text"></span>
 		</div>
 		<div v-html='decisionTree'></div>
-		
 		<div class="alert alert-success general_success" id="success-alert" style="display: none;">
 			<button type="button" class="close" data-dismiss="alert">x</button>
 			<strong> General question data saved successfully! </strong><span id="text"></span>

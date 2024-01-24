@@ -11,11 +11,15 @@
                     <input type="hidden" name="hid_stage_id" />
                     <input type="hidden" name="form_name" value="relationship_form">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
-                    <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
+                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
                         <strong> Relationship data saved successfully! </strong><span id="text"></span>
                     </div>
                     <div v-html="RelationshipQuestionnaire"></div>
+                    <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
+                        <button type="button" class="close" data-dismiss="alert">x</button>
+                        <strong> Relationship data saved successfully! </strong><span id="text"></span>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
