@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,9 +23,10 @@ class PatientsLabRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
+        return validationRules(
+            True,
             [
-                'lab.*'        => 'required', 
+                'lab.*'        => 'required',
                 'reading.*.*'  => 'required',
                 'high_val.*.*' => 'required_if:reading.*.*,high,normal,low',
                 'labdate.*'    => 'required',
@@ -32,6 +34,5 @@ class PatientsLabRequest extends FormRequest
                 'notes.*'      => 'nullable|text_comments_slash' //'required'
             ]
         );
-
     }
 }
