@@ -13,21 +13,23 @@
 Route::prefix('org')->group(function () {
     Route::middleware(["auth", "web"])->group(function () {
         Route::middleware(["roleAccess"])->group(function () {
-            Route::get("/labs", function(){
+            Route::get("/labs", function () {
                 return view('Labs::labs-list');
             })->name("labs");
         });
         Route::get("/labs-edit/{id}", "RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@editLabs")->name("labs_edit");
         Route::get("/labs-list", "RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@LabsList")->name("labs_list");
-       // Route::post('/ajax/submitLabs','RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@saveLabs')->name("ajax.save.labs");
-        Route::post('/ajax/submitLabs','RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@saveLabs')->name("submit_lab");
+        // Route::post('/ajax/submitLabs','RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@saveLabs')->name("ajax.save.labs");
+        Route::post('/ajax/submitLabs', 'RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@saveLabs')->name("submit_lab");
 
-        Route::get('/ajax/populateLabsForm/{patientId}','RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@populateLabsData')->name("ajax.populate.labs.data");
+        Route::get('/ajax/populateLabsForm/{patientId}', 'RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@populateLabsData')->name("ajax.populate.labs.data");
         Route::post("/existlab", "RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@existLab")->name("existlab");
 
         Route::post('/labStatus/{id}', 'RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@changeLabStatus');
+        Route::get("/active-labs", "RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@activeLabs")->name("active_labs");
+
         // Route::post('/delete-lab/{id}', 'RCare\Org\OrgPackages\Labs\src\Http\Controllers\LabsController@deleteLab')->name('delete.lab'); 
- 	});
+    });
 });
 
 /*

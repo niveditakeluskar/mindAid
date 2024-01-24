@@ -32,6 +32,9 @@ Route::middleware(["auth", "web"])->group(function () {
             return $d;
         });
 
+        Route::get('/get_revew_notes/{patient_id}', 'RCare\Ccm\Http\Controllers\CcmController@getReviewNotes');
+        Route::get('/get_device_list/{patient_id}/device_list', 'RCare\Ccm\Http\Controllers\CcmController@getDevice')->name('get.device.list');
+
         Route::get('/get-savedQuestion/{module_id}/{patient_id}/{step_id}/saved_question', 'RCare\Ccm\Http\Controllers\CcmController@getSavedGeneralQuestions')->name('get.saved.question');
         //     Route::get('/monthly-monitoring-patient-list', 'RCare\Ccm\Http\Controllers\CcmController@index')->name('monthly.monitoring.patient.list');
         ///////////////////////New Monthly Monitoring/////////////////////////////

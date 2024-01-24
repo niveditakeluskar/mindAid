@@ -90,6 +90,16 @@ use Inertia\Inertia;
 class CcmController extends Controller
 {
 
+    public function getReviewNotes($patient_id){
+        $data = VitalsObservationNotes::latest($patient_id);
+        if(isset($data)){
+            return $data['notes'];
+        }else{
+            return '';
+        }
+       
+    }
+
     public function callWrapUpActivities()
     {
 
@@ -930,6 +940,62 @@ class CcmController extends Controller
         // );
 
     }
+
+    public function getDevice($patient_id){
+        $PatientDevices = PatientDevices::where('patient_id',$patient_id)->where('status',1)->orderby('id','desc')->get();
+
+        $devices   = Devices::where('status','1')->orderby('id','asc')->get();
+        $deviceid=1;
+        $patient_assign_device="";
+                $patient_assign_deviceid="";
+        if(!empty($PatientDevices[0])){
+            $data = json_decode($PatientDevices[0]->vital_devices);
+                $show_device="";
+                $show_device_id="";
+            if(isset($data)){
+                foreach($data as $dev_data){
+                    $dev=  Devices::where('id',$dev_data->vid)->where('status','1')->orderby('id','asc')->first();
+                    $show_device.= $dev->device_name.", ";
+                    $show_device_id.= $dev->id.", ";
+                }
+                $patient_assign_device= rtrim($show_device, ', ');
+                $patient_assign_deviceid= rtrim($show_device_id, ', ');
+            }else{
+                $patient_assign_device="";
+                $patient_assign_deviceid="";
+            }
+        }
+
+        $Adeviceid = explode(',', $patient_assign_deviceid);
+       // dd($patient_assign_deviceid);
+        $deviceid = $Adeviceid[0];
+        $content = '';
+        if(!empty($devices)){
+            for($i=0;$i<count($devices);$i++){ 
+
+                if(isset($patient_assign_deviceid) && $patient_assign_deviceid!="")
+                {
+                ($i == ($Adeviceid[0]-1)) ? $active="active" : $active="";  
+                    if($deviceid == '' && $active == "active"){
+                        $deviceid = $devices[$i]->id;
+                    }
+                }
+                else{
+                    ($i == (2)) ? $active="active" : $active="";    
+                    if($deviceid == '' && $active == "active"){
+                        $deviceid = $devices[$i]->id;
+                    }
+                }
+                $content = $content.'<li class="nav-item">';
+                $content = $content.'<a class="nav-link '.$active.' tabclass" onClick="tabChange('.$devices[$i]->id.');" id="device-icon-tab_'.$devices[$i]->id.'" data-toggle="tab" href="#deviceid_'.$devices[$i]->id.'" role="tab" aria-controls="ccm-call" aria-selected="false"><i class="nav-icon color-icon i-Control-2 mr-1"></i>'. $devices[$i]->device_name.'</a>';
+                $content = $content.'</li>';
+            }
+        }
+            $data['deviceID'] = $deviceid;
+            $data['content'] = $devices;
+        return $data;
+    }
+
     public function getFollowupTaskListData($patient_id, $module_id)
     {
         $login_user = Session::get('userid');
