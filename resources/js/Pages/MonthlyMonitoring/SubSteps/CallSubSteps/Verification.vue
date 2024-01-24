@@ -59,7 +59,7 @@ export default {
 			end_time: '',
 			form_name: '',
 			billable: '',
-			verification: null,
+			verification:'',
 			formErrors: {},
 			showAlert: false,
 		};
@@ -79,13 +79,15 @@ export default {
 		},
 		async populateFuntion(){ 
 			try{
-				const response = await fetch(`/ccm/populate-monthly-monitoring-data/828433174`);
+				const response = await fetch(`/ccm/populate-monthly-monitoring-data/${this.patientId}`);
 				if(!response.ok){  
 						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				this.verification = this.patientPrepSaveDetails.populateHippa[0].verification;
+				if(this.patientPrepSaveDetails.populateHippa!=''){
+					this.verification = this.patientPrepSaveDetails.populateHippa.static.verification;
+				}
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
