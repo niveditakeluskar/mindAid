@@ -225,7 +225,7 @@ export default {
         let getStepID = async (sid) => {
             try {
                 let stepname = 'Drug';
-                let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
+                let response = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${sid}/${stepname}`);
                 drugallergiesStepId = response.data.stepID;
                 console.log("stepIDstepID", drugallergiesStepId);
             } catch (error) {

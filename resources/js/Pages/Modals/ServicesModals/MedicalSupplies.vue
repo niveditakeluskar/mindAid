@@ -1,12 +1,12 @@
 <!-- ModalForm.vue -->
 <template>
-    <div class="tab-pane fade show active" id="dme" role="tabpanel" aria-labelledby="dme-services-icon-pill">
+    <div class="tab-pane fade show active" id="medical-supplies-services" role="tabpanel" aria-labelledby="medical-supplies-services-icon-pill">
         <div class="card">  
-            <div class="card-header"><h4>DME</h4></div>
-            <form id="service_dme_form" name="service_dme_form" @submit.prevent="submitSrvicesForm">
-                <div class="alert alert-success" :style="{ display: showDMEAlert ? 'block' : 'none' }">
+            <div class="card-header"><h4>Medical Supplies</h4></div>
+            <form id="service_medical_supplies_form" name="service_medical_supplies_form" @submit.prevent="submitSrvicesForm">
+                <div class="alert alert-success" :style="{ display: showMedicalSuppliesAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>
-                    <strong> DME Services data saved successfully! </strong><span id="text"></span>
+                    <strong> Medical Supplies Services data saved successfully! </strong><span id="text"></span>
                 </div>  
                 <div class="form-row col-md-12">
                     <input type="hidden" name="uid" :value="patientId"/>
@@ -15,21 +15,21 @@
                     <input type="hidden" name="end_time" value="00:00:00">
                     <input type="hidden" name="module_id" :value="moduleId"/>
                     <input type="hidden" name="component_id" :value="componentId"/>
-                    <input type="hidden" name="stage_id" :value="dmeServicesStageId"/>
-                    <input type="hidden" name="step_id" :value="dmeServicesStepId">
-                    <input type="hidden" name="form_name" value="service_dme_form">
-                    <input type="hidden" name="service_type" value="dme">
-        		    <input type="hidden" name="hid" class="hid" value='1'>
+                    <input type="hidden" name="stage_id" :value="medicalSuppliesServicesStageId"/>
+                    <input type="hidden" name="step_id" :value="medicalSuppliesServicesStepId">
+                    <input type="hidden" name="form_name" value="service_medical_supplies_form">
+                    <input type="hidden" name="service_type" value="medical_supplies">
+        		    <input type="hidden" name="hid" class="hid" value='6'>
                     <input type="hidden" name="id" id="service_id">
                     <input type="hidden" name="billable" value="1">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="DMEServicesTime" />
-                    <DMEForm :formErrors="formErrors" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="MedicalSuppliesServicesTime" />
+                    <MedicalSuppliesForm :formErrors="formErrors" />
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
                         <div class="row">
                             <div class="col-lg-12 text-right">
-                                <button type="submit" class="btn  btn-primary m-1" id="save_service_dme_form">Save</button>
+                                <button type="submit" class="btn  btn-primary m-1" id="save_service_medical_supplies_form">Save</button>
                             </div>
                         </div>
                     </div>
@@ -46,10 +46,10 @@
                     <div class="table-responsive">
                         <ag-grid-vue
                             style="width: 100%; height: 100%;"
-                            id="dme-services-list"
+                            id="medicalSupplies-services-list"
                             class="ag-theme-alpine"
                             :columnDefs="columnDefs.value"
-                            :rowData="dmeServiceRowData.value"
+                            :rowData="medicalSuppliesServiceRowData.value"
                             :defaultColDef="defaultColDef"
                             :gridOptions="gridOptions"
                             :loadingCellRenderer="loadingCellRenderer"
@@ -73,7 +73,7 @@ import {
     AgGridVue,
     // Add other common imports if needed
 } from '../../commonImports';
-import DMEForm from './SubForms/ServicesShortForm.vue';
+import MedicalSuppliesForm from './SubForms/ServicesShortForm.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -83,19 +83,19 @@ export default {
         stageId: Number,
     },
     components: {
-        DMEForm,
+        MedicalSuppliesForm,
         AgGridVue,
     },
     setup(props) {
-        let showDMEAlert = ref(false);
-        let dmeServicesStageId = ref(0);
-        let dmeServicesStepId = ref(0);
-        let DMEServicesTime = ref(null);
+        let showMedicalSuppliesAlert = ref(false);
+        let medicalSuppliesServicesStageId = ref(0);
+        let medicalSuppliesServicesStepId = ref(0);
+        let MedicalSuppliesServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
         const loadingCellRenderer = ref(null);
         const loadingCellRendererParams = ref(null);
-        const dmeServiceRowData = reactive({ value: [] });
+        const medicalSuppliesServiceRowData = reactive({ value: [] });
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
@@ -150,17 +150,17 @@ export default {
             },
         });
 
-        const fetchPatientDMEServiceList = async () => {
+        const fetchPatientMedicalSuppliesServiceList = async () => {
             try {
                 loading.value = true;
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/1`);
+                const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/6`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
                 loading.value = false;
                 const data = await response.json();
-                dmeServiceRowData.value = data.data;
+                medicalSuppliesServiceRowData.value = data.data;
             } catch (error) {
                 console.error('Error fetching followup task list:', error);
                 loading.value = false;
@@ -169,7 +169,7 @@ export default {
 
         let submitSrvicesForm = async () => {
             formErrors.value = {};
-            let myForm = document.getElementById('service_dme_form');
+            let myForm = document.getElementById('service_medical_supplies_form');
             let formData = new FormData(myForm);
             let formDataObject = {};
 
@@ -178,14 +178,14 @@ export default {
             });
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
-                    showDMEAlert.value = true;
+                    showMedicalSuppliesAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
-                    await fetchPatientDMEServiceList();
-                    document.getElementById("service_dme_form").reset();
+                    await fetchPatientMedicalSuppliesServiceList();
+                    document.getElementById("service_medical_supplies_form").reset();
                     setTimeout(() => {
-                        showDMEAlert.value = false;
-                        DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                        showMedicalSuppliesAlert.value = false;
+                        MedicalSuppliesServicesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 // Handle the response here
                 formErrors.value = [];
@@ -200,9 +200,9 @@ export default {
 
         let getStepID = async (sid) => {
             try {
-                let stepname = 'Service-Dme';
+                let stepname = 'Service-Social';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                dmeServicesStepId.value = response.data.stepID;
+                medicalSuppliesServicesStepId.value = response.data.stepID;
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
@@ -217,8 +217,8 @@ export default {
                     module_id: props.moduleId,
                     component_id: props.componentId,
                     stage_id: props.stageId,
-                    step_id: dmeServicesStepId.value,
-                    form_name: 'service_dme_form',
+                    step_id: medicalSuppliesServicesStepId.value,
+                    form_name: 'service_medical_supplies_form',
                     billable: 1,
                     start_time: "00:00:00",
                     end_time: "00:00:00",
@@ -226,14 +226,14 @@ export default {
                 };
                 try {
                     const deleteServicesResponse = await deleteServiceDetails(formData);
-                    // showDMEAlert.value = true;
+                    // showMedicalSuppliesAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(deleteServicesResponse.form_start_time);
-                    await fetchPatientDMEServiceList();
-                    document.getElementById("service_dme_form").reset();
+                    await fetchPatientMedicalSuppliesServiceList();
+                    document.getElementById("service_medical_supplies_form").reset();
                     setTimeout(() => {
-                        // showDMEAlert.value = false;
-                        DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                        // showMedicalSuppliesAlert.value = false;
+                        MedicalSuppliesServicesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -243,9 +243,9 @@ export default {
 
         let editService = async (id) => {
             try {
-                const serviceToEdit = dmeServiceRowData.value.find(service => service.id == id);
+                const serviceToEdit = medicalSuppliesServiceRowData.value.find(service => service.id == id);
                 if (serviceToEdit) {
-                    const form = document.getElementById('service_dme_form');
+                    const form = document.getElementById('service_medical_supplies_form');
                     form.querySelector('#service_id').value = serviceToEdit.id;
                     form.querySelector('#type').value = serviceToEdit.type;
                     form.querySelector('#purpose').value = serviceToEdit.purpose;
@@ -271,8 +271,8 @@ export default {
             getStepID(newValue);
         });
 
-        watch(() => showDMEAlert, (newShowDMEAlert, oldShowDMEAlert) => {
-                showDMEAlert.value = newShowDMEAlert;
+        watch(() => showMedicalSuppliesAlert, (newShowMedicalSuppliesAlert, oldShowMedicalSuppliesAlert) => {
+                showMedicalSuppliesAlert.value = newShowMedicalSuppliesAlert;
             }
         );
 
@@ -284,12 +284,12 @@ export default {
             rowModelType.value = 'serverSide';
             cacheBlockSize.value = 20;
             maxBlocksInCache.value = 10;
-            fetchPatientDMEServiceList();
+            fetchPatientMedicalSuppliesServiceList();
         });
 
         onMounted(async () => {
             try {
-                DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                MedicalSuppliesServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
             } catch (error) {
@@ -300,16 +300,16 @@ export default {
         return {
             loading,
             submitSrvicesForm,
-            dmeServicesStageId,
-            dmeServicesStepId,
+            medicalSuppliesServicesStageId,
+            medicalSuppliesServicesStepId,
             formErrors,
-            DMEServicesTime,
-            showDMEAlert,
+            MedicalSuppliesServicesTime,
+            showMedicalSuppliesAlert,
             columnDefs,
-            dmeServiceRowData,
+            medicalSuppliesServiceRowData,
             defaultColDef,
             gridOptions,
-            fetchPatientDMEServiceList,
+            fetchPatientMedicalSuppliesServiceList,
             deleteServices,
             editService,
         };
