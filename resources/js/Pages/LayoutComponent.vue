@@ -51,38 +51,38 @@ export default {
     },
     async initializeScripts(moduleID, patientId) {
       try {
-    const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleID}/list`);
-    $("#toDoList").html(taskMangeResp.data);
-    $('.badge').html($('#count_todo').val());
-    const patientStatus =  await axios.get(`/patients/patient-status/${patientId}/${moduleID}/status`);
-    $("#status_blockcontent").html(patientStatus.data);
-    const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleID}/careplanstatus`);
-    $("#careplan_blockcontent").html(carePlanStatus.data);
-    let currentDate = new Date()
-    let year = currentDate.getFullYear();
-    let month =  currentDate.getMonth() + 1;
-    const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleID}/${month}/${year}/previousstatus`);
-    $("#previousMonthData").html(previousMonths.data);
-  } catch (error) {
-    console.error(error);
-  }
+        const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleID}/list`);
+        $("#toDoList").html(taskMangeResp.data);
+        $('.badge').html($('#count_todo').val());
+        const patientStatus = await axios.get(`/patients/patient-status/${patientId}/${moduleID}/status`);
+        $("#status_blockcontent").html(patientStatus.data);
+        const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleID}/careplanstatus`);
+        $("#careplan_blockcontent").html(carePlanStatus.data);
+        let currentDate = new Date()
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth() + 1;
+        const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleID}/${month}/${year}/previousstatus`);
+        $("#previousMonthData").html(previousMonths.data);
+      } catch (error) {
+        console.error(error);
+      }
 
-  try {
-    const getCMtotaltimeResp = await axios.get(`/patients/getCMtotaltime`);
-    var data = JSON.stringify(getCMtotaltimeResp.data);
-    if (data == "null" || data == "") {
-      var totalpatients = "00";
-      var totaltime = "00";
-    } else {
-      var totalpatients = getCMtotaltimeResp.data[0].totalpatients;
-      var totaltime = getCMtotaltimeResp.data.minutes;
-    }
-    var finaldata = " : " + totaltime + " / " + totalpatients;
-    $(".cmtotaltimespent").html(finaldata);
- 
-  } catch (error) {
-    console.error(error);
-  }
+      try {
+        const getCMtotaltimeResp = await axios.get(`/patients/getCMtotaltime`);
+        var data = JSON.stringify(getCMtotaltimeResp.data);
+        if (data == "null" || data == "") {
+          var totalpatients = "00";
+          var totaltime = "00";
+        } else {
+          var totalpatients = getCMtotaltimeResp.data[0].totalpatients;
+          var totaltime = getCMtotaltimeResp.data.minutes;
+        }
+        var finaldata = " : " + totaltime + " / " + totalpatients;
+        $(".cmtotaltimespent").html(finaldata);
+
+      } catch (error) {
+        console.error(error);
+      }
 
 
       var $body = $("body");
@@ -189,9 +189,6 @@ export default {
         localStorage.setItem("systemDate", currentDate);
       };
 
-
-
-
       //end of initializeScripts
       $("#logout_yes").click(function (e) {
         $("#sign-out-btn")[0].click();
@@ -200,10 +197,6 @@ export default {
       $("#logout_no").click(function (e) {
         $('#logout_modal').modal('hide');
       });
-
-
-
-    
     }
   },
   // Include your script tags here as an array of objects

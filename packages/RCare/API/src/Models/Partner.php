@@ -6,7 +6,13 @@ use RCare\System\Support\DashboardFetchable;
 use RCare\System\Support\ModelMapper;
 use Illuminate\Database\Eloquent\Model;
 use RCare\System\Traits\DatesTimezoneConversion;
-class Partner extends Model
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+
+class Partner extends Authenticatable 
 {
 use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
 

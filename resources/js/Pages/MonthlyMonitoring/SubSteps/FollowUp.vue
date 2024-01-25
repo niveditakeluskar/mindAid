@@ -257,7 +257,6 @@ export default {
 				task_date: ''
 			}
 		]);
-		// 
 
 		const onGridReady = (params) => {
 			gridApi.value = params.api; // Set the grid API when the grid is ready
@@ -455,7 +454,6 @@ export default {
 			//    console.error('Error submitting form:', error);
 			//  });
 		};
-
 
 		const handleCheckboxChange = (event) => {
 			emr_complete.value = event.target.checked;

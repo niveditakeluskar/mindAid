@@ -11,7 +11,7 @@ export default {
     const callExternalFunctionWithParams = (param1, param2) => {
       const activeDeactiveModal = document.getElementById('active-deactive');
       if (activeDeactiveModal) {
-        $(activeDeactiveModal).modal('show');
+        $('#active-deactive').modal('show');
       } else {
         console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
       }
@@ -104,3 +104,47 @@ export default {
 };
 
 </script>
+<style scoped>.goal-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  background-color: white;
+  z-index: 1000;
+  margin: 2%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Style the overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+/* Show the overlay and modal when modal is open */
+.modal.open {
+  display: block;
+  opacity: 1;
+}
+
+.overlay.open {
+  display: block;
+}
+
+.modal-content {
+  overflow-y: auto !important;
+  height: 800px !important;
+}</style>

@@ -49,7 +49,7 @@ use RCare\Ccm\Http\Requests\AllergiesAddRequest;
 use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsVitalsDataAddRequest;
+use RCare\Ccm\Http\Requests\PatientsVitalsDataAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsProvidersAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsProviderSpecilistAddRequest;
 use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
@@ -57,7 +57,7 @@ use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
-use RCare\Ccm\src\Http\Requests\PatientsLabRequest;
+use RCare\Ccm\Http\Requests\PatientsLabRequest;
 use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHealthDataRequest;
@@ -993,7 +993,6 @@ class CarePlanDevelopmentController extends Controller
         $billable     = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->form_start_time);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-
         DB::beginTransaction();
         try {
             if (!empty($id) || $id != '') {
@@ -1256,8 +1255,8 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick = carePlanDevelopment.editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" onclick = carePlanDevelopment.deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" onclick=deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
                 return $btn; //editMedicationsPatient //deleteMedicationsPatient
             })
             ->rawColumns(['action'])
