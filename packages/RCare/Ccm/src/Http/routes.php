@@ -21,14 +21,14 @@ Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('ccm')->group(function () {
 
         Route::get('/diagnosis-conditions', 'RCare\Ccm\Http\Controllers\CcmController@getDiagnosisConditions');
-         Route::get('/activediagnosis-code', 'RCare\Ccm\Http\Controllers\CcmController@getActiveDiagnosiscode');
+        Route::get('/activediagnosis-code', 'RCare\Ccm\Http\Controllers\CcmController@getActiveDiagnosiscode');
 
         Route::get('/get-stepquestion/{module_id}/{patient_id}/{step_id}/{componentId}/question_list', function (string $module_id, string $patient_id, string $step_id, string $componentId) {
-            $d = getDecisionTree($module_id,$patient_id,$step_id,$componentId);
+            $d = getDecisionTree($module_id, $patient_id, $step_id, $componentId);
             return $d;
         });
         Route::get('/get-calltext/{module_id}/{patient_id}/{component_id}/call_message', function (string $module_id, string $patient_id, string $component_id) {
-            $d = getSendTextMessage($module_id,$patient_id,$component_id);
+            $d = getSendTextMessage($module_id, $patient_id, $component_id);
             return $d;
         });
 
@@ -49,9 +49,9 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listMonthalyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         //Route::get('/monthly-monitoring/patients-search/{id}', 'RCare\Ccm\Http\Controllers\CcmController@listSpMonthlyMonitoringPatientsSearch')->name('monthly.monitoring.patients.search');
         Route::get('/monthly-monitoring/{id}', 'RCare\Ccm\Http\Controllers\CcmController@fetchMonthlyMonitoringPatientDetails')->name('monthly.monitoring.patient.details');
-        
+
         Route::get('/populate-monthly-monitoring-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populateMonthlyMonitoringData')->name('populate.MonthlyMonitoring.data');
-        
+
         // Route::get("/monthly-monitoring/{id}", function(){ 
         //         return view('Ccm::monthly-monitoring.patient-details');
         //     })->name('monthly.monitoring.patient.details');
@@ -262,7 +262,7 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get('/care-plan-development-labs-labslist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getLabData')->name('care.plan.development.labs.labslist');
 
-        /* Route::get('/care-plan-development-imaging-imaginglist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getImagingData')->name('care.plan.development.imaging.imaginglist');*/
+        Route::get('/care-plan-development-imaging-imaginglist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getImagingData')->name('care.plan.development.imaging.imaginglist');
 
         Route::get('/care-plan-development-vital-vitallist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getVitalData')->name('care.plan.development.vital.vitallist');
 

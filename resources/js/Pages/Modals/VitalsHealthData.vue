@@ -58,8 +58,8 @@ import {
 } from '../commonImports';
 import Vitals from './VitalsHealthDataModals/Vitals.vue';
 import Labs from './VitalsHealthDataModals/Labs.vue';
+import Imaging from './VitalsHealthDataModals/Imaging.vue';
 import HomeHealth from './ServicesModals/HomeHealth.vue';
-import Dialysis from './ServicesModals/Dialysis.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -70,14 +70,14 @@ export default {
     components: {
         Vitals,
         Labs,
-        Dialysis,
+        Imaging,
         HomeHealth,
     },
 	setup(props) {
         const tabs = ref([
             { label: 'Vitals', component: 'Vitals' },
             { label: 'Labs', component: 'Labs' },
-            { label: 'Imaging', component: 'Dialysis' },
+            { label: 'Imaging', component: 'Imaging' },
             { label: 'Health Data', component: 'HomeHealth' },
         ]);
 
