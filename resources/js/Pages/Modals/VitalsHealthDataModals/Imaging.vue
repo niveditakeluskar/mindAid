@@ -84,7 +84,7 @@ import {
     ref,
     watch,
     onBeforeMount,
-    onMounted,
+    onMounted, 
     AgGridVue,
 } from '../../commonImports';
 import AgGridTable from '../../components/AgGridTable.vue';
