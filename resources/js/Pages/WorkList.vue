@@ -86,7 +86,7 @@
                   </div>
                 </div>
               </form>
-
+            <PatientStatus ref="PatientStatusRef"/>
             </div>
           </div>
         </div>
@@ -119,16 +119,22 @@ import {
 } from './commonImports';
 import AgGridTable from './components/AgGridTable.vue';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
-import patientStatus from './Modals/patientStatus.vue'; // Import your layout component
+import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
 import axios from 'axios';
 
 export default {
+  props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+    },
   components: {
     LayoutComponent,
-    AgGridTable,
-  },
-  setup() {
-    const { callExternalFunctionWithParams } = patientStatus.setup();
+    PatientStatus,
+    AgGridTable
+},
+  setup(props) {
+    const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
     const loading = ref(false);
@@ -151,7 +157,7 @@ export default {
     const activedeactivestatusComputed = computed(() =>
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
-
+    const PatientStatusRef = ref();
 
 
     onMounted(async () => {
@@ -260,9 +266,8 @@ export default {
     });
 
     const callExternalFunctionClick = (pid, pstatus) => {
-
+      PatientStatusRef.value.openModal();
       callExternalFunctionWithParams(pid, pstatus);
-
     };
 
 
@@ -394,6 +399,7 @@ export default {
     };
 
     return {
+      PatientStatusRef,
       columnDefs,
       loading,
       tableInstance,

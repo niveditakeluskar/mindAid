@@ -89,7 +89,6 @@ import {
     AgGridVue,
     // Add other common imports if needed
 } from '../commonImports';
-import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 import { getCurrentInstance, watchEffect, nextTick } from 'vue';
 
@@ -105,7 +104,6 @@ export default {
         };
     },
     components: {
-        LayoutComponent,
         AgGridVue,
     },
     methods: {

@@ -113,6 +113,7 @@
                                             :textContent="patient_module" data-original-title="Patient Enrollment Status"
                                             id="PatientStatus">
                                         </span>
+                                        <PatientStatus ref="PatientStatusRef"/>
                                         <span patient_enroll_date v-if="patient_module_status == '1'">
                                             <a @click="() => patientServiceStatus('1')" data-toggle="modal"
                                                 style="margin-left: 15px;" class="ActiveDeactiveClass"
@@ -268,7 +269,7 @@ import moment from 'moment';
 import axios from 'axios';
 import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
 import DeviceModal from '../../Modals/DeviceModal.vue';
-import patientStatus from '../../Modals/patientStatus.vue'; // Import your layout component
+import PatientStatus from '../../Modals/PatientStatus.vue'; // Import your layout component
 import AlertThresholds from '../../Modals/AlertThresholds.vue'; // Import your layout component
 import Veteran from '../../Modals/VeteranService.vue';
 import AddDevices from '../../Modals/AddDevices.vue';
@@ -314,10 +315,11 @@ export default {
         PersonalNotes,
         ResearchStudy,
         AddDevices,
+        PatientStatus,
         // AdditionalDevices,
     },
     setup(props) {
-        const { callExternalFunctionWithParams } = patientStatus.setup();
+        const { callExternalFunctionWithParams } = PatientStatus.setup();
         const veteranRef = ref();
         const add_devicesRef = ref();
         const additional_devicesRef = ref();
@@ -370,7 +372,7 @@ export default {
         const billable_time = ref();
         const non_billabel_time = ref();
         const total_time = ref();
-
+        const PatientStatusRef = ref();
 
 
         // const enrolledServices = ref(null);
@@ -382,6 +384,7 @@ export default {
         const showAddPatientDevices = ref(false);
 
         const patientServiceStatus = async (pstatus) => {
+            PatientStatusRef.value.openModal();
             callExternalFunctionWithParams(props.patientId, pstatus);
         }
 
@@ -683,6 +686,7 @@ export default {
             personalnotesfunction,
             personalnotesRef,
             researchstudyfunction,
+            PatientStatusRef,
             researchstudyRef,
             patientName,
             patientGender,
