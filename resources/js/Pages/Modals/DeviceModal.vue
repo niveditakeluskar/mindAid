@@ -142,7 +142,7 @@ export default {
         const selectedcondition = ref('');
 
 
-        let columnDefs = ref([
+        const columnDefs = ref([
             {
                 headerName: 'Sr. No.',
                 valueGetter: 'node.rowIndex + 1',
@@ -202,19 +202,7 @@ export default {
             }
         ]);
 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-        });
-
-        const gridOptions = reactive({
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
+    
 
         const fetchDeviceList = async () => {
             try {
@@ -416,14 +404,6 @@ export default {
         };
 
 
-        onBeforeMount(() => {
-            popupParent.value = document.body;
-
-        });
-
-        const onFirstDataRendered = (params) => {
-            params.api.paginationGoToPage(1);
-        };
 
         onMounted(async () => {
             fetchPartnerId();
@@ -450,15 +430,6 @@ export default {
             loading,
             columnDefs,
             passRowData,
-            defaultColDef,
-            onFirstDataRendered,
-            gridOptions,
-            popupParent,
-            gridApi,
-            gridColumnApi,
-            onGridReady,
-            paginationPageSizeSelector,
-            paginationNumberFormatter,
             partnersOption,
             codeOptions,
             selectedMedication,

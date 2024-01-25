@@ -178,7 +178,7 @@
                                         <span data-toggle="tooltip" data-placement="right" title="Device Code"
                                             data-original-title="Patient Device Code.">
                                             <i class="text-muted i-Hospital"></i> :
-                                            <span :textContent="patient_device"></span>
+                                            <span v-html="patient_device"></span>
                                         </span>
                                         <input type="hidden" name="device_code" value="PatientDevices">
                                     </div>
