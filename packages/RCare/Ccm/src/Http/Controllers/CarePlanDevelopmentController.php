@@ -58,7 +58,7 @@ use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\Http\Requests\PatientsLabRequest;
-use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
+use RCare\Ccm\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHealthDataRequest;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
@@ -435,6 +435,27 @@ class CarePlanDevelopmentController extends Controller
             $result['review_allergy_other_allergy_form'] = $PatientOtherAllergy;
         }
         return $result;
+    }
+
+    public function getImagingData(Request $Request){
+        $patientId               = sanitizeVariable($Request->route('patientid'));
+        $lastMonthImaging = "";
+        $dataexist        = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+        if ($dataexist == true) {
+            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+            ->orderBy('created_at', 'desc')->get();
+        } else {
+            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->where('created_at', '>=', Carbon::now()->subMonth())->get();
+        } 
+        return Datatables::of($lastMonthImaging)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function Services_list(Request $Request)
@@ -4297,7 +4318,7 @@ class CarePlanDevelopmentController extends Controller
             return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
     }
-
+    
     public function savePatientImagingData(PatientsImagingRequest $request)
     {
         $imaging              = sanitizeVariable($request->imaging);

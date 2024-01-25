@@ -143,7 +143,6 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/care-plan-development-numbertracking-vitals', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientvitalData')->name('care.plan.development.numbertracking.vitals');
         Route::post('/care-plan-development-numbertracking-labs', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientLabData')->name('care.plan.development.numbertracking.labs');
         Route::post('/care-plan-development-numbertracking-imaging', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientImagingData')->name('care.plan.development.numbertracking.imaging');
-
         Route::post('/care-plan-development-numbertracking-healthdata', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientHealthData')->name('care.plan.development.numbertracking.healthdata');
 
         //providers
