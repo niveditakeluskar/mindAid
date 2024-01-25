@@ -141,7 +141,8 @@
 <!-- <div> -->
 	<div >
 		<h4>Medications:</h4>
-		@if(count($PatientMedication1)>0)
+		<!-- if(count($PatientMedication1)>0) -->
+		@if(is_array($PatientMedication1) && count($PatientMedication1) > 0)
 			<div>
 				<table class="tbl">
 						<thead> 

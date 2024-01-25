@@ -136,7 +136,7 @@ class PrintCarePlanController extends Controller
         // echo "<pre>";
         // dd($PatientDiagnosis);
 
-        $PatientDiag      = DB::select(DB::raw(
+        $PatientDiag      =
                                 "select distinct code,condition,jsonb(goals) as goals,jsonb(symptoms) as symptoms ,jsonb(tasks) as tasks,
                                 to_char(max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') 
                                 as date
@@ -147,7 +147,7 @@ class PrintCarePlanController extends Controller
                                 AND status =1 
                                 group  by code,condition,jsonb(patient_diagnosis_codes.goals),jsonb(patient_diagnosis_codes.symptoms),jsonb(patient_diagnosis_codes.tasks)
                                 order by date desc"
-                            ));
+                            ;
 
         // $PatientDiag      = PatientDiagnosis::select(DB::raw("distinct code, condition, goals, symptoms, jsonb(tasks) as tasks, to_char(max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date"))
         //                     ->where("patient_id", $uid)
@@ -232,7 +232,7 @@ class PrintCarePlanController extends Controller
         //                                             ->where('patient_id', $uid)
         //                                             ->get();
         
-        $PatientMedication1     = DB::select(DB::raw("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+        $PatientMedication1     = "select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
                                         rm.description as name,pm1.updated_at as date
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
@@ -242,7 +242,7 @@ class PrintCarePlanController extends Controller
                                             AND pm.created_at >= date_trunc('month', current_date) 
                                             AND pm.status = 1
                                             group by pm.med_id) 
-                                        order by rm.description asc"));
+                                        order by rm.description asc";
 
         $last_time_spend        = CommonFunctionController::getCcmNetTime($uid, $module_id);
 
