@@ -22,24 +22,10 @@
                         </div>
                     </div>
                     <div class="row m-1">
-                        <div class="col-12">
-                            <div class="table-responsive">
-                                <div class="table-responsive">
-                                    <ag-grid-vue
-                                        style="width: 100%; height: 100%;"
-                                        id="callwrap-list"
-                                        class="ag-theme-alpine"
-                                        :columnDefs="callWrapColumnDefs.value"
-                                        :rowData="callWrapRowData.value"
-                                        :defaultColDef="defaultColDef"
-                                        :gridOptions="gridOptions"
-                                        :loadingCellRenderer="loadingCellRenderer"
-                                                    :loadingCellRendererParams="loadingCellRendererParams"
-                                                    :rowModelType="rowModelType"
-                                                    :cacheBlockSize="cacheBlockSize"
-                                                    :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                                </div>
-                            </div>
+                        <div class="col-12"> 
+                   
+                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"/>
+
                         </div>
                     </div>
                     <form id="callwrapup_form" name="callwrapup_form" action="" method="post"> 
@@ -215,10 +201,9 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../../commonImports';
-import LayoutComponent from '../../../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 export default {
     props: {
@@ -227,8 +212,7 @@ export default {
         componentId: Number,
     },
     components: {
-        LayoutComponent,
-        AgGridVue,
+        AgGridTable,
     },
     data() {
         return {
@@ -280,15 +264,11 @@ export default {
         },
     },
     setup(props) {
-        const callWrapRowData = reactive({ value: [] }); // Initialize rowData as an empty array
+        const callWrapRowData = ref( []); // Initialize rowData as an empty array
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
+       
 
-        let callWrapColumnDefs = reactive({
+        const callWrapColumnDefs = ref({
             value: [
                 {
                     headerName: 'Seq.',
@@ -308,23 +288,7 @@ export default {
             ]
         });
 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-            wrapText: true,
-            autoHeight: true,
-        });
-
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
+       
 
         const fetchCallWrapUpList = async () => {
             try {
@@ -347,15 +311,6 @@ export default {
         //     alert("test");
         // };
 
-        onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
-        });
 
         onMounted(async () => {
             try {
@@ -369,27 +324,13 @@ export default {
             loading,
             callWrapColumnDefs,
             callWrapRowData,
-            defaultColDef,
-            gridOptions,
             fetchCallWrapUpList,
             // deleteCallWrap,
         };
     }
 }
 </script>
-<style>
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
-/* Use the theme you prefer */
 
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    /* Adjust as needed */
-}
-</style>
 
 
 

@@ -318,5 +318,53 @@ export default {
     text-overflow: clip;
     overflow: visible;
 }
+
+
+.search-container {
+	display: inline-block;
+	position: relative;
+	border-radius: 50px;
+	/* To create an oval shape, use a large value for border-radius */
+	overflow: hidden;
+	width: 200px;
+	/* Adjust width as needed */
+}
+
+.oval-search-container {
+	position: relative;
+	display: inline-block;
+	/*  border: 1px solid #ccc; */
+	/* Adding a visible border */
+	/* border-radius: 20px; */
+	/* Adjust border-radius for a rounded shape */
+	/* width: 200px; */
+	/* Adjust width as needed */
+	margin-right: 10px;
+	/* Adjust margin between the search box and icons */
+}
+
+input[type="text"] {
+	width: calc(100% - 0px);
+	/* Adjust the input width considering the icon */
+	/*  border: none; */
+	outline: none;
+	border-radius: 10px;
+}
+
+.search-icon {
+	position: absolute;
+	top: 50%;
+	right: 1px;
+	transform: translateY(-50%);
+	width: 20px;
+	/* Adjust icon size as needed */
+	height: auto;
+}
+
+/* Align the export icons properly */
+.ml-auto img {
+	margin-right: 5px;
+	/* Adjust margin between the export icons */
+}
 </style>
   

@@ -57,22 +57,8 @@
 
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
-                <div class="col-12">
-                    <div class="table-responsive">
-                    <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="Other-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="otherAllergiescolumnDefs.value"
-                            :rowData="otherAllergiesRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                <div class="col-12"> 
+                    <AgGridTable :rowData="otherAllergiesRowData" :columnDefs="otherAllergiescolumnDefs"/>
                 </div>
             </div>
         </div>
@@ -85,7 +71,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import OtherForm from '../../Patients/Components/AllergiesShortForm.vue';
@@ -99,7 +85,7 @@ export default {
     },
     components: {
         OtherForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showOtherAlert = ref(false);
@@ -108,13 +94,9 @@ export default {
         let otherallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const otherAllergiesRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let otherAllergiescolumnDefs = reactive({
+        const otherAllergiesRowData = ref( [] );
+      
+        let otherAllergiescolumnDefs = ref({
             value: [
                 {
                     headerName: 'Sr. No.',
@@ -149,26 +131,6 @@ export default {
                 },
             ]
         }); 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
         
         const fetchPatientOtherList = async () => {
             try {
@@ -190,7 +152,7 @@ export default {
 
         
         
-        let submitAllergiesForm = async () => {
+        const submitAllergiesForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('allergy_other_allergy_form');
             let formData = new FormData(myForm);
@@ -226,7 +188,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'Other';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -237,7 +199,7 @@ export default {
             }
         };
 
-        let deleteAllergies = async (id, obj) => {
+        const deleteAllergies = async (id, obj) => {
              if (window.confirm("Are you sure you want to delete this Allergies?")) {
                 const formData = {
                     id: id,
@@ -270,7 +232,7 @@ export default {
             }
         }
 
-        let editAllergy = async (id) => {
+        const editAllergy = async (id) => {
             try {
                 const allergiesToEdit = otherAllergiesRowData.value.find(allergies => allergies.id == id);
                 console.log(allergiesToEdit);
@@ -307,13 +269,6 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
             fetchPatientOtherList();
         });
 
@@ -338,8 +293,6 @@ export default {
             showOtherAlert,
             otherAllergiescolumnDefs,
             otherAllergiesRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientOtherList,
             deleteAllergies,
             editAllergy,

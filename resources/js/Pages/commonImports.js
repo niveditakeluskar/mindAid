@@ -1,6 +1,5 @@
 import { onBeforeMount,reactive,ref, onMounted, computed, watch } from 'vue';
-import { AgGridVue } from 'ag-grid-vue3';
-
+import AgGridTable from './components/AgGridTable.vue';
 
 export {
   reactive,
@@ -8,7 +7,7 @@ export {
   onMounted,
   computed,
   watch,
-  AgGridVue,
   onBeforeMount,
+  AgGridTable
   // Add other common imports if needed
 };

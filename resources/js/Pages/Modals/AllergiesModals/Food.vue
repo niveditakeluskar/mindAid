@@ -57,22 +57,9 @@
 
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
-                <div class="col-12">
-                    <div class="table-responsive">
-                    <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="food-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="foodAllergiescolumnDefs.value"
-                            :rowData="foodAllergiesRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                <div class="col-12"> 
+                    <AgGridTable :rowData="foodAllergiesRowData" :columnDefs="foodAllergiescolumnDefs"/>
+
                 </div>
             </div>
         </div>
@@ -85,7 +72,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import FoodForm from '../../Patients/Components/AllergiesShortForm.vue';
@@ -99,7 +86,7 @@ export default {
     },
     components: {
         FoodForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showfoodAlert = ref(false);
@@ -108,13 +95,10 @@ export default {
         let foodallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const foodAllergiesRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let foodAllergiescolumnDefs = reactive({
+       
+        const foodAllergiesRowData = ref([]);
+       
+        let foodAllergiescolumnDefs = ref({
             value: [
                 {
                     headerName: 'Sr. No.',
@@ -149,26 +133,7 @@ export default {
                 },
             ]
         }); 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
+       
         
         const fetchPatientFoodList = async () => {
             try {
@@ -307,13 +272,7 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+          
             fetchPatientFoodList();
         });
 
@@ -338,8 +297,7 @@ export default {
             showfoodAlert,
             foodAllergiescolumnDefs,
             foodAllergiesRowData,
-            defaultColDef,
-            gridOptions,
+           
             fetchPatientFoodList,
             deleteAllergies,
             editAllergy,

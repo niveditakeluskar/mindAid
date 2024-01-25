@@ -116,8 +116,8 @@ import {
   onMounted,
   computed,
   watch,
+  AgGridTable
 } from './commonImports';
-import AgGridTable from './components/AgGridTable.vue';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
 import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
 import axios from 'axios';
@@ -311,9 +311,6 @@ export default {
       try {
         const response = await fetch('/patients/getuser-filters');
         const data = await response.json();
-        // Fetch patients and wait for the data before updating selectedPatients
-        //const fetchedPatients = await fetchPatients(data.practice);
-
         selectedPractice.value = data.practice;
         selectedPatients.value = data.patient;
         selectedOption.value = data.timeoption;
@@ -421,5 +418,4 @@ export default {
   },
 };
 </script>
-
   

@@ -65,11 +65,9 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="table-responsive">
-                            <ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark"
-                                :gridOptions="gridOptions" :defaultColDef="defaultColDef" :columnDefs="columnDefs"
-                                :rowData="rowData" @grid-ready="onGridReady" :popupParent="popupParent"></ag-grid-vue>
-                        </div>
+                      
+                            <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
+                 
                     </div>
                 </div>
             </div>
@@ -86,7 +84,7 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable
     // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';
@@ -104,7 +102,7 @@ export default {
         };
     },
     components: {
-        AgGridVue,
+        AgGridTable,
     },
     methods: {
         openModal() {
@@ -133,28 +131,16 @@ export default {
         const goalsText = ref(''); // Use ref for the concatenated goals string
         const selectedPartnerId = ref('');
         const selectedCode = ref('');
-        const rowData = ref([]); // Initialize rowData as an empty array
+        const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
         const medicationTime = ref('');
         const deviceStageId = ref(0);
 
         let codeOptions = ref([]);
         let selectedMedication = ref('');
-        const gridApi = ref(null);
-        const gridColumnApi = ref(null);
-        const popupParent = ref(null);
-        const paginationPageSizeSelector = ref(null);
-        const paginationNumberFormatter = ref(null);
         const selectedEditDiagnosId = ref('');
         const selectedcondition = ref('');
-        const onGridReady = (params) => {
-            gridApi.value = params.api; // Set the grid API when the grid is ready
-            gridColumnApi.value = params.columnApi;
-            /* paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-            paginationNumberFormatter.value = (params) => {
-                return '[' + params.value.toLocaleString() + ']';
-            }; */
-        };
+
 
         let columnDefs = ref([
             {
@@ -242,7 +228,7 @@ export default {
                 const data = await response.json();
                 // Check if data.data is not undefined before assigning it to rowData
                 if (data.data) {
-                    rowData.value = data.data;
+                    passRowData.value = data.data;
                 } else {
                     console.error('Data is undefined in the response:', data);
                 }
@@ -463,7 +449,7 @@ export default {
             selectedCode,
             loading,
             columnDefs,
-            rowData,
+            passRowData,
             defaultColDef,
             onFirstDataRendered,
             gridOptions,
