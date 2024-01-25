@@ -40,7 +40,7 @@
 				</div> 
 				<div :id="`${sectionName}_CPmsg`" class="invalid-feedback" style="font-size: 13px;"></div>
 			</div>
-			<div v-if="conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1"
+			<div v-if="((conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1) &&  conditionRequirnment4!=1)"
 				:id="`${sectionName}_note`" class="notes mb-4">
 				<textarea class="form-control" name="condition_requirnment_notes"
 					:id="`${sectionName}_condition_requirnment_notes`" v-model="condition_requirnment_notes"></textarea>
@@ -123,7 +123,7 @@
 				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
 			</div>
 			<div v-if="med_added_or_disconYesNo == 'Yes'">
-			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4" >
+			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
 					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
 	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
@@ -135,10 +135,9 @@
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
-				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`"
-					class="btn btn-primary click_id allergiesclick" data-toggle="modal" data-target="#myModal"
-					target="allergy-information">Edit Allergies</button>
-			</label>
+				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal">Edit Allergies</button>
+				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			<input type="hidden" name="this_month" value="1">
 			<!-- // $section == 'call_preparation' &&  -->
@@ -177,34 +176,34 @@
 						<label :for="`${sectionName}_report_requirnment_new_lab`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment1"
 								:id="`${sectionName}_report_requirnment_new_lab`" v-model="report_requirnment1" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment1" >
+								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment1" value="1">
 							<span>New Labs</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_diag_img`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment2"
 								:id="`${sectionName}_report_requirnment_diag_img`" v-model="report_requirnment2" class="RRclass"
-								formControlName="checkbox"  @change="checkReportRequirnments()" value="1" :checked="report_requirnment2" >
+								formControlName="checkbox"  @change="checkReportRequirnments()" :checked="report_requirnment2" value="1">
 							<span>Diagnostic Imaging</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_health`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment4"
 								:id="`${sectionName}_report_requirnment_health`" v-model="report_requirnment4" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment4">
+								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment4" value="1">
 							<span>Health Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_new_vitals`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment5"
 								:id="`${sectionName}_report_requirnment_new_vitals`" v-model="report_requirnment5" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" value="1" :checked="report_requirnment5">
+								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment5" value="1">
 							<span>Vitals Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
-								 class="RRclass" formControlName="checkbox" value="0" @click="noneReportRequirements()">
+								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" value="0">
 							<span>None</span><span class="error">*</span>
 							<span class="checkmark"></span>
 							<!-- <span class="error">*</span> -->
@@ -277,6 +276,7 @@
 
 <script>
 import ModalForm from '../../Modals/Medication.vue';
+import AllergiesModalForm from '../../Modals/Allergies.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
 import ServicesModalForm from '../../Modals/Services.vue';
 import vitalsHealthDataModalForm from '../../Modals/VitalsHealthData.vue';
@@ -292,7 +292,8 @@ export default {
 		ReviewCarePlanModal,
 	},
 	components: {
-		ModalForm,
+		ModalForm, // Register the modal component
+		AllergiesModalForm,
 		ServicesModalForm,
 		vitalsHealthDataModalForm,
 		ReviewCarePlanModal
@@ -300,24 +301,23 @@ export default {
 	data() {
 		return {
 			// time:null,
-			
-			conditionRequirnment1: 0,
-			conditionRequirnment2: 0,
-			conditionRequirnment3: 0,
-			conditionRequirnment4: 0,
+			conditionRequirnment1:'',
+			conditionRequirnment2:'',
+			conditionRequirnment3:'',
+			conditionRequirnment4:'',
 
-			report_requirnment1: 0,
-			report_requirnment2: 0,
-			report_requirnment4: 0,
-			report_requirnment5: 0,
+			report_requirnment1:'',
+			report_requirnment2:'',
+			report_requirnment4:'',
+			report_requirnment5:'',
 
-			officeVisitYesNo: 0,
+			officeVisitYesNo:'',
 
-			newDiagnosisYesNo: 0,
+			newDiagnosisYesNo:'',
 
-			pcpReviwewdYesNo : 0,
+			pcpReviwewdYesNo :'',
 
-			med_added_or_disconYesNo: 0,
+			med_added_or_disconYesNo:'',
 			
 			data_present_in_emrYesNO:'',
 		};
@@ -346,6 +346,7 @@ export default {
 			this.conditionRequirnment3 = 0;
 		},
 		checkConditionRequirnments() {
+		    this.conditionRequirnment4 = 0;
 			if (this.conditionRequirnment1 === 1 || this.conditionRequirnment2 === 1 || this.conditionRequirnment3 === 1) {
 				this.conditionRequirnment4 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
@@ -357,6 +358,7 @@ export default {
 			this.report_requirnment5 = 0;
 		},
 		checkReportRequirnments() {
+			this.report_requirnment3 = 0; 
 			if (this.report_requirnment1 === 1 || this.report_requirnment2 === 1 || this.report_requirnment4 === 1 || this.report_requirnment5 === 1) {
 				this.report_requirnment3 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
@@ -392,7 +394,7 @@ export default {
 					this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment2;
 					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
 					this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment3;
-					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
+					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment5;
 					
 					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation[0].anything_else;
 					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation[0].patient_relationship_building;
@@ -413,6 +415,10 @@ export default {
 			console.log("ReviewCarePlanModal called");
 			this.$refs.ReviewCarePlanModal.openModal();
 			this.$refs.modalForm.openModal();
+		},
+		openAllergiesModal() {
+			console.log("openAllergiesModal called");
+			this.$refs.allergiesModalForm.openModal();
 		},
 		openServicesModal() {
 			this.$refs.servicesModalForm.openModal();
@@ -436,4 +442,7 @@ export default {
 	}
 
 }
+
+
+
 </script>
