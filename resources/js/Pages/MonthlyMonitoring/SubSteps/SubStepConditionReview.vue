@@ -132,8 +132,8 @@
                                     type="date" :value="toDate" autocomplete="off">
                             </div>
                             <div>
-                                <button type="button" id="searchbutton" class="btn btn-primary mt-4">Search</button>
-                                <button type="button" id="resetbutton" class="btn btn-primary mt-4">Reset</button>
+                                <button type="button" id="searchbutton" class="btn btn-primary mt-4" @click="SerchReviewData">Search</button>
+                                <button type="button" id="resetbutton" class="btn btn-primary mt-4" style="margin-left: 10px ">Reset</button>
                             </div>
                             <div class="col-md-2 text-right" id="address_btn"></div>
                         </div>
@@ -407,6 +407,20 @@ export default {
                 this.changedevice = false;
                 this.ajexChart();
             }
+        },
+
+        async SerchReviewData(){
+            this.toshowTable = false;
+            this.fromDate = $("#fromdate").val();
+            this.toDate = $("#todate").val();
+            let tab = 'observationsbp';
+            await axios.get(`/rpm/patient-alert-history-list-device-link/${this.patientId}/${tab}/${this.fromDate}/${this.toDate}`)
+                .then(response => {
+                    this.toshowTable = true;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         },
 
         async dataList() {
