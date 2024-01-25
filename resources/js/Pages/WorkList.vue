@@ -86,7 +86,7 @@
                   </div>
                 </div>
               </form>
-
+            <PatientStatus ref="PatientStatusRef"/>
             </div>
           </div>
         </div>
@@ -95,39 +95,9 @@
         <div class="col-md-12 mb-4">
           <div class="card text-left">
             <div class="card-body">
-
-              <div v-if="loading" class="table-responsive loading-spinner">
-                <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
-                  <i class="fas fa-spinner fa-pulse"></i> <span>One Moment Please...............</span>
-                </div>
+              <div style="height: 100vh;">
+                <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
               </div>
-              <div v-else style="height: 100vh;">
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <div class="quick-filter"></div>
-
-                  <div class="ml-auto"> <!-- This div aligns elements to the right -->
-                    <div class="oval-search-container">
-                      <input type="text" id="filter-text-box" placeholder="Search..." v-model="filterText"
-                        @input="onFilterTextBoxChanged">
-                      <img src="/assets/images/search.png" class="search-icon" alt="search">
-                    </div>
-                    <img src="/assets/images/excel_icon.png" width="20" v-on:click="onBtnExport()" alt="excel">
-                    <img src="/assets/images/pdf_icon.png" width="20" @click="exportAsPDF" alt="export pdf"
-                      data-toggle="tooltip" data-placement="top" title="pdf" data-original-title="PDF">
-                    <img src="/assets/images/copy_icon.png" width="20" @click="copySelectedRows" alt="copy"
-                      data-toggle="tooltip" data-placement="top" title="copy" data-original-title="Copy">
-                  </div>
-                </div>
-                <!--   <table id="patient-list" ref="dataTable" class="display table table-striped table-bordered"
-                  style="width:100%">
-                </table> -->
-                <!-- Ag-Grid Vue component -->
-                <ag-grid-vue style="width: 100%; height: 95%;" class="ag-theme-quartz-dark" :gridOptions="gridOptions"
-                  :defaultColDef="defaultColDef" :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady"
-                  :suppressExcelExport="true" :popupParent="popupParent"></ag-grid-vue>
-              </div>
-
             </div>
           </div> <!--End of card-->
 
@@ -146,29 +116,27 @@ import {
   onMounted,
   computed,
   watch,
-  AgGridVue,
-  onBeforeMount,
 } from './commonImports';
+import AgGridTable from './components/AgGridTable.vue';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
-import patientStatus from './Modals/patientStatus.vue'; // Import your layout component
+import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
 import axios from 'axios';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-
 
 export default {
+  props: {
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+    },
   components: {
     LayoutComponent,
-    AgGridVue,
-  },
-  setup() {
-    const { callExternalFunctionWithParams } = patientStatus.setup();
+    PatientStatus,
+    AgGridTable
+},
+  setup(props) {
+    const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
-    const gridApi = ref(null);
-    const gridColumnApi = ref(null);
-    const filterText = ref('');
-    const popupParent = ref(null);
-    const rowData = ref();
+    const passRowData = ref([]);
     const loading = ref(false);
     const tableInstance = ref(null); // Define tableInstance using ref()
     const showModal = ref(false);
@@ -189,10 +157,8 @@ export default {
     const activedeactivestatusComputed = computed(() =>
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
+    const PatientStatusRef = ref();
 
-    onBeforeMount(() => {
-      popupParent.value = document.body;
-    });
 
     onMounted(async () => {
       try {
@@ -213,124 +179,6 @@ export default {
       }
     });
 
-
-    const onBtnExport = () => {
-      const fileName = 'Renova Healthcare'; // Replace 'custom_filename' with your desired file name
-      const params = {
-        fileName: fileName,
-        processCellCallback: (params) => {
-          // Remove HTML tags from cell values
-          if (params.value && typeof params.value === 'string') {
-            const div = document.createElement('div');
-            div.innerHTML = params.value;
-            return div.textContent || div.innerText || '';
-          }
-          return params.value;
-        },
-      };
-      gridApi.value.exportDataAsCsv(params);
-    };
-    const onBtnUpdate = () => {
-      document.querySelector('#csvResult').value = gridApi.value.getDataAsCsv();
-
-    };
-
-    const onGridReady = (params) => {
-      gridApi.value = params.api; // Set the grid API when the grid is ready
-      gridColumnApi.value = params.columnApi;
-	  params.api.sizeColumnsToFit(); 
-    };
-
-    const copySelectedRows = () => {
-      if (gridApi.value) {
-        const rowData = gridApi.value.getModel().rowsToDisplay.map(row => {
-          // Extracting text content from each cell
-          const rowDataWithoutHTML = {};
-          gridApi.value.getColumnDefs().forEach(colDef => {
-            const value = gridApi.value.getValue(colDef.field, row);
-            rowDataWithoutHTML[colDef.field] = value ? value.toString().replace(/<[^>]+>/g, '') : '';
-          });
-          return rowDataWithoutHTML;
-        });
-        copyDataToClipboard(rowData);
-      }
-    };
-
-    const copyDataToClipboard = (data) => {
-      const textToCopy = data.map(row => Object.values(row).join('\t')).join('\n');
-      navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-          alert('Data copied to clipboard');
-          // Optionally, show a success message or perform other actions after copying
-        })
-        .catch((error) => {
-          console.error('Unable to copy data to clipboard:', error);
-          // Handle any errors encountered during copying
-        });
-    };
-
-    function sanitizeDataForPDFExport(data) {
-      if (typeof data === 'string') {
-        // Remove HTML tags from the string
-        return data.replace(/<[^>]*>?/gm, '');
-      }
-      return data;
-    };
-
-    function exportAsPDF() {
-      const doc = new jsPDF();
-
-      // Extracting column headers
-      const columns = columnDefs.value.map((columnDef) => columnDef.headerName);
-
-      // Extracting row data in a format compatible with autoTable
-      const rows = rowData.value.map((row) => {
-        // Generating an array containing values for each column in the row
-        const rowDataArray = columns.map((col) => {
-          switch (col) {
-            case 'Sr. No.':
-              return rowData.value.indexOf(row) + 1;
-            case 'Patient Name':
-              return `${row['pfname']} ${row['plname']}`;
-            case 'DOB':
-              // Assuming 'pdob' contains a date string
-              const date = row['pdob'];
-              if (!date) return null;
-              return new Date(date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              });
-            // You can add cases for other columns as required
-            default:
-              // For other columns, sanitize the data and return
-              return sanitizeDataForPDFExport(row[col.toLowerCase()]);
-          }
-        });
-
-        return rowDataArray;
-      });
-
-      doc.autoTable({
-        head: [columns],
-        body: rows,
-      });
-
-      doc.save('Renova_Healthcare.pdf');
-    };
-
-
-
-
-    const onFilterTextBoxChanged = () => {
-      if (gridApi.value) {
-        gridApi.value.setGridOption(
-          'quickFilterText',
-          filterText.value
-        );
-      }
-    };
-
     // Define a custom cell renderer function
     const customCellRenderer = (params) => {
       const row = params.data;
@@ -350,11 +198,12 @@ export default {
         return ''; // Or handle the case where the 'action' value is not available
       }
     };
+
     const columnDefs = ref([
       {
         headerName: 'Sr. No.',
         valueGetter: 'node.rowIndex + 1',
-		width:20
+        width: 20
       },
       { headerName: 'EMR No.', field: 'pppracticeemr', filter: true },
       {
@@ -410,15 +259,6 @@ export default {
       { headerName: 'Call Score', field: 'pssscore' },
     ]);
 
-    const defaultColDef = ref({
-      sortable: true,
-      flex: 1,
-    });
-    const gridOptions = ref({
-      pagination: true,
-      paginationAutoPageSize: true,
-    });
-
 
     // Watch for changes in selectedPractice
     watch(selectedPractice, (newPracticeId) => {
@@ -426,9 +266,8 @@ export default {
     });
 
     const callExternalFunctionClick = (pid, pstatus) => {
-
-        callExternalFunctionWithParams(pid, pstatus);
-
+      PatientStatusRef.value.openModal();
+      callExternalFunctionWithParams(pid, pstatus);
     };
 
 
@@ -495,7 +334,7 @@ export default {
 
     const handleSubmit = async () => {
       try {
-        gridApi.value.showLoadingOverlay();
+        
         await getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedPatients.value === '' ? null : selectedPatients.value,
@@ -545,48 +384,14 @@ export default {
       selectedPatients.value = [];
     }
 
-
-
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
       try {
         const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
-
         if (!response.ok) {
           throw new Error('Failed to fetch patient list');
         }
-
-        const reader = response.body.getReader();
-        const contentLength = +response.headers.get('content-length');
-        let receivedLength = 0;
-        let chunks = [];
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            break;
-          }
-
-          chunks.push(value);
-          receivedLength += value.length;
-
-          // Process chunks if necessary or concatenate them
-        }
-
-        const concatenated = new Uint8Array(receivedLength);
-        let position = 0;
-
-        for (const chunk of chunks) {
-          concatenated.set(chunk, position);
-          position += chunk.length;
-        }
-
-        // Process or parse the concatenated data
-        const data = JSON.parse(new TextDecoder('utf-8').decode(concatenated));
-
-        // Do something with the data (e.g., assign it to rowData)
-        rowData.value = data.data || [];
-
+        const data = await response.json();
+        passRowData.value = data.data || [];
       } catch (error) {
         console.error('Error fetching patient list:', error);
         loading.value = false;
@@ -594,109 +399,27 @@ export default {
     };
 
     return {
+      PatientStatusRef,
+      columnDefs,
       loading,
       tableInstance,
       showModal,
       selectedPractice,
       selectedPatients,
-      columnDefs,
-      rowData,
-      defaultColDef,
-      gridOptions,
+      passRowData,
       practices,
       patients,
       selectedOption,
       timeValue,
       activedeactivestatus,
       patientsmodules,
-      gridApi,
-      filterText,
-      popupParent,
-      gridColumnApi,
       layoutComponentRef,
-      exportAsPDF,
-      onBtnExport,
-      onBtnUpdate,
-      onGridReady,
-      onFilterTextBoxChanged,
       handleSubmit,
       handleChange,
-      copySelectedRows,
       handleReset,
     };
   },
 };
 </script>
-<style>
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-.ag-theme-quartz,
-.ag-theme-quartz-dark {
-  --ag-foreground-color: rgb(63, 130, 154);
-  --ag-background-color: rgb(243, 243, 243);
-  --ag-header-foreground-color: rgb(63, 130, 154);
-  --ag-header-background-color: rgb(238, 238, 238);
-  --ag-odd-row-background-color: rgb(255, 255, 255);
-  --ag-header-column-resize-handle-color: rgb(63, 130, 154);
-  --ag-borders: solid 1px rgb(255, 255, 255); /* Border color for regular cells */
-  --ag-borders-critical: solid 1px rgb(255, 255, 255);
-  --ag-borders-secondary: solid 1px rgb(255, 255, 255);
-  --ag-secondary-border-color: rgb(255, 255, 255);
-  --ag-row-border-style: solid 1px rgb(255, 255, 255); /* Border color for rows */
-  --ag-row-border-color: blue;
-  --ag-cell-horizontal-border: solid 1px #ddd; /* Border color for cells in the header */
-  --ag-border-color: rgb(255, 255, 255);
-  --ag-font-size: 17px;
-  --ag-font-family: monospace;
-}
-
-/* Borders for regular cells */
-.ag-cell {
-  border: var(--ag-borders);
-}
-
-/* Borders for header cells */
-.ag-header-cell {
-  border: var(--ag-borders);
-}
-
-/* Borders for rows */
-.ag-row {
-  border: var(--ag-row-border-style) var(--ag-row-border-color);
-}
-
-/* Borders for cells in the header */
-.ag-header-cell-label {
-  border-bottom: var(--ag-cell-horizontal-border);
-}
-
-/* Borders for column headers */
-.ag-header-row {
-  border-bottom: var(--ag-cell-horizontal-border);
-}
-
-/* Optional: Borders for the entire table */
-.ag-root-wrapper {
-  border: var(--ag-borders);
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  /* Adjust as needed */
-}
-
-.quick-filter {
-  display: flex;
-  align-items: center;
-}
-.ag-header-cell-label .ag-header-cell-text {
-      word-break: break-word !important;
-	  white-space: normal !important;
-	  text-overflow: clip;
-    overflow: visible;
-}
-</style>
+  

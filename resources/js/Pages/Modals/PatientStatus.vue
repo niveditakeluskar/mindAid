@@ -1,21 +1,59 @@
 <template>
-    <div>
-
-    </div>
+  <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
+  <div class="modal fade" :class="{ 'open': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Change Patient Status</h4>
+              <button type="button" class="close" @click="closeModal">×</button>
+          </div>
+          <div class="modal-body" style="padding-top:10px;" id="active-deactive">
+              <loading-spinner :isLoading="isLoading"></loading-spinner>
+              <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
+              
+              </form>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" @click="closeModal">Close</button>
+          </div>
+      </div>
+  </div>
 </template>
 <script>
+import {
+    reactive,
+    ref,
+    onBeforeMount,
+    onMounted,
+} from '../commonImports';
 import axios from 'axios';
+import { getCurrentInstance, watchEffect, nextTick } from 'vue';
 
 export default {
-  setup() {
+    props: {
+        patientId: Number,
+        moduleId: Number,
+        componentId: Number,
+    },
+    data() {
+  
+    },
+    components: {
+
+    },
+    methods: {
+
+    },
+    setup(props) {
+      const isOpen = ref(false); 
+      const openModal = () => {
+            isOpen.value = true;
+        };
+
+        const closeModal = () => {
+            isOpen.value = false;
+        };
+
     const callExternalFunctionWithParams = (param1, param2) => {
-      const activeDeactiveModal = document.getElementById('active-deactive');
-      if (activeDeactiveModal) {
-        $('#active-deactive').modal('show');
-      } else {
-        console.error('Modal element not found or jQuery/Bootstrap not properly loaded');
-      }
-     
       if ($.isNumeric(param1) == true) {
         //patient list
       /*   var module = $("input[name='module_id']").val();
@@ -71,7 +109,7 @@ export default {
           $("form[name='active_deactive_form'] #role3").hide();
         }
       }else{
-        $(activeDeactiveModal).modal('hide');
+   
       }
     };
   // When the Submit button is clicked within the modal
@@ -99,52 +137,62 @@ export default {
           }
         });
       });
-    return { callExternalFunctionWithParams };
+
+    return { 
+            callExternalFunctionWithParams,
+            isOpen,
+            openModal,
+            closeModal
+           };
   },
 };
 
 </script>
-<style scoped>.goal-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
+<style>
+
+.goal-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 /* Modal styles */
 .modal {
-  display: none;
-  position: fixed;
-  background-color: white;
-  z-index: 1000;
-  margin: 2%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+    display: none;
+    position: fixed;
+    background-color: white;
+    z-index: 1000;
+    margin: 2%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 /* Style the overlay */
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
 }
 
 /* Show the overlay and modal when modal is open */
 .modal.open {
-  display: block;
-  opacity: 1;
+    display: block;
+    opacity: 1;
 }
 
 .overlay.open {
-  display: block;
+    display: block;
 }
 
 .modal-content {
-  overflow-y: auto !important;
-  height: 800px !important;
-}</style>
+    overflow-y: auto !important;
+    height: 800px !important;
+}
+
+</style>

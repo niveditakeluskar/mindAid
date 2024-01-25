@@ -10,54 +10,58 @@
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
                 <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
-                        <input type="hidden" name="patient_id" :value="patientId" />
-                        <input type="hidden" name="uid" :value="patientId">
-                        <input type="hidden" name="start_time" :value="'00:00:00'" >
-                        <input type="hidden" name="end_time" :value="'00:00:00'">
-                        <input type="hidden" name="module_id" :value="moduleId" />
-                        <input type="hidden" name="component_id" :value="componentId" />
-                        <input type="hidden" name="stage_id" :value="deviceStageId" />
-                        <input type="hidden" name="form_name" value="devices_form">
-                        <input type="hidden" name="idd" id="idd">
-                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
-                        <div class="row">
-                            <div id="devices_success"></div>
-                            <div class="col-md-12 form-group">
-                                <label>Devices ID<span class='error'>*</span></label>
-                                <input type="text" class="form-control" name="device_id" id="device_id">
-                                <div class="invalid-feedback"></div>
-                                <div class="invalid-feedback" v-if="formErrors.device_id" style="display: block;">{{ formErrors.device_id[0] }}</div>
-                            </div>
-                            <!-- <div class="col-md-6 form-group">
+                    <input type="hidden" name="patient_id" :value="patientId" />
+                    <input type="hidden" name="uid" :value="patientId">
+                    <input type="hidden" name="start_time" :value="'00:00:00'">
+                    <input type="hidden" name="end_time" :value="'00:00:00'">
+                    <input type="hidden" name="module_id" :value="moduleId" />
+                    <input type="hidden" name="component_id" :value="componentId" />
+                    <input type="hidden" name="stage_id" :value="deviceStageId" />
+                    <input type="hidden" name="form_name" value="devices_form">
+                    <input type="hidden" name="idd" id="idd">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
+                        :value="medicationTime" v-model="medicationTime">
+                    <div class="row">
+                        <div id="devices_success"></div>
+                        <div class="col-md-12 form-group">
+                            <label>Devices ID<span class='error'>*</span></label>
+                            <input type="text" class="form-control" name="device_id" id="device_id">
+                            <div class="invalid-feedback"></div>
+                            <div class="invalid-feedback" v-if="formErrors.device_id" style="display: block;">{{
+                                formErrors.device_id[0] }}</div>
+                        </div>
+                        <!-- <div class="col-md-6 form-group">
                                 <label>Devices<span class='error'>*</span></label>
                                 @selectdevices("devices", ["id"=> "editdevice"]) 
                             </div>  -->
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Partners<span class='error'>*</span></label>
-                                <select class="custom-select show-tick"  name="partner_id">
-                            <option v-for="item in partnersOption" :key="item.id" :value="item.id">
-                             {{ item.partner_id }}
-                            </option>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>Partners<span class='error'>*</span></label>
+                            <select class="custom-select show-tick" name="partner_id" v-model="selectedPartnerId" @change="handlePartnerDevice">
+                                <option v-for="item in partnersOption" :key="item.id" :value="item.id">
+                                    {{ item.partner_id }}
+                                </option>
                             </select>
-                            <div class="invalid-feedback" v-if="formErrors.partner_id" style="display: block;">{{ formErrors.partner_id[0] }}</div>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Partner Devices<span class='error'>*</span></label>
-                                <select class="custom-select show-tick"  name="partner_devices_id">
-                            <option v-for="item in partnersDeviceOption" :key="item.id" :value="item.id">
-                             {{ item.device_name }}
-                            </option>
+                            <div class="invalid-feedback" v-if="formErrors.partner_id" style="display: block;">{{
+                                formErrors.partner_id[0] }}</div>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label>Partner Devices<span class='error'>*</span></label>
+                            <select class="custom-select show-tick" name="partner_devices_id" >
+                                <option v-for="item in partnersDeviceOption" :key="item.id" :value="item.id">
+                                    {{ item.device_name }}
+                                </option>
                             </select>
-                            <div class="invalid-feedback" v-if="formErrors.partner_devices_id" style="display: block;">{{ formErrors.partner_devices_id[0] }}</div>
-                            </div>
+                            <div class="invalid-feedback" v-if="formErrors.partner_devices_id" style="display: block;">{{
+                                formErrors.partner_devices_id[0] }}</div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary float-right submit-add-patient-devices">Submit</button>
-                            <button type="button" class="btn btn-default float-left" @click="closeModal">Close</button>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary float-right submit-add-patient-devices">Submit</button>
+                        <button type="button" class="btn btn-default float-left" @click="closeModal">Close</button>
+                    </div>
+                </form>
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
@@ -85,7 +89,6 @@ import {
     AgGridVue,
     // Add other common imports if needed
 } from '../commonImports';
-import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 import { getCurrentInstance, watchEffect, nextTick } from 'vue';
 
@@ -101,7 +104,6 @@ export default {
         };
     },
     components: {
-        LayoutComponent,
         AgGridVue,
     },
     methods: {
@@ -117,7 +119,7 @@ export default {
         const partnersDeviceOption = ref([]);
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
-        const selectedDiagnosisId = ref('');
+        const selectedPartnerDeviceId = ref('');
         const comments = ref('');
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
@@ -133,7 +135,7 @@ export default {
         const selectedCode = ref('');
         const rowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
-        const medicationTime =ref('');
+        const medicationTime = ref('');
         const deviceStageId = ref(0);
 
         let codeOptions = ref([]);
@@ -169,47 +171,49 @@ export default {
                 headerName: 'Action',
                 field: 'action',
                 cellRenderer: (params) => {
-                    const link = document.createElement('div');
-                    const editIcon = document.createElement('i');
-                    const deleteIcon = document.createElement('i');
-                    deleteIcon.classList.add('text-20', 'i-yess');
+                    const linkContainer = document.createElement('div');
+                    // Edit Button
+                    const editLink = document.createElement('a');
+                    editLink.href = 'javascript:void(0)';
+                    editLink.dataset.toggle = 'tooltip';
+                    editLink.dataset.id = params.data.id;
+                    editLink.dataset.originalTitle = 'Edit';
+                    editLink.classList.add('editDevicesdata');
+                    editLink.title = 'Edit';
 
-                    const { data } = params;
-                    let editIconColor = 'black';
-                    let deleteIconColor = 'red';
-              
-                    if (data.status === 1) {
-                        deleteIcon.style.color = 'green';
-                        
+                    const editIcon = document.createElement('i');
+                    editIcon.classList.add('editform', 'i-Pen-4');
+                    editLink.appendChild(editIcon);
+
+                    linkContainer.appendChild(editLink);
+
+                    // Add a space
+                    linkContainer.appendChild(document.createTextNode(' '));
+
+                    // Status Button
+                    const statusLink = document.createElement('a');
+                    statusLink.href = 'javascript:void(0)';
+                    statusLink.dataset.id = params.data.id;
+
+                    if (params.data.status === 1) {
+                        statusLink.classList.add('change_device_status_active');
+                        statusLink.id = 'active';
+                        statusLink.title = 'Active';
                     } else {
-                        deleteIcon.style.color = 'red';
+                        statusLink.classList.add('change_device_status_deactive');
+                        statusLink.id = 'deactive';
+                        statusLink.title = 'Deactive';
                     }
 
-                    editIcon.classList.add('text-20', 'i-Closee', 'i-Pen-4');
-                    editIcon.style.color = editIconColor;
+                    const statusIcon = document.createElement('i');
+                    statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', params.data.status === 1 ? 'i-Yes' : 'i-Close');
+                    statusLink.appendChild(statusIcon);
 
-                    const space = document.createTextNode(' '); // Add space between icons
-                    deleteIcon.style.color = deleteIconColor;
+                    linkContainer.appendChild(statusLink);
 
-                    link.appendChild(editIcon);
-                    link.appendChild(space);
-                    link.appendChild(deleteIcon);
-
-                    link.classList.add('ActiveDeactiveClass');
-                    link.style.cursor = 'pointer';
-
-                    link.addEventListener('click', (event) => {
-                        if (event.target === editIcon) {
-                            editPatientDignosis(data.id, event.target);
-                        } else if (event.target === deleteIcon) {
-                            deletePatientDignosis(data.id, event.target);
-                        }
-                    });
-
-                    return link;
+                    return linkContainer;
                 },
             }
-
         ]);
 
         const defaultColDef = ref({
@@ -221,7 +225,6 @@ export default {
         });
 
         const gridOptions = reactive({
-            // other properties...
             pagination: true,
             paginationPageSize: 20, // Set the number of rows per page
             domLayout: 'autoHeight', // Adjust the layout as needed
@@ -249,12 +252,27 @@ export default {
             }
         };
 
+        const handlePartnerDevice = async () => {
+            try {
+        const partnerid = selectedPartnerId; // Replace with the actual partner ID
+        const response = await axios.get(`/patients/ajax/${partnerid}/practice/practiceId/moduleId/patient`);
+        partnersDeviceOption.value = response.data;
+
+       /*  if (selectedPartnerDevice.value) {
+          // Set the default selected partner device if available
+          selectedPartnerDevice.value = selectedPartnerDevice.value;
+        } */
+      } catch (error) {
+        console.error(error, error.response);
+      }
+        }
+
         const editPatientDignosis = async (id) => {
             clearGoals();
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
-          
+
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
@@ -264,7 +282,7 @@ export default {
                 if (carePlanData && carePlanData.goals) {
                     goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
                 }
-                selectedDiagnosisId.value = carePlanData.diagnosis;
+                selectedPartnerDeviceId.value = carePlanData.diagnosis;
                 selectedPartnerId.value = carePlanData.diagnosis;
                 selectedCode.value = carePlanData.code;
                 selectedcondition.value = carePlanData.condition;
@@ -323,9 +341,9 @@ export default {
                         throw new Error(`Failed to delete care plan - ${response.status} ${response.statusText}`);
                     }
                     const responseData = await response.json();
-                  
+
                     alert("Deleted Successfully");
-            
+
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
                     /* document.getElementById('time-container').textContent = AppStopwatch.pauseClock; */
@@ -370,7 +388,7 @@ export default {
         };
 
 
-      
+
         const fetchPartnerId = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
@@ -380,7 +398,7 @@ export default {
                 }
                 const partnerData = await response.json();
                 partnersOption.value = Object.entries(partnerData).map(([id, partner_id]) => ({ id, partner_id }));
-               
+
             } catch (error) {
                 console.error('Error fetching diagnosis list:', error);
             }
@@ -395,7 +413,7 @@ export default {
                 }
                 const partnersDeviceOptionData = await response.json();
                 partnersDeviceOption.value = Object.entries(partnersDeviceOptionData).map(([id, device_name]) => ({ id, device_name }));
-        
+
             } catch (error) {
                 console.error('Error fetching diagnosis list:', error);
             }
@@ -411,10 +429,10 @@ export default {
             }
         };
 
-      
+
         onBeforeMount(() => {
             popupParent.value = document.body;
-   
+
         });
 
         const onFirstDataRendered = (params) => {
@@ -422,7 +440,7 @@ export default {
         };
 
         onMounted(async () => {
-            fetchPartnerId();  
+            fetchPartnerId();
             fetchPartnerDeviceId();
             fetchDeviceList();
             try {
@@ -434,12 +452,13 @@ export default {
         });
 
         return {
+            handlePartnerDevice,
             partnersDeviceOption,
             fetchPartnerDeviceId,
             fetchPartnerId,
             fetchDeviceList,
             isSaveButtonDisabled,
-            selectedDiagnosisId,
+            selectedPartnerDeviceId,
             comments,
             selectedCode,
             loading,
@@ -525,5 +544,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     height: 800px !important;
-}
-</style>
+}</style>

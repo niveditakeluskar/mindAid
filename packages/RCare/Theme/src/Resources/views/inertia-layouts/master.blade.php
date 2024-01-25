@@ -108,7 +108,7 @@
     </div>
 
     <!-- Modal for Deactivation-->
-    <div id="active-deactive" class="modal fade" role="dialog">
+    <div  class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">

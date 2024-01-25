@@ -692,7 +692,6 @@ export default {
 
                 if (response.data > 0) {
                     // Your code for when count is greater than 0
-                    alert(formName);
                     $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
                     $("form[name='" + formName + "'] #symptoms_0").prop("disabled", true);
                     $("form[name='" + formName + "'] #goals_0").prop("disabled", true);
