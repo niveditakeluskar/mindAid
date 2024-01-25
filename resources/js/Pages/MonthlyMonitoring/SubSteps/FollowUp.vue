@@ -460,7 +460,7 @@ export default {
 		};
 
 		onBeforeMount(() => {
-			popupParent.value = document.body;
+		/* 	popupParent.value = document.body; */
 
 		});
 		const onFirstDataRendered = (params) => {
