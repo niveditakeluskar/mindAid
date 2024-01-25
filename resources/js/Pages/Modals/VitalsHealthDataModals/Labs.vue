@@ -23,7 +23,7 @@
                     <div class="form-row">
                         <div class="col-md-4 form-group mb-3">
                             <label>Labs<span class="error">*</span> :</label><br>
-                            <select name="lab[]" class="custom-select show-tick select2 col-md-10" id="lab" v-model="selectedLabs">
+                            <select name="lab[]" class="custom-select show-tick select2 col-md-10" id="lab" @change="onLabchange" v-model="selectedLabs">
                                 <option value="">Select Lab</option>
                                 <option v-for="lab in labs" :key="lab.id" :value="lab.id">
                                     {{ lab.description }}
@@ -37,6 +37,7 @@
                             <input type="date" name="labdate[]" id="labdate" class="form-control" />
                         </div>
                     </div>
+                    <div v-html="labParams" class="form-row"></div>
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
@@ -103,6 +104,7 @@ export default {
         let labsStepId = ref(0);
         let labsTime = ref(null);
         let labs = ref([]);
+        const labParams = ref('');
         let formErrors = ref([]);
         let selectedLabs = ref(0);
         const loading = ref(false);
@@ -205,6 +207,21 @@ export default {
             }
         }
 
+        let onLabchange = async (event) => {
+            const labId = event.target.value;
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            try {
+                const getLabResponse = await axios.post('/ccm/lab-param', { lab: labId });
+                labParams.value = getLabResponse.data;
+            } catch (error) {
+                if (error.status && error.status === 422) {
+                    formErrors.value = error.responseJSON.errors;
+                } else {
+                    console.error('Error getting lab params:', error);
+                }
+            }
+        }
+
         let getStepID = async (sid) => {
             try {
                 let stepname = 'NumberTracking-Labs';
@@ -276,6 +293,8 @@ export default {
             editService,
             fetchLabs,
             labs,
+            onLabchange,
+            labParams,
         };
     }
 };
