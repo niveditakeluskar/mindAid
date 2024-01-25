@@ -35,31 +35,39 @@ export default {
       moduleId: Number,
       componentId: Number,
   },
+  data() {
+        return {
+            isOpen: false,
+        };
+    },
+    methods: {
+        openModal() {
+            this.isOpen = true;
+        },
+        closeModal() {
+            this.isOpen = false;
+        },
+    },
     
   setup(props) {
-      const isOpen = ref(false);
-      const veteranService = ref(null);
+     
+      const veteranService = ref();
       
-      const openModal = () => {
-          isOpen.value = true;
-      };
-
-      const closeModal = () => {
-          isOpen.value = false;
-      }; 
-
       const getVtservice = async () => {
-            try {
-                await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulating a 2-second delay
-                const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch medication list');
-                }
-                veteranService.value = response.data; 
-                console.log(response.data+"veteranService");
-            } catch (error) {
-                console.error('Error fetching medications list:', error);
-            }
+
+        let response = await axios.get(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
+        veteranService.value = response.data;
+            // try {
+            //     //await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulating a 2-second delay
+            //     const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
+            //     if (!response.ok) {
+            //         throw new Error('Failed to fetch medication list');
+            //     }
+            //     veteranService.value = response.data; 
+            //     console.log(response,"veteranService");
+            // } catch (error) {
+            //     console.error('Error fetching medications list:', error);
+            // }
         };
         onMounted(() => {
             getVtservice();
@@ -67,9 +75,6 @@ export default {
         });
 
       return {
-          isOpen,
-          openModal,
-          closeModal,
           veteranService,
           getVtservice,
       };

@@ -228,6 +228,7 @@ export default {
         onMounted(async () => {
             try {
                 labsTime.value = document.getElementById('page_landing_times').value;
+                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
