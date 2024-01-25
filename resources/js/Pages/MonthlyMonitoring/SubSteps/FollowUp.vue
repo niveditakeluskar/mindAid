@@ -100,14 +100,8 @@
 					</div>
 					<hr>
 					<div class="col-md-12">
-						<div class="table-responsive">
-							<ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark"
-								:gridOptions="gridOptions" :defaultColDef="defaultColDef" :columnDefs="columnDefs"
-								:rowData="rowData" @grid-ready="onGridReady"
-								:paginationPageSizeSelector="paginationPageSizeSelector"
-								:paginationNumberFormatter="paginationNumberFormatter"
-								:popupParent="popupParent"></ag-grid-vue>
-						</div>
+						<AgGridTable :rowData="rowData" :columnDefs="columnDefs"/>
+
 					</div>
 
 					<div class="card-footer">
@@ -166,10 +160,9 @@ import {
 	ref,
 	onBeforeMount,
 	onMounted,
-	AgGridVue,
+	AgGridTable,
 	// Add other common imports if needed
 } from '../../commonImports';
-import LayoutComponent from '../../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 import { getCurrentInstance } from "vue";
 
@@ -180,8 +173,7 @@ export default {
 		componentId: Number,
 	},
 	components: {
-		LayoutComponent,
-		AgGridVue,
+		AgGridTable,
 	},
 	data() {
 		return {
@@ -242,11 +234,6 @@ export default {
 		const followupStageId = ref();
 		const rowData = ref();
 		const loading = ref(false);
-		const gridApi = ref(null);
-		const gridColumnApi = ref(null);
-		const popupParent = ref(null);
-		const paginationPageSizeSelector = ref(null);
-		const paginationNumberFormatter = ref(null);
 
 		const items = ref([
 			{
@@ -258,16 +245,8 @@ export default {
 			}
 		]);
 
-		const onGridReady = (params) => {
-			gridApi.value = params.api; // Set the grid API when the grid is ready
-			gridColumnApi.value = params.columnApi;
-			paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-			paginationNumberFormatter.value = (params) => {
-				return '[' + params.value.toLocaleString() + ']';
-			};
-		};
-	
-		let columnDefs = ref([
+		
+		const columnDefs = ref([
 			{
 				headerName: 'Sr. No.',
 				valueGetter: 'node.rowIndex + 1',
@@ -320,18 +299,8 @@ export default {
 				},
 			},
 		]);
-		const defaultColDef = ref({
-			sortable: true,
-			filter: true,
-			flex: 1,
-			minWidth: 100,
-			editable: false,
-		});
-		const gridOptions = reactive({
-			pagination: true,
-			paginationPageSize: 10, // Set the number of rows per page
-			domLayout: 'autoHeight',
-		});
+
+		
 
 		const fetchFollowupMasterTask = async () => {
 			await axios.get(`/org/get_future_followup_task`)
@@ -354,6 +323,7 @@ export default {
 			// Set data in the modal fields based on rowData
 			// Example: document.getElementById('task_notes').innerText = rowData.notes;
 		}; 
+
 		const fetchFollowupMasterTaskList = async () => {
 			try {
 				loading.value = true;
@@ -371,7 +341,7 @@ export default {
 			}
 		};
 
-		let getStageID = async () => {
+		const getStageID = async () => {
 			try {
 				let stageName = 'Follow_Up';
 				const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
@@ -459,13 +429,8 @@ export default {
 			emr_complete.value = event.target.checked;
 		};
 
-		onBeforeMount(() => {
-		/* 	popupParent.value = document.body; */
-
-		});
-		const onFirstDataRendered = (params) => {
-			params.api.paginationGoToPage(1);
-		};
+		
+	
 		onMounted(async () => {
 			try {
 				fetchFollowupMasterTask();
@@ -482,15 +447,7 @@ export default {
 			loading,
 			columnDefs,
 			rowData,
-			defaultColDef,
-			gridOptions,
-			popupParent,
-			gridApi,
-			gridColumnApi,
-			onGridReady,
-			paginationPageSizeSelector,
-			paginationNumberFormatter,
-			onFirstDataRendered,
+		
 			fetchFollowupMasterTask,
 			fetchFollowupMasterTaskList,
 			getStageID,
@@ -565,85 +522,4 @@ $('body').on('click', '.change_status_flag', function () {
   });
 
 </script>
-<style>
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
-/* Use the theme you prefer */
 
-.ag-theme-quartz,
-.ag-theme-quartz-dark {
-	--ag-foreground-color: rgb(63, 130, 154);
-	--ag-background-color: rgb(238, 238, 238);
-	--ag-header-foreground-color: rgb(63, 130, 154);
-	--ag-header-background-color: rgb(238, 238, 238);
-	--ag-odd-row-background-color: rgb(255, 255, 255);
-	--ag-header-column-resize-handle-color: rgb(63, 130, 154);
-
-	--ag-font-size: 17px;
-	--ag-font-family: monospace;
-}
-
-.loading-spinner {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100px;
-	/* Adjust as needed */
-}
-
-.quick-filter {
-	display: flex;
-	align-items: center;
-}
-
-.export-button {
-	cursor: pointer;
-}
-
-.search-container {
-	display: inline-block;
-	position: relative;
-	border-radius: 50px;
-	/* To create an oval shape, use a large value for border-radius */
-	overflow: hidden;
-	width: 200px;
-	/* Adjust width as needed */
-}
-
-.oval-search-container {
-	position: relative;
-	display: inline-block;
-	/*  border: 1px solid #ccc; */
-	/* Adding a visible border */
-	/* border-radius: 20px; */
-	/* Adjust border-radius for a rounded shape */
-	/* width: 200px; */
-	/* Adjust width as needed */
-	margin-right: 10px;
-	/* Adjust margin between the search box and icons */
-}
-
-input[type="text"] {
-	width: calc(100% - 0px);
-	/* Adjust the input width considering the icon */
-	/*  border: none; */
-	outline: none;
-	border-radius: 10px;
-}
-
-.search-icon {
-	position: absolute;
-	top: 50%;
-	right: 1px;
-	transform: translateY(-50%);
-	width: 20px;
-	/* Adjust icon size as needed */
-	height: auto;
-}
-
-/* Align the export icons properly */
-.ml-auto img {
-	margin-right: 5px;
-	/* Adjust margin between the export icons */
-}
-</style>

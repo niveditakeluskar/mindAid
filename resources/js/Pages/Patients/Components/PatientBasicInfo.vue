@@ -115,18 +115,18 @@
                                         </span>
                                         <PatientStatus ref="PatientStatusRef"/>
                                         <span patient_enroll_date v-if="patient_module_status == '1'">
-                                            <a @click="() => patientServiceStatus('1')" data-toggle="modal"
+                                            <a @click="() => patientServiceStatus('1')"
                                                 style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                data-target="#active-deactive" id="active">
+                                                 id="active">
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
 
                                         <span patient_enroll_date v-if="patient_module_status == '0'">
-                                            <a @click="() => patientServiceStatus('0')" data-toggle="modal"
+                                            <a @click="() => patientServiceStatus('0')"
                                                 style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                data-target="#active-deactive" id="suspend">
+                                                 id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Suspended"></i>
                                             </a>
@@ -134,17 +134,17 @@
                                             To : <span :textContent="suspended_to_date"></span>
                                         </span>
                                         <span patient_enroll_date v-if="patient_module_status == '2'">
-                                            <a @click="() => patientServiceStatus('2')" data-toggle="modal"
+                                            <a @click="() => patientServiceStatus('2')"
                                                 style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                data-target="#active-deactive" id="deactive">
+                                                 id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span patient_enroll_date v-if="patient_module_status == '3'">
-                                            <a @click="() => patientServiceStatus('3')" data-toggle="modal"
+                                            <a @click="() => patientServiceStatus('3')"
                                                 style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                data-target="#active-deactive" id="deceased">
+                                                 id="deceased">
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Deceased"></i>
                                             </a>

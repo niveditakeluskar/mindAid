@@ -118,21 +118,7 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="vitals-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="columnDefs.value"
-                            :rowData="vitalsRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                    <AgGridTable :rowData="vitalsRowData" :columnDefs="columnDefs"/>
                 </div>
             </div>
         </div>
@@ -145,7 +131,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import axios from 'axios';
@@ -157,7 +143,7 @@ export default {
         stageId: Number,
     },
     components: {
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showVitalsAlert = ref(false);
@@ -166,13 +152,8 @@ export default {
         let vitalsTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const vitalsRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
+        const vitalsRowData = ref([]);
+        let columnDefs = ref({
             value: [
                 {
                     headerName: 'Sr. No.',
@@ -192,26 +173,6 @@ export default {
                 { headerName: 'Notes', field: 'notes' },
             ]
         });
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
 
         const fetchPatientVitalsList = async () => {
             try {
@@ -230,7 +191,7 @@ export default {
             }
         };
 
-        let submiVitalsHealthDataForm = async () => {
+        const submiVitalsHealthDataForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_vitals_form');
             let formData = new FormData(myForm);
@@ -262,7 +223,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'NumberTracking-Vitals_Data';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -282,13 +243,6 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
             fetchPatientVitalsList();
         });
 
@@ -310,8 +264,6 @@ export default {
             showVitalsAlert,
             columnDefs,
             vitalsRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientVitalsList,
             deleteServices,
             editService,

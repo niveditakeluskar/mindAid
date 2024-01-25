@@ -8,8 +8,94 @@
           </div>
           <div class="modal-body" style="padding-top:10px;" id="active-deactive">
               <loading-spinner :isLoading="isLoading"></loading-spinner>
-              <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
-              
+              <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitDeviceForm">
+                <input type="hidden" name="patient_id" value="" />
+                        <input type="hidden" name="uid" value="">
+                        <input type="hidden" name="start_time" value="00:00:00">
+                        <input type="hidden" name="end_time" value="00:00:00">
+                        <input type="hidden" name="module_id" value="" />
+                        <input type="hidden" name="component_id" value="" />
+                        <input type="hidden" name="form_name" value="active_deactive_form" />
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="worklist" id="worklist">
+                        <input type="hidden" name="patientid" id="patientid">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 form-group mb-3">
+                                    <label for="module">Module</label>
+                                    <select name="modules" id="enrolledservice_modules" class="custom-select show-tick enrolledservice_modules"></select>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="status"> Select the Status <span class="error">*</span></label>
+                                        <span class="forms-element">
+                                            <div class="form-row">
+                                                <label class="radio radio-primary col-md-3 float-left" id="role1">
+                                                    <input type="radio" id="role1" class="" name="status" value="1" formControlName="radio" @click ="showReasonOptions(1)">
+                                                    <span>Active</span>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <label class="radio radio-primary col-md-3 float-left" id="role0">
+                                                    <input type="radio" id="role0" class="" name="status" value="0" formControlName="radio" @click ="showReasonOptions(0)">
+                                                    <span>Suspended</span>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <label class="radio radio-primary col-md-3 float-left" id="role2">
+                                                    <input type="radio" id="role2" class="" name="status" value="2" formControlName="radio" @click ="showReasonOptions(2)">
+                                                    <span>Deactivated</span>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <label class="radio radio-primary col-md-3 float-left" id="role3">
+                                                    <input type="radio" id="role3" class="" name="status" value="3" formControlName="radio" @click ="showReasonOptions(3)">
+                                                    <span>Deceased</span>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </span>
+                                        <div class="form-row invalid-feedback"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" id="date_value">
+                                    <div class="form-group row">
+                                        <div class="col-md-6 form-group mb-3" id="fromdate">
+                                            <label for="date" id="from_date">From Date <span class="error">*</span></label>
+                                           
+                                            <input name="activedeactivefromdate" id="fromdate" type="date">
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3" id="deceasedfromdate">
+                                            <label for="date" id="from_date">Date of Deceased <span class="error">*</span></label>
+                                     
+                                            <input name="deceasedfromdate" id="deceasedfromdate" type="date">
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3" id="todate">
+                                            <label for="date">To Date <span class="error">*</span></label>
+                                         
+                                            <input name="activedeactivetodate" id="todate" type="date">
+                                        </div>
+                                        <div class="col-md-6 form-group mb-3" id="deactivation_drpdwn_div">
+                                            <label for="deactivation_drpdwn">Reason for Deactivation</label>
+                                            <select id="practices" class="custom-select show-tick select2">
+                                            <option>Select Deactivation Reasons</option>
+                                            <option v-for="Deactivation in Deactivations" :key="Deactivation.id" :value="Deactivation.id">
+                                              {{ Deactivation.reasons }}
+                                            </option>
+                                          </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" id="reason">
+                                    <div id="comments_div" class="mb-3 form-group">
+                                        <label for="comments">Reason for status change <span class="error">*</span></label>
+                                        <textarea class="form-control" name="deactivation_reason" id="comments"></textarea>
+                                        <div id="comments" class="invalid-feedback"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary float-right submit-active-deactive">Submit</button>
+                                <button type="button" class="btn btn-default float-left" data-dismiss="modal" @click="closeModal">Close</button>
+                            </div>
+                        </div>
               </form>
           </div>
           <div class="modal-footer">
@@ -44,25 +130,61 @@ export default {
 
     },
     setup(props) {
+      const Deactivations = ref([]);
       const isOpen = ref(false); 
       const openModal = () => {
             isOpen.value = true;
+            fetchActiveDeactiveReasons();
         };
 
         const closeModal = () => {
             isOpen.value = false;
+            $("#status").prop("checked", false);
         };
+    
+        const fetchActiveDeactiveReasons = async () => {
+      try {
+        const response = await fetch('/patients/get-deactivationreasons');
+        const activedeactiveData = await response.json();
+                const activedeactiveArray = Object.entries(activedeactiveData).map(([id, reasons]) => ({ id, reasons }));
+                Deactivations.value = activedeactiveArray;
+      } catch (error) {
+        console.error('Error fetching ActiveDeactiveReasons:', error);
+      }
+    };
+
+    const showReasonOptions = (param3) => {
+      $("form[name='active_deactive_form'] #date_value").show();
+      if(param3 == 1){
+        $("form[name='active_deactive_form'] #fromdate").hide();
+        $("form[name='active_deactive_form'] #deceasedfromdate").hide();
+        $("form[name='active_deactive_form'] #todate").hide();
+        $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
+      }else if(param3 == 0){
+        $("form[name='active_deactive_form'] #fromdate").show();
+        $("form[name='active_deactive_form'] #deceasedfromdate").hide();
+        $("form[name='active_deactive_form'] #todate").show();
+        $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
+      }else if(param3 == 2){
+        $("form[name='active_deactive_form'] #fromdate").show();
+        $("form[name='active_deactive_form'] #deceasedfromdate").hide();
+        $("form[name='active_deactive_form'] #todate").hide();
+        $("form[name='active_deactive_form'] #deactivation_drpdwn_div").show();
+      }else if(param3 == 3){
+        $("form[name='active_deactive_form'] #fromdate").hide();
+        $("form[name='active_deactive_form'] #deceasedfromdate").show();
+        $("form[name='active_deactive_form'] #todate").hide();
+        $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
+      }else{
+        $("#status").prop("checked", false);
+        $("form[name='active_deactive_form'] #date_value").hide();
+        alert("Invalid Request");
+      }
+      };
 
     const callExternalFunctionWithParams = (param1, param2) => {
       if ($.isNumeric(param1) == true) {
-        //patient list
-      /*   var module = $("input[name='module_id']").val();
-        alert(module);
-        $('#enrolledservice_modules').val(module).trigger('change');
-        $('#enrolledservice_modules').change();
-      } else { */
        let patientId = param1;
-        //worklist
         var selmoduleId = $("#modules").val();
         axios({
           method: "GET",
@@ -84,6 +206,7 @@ export default {
         $("form[name='active_deactive_form'] #date_value").hide();
         $("form[name='active_deactive_form'] #fromdate").hide();
         $("form[name='active_deactive_form'] #todate").hide();
+        $("#status").prop("checked", false);
         if (status == 0) {
           $("form[name='active_deactive_form'] #role1").show();
           $("form[name='active_deactive_form'] #role0").hide();
@@ -109,10 +232,11 @@ export default {
           $("form[name='active_deactive_form'] #role3").hide();
         }
       }else{
-   
+        closeModal();
       }
     };
-  // When the Submit button is clicked within the modal
+
+      // When the Submit button is clicked within the modal
       $('.submit-active-deactive').on('click', function () {
         // Serialize the form data
         const formData = $('#active_deactive_form').serialize();
@@ -139,10 +263,13 @@ export default {
       });
 
     return { 
+      showReasonOptions,
             callExternalFunctionWithParams,
             isOpen,
             openModal,
-            closeModal
+            closeModal,
+            fetchActiveDeactiveReasons,
+            Deactivations
            };
   },
 };

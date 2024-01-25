@@ -1,9 +1,6 @@
 <template>
-    <div class="table-responsive">
-        <ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark" :gridOptions="gridOptions"
-            :defaultColDef="defaultColDef" :columnDefs="columnDefs" :rowData="rowData"
-            @grid-ready="onGridReady"></ag-grid-vue>
-    </div>
+                      <AgGridTable :rowData="rowData" :columnDefs="columnDefs"/>
+
 </template>
 <script>
 import axios from 'axios';
@@ -11,7 +8,7 @@ import {
     reactive,
     onMounted,
     ref,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 export default {
@@ -22,26 +19,15 @@ export default {
         toDate: Date,
     },
     components: {
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         const rowData = ref([]);
-        const gridApi = ref(null);
-        const gridColumnApi = ref(null);
-        const popupParent = ref(null);
-        const paginationPageSizeSelector = ref(null);
-        const paginationNumberFormatter = ref(null);
+      
         const table = ref();
-        const onGridReady = (params) => {
-            gridApi.value = params.api; // Set the grid API when the grid is ready
-            gridColumnApi.value = params.columnApi;
-            paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-            paginationNumberFormatter.value = (params) => {
-                return '[' + params.value.toLocaleString() + ']';
-            };
-        };
+      
 
-        let colDefs = [
+        const colDefs = [
             {
                 headerName: 'TimeStamp',
                 field: 'csseffdate',
@@ -150,20 +136,11 @@ export default {
             table.value = 'observationsbp';
         }
 
-        let columnDefs = ref(
+        const columnDefs = ref(
             colDefs
         );
 
-        const defaultColDef = ref({
-            flex: 1,
-            minWidth: 100,
-            editable: false,
-        });
-        const gridOptions = reactive({
-            pagination: true,
-            paginationPageSize: 10, // Set the number of rows per page
-            domLayout: 'autoHeight',
-        });
+       
 
         const fetchFollowupMasterTaskList = async () => {
 
@@ -193,14 +170,7 @@ export default {
         return {
             columnDefs,
             rowData,
-            defaultColDef,
-            gridOptions,
-            popupParent,
-            gridApi,
-            gridColumnApi,
-            onGridReady,
-            paginationPageSizeSelector,
-            paginationNumberFormatter,
+           
             fetchFollowupMasterTaskList,
             table,
             // addNewItem,
@@ -211,23 +181,6 @@ export default {
 }
 </script>
 <style>
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
-/* Use the theme you prefer */
-
-.ag-theme-quartz,
-.ag-theme-quartz-dark {
-    --ag-foreground-color: rgb(63, 130, 154);
-    --ag-background-color: rgb(238, 238, 238);
-    --ag-header-foreground-color: rgb(63, 130, 154);
-    --ag-header-background-color: rgb(238, 238, 238);
-    --ag-odd-row-background-color: rgb(255, 255, 255);
-    --ag-header-column-resize-handle-color: rgb(63, 130, 154);
-
-    --ag-font-size: 17px;
-    --ag-font-family: monospace;
-}
-
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;

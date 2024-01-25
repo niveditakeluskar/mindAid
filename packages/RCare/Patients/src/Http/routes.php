@@ -196,6 +196,9 @@ Route::middleware(["auth", "web"])->group(function () {
             $patients = Patients::Allpatients(); // worklistPractices() fetches practices
             return response()->json($patients);
         });
+        
+        Route::get("/get-deactivationreasons", "RCare\Patients\Http\Controllers\PatientWorklistController@deactivationReasonsList");
+
 
         Route::get("/get-activePartner", "RCare\Patients\Http\Controllers\PatientWorklistController@activePartnerList");
         

@@ -59,19 +59,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
-                    <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="drug-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="drugAllergiescolumnDefs.value"
-                            :rowData="drugAllergiesRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
+                        <AgGridTable :rowData="drugAllergiesRowData" :columnDefs="drugAllergiescolumnDefs"/>
+
                     </div>
                 </div>
             </div>
@@ -85,7 +74,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import DrugForm from '../../Patients/Components/AllergiesShortForm.vue';
@@ -99,7 +88,7 @@ export default {
     },
     components: {
         DrugForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showDurgAlert = ref(false);
@@ -108,13 +97,9 @@ export default {
         let drugallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const drugAllergiesRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let drugAllergiescolumnDefs = reactive({
+       
+        const drugAllergiesRowData = ref([]);
+        const drugAllergiescolumnDefs = ref({
             value: [
                 {
                     headerName: 'Sr. No.',
@@ -145,27 +130,7 @@ export default {
                 },
             ]
         }); 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
-        
+       
         const fetchPatientDrugList = async () => {
             try {
                 loading.value = true;
@@ -303,13 +268,7 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+           
             fetchPatientDrugList();
         });
 
@@ -334,8 +293,7 @@ export default {
             showDurgAlert,
             drugAllergiescolumnDefs,
             drugAllergiesRowData,
-            defaultColDef,
-            gridOptions,
+          
             fetchPatientDrugList,
             deleteAllergies,
             editAllergy,

@@ -414,7 +414,6 @@ export default {
 			// Access the modal component through a ref
 			console.log("ReviewCarePlanModal called");
 			this.$refs.ReviewCarePlanModal.openModal();
-			this.$refs.modalForm.openModal();
 		},
 		openAllergiesModal() {
 			console.log("openAllergiesModal called");

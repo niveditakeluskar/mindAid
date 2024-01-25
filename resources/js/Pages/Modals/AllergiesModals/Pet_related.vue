@@ -57,22 +57,9 @@
 
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
-                <div class="col-12">
-                    <div class="table-responsive">
-                    <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="pet-related-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="PetRelatedAllergiescolumnDefs.value"
-                            :rowData="PetRelatedAllergiesRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                <div class="col-12"> 
+                    <AgGridTable :rowData="PetRelatedAllergiesRowData" :columnDefs="PetRelatedAllergiescolumnDefs"/>
+
                 </div>
             </div>
         </div>
@@ -85,7 +72,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import PetRelatedForm from '../../Patients/Components/AllergiesShortForm.vue';
@@ -99,7 +86,7 @@ export default {
     },
     components: {
         PetRelatedForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showPetRelatedAlert = ref(false);
@@ -108,13 +95,11 @@ export default {
         let petrelatedallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const PetRelatedAllergiesRowData = reactive({ value: [] });
+        const PetRelatedAllergiesRowData = ref([]);
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
-        let PetRelatedAllergiescolumnDefs = reactive({
+        let PetRelatedAllergiescolumnDefs = ref({
             value: [
                 {
                     headerName: 'Sr. No.',
@@ -145,26 +130,7 @@ export default {
                 },
             ]
         }); 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
+        
         
         const fetchPatientPetRelatedList = async () => {
             try {
@@ -186,7 +152,7 @@ export default {
 
         
         
-        let submitAllergiesForm = async () => {
+        const submitAllergiesForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('allergy_pet_related_form');
             let formData = new FormData(myForm);
@@ -222,7 +188,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'petrelated';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -233,7 +199,7 @@ export default {
             }
         };
 
-        let deleteAllergies = async (id, obj) => {
+        const deleteAllergies = async (id, obj) => {
              if (window.confirm("Are you sure you want to delete this Allergies?")) {
                 const formData = {
                     id: id,
@@ -266,10 +232,9 @@ export default {
             }
         }
 
-        let editAllergy = async (id) => {
+        const editAllergy = async (id) => {
             try {
                 const allergiesToEdit = PetRelatedAllergiesRowData.value.find(allergies => allergies.id == id);
-                console.log(allergiesToEdit);
                 if (allergiesToEdit) {
                     const form = document.getElementById('allergy_pet_related_form');
                     form.querySelector('#allergies_id').value = allergiesToEdit.id;
@@ -303,13 +268,7 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+           
             fetchPatientPetRelatedList();
         });
 
@@ -334,8 +293,6 @@ export default {
             showPetRelatedAlert,
             PetRelatedAllergiescolumnDefs,
             PetRelatedAllergiesRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientPetRelatedList,
             deleteAllergies,
             editAllergy,
