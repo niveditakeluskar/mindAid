@@ -290,6 +290,7 @@ export default {
         onMounted(async () => {
             try {
                 OtherServicesTime.value = document.getElementById('page_landing_times').value;
+                getStepID(props.stageId);
                 exposeDeleteServices();
                 exposeEditServices();
             } catch (error) {

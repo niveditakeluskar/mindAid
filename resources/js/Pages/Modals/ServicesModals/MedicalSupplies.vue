@@ -292,6 +292,7 @@ export default {
                 MedicalSuppliesServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
+                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

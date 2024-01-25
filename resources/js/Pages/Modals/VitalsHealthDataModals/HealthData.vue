@@ -160,7 +160,7 @@ export default {
 
         let getStepID = async (sid) => {
             try {
-                let stepname = 'NumberTracking-Imaging';
+                let stepname = 'NumberTracking-Health_Data';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
                 imagingStepId.value = response.data.stepID;
             } catch (error) {
