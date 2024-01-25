@@ -2,11 +2,11 @@
 <template>
     <div class="tab-pane fade show active" id="imaging" role="tabpanel" aria-labelledby="imaging-icon-pill">
         <div class="card">  
-            <div class="card-header"><h4>Imaging</h4></div>
-            <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiLabsHealthDataForm">
+            <div class="card-header"><h4>Health Data</h4></div>
+            <form id="number_tracking_healthdata_form" name="number_tracking_healthdata_form" @submit.prevent="submiLabsHealthDataForm">
                 <div class="alert alert-success" :style="{ display: showImagingAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>
-                    <strong> Imaging data saved successfully! </strong><span id="text"></span>
+                    <strong> Health Data data saved successfully! </strong><span id="text"></span>
                 </div>  
                 <div class="col-md-12">
                     <input type="hidden" name="uid" :value="patientId"/>
@@ -17,7 +17,7 @@
                     <input type="hidden" name="component_id" :value="componentId"/>
                     <input type="hidden" name="stage_id" :value="imagingStageId"/>
                     <input type="hidden" name="step_id" :value="imagingStepId">
-                    <input type="hidden" name="form_name" value="number_tracking_imaging_form">
+                    <input type="hidden" name="form_name" value="number_tracking_healthdata_form">
                     <input type="hidden" name="billable" value="1">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="imagingTime" />
                     <div v-for="(item, index) in imagingItems" :key="index" class="form-row">
@@ -42,7 +42,7 @@
                     <div class="mc-footer">
                         <div class="row">
                             <div class="col-lg-12 text-right">
-                                <button type="submit" class="btn  btn-primary m-1" id="save_number_tracking_imaging_form">Save</button>
+                                <button type="submit" class="btn  btn-primary m-1" id="save_number_tracking_healthdata_form">Save</button>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@ export default {
 
         let submiLabsHealthDataForm = async () => {
             formErrors.value = {};
-            let myForm = document.getElementById('number_tracking_imaging_form');
+            let myForm = document.getElementById('number_tracking_healthdata_form');
             let formData = new FormData(myForm);
             let formDataObject = {};
 
@@ -142,7 +142,7 @@ export default {
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientImagingList();
-                    document.getElementById("number_tracking_imaging_form").reset();
+                    document.getElementById("number_tracking_healthdata_form").reset();
                     setTimeout(() => {
                         showImagingAlert.value = false;
                         imagingTime.value = document.getElementById('page_landing_times').value;
