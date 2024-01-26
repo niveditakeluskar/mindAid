@@ -169,8 +169,8 @@ export default {
 
         return {
             columnDefs,
-            rowData,
-           
+            colDefs,
+            rowData,           
             fetchFollowupMasterTaskList,
             table,
             // addNewItem,
@@ -181,6 +181,7 @@ export default {
 }
 </script>
 <style>
+
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 310px;

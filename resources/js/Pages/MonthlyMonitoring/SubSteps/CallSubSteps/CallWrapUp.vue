@@ -268,8 +268,7 @@ export default {
         const loading = ref(false);
        
 
-        const callWrapColumnDefs = ref({
-            value: [
+        const callWrapColumnDefs = ref( [
                 {
                     headerName: 'Seq.',
                     valueGetter: 'node.rowIndex + 1',
@@ -285,8 +284,7 @@ export default {
                         return row.action;
                     },
                 },
-            ]
-        });
+            ]);
 
        
 

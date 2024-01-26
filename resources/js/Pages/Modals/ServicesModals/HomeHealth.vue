@@ -83,8 +83,7 @@ export default {
         const loading = ref(false);
         const homeHealthServiceRowData = ref([]);
        
-        let columnDefs = ref({
-            value: [
+        let columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -115,7 +114,7 @@ export default {
                     },
                 },
             ]
-        });
+        );
        
         const fetchPatientHomeHealthServiceList = async () => {
             try {
@@ -263,7 +262,6 @@ export default {
                 HomeHealthServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
-                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

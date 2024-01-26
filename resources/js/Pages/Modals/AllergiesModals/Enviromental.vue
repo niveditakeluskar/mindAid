@@ -97,8 +97,7 @@ export default {
        
         const enviromentalAllergiesRowData = ref([]);
        
-        let enviromentalAllergiescolumnDefs = ref({
-            value: [
+        let enviromentalAllergiescolumnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -130,8 +129,7 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        }); 
+            ]); 
 
        
         const fetchPatientEnviromentalList = async () => {
