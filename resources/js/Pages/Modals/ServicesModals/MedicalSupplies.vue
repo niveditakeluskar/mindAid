@@ -85,8 +85,7 @@ export default {
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
-        const columnDefs = ref({
-            value: [
+        const columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -114,7 +113,7 @@ export default {
                     },
                 },
             ]
-        });
+        );
        
         const fetchPatientMedicalSuppliesServiceList = async () => {
             try {
@@ -252,7 +251,6 @@ export default {
                 MedicalSuppliesServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
-                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

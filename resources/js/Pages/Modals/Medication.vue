@@ -222,8 +222,7 @@ export default {
         let medications = ref([]);
         let selectedMedication = ref('');
 
-        let columnDefs = ref({
-            value: [
+        let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -249,8 +248,7 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        });
+            ]);
        
         let medicationTime = ref(null);
         let medicationStageId = ref(0);

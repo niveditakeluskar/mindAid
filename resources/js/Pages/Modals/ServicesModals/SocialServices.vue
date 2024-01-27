@@ -83,8 +83,7 @@ export default {
        
         const socialServiceRowData = ref([]);
        
-        const columnDefs = ref({
-            value: [
+        const columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -115,7 +114,7 @@ export default {
                     },
                 },
             ]
-        });
+        );
        
         const fetchPatientSocialServiceList = async () => {
             try {
@@ -263,7 +262,6 @@ export default {
                 SocialServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
-                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

@@ -99,8 +99,7 @@ export default {
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
-        let PetRelatedAllergiescolumnDefs = ref({
-            value: [
+        let PetRelatedAllergiescolumnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -116,11 +115,7 @@ export default {
                     field: 'users.f_name',
                     cellRenderer: function (params) {
                         const row = params.data;
-                        if (row && row.users && row.users.f_name) {
-                            return row.users.f_name + ' ' + (row.users.l_name || ''); // Added a check for l_name as well
-                        } else {
-                            return 'N/A';
-                        }
+                        return row && row.users.f_name ? row.users.f_name + ' ' + row.users.l_name : 'N/A';
                     },
                 },
                 { headerName: 'Last Modified On', field: 'updated_at' },
@@ -132,8 +127,7 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        }); 
+            ]); 
         
         
         const fetchPatientPetRelatedList = async () => {

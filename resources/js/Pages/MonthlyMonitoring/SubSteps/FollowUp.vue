@@ -343,8 +343,8 @@ export default {
 
 		const getStageID = async () => {
 			try {
-				let stageName = 'Follow_Up';
-				const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
+				const stageName = 'Follow_Up';
+				const response = await fetch(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
 				followupStageId = response.data.stageID;
 			} catch (error) {
 				console.error('Error fetching stageID:', error);

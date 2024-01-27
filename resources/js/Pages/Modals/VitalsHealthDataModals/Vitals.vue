@@ -153,8 +153,7 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const vitalsRowData = ref([]);
-        let columnDefs = ref({
-            value: [
+        let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -171,8 +170,7 @@ export default {
                 { headerName: 'Pain Level', field: 'pain_level' },
                 { headerName: 'Oxygen', field: 'oxygen' },
                 { headerName: 'Notes', field: 'notes' },
-            ]
-        });
+            ]);
 
         const fetchPatientVitalsList = async () => {
             try {
@@ -249,7 +247,6 @@ export default {
         onMounted(async () => {
             try {
                 vitalsTime.value = document.getElementById('page_landing_times').value;
-                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
