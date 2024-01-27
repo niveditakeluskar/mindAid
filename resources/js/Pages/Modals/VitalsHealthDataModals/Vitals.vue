@@ -15,7 +15,7 @@
                     <input type="hidden" name="end_time" value="00:00:00">
                     <input type="hidden" name="module_id" :value="moduleId"/>
                     <input type="hidden" name="component_id" :value="componentId"/>
-                    <input type="hidden" name="stage_id" :value="vitalsStageId"/>
+                    <input type="hidden" name="stage_id" :value="stageId"/>
                     <input type="hidden" name="step_id" :value="vitalsStepId">
                     <input type="hidden" name="form_name" value="number_tracking_vitals_form">
                     <input type="hidden" name="billable" value="1">
@@ -154,7 +154,6 @@ export default {
     },
     setup(props) {
         let showVitalsAlert = ref(false);
-        let vitalsStageId = ref(0);
         let vitalsStepId = ref(0);
         let vitalsTime = ref(null);
         let formErrors = ref([]);
@@ -264,7 +263,6 @@ export default {
         return {
             loading,
             submiVitalsHealthDataForm,
-            vitalsStageId,
             vitalsStepId,
             formErrors,
             vitalsTime,
