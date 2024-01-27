@@ -83,21 +83,21 @@
                     <div class="col-md-12 form-group mb-3">
                         <div class="mr-3 d-inline-flex align-self-center">
                         <label class="radio radio-primary mr-3">
-                            <input type="radio" id="yes" name="oxygen" value="1" formControlName="radio" v-model="oxygen">
+                            <input type="radio" id="yes" name="oxygen" value="1" formControlName="radio" v-model="oxygenRadio" />
                             <span>Room Air</span>
                             <span class="checkmark"></span>
                         </label> 
                         <label class="radio radio-primary mr-3">
-                            <input type="radio" id="no" name="oxygen" value="0" formControlName="radio" v-model="oxygen">
+                            <input type="radio" id="no" name="oxygen" value="0" formControlName="radio" v-model="oxygenRadio" />
                             <span>Supplemental Oxygen</span>
                             <span class="checkmark"></span>
                         </label> 
                         </div>
                     </div>  
-                    <div class="col-md-12 mr-3 mb-3" v-if="oxygen == 0">
+                    <div class="col-md-12 mr-3 mb-3" v-if="oxygenRadio === '0'">
                         <label>Notes</label> 
                         <textarea class="form-control forms-element" name="notes"></textarea>
-                        <div class="invalid-feedback"></div>
+                        <div class="invalid-feedback" v-if="formErrors.notes" style="display: block;">{{ formErrors.notes[0] }}</div>
                     </div> 
                 </div>
                 <div class="card-footer">
@@ -118,7 +118,9 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
-                    <AgGridTable :rowData="vitalsRowData" :columnDefs="columnDefs"/>
+                    <div class="table-responsive">
+                        <AgGridTable :rowData="vitalsRowData" :columnDefs="columnDefs" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -131,11 +133,16 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridTable,
-    // Add other common imports if needed
 } from '../../commonImports';
 import axios from 'axios';
+import AgGridTable from '../../components/AgGridTable.vue';
 export default {
+    data() {
+        return {
+            oxygenRadio: '', // Initialize the variable
+            notes: '', // Initialize the notes variable
+        };
+    },
     props: {
         patientId: Number,
         moduleId: Number,
@@ -171,7 +178,6 @@ export default {
                 { headerName: 'Oxygen', field: 'oxygen' },
                 { headerName: 'Notes', field: 'notes' },
             ]);
-
         const fetchPatientVitalsList = async () => {
             try {
                 loading.value = true;
@@ -189,7 +195,7 @@ export default {
             }
         };
 
-        const submiVitalsHealthDataForm = async () => {
+        let submiVitalsHealthDataForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_vitals_form');
             let formData = new FormData(myForm);
@@ -201,27 +207,29 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-vitals', formData);
+                if (saveServicesResponse && saveServicesResponse.status === 200) {
                     showVitalsAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.form_start_time);
+                    $(".form_start_time").val(saveServicesResponse.data.form_start_time);
                     await fetchPatientVitalsList();
                     document.getElementById("number_tracking_vitals_form").reset();
                     setTimeout(() => {
                         showVitalsAlert.value = false;
                         vitalsTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
-                // Handle the response here
-                formErrors.value = [];
+                    // Handle the response here
+                    formErrors.value = [];
+                }
             } catch (error) {
-                if (error.status && error.status === 422) {
-                    formErrors.value = error.responseJSON.errors;
+                if (error.response.status && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
                 } else {
                     console.error('Error submitting form:', error);
                 }
             }
         }
 
-        const getStepID = async (sid) => {
+        let getStepID = async (sid) => {
             try {
                 let stepname = 'NumberTracking-Vitals_Data';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -247,6 +255,7 @@ export default {
         onMounted(async () => {
             try {
                 vitalsTime.value = document.getElementById('page_landing_times').value;
+                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
