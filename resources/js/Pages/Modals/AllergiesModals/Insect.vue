@@ -57,22 +57,9 @@
 
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
-                <div class="col-12">
-                    <div class="table-responsive">
-                    <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="insect-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="insectAllergiescolumnDefs.value"
-                            :rowData="insectAllergiesRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                <div class="col-12"> 
+                    <AgGridTable :rowData="insectAllergiesRowData" :columnDefs="insectAllergiescolumnDefs"/>
+
                 </div>
             </div>
         </div>
@@ -85,7 +72,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import insectForm from '../../Patients/Components/AllergiesShortForm.vue';
@@ -99,7 +86,7 @@ export default {
     },
     components: {
         insectForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showinsectAlert = ref(false);
@@ -108,14 +95,10 @@ export default {
         let insectallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const insectAllergiesRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let insectAllergiescolumnDefs = reactive({
-            value: [
+        
+        const insectAllergiesRowData = ref([]);
+       
+        let insectAllergiescolumnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -131,11 +114,7 @@ export default {
                     field: 'users.f_name',
                     cellRenderer: function (params) {
                         const row = params.data;
-                        if (row && row.users && row.users.f_name) {
-                            return row.users.f_name + ' ' + (row.users.l_name || ''); // Added a check for l_name as well
-                        } else {
-                            return 'N/A';
-                        }
+                        return row && row.users.f_name ? row.users.f_name + ' ' + row.users.l_name : 'N/A';
                     },
                 },
                 { headerName: 'Last Modified On', field: 'updated_at' },
@@ -147,28 +126,7 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        }); 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
+            ]); 
         
         const fetchPatientinsectList = async () => {
             try {
@@ -307,13 +265,7 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+            
             fetchPatientinsectList();
         });
 
@@ -338,8 +290,6 @@ export default {
             showinsectAlert,
             insectAllergiescolumnDefs,
             insectAllergiesRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientinsectList,
             deleteAllergies,
             editAllergy,
