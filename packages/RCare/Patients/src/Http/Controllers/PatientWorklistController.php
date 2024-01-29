@@ -39,6 +39,8 @@ use RCare\Org\OrgPackages\Partner\src\Models\Partner;
 use Auth;
 use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
 use RCare\Rpm\Models\Partner_Devices;
+use RCare\Org\OrgPackages\DeactivationReasons\src\Models\DeactivationReasons;
+
 class PatientWorklistController extends Controller
 {
 
@@ -86,6 +88,19 @@ class PatientWorklistController extends Controller
         return response()->json($options);
     }
     
+    public function deactivationReasonsList()
+    {
+        $options = [];
+
+        foreach (DeactivationReasons::activeReasons() as $activeReasons) {
+            $options[$activeReasons->id] = $activeReasons->reasons;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
+    }
+
     public function getUserListData(Request $request)
     {
 
