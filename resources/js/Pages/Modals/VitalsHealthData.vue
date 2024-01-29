@@ -59,7 +59,7 @@ import {
 import Vitals from './VitalsHealthDataModals/Vitals.vue';
 import Labs from './VitalsHealthDataModals/Labs.vue';
 import Imaging from './VitalsHealthDataModals/Imaging.vue';
-import HomeHealth from './ServicesModals/HomeHealth.vue';
+import HealthData from './VitalsHealthDataModals/HealthData.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -71,14 +71,14 @@ export default {
         Vitals,
         Labs,
         Imaging,
-        HomeHealth,
+        HealthData,
     },
 	setup(props) {
         const tabs = ref([
             { label: 'Vitals', component: 'Vitals' },
             { label: 'Labs', component: 'Labs' },
             { label: 'Imaging', component: 'Imaging' },
-            { label: 'Health Data', component: 'HomeHealth' },
+            { label: 'Health Data', component: 'HealthData' },
         ]);
 
         const activeTab = ref(0);

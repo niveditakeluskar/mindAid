@@ -57,21 +57,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
-                        <!-- <AgGridTable :rowData="imagingRowData" :columnDefs="columnDefs"/> -->
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="imaging-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="imagingColumnDefs.value"
-                            :rowData="imagingRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-
+                        <AgGridTable :rowData="imagingRowData" :columnDefs="columnDefs"/>
                     </div>
                 </div>
             </div>
@@ -84,8 +70,7 @@ import {
     ref,
     watch,
     onBeforeMount,
-    onMounted, 
-    AgGridVue,
+    onMounted,
 } from '../../commonImports';
 import AgGridTable from '../../components/AgGridTable.vue';
 import axios from 'axios';
@@ -98,7 +83,6 @@ export default {
     },
     components: {
         AgGridTable,
-        AgGridVue,
     },
     setup(props) {
         let showImagingAlert = ref(false);
@@ -108,46 +92,22 @@ export default {
         let imaging = ref([]);
         let formErrors = ref([]);
         const loading = ref(false);
-        const imagingRowData = reactive({ value: [] });
+        const imagingRowData = ref([]);
         let imagingItems = ref([
             {
                 imaging: '',
                 imaging_date: ''
             }
         ]);
-        let imagingColumnDefs =reactive({
-            value: [
+        let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Imaging Date', field: 'imaging_date', filter: true },
-                { headerName: 'Imaging', field: 'imaging_details' },
-                ]
-        });
-        
-
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
+                { headerName: 'Imaging Date', field: 'description', filter: true },
+                { headerName: 'Imaging', field: 'notes' },
+            ]);
 
         const fetchPatientImagingList = async () => {
             try {
@@ -160,7 +120,6 @@ export default {
                 loading.value = false;
                 const data = await response.json();
                 imagingRowData.value = data.data;
-                console.log(data.data,'imaging_Data');
             } catch (error) {
                 console.error('Error fetching imaging list:', error);
                 loading.value = false;
@@ -201,7 +160,7 @@ export default {
 
         let getStepID = async (sid) => {
             try {
-                let stepname = 'NumberTracking-Imaging';
+                let stepname = 'NumberTracking-Health_Data';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
                 imagingStepId.value = response.data.stepID;
             } catch (error) {
@@ -250,9 +209,7 @@ export default {
             formErrors,
             imagingTime,
             showImagingAlert,
-            defaultColDef,
-            gridOptions,
-            imagingColumnDefs,
+            columnDefs,
             imagingRowData,
             fetchPatientImagingList,
             deleteServices,

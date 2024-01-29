@@ -69,7 +69,6 @@ export default {
         patient_spirometerpefhigh:Number, 
         patient_spirometerpeflow:Number,
     },
-
     components: {
         Tab1Component,
         Tab2Component,
