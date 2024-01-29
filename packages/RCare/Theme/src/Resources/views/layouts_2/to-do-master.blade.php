@@ -746,6 +746,7 @@
                         <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
                         <input type="hidden" name="start_time" value="00:00:00">
                         <input type="hidden" name="end_time" value="00:00:00"> 
+                        <input type="hidden" name="fromstarttime" id="fromstarttime">
                         <input type="hidden" name="module_id" value="{{ $module_id }}" />
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
