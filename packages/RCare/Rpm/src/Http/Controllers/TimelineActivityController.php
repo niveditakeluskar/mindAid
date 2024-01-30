@@ -35,10 +35,11 @@ class TimelineActivityController extends Controller
 
 public function patientMonthlyData(Request $request)
 {
-      $monthly = date('Y-m');//date('2022-03'); 
+      $monthly = date('Y-m');
+      //date('2022-05'); 
       $year = date('Y', strtotime($monthly));
       $month = date('m', strtotime($monthly));
-      // dd(sanitizeVariable($request->month));
+      // dd(sanitizeVariable($request->month)); 
       $patient_id = sanitizeVariable($request->route('patient_id'));
       // dd($patient_id);
       $patient =  Patients::with('patientServices', 'patientServices.module')->where('id',$patient_id)->get();
@@ -48,7 +49,7 @@ public function patientMonthlyData(Request $request)
       ->orderBy('effdatetime','desc')->get();
       
       $ob_oxy = Observation_Oxymeter::whereMonth('effdatetime', $month)
-      ->whereYear('effdatetime',$year)->where('patient_id',$patient_id)
+      ->whereYear('effdatetime',$year)->where('patient_id',$patient_id) 
       ->select('effdatetime','oxy_qty') 
       ->orderBy('effdatetime','desc')->get();
       

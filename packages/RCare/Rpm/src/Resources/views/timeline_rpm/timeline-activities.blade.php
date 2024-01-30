@@ -20,7 +20,7 @@
     /* border: 2px solid green; */
     border-radius: 50%;
     margin-left: 20px;
-    margin-top: 30px;
+    margin-top: 30px; 
 }
 .reminder-msg-icon {
   height: 40px;
@@ -166,7 +166,7 @@
 <div class="breadcrusmb">
   <div class="row">
         <h5 class="card-title mb-3">Timeline Activities</h5>
-             <!-- <button type="button" id="exportbutton" class="btn btn-primary">Export to excel</button>    -->
+             <!-- <button type="button" id="exportbutton" class="btn btn-primary">Export to excel</button> -->
   </div>
 </div>  
 <div class='row'>
@@ -175,8 +175,9 @@
   <?php
        $module_id    = getPageModuleName();
        $submodule_id = getPageSubModuleName();
+       $patient_id ='1830627799';
   ?>
-  <input type="hidden" id="hidden_id" name="patient_id" value={{$patient_id}}> 
+  <input type="hidden" id="hidden_id" name="patient_id" value='1830627799'> 
   <input type="hidden" id="module_id" name="module_id" value={{$module_id}}>
   @include('Patients::components.patient-Ajaxbasic-info')
 </div>        
@@ -185,7 +186,7 @@
 $number_days = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y")); // 31
 echo date('M Y');//"There are {$number_days} days";
 ?>
-<div class='row'>
+<div class='row'> 
   <div class="col-md-12">
     <!-- <div class="col-md-4 form-group mb-3"> 
     <label for="month">Month & Year</label>
