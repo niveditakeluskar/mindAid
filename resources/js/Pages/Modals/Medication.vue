@@ -98,7 +98,7 @@
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="pharmacy_phone_no">Pharmacy Phone Number</label>
-                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" />
+                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" v-mask="'(###) ###-####'" />
                                                             <div class="invalid-feedback" v-if="formErrors.pharmacy_phone_no" style="display: block;">{{ formErrors.pharmacy_phone_no[0] }}</div>
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
@@ -160,6 +160,8 @@ import {
 } from '../commonImports';
 import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
+import VueMask from 'vue-the-mask';
+
 export default {
 	props: {
 		patientId: Number,
@@ -173,6 +175,7 @@ export default {
             showAlert: false,
         };
     },
+    directives: { VueMask },
     components: {
         LayoutComponent,
         AgGridTable,
@@ -194,6 +197,7 @@ export default {
                 if (response && response.status == 200) {
                     this.showAlert = true;
                     updateTimer(this.patientId, '1', this.moduleId);
+                    console.log("response.data.form_start_time", response.data.form_start_time);
                     $(".form_start_time").val(response.data.form_start_time);
                     this.fetchPatientMedicationList();
                     document.getElementById("medications_form").reset();

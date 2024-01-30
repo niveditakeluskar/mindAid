@@ -26,7 +26,7 @@
                             <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"/>
                         </div>
                     </div>
-                    <form id="callwrapup_form" name="callwrapup_form" action="" method="post">
+                    <form id="callwrapup_form" name="callwrapup_form" @submit.prevent="submitCallWrapUpFormData">
                         <input type="hidden" name="uid" :value="patientId"/>
                         <input type="hidden" name="patient_id" :value="patientId"/>
                         <input type="hidden" name="start_time" value="00:00:00"> 
