@@ -389,7 +389,7 @@ class CarePlanDevelopmentController extends Controller
         $id          = sanitizeVariable($request->route('id'));
         $allergytype = sanitizeVariable($request->route('allergytype'));
         $data        = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($id, $allergytype);
-        
+
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
