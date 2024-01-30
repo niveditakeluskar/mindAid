@@ -138,21 +138,7 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="table-responsive">
-                            <ag-grid-vue
-                                style="width: 100%; height: 100%;"
-                                id="medication-list"
-                                class="ag-theme-alpine"
-                                :columnDefs="columnDefs.value"
-                                :rowData="rowData.value"
-                                :defaultColDef="defaultColDef"
-                                :gridOptions="gridOptions"
-                                :loadingCellRenderer="loadingCellRenderer"
-                                            :loadingCellRendererParams="loadingCellRendererParams"
-                                            :rowModelType="rowModelType"
-                                            :cacheBlockSize="cacheBlockSize"
-                                            :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                        </div>
+                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
                     </div>
                 </div>
             </div>
@@ -169,7 +155,7 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../commonImports';
 import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
@@ -189,7 +175,7 @@ export default {
     },
     components: {
         LayoutComponent,
-        AgGridVue,
+        AgGridTable,
     },
     methods: {
         openModal() {
@@ -229,17 +215,14 @@ export default {
         }
     },
 	setup(props) {
-        const rowData = reactive({ value: [] }); // Initialize rowData as an empty array
+        const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
+      
+      
         let medications = ref([]);
         let selectedMedication = ref('');
-        const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
-            value: [
+
+        let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -265,22 +248,8 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        });
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
+            ]);
+       
         let medicationTime = ref(null);
         let medicationStageId = ref(0);
         let stepID = ref(0);
@@ -295,7 +264,7 @@ export default {
                 }
                 loading.value = false;
                 const data = await response.json();
-                rowData.value = data.data;
+                passRowData.value = data.data;
             } catch (error) {
                 console.error('Error fetching followup task list:', error);
                 loading.value = false;
@@ -412,13 +381,7 @@ export default {
         };
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+           
             fetchPatientMedicationList();
             fetchMedications();
             getStageID();
@@ -437,9 +400,7 @@ export default {
         return {
             loading,
             columnDefs,
-            rowData,
-            defaultColDef,
-            gridOptions,
+            passRowData,
             medications,
             selectedMedication,
             medicationTime,

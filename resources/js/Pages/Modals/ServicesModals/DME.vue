@@ -43,21 +43,8 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="dme-services-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="columnDefs.value"
-                            :rowData="dmeServiceRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                    <AgGridTable :rowData="dmeServiceRowData" :columnDefs="columnDefs"/>
+
                 </div>
             </div>
         </div>
@@ -70,7 +57,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import DMEForm from './SubForms/ServicesShortForm.vue';
@@ -84,7 +71,7 @@ export default {
     },
     components: {
         DMEForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showDMEAlert = ref(false);
@@ -93,14 +80,10 @@ export default {
         let DMEServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const dmeServiceRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
-            value: [
+        
+        const dmeServiceRowData = ref([]);
+      
+        const columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -127,29 +110,8 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        });
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
-
+            ]);
+        
         const fetchPatientDMEServiceList = async () => {
             try {
                 loading.value = true;
@@ -167,7 +129,7 @@ export default {
             }
         };
 
-        let submitSrvicesForm = async () => {
+        const submitSrvicesForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('service_dme_form');
             let formData = new FormData(myForm);
@@ -198,7 +160,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'Service-Dme';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -208,7 +170,7 @@ export default {
             }
         };
         
-        let deleteServices = async (id, obj) => {
+        const deleteServices = async (id, obj) => {
             if (window.confirm("Are you sure you want to delete this Service?")) {
                 const formData = {
                     id: id,
@@ -241,7 +203,7 @@ export default {
             }
         }
 
-        let editService = async (id) => {
+        const editService = async (id) => {
             try {
                 const serviceToEdit = dmeServiceRowData.value.find(service => service.id == id);
                 if (serviceToEdit) {
@@ -277,13 +239,7 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
+            
             fetchPatientDMEServiceList();
         });
 
@@ -292,7 +248,6 @@ export default {
                 DMEServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
-                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -308,8 +263,6 @@ export default {
             showDMEAlert,
             columnDefs,
             dmeServiceRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientDMEServiceList,
             deleteServices,
             editService,
