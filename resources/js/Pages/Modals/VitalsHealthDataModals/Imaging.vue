@@ -57,20 +57,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
-                        <!-- <AgGridTable :rowData="imagingRowData" :columnDefs="columnDefs"/> -->
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="imaging-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="imagingColumnDefs.value"
-                            :rowData="imagingRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
+                        <AgGridTable :rowData="imagingRowData" :columnDefs="imagingColumnDefs"/>
+                      
 
                     </div>
                 </div>
@@ -85,9 +73,8 @@ import {
     watch,
     onBeforeMount,
     onMounted, 
-    AgGridVue,
+    AgGridTable,
 } from '../../commonImports';
-import AgGridTable from '../../components/AgGridTable.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -98,7 +85,6 @@ export default {
     },
     components: {
         AgGridTable,
-        AgGridVue,
     },
     setup(props) {
         let showImagingAlert = ref(false);
@@ -108,15 +94,14 @@ export default {
         let imaging = ref([]);
         let formErrors = ref([]);
         const loading = ref(false);
-        const imagingRowData = reactive({ value: [] });
+        const imagingRowData = ref([]);
         let imagingItems = ref([
             {
                 imaging: '',
                 imaging_date: ''
             }
         ]);
-        let imagingColumnDefs =reactive({
-            value: [
+        let imagingColumnDefs =ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -124,31 +109,18 @@ export default {
                 },
                 { headerName: 'Imaging Date', field: 'imaging_date', filter: true },
                 { headerName: 'Imaging', field: 'imaging_details' },
-                ]
-        });
+                {
+                    headerName: 'Action',
+                    field: 'action',
+                    cellRenderer: function (params) {
+                        const row = params.data;
+                        return row && row.action ? row.action : '';
+                    },
+                },
+                ]);
         
 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
-
+        
         const fetchPatientImagingList = async () => {
             try {
                 loading.value = true;
@@ -198,6 +170,25 @@ export default {
                 }
             }
         }
+
+        
+        const editImaging= async (id) => {
+            try {
+                const imagingToEdit = dmeServiceRowData.value.find(service => service.id == id);
+                if (imagingToEdit) {
+                    const form = document.getElementById('service_dme_form');
+                    form.querySelector('#service_id').value = imagingToEdit.id;
+                    form.querySelector('#type').value = imagingToEdit.type;
+                    form.querySelector('#purpose').value = imagingToEdit.purpose;
+                    form.querySelector('#specify').value = imagingToEdit.specify;
+                    form.querySelector('#brand').value = imagingToEdit.brand;
+                    form.querySelector('#notes').value = imagingToEdit.notes;
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error editing service:', error);
+            }
+        };
 
         let getStepID = async (sid) => {
             try {
@@ -250,13 +241,11 @@ export default {
             formErrors,
             imagingTime,
             showImagingAlert,
-            defaultColDef,
-            gridOptions,
             imagingColumnDefs,
             imagingRowData,
             fetchPatientImagingList,
             deleteServices,
-            editService,
+            editImaging,
             imaging,
             imagingItems,
             addImagingItem,
