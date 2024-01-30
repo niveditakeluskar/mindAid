@@ -1,5 +1,5 @@
 <template>
-  <LayoutComponent ref="layoutComponentRef">
+  <LayoutComponent ref="layoutComponentRef" >
     <div>
       <div class="breadcrusmb">
         <div class="row" style="margin-top: 10px">
@@ -20,7 +20,7 @@
                   <div class="col-md-6 form-group mb-6">
                     <label for="practicename">Practice Name</label>
                     <!-- Your selectworklistpractices component -->
-                    <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice"
+                    <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                         {{ practice.name }}
@@ -86,7 +86,7 @@
                   </div>
                 </div>
               </form>
-            <PatientStatus ref="PatientStatusRef"/>
+            <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId"/>
             </div>
           </div>
         </div>
@@ -100,7 +100,6 @@
               </div>
             </div>
           </div> <!--End of card-->
-
         </div>
       </div>
 
@@ -124,7 +123,6 @@ import axios from 'axios';
 
 export default {
   props: {
-      patientId: Number,
       moduleId: Number,
       componentId: Number,
     },
@@ -158,7 +156,6 @@ export default {
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
     const PatientStatusRef = ref();
-
 
     onMounted(async () => {
       try {
@@ -418,4 +415,3 @@ export default {
   },
 };
 </script>
-  

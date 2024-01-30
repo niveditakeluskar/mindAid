@@ -275,8 +275,11 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
-                                                                            <input type="hidden"
+                                                                        <input type="hidden" name="timearr[form_start_time]"
+                                                                            class="timearr form_start_time"
+                                                                            :value="medicationTime"
+                                                                            v-model="medicationTime">
+                                                                        <input type="hidden"
                                                                             name="timearr['form_save_time']"
                                                                             class="form_save_time"><input type="hidden"
                                                                             name="timearr['pause_start_time']"><input
@@ -303,7 +306,7 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
+                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
                     </div>
                 </div>
             </div>
@@ -557,10 +560,11 @@ export default {
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
+                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    document.getElementById("care_plan_form").reset();
+                
                     setTimeout(() => {
                         showSuccessAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
@@ -930,5 +934,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     height: 800px !important;
-}
-</style>
+}</style>

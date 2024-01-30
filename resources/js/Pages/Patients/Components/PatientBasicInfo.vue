@@ -113,20 +113,19 @@
                                             :textContent="patient_module" data-original-title="Patient Enrollment Status"
                                             id="PatientStatus">
                                         </span>
-                                        <PatientStatus ref="PatientStatusRef"/>
+                                        <PatientStatus ref="PatientStatusRef" :moduleId="moduleId"
+                                            :componentId="componentId" />
                                         <span patient_enroll_date v-if="patient_module_status == '1'">
-                                            <a @click="() => patientServiceStatus('1')"
-                                                style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                 id="active">
+                                            <a @click="() => patientServiceStatus('1')" style="margin-left: 15px;"
+                                                class="ActiveDeactiveClass" id="active">
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Activate"></i>
                                             </a>
                                         </span>
 
                                         <span patient_enroll_date v-if="patient_module_status == '0'">
-                                            <a @click="() => patientServiceStatus('0')"
-                                                style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                 id="suspend">
+                                            <a @click="() => patientServiceStatus('0')" style="margin-left: 15px;"
+                                                class="ActiveDeactiveClass" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Suspended"></i>
                                             </a>
@@ -134,17 +133,15 @@
                                             To : <span :textContent="suspended_to_date"></span>
                                         </span>
                                         <span patient_enroll_date v-if="patient_module_status == '2'">
-                                            <a @click="() => patientServiceStatus('2')"
-                                                style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                 id="deactive">
+                                            <a @click="() => patientServiceStatus('2')" style="margin-left: 15px;"
+                                                class="ActiveDeactiveClass" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
                                         </span>
                                         <span patient_enroll_date v-if="patient_module_status == '3'">
-                                            <a @click="() => patientServiceStatus('3')"
-                                                style="margin-left: 15px;" class="ActiveDeactiveClass"
-                                                 id="deceased">
+                                            <a @click="() => patientServiceStatus('3')" style="margin-left: 15px;"
+                                                class="ActiveDeactiveClass" id="deceased">
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Deceased"></i>
                                             </a>
@@ -475,7 +472,12 @@ export default {
                 finNumber.value = data.patient[0].fin_number;
                 consent_to_text.value = data.consent_to_text;
                 military_status.value = data.military_status;
-                patientAddress.value = data.PatientAddress.add_1 + ',' + data.PatientAddress.add_2 + ',' + data.PatientAddress.city + ',' + data.PatientAddress.state + ',' + data.PatientAddress.zipcode;
+                if (data.PatientAddress) {
+                    patientAddress.value = `${data.PatientAddress.add_1}, ${data.PatientAddress.add_2}, ${data.PatientAddress.city}, ${data.PatientAddress.state}, ${data.PatientAddress.zipcode}`;
+                } else {
+                    // Handle the case when PatientAddress is null
+                    patientAddress.value = '';
+                }
                 practice_name.value = data.practice_name;
                 provider_name.value = data.provider_name;
                 practice_emr.value = data.practice_emr;

@@ -56,7 +56,7 @@ use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
+use RCare\Ccm\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\Http\Requests\PatientsLabRequest;
 use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;

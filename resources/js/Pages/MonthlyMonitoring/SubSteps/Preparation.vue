@@ -2,7 +2,7 @@
 <!--    <form id="call_preparation_preparation_followup_form" name="call_preparation_preparation_followup_form"
       action="{{ route('monthly.monitoring.call.preparation') }}" method="post"> -->
       <loading-spinner :isLoading="isLoading"></loading-spinner>
-      <form id="call_preparation_preparation_followup_form" @submit.prevent="saveForm">
+      <form id="call_preparation_preparation_followup_form" @submit.prevent="submitPrepareForm">
          <div class="row call mb-4 ">
          <div class="col-lg-12 mb-4 ">
             <div class="card">
@@ -12,13 +12,6 @@
                      <strong>Call Preparation Completed! </strong><span id="text"></span>
                   </div>
                    <!-- Display validation errors -->
-    <div v-if="hasValidationErrors" class="error-messages">
-      <ul>
-        <li v-for="(errorMessage, field) in validationErrors" :key="field">
-          {{ errorMessage }}
-        </li>
-      </ul>
-      </div>
                   <div class="card-title">Call Preparation</div>
                   <input type="hidden" name="uid" :value="patientId"/>
                   <input type="hidden" name="patient_id" :value="patientId" /> <!-- Bind patientId to the input field -->
@@ -53,7 +46,7 @@
 
 <script>
 import PreparationForm from '../Components/PreparationFollowUpForm.vue';
-import { defineComponent } from 'vue';
+import { defineComponent,ref } from 'vue';
 import axios from 'axios';
 // import stepWizard from 'js/app.js';
 export default {
@@ -61,11 +54,11 @@ export default {
       patientId: Number,
       moduleId: Number,
       componentId: Number,
+      stageid: Number,
    },
    data() {
       return {
          time:null,
-         isLoading: false,
          sectionName: 'call_preparation',
          csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
          validationErrors: {},
@@ -78,58 +71,34 @@ export default {
       this.time = document.getElementById('page_landing_times').value;
       console.log('Component mounted.');
    },
-  methods: {
-    saveForm() {
-      this.clearValidationErrors();
-      this.isLoading = true;
-      const formData = new FormData();
-      const formElements = document.getElementById('call_preparation_preparation_followup_form').elements;
-
-      for (let i = 0; i < formElements.length; i++) {
-        const element = formElements[i];
-        // Check if the element is not a button or any other unwanted type
-        if (element.tagName !== 'BUTTON' && element.type !== 'button') {
-          formData.append(element.name, element.value);
-        }
-      }
-
-      formData.append('_token', this.csrfToken);
-
-      axios.post('/ccm/monthly-monitoring-call-preparation-form', formData)
-        .then(response => {
-         this.clearValidationErrors();
-         alert("submitted successfully");
-          // Handle success response
-          console.log('Form saved successfully', response.data);
-          // Optionally, perform any additional actions on successful form submission
-        })
-        .catch(error => {
-          this.isLoading = false;
-
-          // Check if the error response contains validation errors
-          if (error.response && error.response.status === 422 && error.response.data.errors) {
-            // Display validation errors
-            this.validationErrors = error.response.data.errors;
-          } else {
-            alert("Oopz!. Something went Wrong, Please Contact Adminstrator");
-            // Handle other types of errors (not validation errors)
-            console.error('Error saving form', error);
-            // Optionally, perform any actions on failed form submission
-          }
-        })
-        .finally(() => {
-          // Hide the spinner when the request is complete (success or failure)
-          this.isLoading = false;
-        });
-    }, clearValidationErrors() {
-    this.validationErrors = {};
-  },
-  },
-  computed: {
-    hasValidationErrors() {
-      return Object.keys(this.validationErrors).length > 0;
-    },
-  },
+    setup(props) {
+      const isLoading = ref(false);
+      const submitPrepareForm = async () => {
+            isLoading.value = true;
+            let myForm = document.getElementById('call_preparation_preparation_followup_form');
+            let formData = new FormData(myForm);
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            try {
+                const response = await axios.post('/ccm/monthly-monitoring-call-preparation-form', formData);
+                if (response && response.status == 200) {
+                    alert("Saved Successfully");
+                    document.getElementById("call_preparation_preparation_followup_form").reset();
+                }
+                isLoading.value = false;
+            } catch (error) {
+                if (error.response && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
+                } else {
+                    console.error('Error submitting form:', error);
+                }
+                isLoading.value = false;
+            }
+        };
+        return{
+          submitPrepareForm,
+          isLoading,
+        };
+    }
 };
 </script>
 
