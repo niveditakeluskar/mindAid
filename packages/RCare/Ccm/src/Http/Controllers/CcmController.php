@@ -91,14 +91,14 @@ use Inertia\Inertia;
 class CcmController extends Controller
 {
 
-    public function getReviewNotes($patient_id){
+    public function getReviewNotes($patient_id)
+    {
         $data = VitalsObservationNotes::latest($patient_id);
-        if(isset($data)){
+        if (isset($data)) {
             return $data['notes'];
-        }else{
+        } else {
             return '';
         }
-       
     }
 
     public function callWrapUpActivities()
@@ -164,141 +164,130 @@ class CcmController extends Controller
         return view('Ccm::current-month-data', compact('curr_topics'));
     }
 
-    public function previousMonthStatus($patient_id,$module_id,$month,$year) {
+    public function previousMonthStatus($patient_id, $module_id, $month, $year)
+    {
         $patient_id  = sanitizeVariable($patient_id);
         $module_id   = sanitizeVariable($module_id);
         $month       = sanitizeVariable($month);
-        $year        = sanitizeVariable($year);  
+        $year        = sanitizeVariable($year);
 
         // dd($month ,$year, date('m'), date('Y') );  
 
 
-                        $prev_topics = DB::select("(select topic,notes from ccm.ccm_topics
+        $prev_topics = DB::select("(select topic,notes from ccm.ccm_topics
                             where id in (select max(id)
                             FROM ccm.ccm_topics
-                            WHERE patient_id='".$patient_id."'
-                            AND EXTRACT(Month from record_date) = '".$month."'  
-                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            WHERE patient_id='" . $patient_id . "'
+                            AND EXTRACT(Month from record_date) = '" . $month . "'  
+                            AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                             AND topic NOT LIKE 'EMR Monthly Summary%' And topic NOT LIKE 'Summary notes added on%' 
                             group by topic)
                             order by sequence, sub_sequence ASC) 
                             ");
-                        
-                        if($month == date('m') && $year == date('Y')){
-                            
-                            
-                            $emr_table = DB::select("(select topic, notes
-                            from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
-                            AND EXTRACT(Month from record_date) = '".$month."' 
-                            AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)");
 
-                            foreach($emr_table as $e){
-                                if($e!=''){
-                                    array_push($prev_topics,$e);
-                                }
-                                 
-                            }
+        if ($month == date('m') && $year == date('Y')) {
 
-                            if(count($emr_table)==0){
-                                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
+
+            $emr_table = DB::select("(select topic, notes
+                            from ccm.ccm_emr_monthly_summary WHERE patient_id='" . $patient_id . "' And status = 1
+                            AND EXTRACT(Month from record_date) = '" . $month . "' 
+                            AND EXTRACT(YEAR from record_date) = '" . $year . "' order by sequence, sub_sequence ASC)");
+
+            foreach ($emr_table as $e) {
+                if ($e != '') {
+                    array_push($prev_topics, $e);
+                }
+            }
+
+            if (count($emr_table) == 0) {
+                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
                                 where id in (select max(id)
                                 FROM ccm.ccm_topics
-                                WHERE patient_id='".$patient_id."'
+                                WHERE patient_id='" . $patient_id . "'
                                 AND topic LIKE 'EMR Monthly Summary%'  
-                                AND EXTRACT(Month from record_date) = '".$month."'  
-                                AND EXTRACT(YEAR from record_date) = '".$year."' 
+                                AND EXTRACT(Month from record_date) = '" . $month . "'  
+                                AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                                 group by topic)
                                 order by sequence, sub_sequence ASC)");
 
-                                foreach($emr_table as $e){
-                                    if($e!=''){
-                                        array_push($prev_topics,$e);
-                                    }
-                                   
-                                }
+                foreach ($emr_table as $e) {
+                    if ($e != '') {
+                        array_push($prev_topics, $e);
+                    }
+                }
 
-                                $emr_table_summary_notes =  DB::select("(select topic,notes
+                $emr_table_summary_notes =  DB::select("(select topic,notes
                                 from ccm.ccm_topics
-                                WHERE patient_id='".$patient_id."'
+                                WHERE patient_id='" . $patient_id . "'
                                 AND topic LIKE 'Summary notes added on%'  
-                                AND EXTRACT(Month from record_date) = '".$month."'  
-                                AND EXTRACT(YEAR from record_date) = '".$year."'
+                                AND EXTRACT(Month from record_date) = '" . $month . "'  
+                                AND EXTRACT(YEAR from record_date) = '" . $year . "'
                                 AND status = 1
                                 order by sequence, sub_sequence ASC)");
 
-                                foreach($emr_table_summary_notes as $n){
-                                    if($n!=''){
-                                        array_push($prev_topics,$n);
-                                    } 
-                                }
-
-
-
-                            }
-                            
-                        }else{
-                            $emr_table = DB::select("(select topic,notes from ccm.ccm_emr_monthly_summary
-                                             WHERE patient_id='".$patient_id."'
+                foreach ($emr_table_summary_notes as $n) {
+                    if ($n != '') {
+                        array_push($prev_topics, $n);
+                    }
+                }
+            }
+        } else {
+            $emr_table = DB::select("(select topic,notes from ccm.ccm_emr_monthly_summary
+                                             WHERE patient_id='" . $patient_id . "'
                                              AND topic LIKE 'EMR Monthly Summary%'  
-                                             AND EXTRACT(Month from record_date) = '".$month."'  
-                                             AND EXTRACT(YEAR from record_date) = '".$year."'
+                                             AND EXTRACT(Month from record_date) = '" . $month . "'  
+                                             AND EXTRACT(YEAR from record_date) = '" . $year . "'
                                              And status = 1
                                              order by sequence, sub_sequence ASC)");
 
-                            if(count($emr_table)==0){
-                                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
+            if (count($emr_table) == 0) {
+                $emr_table = DB::select("(select topic,notes from ccm.ccm_topics
                                 where id in (select max(id)
                                 FROM ccm.ccm_topics
-                                WHERE patient_id='".$patient_id."'
+                                WHERE patient_id='" . $patient_id . "'
                                 AND topic LIKE 'EMR Monthly Summary%'  
-                                AND EXTRACT(Month from record_date) = '".$month."'  
-                                AND EXTRACT(YEAR from record_date) = '".$year."' 
+                                AND EXTRACT(Month from record_date) = '" . $month . "'  
+                                AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                                 group by topic)
                                 order by sequence, sub_sequence ASC)");
+            }
+            if (count($emr_table) > 0) {
+                foreach ($emr_table as $e) {
+                    array_push($prev_topics, $e);
+                }
+            }
 
-                            }
-                            if(count($emr_table)>0){
-                                foreach($emr_table as $e){
-                                    array_push($prev_topics,$e);
-                                }
-                                
-                            }
-                            
 
-                            $emr_table_summary_notes =  DB::select("(select topic,notes
+            $emr_table_summary_notes =  DB::select("(select topic,notes
                             from ccm.ccm_emr_monthly_summary
-                            WHERE patient_id='".$patient_id."'
+                            WHERE patient_id='" . $patient_id . "'
                             AND topic LIKE 'Summary notes added on%'  
-                            AND EXTRACT(Month from record_date) = '".$month."'  
-                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            AND EXTRACT(Month from record_date) = '" . $month . "'  
+                            AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                             AND status = 1
                             order by sequence, sub_sequence ASC)");
 
-                            if(count($emr_table_summary_notes)==0){
-                            $emr_table_summary_notes =  DB::select("(select topic,notes
+            if (count($emr_table_summary_notes) == 0) {
+                $emr_table_summary_notes =  DB::select("(select topic,notes
                             from ccm.ccm_topics
-                            WHERE patient_id='".$patient_id."'
+                            WHERE patient_id='" . $patient_id . "'
                             AND topic LIKE 'Summary notes added on%'  
-                            AND EXTRACT(Month from record_date) = '".$month."'  
-                            AND EXTRACT(YEAR from record_date) = '".$year."' 
+                            AND EXTRACT(Month from record_date) = '" . $month . "'  
+                            AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                             order by sequence, sub_sequence ASC)");
-                            }
+            }
 
-                            if(count($emr_table_summary_notes) > 0){
-                                foreach($emr_table_summary_notes as $notes){
-                                    array_push($prev_topics,$notes);  
-                                }
-                               
+            if (count($emr_table_summary_notes) > 0) {
+                foreach ($emr_table_summary_notes as $notes) {
+                    array_push($prev_topics, $notes);
+                }
+            }
+        }
 
-                            }
 
-                            
-                        }
+        // dd($prev_topics);
 
-                        
-                        // dd($prev_topics);
-                        
-        
+
         // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
         //                 where id in (select max(id)
         //                 FROM ccm.ccm_topics
@@ -313,12 +302,12 @@ class CcmController extends Controller
         //                 from ccm.ccm_emr_monthly_summary WHERE patient_id='".$patient_id."' And status = 1
         //                 AND EXTRACT(Month from record_date) = '".$month."' 
         //                 AND EXTRACT(YEAR from record_date) = '".$year."' order by sequence, sub_sequence ASC)
-                        
+
         //                 ") ); 
 
-                        // dd($prev_topics);                
+        // dd($prev_topics);                
 
-        
+
         // $prev_topics = DB::select(DB::raw("(select topic,notes from ccm.ccm_topics
         //                 where id in (select max(id)
         //                 FROM ccm.ccm_topics
@@ -333,7 +322,7 @@ class CcmController extends Controller
         //                             from ccm.callwrapup_checklist where patient_id = '".$patient_id."' order by id desc limit 1  ) ")       );
 
         // dd($patient_id,$prev_checklist_topics);  
-        
+
         return view('Ccm::previous-month-data', compact('prev_topics'));
     }
 
@@ -787,21 +776,23 @@ class CcmController extends Controller
         $result['enrolleddateform'] = $activitydata;
         return $result;
     }
-    
-    public function populateMonthlyMonitoringData($patientId) {
+
+    public function populateMonthlyMonitoringData($patientId)
+    {
         $patientId   = sanitizeVariable($patientId);
         $module_id    = getPageModuleName();
         $configTZ = config('app.timezone');
         $userTZ   = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-       $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
-       $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
+        $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
+        $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
         // dd($callp);
         $result['populateCallPreparation'] = $callp;
         $result['populateHippa'] = $hippa;
         return $result;
     }
-    
-    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id){
+
+    public function getSavedGeneralQuestions($module_id, $patient_id, $step_id)
+    {
         $enrollinRPM = 1;
         if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
             $enrollinRPM = 2;
@@ -823,7 +814,7 @@ class CcmController extends Controller
     {
         $patient_id   = sanitizeVariable($request->route('id'));
         // $module_id    = getPageModuleName();
-    
+
         // $SID = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'General Question');
 
         // $last_time_spend                = CommonFunctionController::getCcmNetTime($patient_id, $module_id);;
@@ -908,13 +899,13 @@ class CcmController extends Controller
         // ]);
         $module_id    = getPageModuleName();
         $submodule_id = getPageSubModuleName();
-        $stage_id =  getFormStageId($module_id , $submodule_id, 'Preparation');
+        $stage_id =  getFormStageId($module_id, $submodule_id, 'Preparation');
 
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => $module_id,
             'componentId' => $submodule_id,
-            'stageid' =>$stage_id,
+            'stageid' => $stage_id,
         ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
@@ -942,58 +933,57 @@ class CcmController extends Controller
 
     }
 
-    public function getDevice($patient_id){
-        $PatientDevices = PatientDevices::where('patient_id',$patient_id)->where('status',1)->orderby('id','desc')->get();
+    public function getDevice($patient_id)
+    {
+        $PatientDevices = PatientDevices::where('patient_id', $patient_id)->where('status', 1)->orderby('id', 'desc')->get();
 
-        $devices   = Devices::where('status','1')->orderby('id','asc')->get();
-        $deviceid=1;
-        $patient_assign_device="";
-                $patient_assign_deviceid="";
-        if(!empty($PatientDevices[0])){
+        $devices   = Devices::where('status', '1')->orderby('id', 'asc')->get();
+        $deviceid = 1;
+        $patient_assign_device = "";
+        $patient_assign_deviceid = "";
+        if (!empty($PatientDevices[0])) {
             $data = json_decode($PatientDevices[0]->vital_devices);
-                $show_device="";
-                $show_device_id="";
-            if(isset($data)){
-                foreach($data as $dev_data){
-                    $dev=  Devices::where('id',$dev_data->vid)->where('status','1')->orderby('id','asc')->first();
-                    $show_device.= $dev->device_name.", ";
-                    $show_device_id.= $dev->id.", ";
+            $show_device = "";
+            $show_device_id = "";
+            if (isset($data)) {
+                foreach ($data as $dev_data) {
+                    $dev =  Devices::where('id', $dev_data->vid)->where('status', '1')->orderby('id', 'asc')->first();
+                    $show_device .= $dev->device_name . ", ";
+                    $show_device_id .= $dev->id . ", ";
                 }
-                $patient_assign_device= rtrim($show_device, ', ');
-                $patient_assign_deviceid= rtrim($show_device_id, ', ');
-            }else{
-                $patient_assign_device="";
-                $patient_assign_deviceid="";
+                $patient_assign_device = rtrim($show_device, ', ');
+                $patient_assign_deviceid = rtrim($show_device_id, ', ');
+            } else {
+                $patient_assign_device = "";
+                $patient_assign_deviceid = "";
             }
         }
 
         $Adeviceid = explode(',', $patient_assign_deviceid);
-       // dd($patient_assign_deviceid);
+        // dd($patient_assign_deviceid);
         $deviceid = $Adeviceid[0];
         $content = '';
-        if(!empty($devices)){
-            for($i=0;$i<count($devices);$i++){ 
+        if (!empty($devices)) {
+            for ($i = 0; $i < count($devices); $i++) {
 
-                if(isset($patient_assign_deviceid) && $patient_assign_deviceid!="")
-                {
-                ($i == ($Adeviceid[0]-1)) ? $active="active" : $active="";  
-                    if($deviceid == '' && $active == "active"){
+                if (isset($patient_assign_deviceid) && $patient_assign_deviceid != "") {
+                    ($i == ($Adeviceid[0] - 1)) ? $active = "active" : $active = "";
+                    if ($deviceid == '' && $active == "active") {
+                        $deviceid = $devices[$i]->id;
+                    }
+                } else {
+                    ($i == (2)) ? $active = "active" : $active = "";
+                    if ($deviceid == '' && $active == "active") {
                         $deviceid = $devices[$i]->id;
                     }
                 }
-                else{
-                    ($i == (2)) ? $active="active" : $active="";    
-                    if($deviceid == '' && $active == "active"){
-                        $deviceid = $devices[$i]->id;
-                    }
-                }
-                $content = $content.'<li class="nav-item">';
-                $content = $content.'<a class="nav-link '.$active.' tabclass" onClick="tabChange('.$devices[$i]->id.');" id="device-icon-tab_'.$devices[$i]->id.'" data-toggle="tab" href="#deviceid_'.$devices[$i]->id.'" role="tab" aria-controls="ccm-call" aria-selected="false"><i class="nav-icon color-icon i-Control-2 mr-1"></i>'. $devices[$i]->device_name.'</a>';
-                $content = $content.'</li>';
+                $content = $content . '<li class="nav-item">';
+                $content = $content . '<a class="nav-link ' . $active . ' tabclass" onClick="tabChange(' . $devices[$i]->id . ');" id="device-icon-tab_' . $devices[$i]->id . '" data-toggle="tab" href="#deviceid_' . $devices[$i]->id . '" role="tab" aria-controls="ccm-call" aria-selected="false"><i class="nav-icon color-icon i-Control-2 mr-1"></i>' . $devices[$i]->device_name . '</a>';
+                $content = $content . '</li>';
             }
         }
-            $data['deviceID'] = $deviceid;
-            $data['content'] = $devices;
+        $data['deviceID'] = $deviceid;
+        $data['content'] = $devices;
         return $data;
     }
 
@@ -1317,7 +1307,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<div href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" v-on:click="deleteCallWrapup(' . $row->id . ')"><i class="i-Closee i-Close"  title="Delete"></i></div>';
+                $btn = '<div href="javascript:void(0)" data-id="' . $row->id . '" class="delete_callwrap" onclick="deleteCallWrapup(' . $row->id . ')"><i class="i-Closee i-Close"  title="Delete"></i></div>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -1684,19 +1674,19 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' : '1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ? '0' :'1';
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ? '0' : '1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ?'0' :'1';
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ? '0' : '1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
         $end_time                      = sanitizeVariable($request->end_time);
         // dd($request->timearr['form_start_time']);
         $form_start_time               = sanitizeVariable($request->timearr['form_start_time']);
-        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']); 
+        $form_save_time                = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($form_save_time);
         $module_id                     = sanitizeVariable($request->module_id);
         $component_id                  = sanitizeVariable($request->component_id);
@@ -1996,12 +1986,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $report_requirnment5           = empty(sanitizeVariable($request->report_requirnment5)) ? '0' : '1';
         $patient_relationship_building = sanitizeVariable($request->patient_relationship_building);
         $condition_requirnment_notes   = sanitizeVariable($request->condition_requirnment_notes);
-        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' :'1';
+        $newofficevisit                = empty(sanitizeVariable($request->newofficevisit)) ? '0' : '1';
         $nov_notes                     = sanitizeVariable($request->nov_notes);
-        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ?'0' :'1';
+        $newdiagnosis                  = empty(sanitizeVariable($request->newdiagnosis)) ? '0' : '1';
         $nd_notes                      = sanitizeVariable($request->nd_notes);
         $report_requirnment_notes      = sanitizeVariable($request->report_requirnment_notes);
-        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ? '0': '1';
+        $med_added_or_discon           = empty(sanitizeVariable($request->med_added_or_discon)) ? '0' : '1';
         $med_added_or_discon_notes     = sanitizeVariable($request->med_added_or_discon_notes);
         $anything_else                 = sanitizeVariable($request->anything_else);
         $start_time                    = sanitizeVariable($request->start_time);
@@ -3950,8 +3940,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $form_name = 'patient_add_device_form';
         $billable = 1;
         $to_email = Partner::where('category', '0')->orderBy('created_at', 'desc')->first();
-        
-        $to = isset($to_email)? $to_email->email:'';
+
+        $to = isset($to_email) ? $to_email->email : '';
         $patient_device = PatientDevices::where('patient_id', $patientId)->where('status', 1)->latest()->first();
         $pdevices = array();
         $rpdevices = array();
@@ -4589,7 +4579,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } else {
                 CallWrap::create($note2);
             }
-        } 
+        }
         //return response()->json(['success' => "Added successfully."]);
         return response(['form_start_time' => $form_save_time]);
         /*  DB::commit();

@@ -85,7 +85,8 @@ export default {
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
-        const columnDefs = ref( [
+        const columnDefs = ref({
+            value: [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -116,7 +117,7 @@ export default {
                     },
                 },
             ]
-        );
+        });
         
         const fetchPatientDialysisServiceList = async () => {
             try {
@@ -148,7 +149,7 @@ export default {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showDialysisAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.form_start_time);
+                    $(".form_start_time").val(saveServicesResponse.data.form_start_time);
                     await fetchPatientDialysisServiceList();
                     document.getElementById("service_dialysis_form").reset();
                     setTimeout(() => {
@@ -265,6 +266,7 @@ export default {
                 DialysisServicesTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteServices();
                 exposeEditServices();
+                getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

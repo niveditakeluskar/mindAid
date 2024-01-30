@@ -29,8 +29,7 @@ class AllergiesAddRequest extends FormRequest
                 'type_of_reactions'           => 'required_if:allergy_status,false', 
                 'severity'                    => 'required_if:allergy_status,false',
                 'course_of_treatment'         => 'required_if:allergy_status,false',
-                'notes'                       => 'nullable|text_comments_slash', 
-                     
+                'notes'                       => 'nullable|text_comments_slash',         
             ]
         );
     }

@@ -45,8 +45,8 @@ use RCare\Patients\Models\PatientImaging;
 use RCare\Patients\Models\CarePlanUpdateLogs;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
-use RCare\Ccm\Http\Requests\AllergiesAddRequest;
-use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
+use RCare\Ccm\src\Http\Requests\AllergiesAddRequest;
+use RCare\Ccm\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
 use RCare\Ccm\Http\Requests\PatientsVitalsDataAddRequest;
@@ -60,7 +60,7 @@ use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\Http\Requests\PatientsLabRequest;
 use RCare\Ccm\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsHealthDataRequest;
+use RCare\Ccm\Http\Requests\PatientsHealthDataRequest;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
 use RCare\Org\OrgPackages\StageCodes\src\Models\StageCode;
 use RCare\Org\OrgPackages\HealthServices\src\Models\HealthServices;
@@ -115,7 +115,7 @@ class CarePlanDevelopmentController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -393,15 +393,9 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" 
-                onclick=editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit">
-                <i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" 
-                onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) 
-                data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=carePlanDevelopment.editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=carePlanDevelopment.deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
-
-               
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -1461,8 +1455,8 @@ class CarePlanDevelopmentController extends Controller
         );
     }
 
-    public function saveAllergy(AllergiesAddRequest $request) //AllergiesAddRequest 
-    {  
+    public function saveAllergy(AllergiesAddRequest $request)
+    { //
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -4125,14 +4119,17 @@ class CarePlanDevelopmentController extends Controller
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
                                 'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i],
+                                // 'high_val'              => $high_val[$labvalue][$i],
                                 'notes'                 => $notes[$labvalue],
-                                'lab_date'              => $labdate[$labvalue][0]
+                                'lab_date'              => $labdate[0]
                                 //'lab_date'              =>Carbon::now() 
                             );
-                            $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
-                            if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                            if (isset($high_val) && ($high_val != "")) {
+                                $labdata['high_val'] = $high_val[$labvalue][$i];
+                                $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
+                                if (isset($name_param[0]->parameter)) {
+                                    $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                                }
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
@@ -4484,6 +4481,29 @@ class CarePlanDevelopmentController extends Controller
             DB::rollBack();
             return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
+    }
+
+    public function getHealthData(Request $request)
+    {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth();
+        $configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+        $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
+            from patients.patient_health_data
+            where  patient_id =" . $patientId . "
+            and created_at::timestamp between '" . $dateS . "' and '" . $dateE . "' 
+            group by health_data,health_date order by updated_at desc";
+        $data = DB::select($qry);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
     }
 
     public function saveTravelData(PatientsTravelAddRequest $request)
