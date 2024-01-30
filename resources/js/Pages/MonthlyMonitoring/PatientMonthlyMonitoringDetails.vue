@@ -33,7 +33,8 @@ export default {
    props: {
       patientId: Number,
       moduleId: Number,
-      componentId: Number
+      componentId: Number,
+      stageid:Number,
    },
    components: {
       LayoutComponent,

@@ -109,8 +109,13 @@ class PatientWorklistController extends Controller
             $usersdetails = Users::where('id', $cid)->get();
             $roleid = $usersdetails[0]->role;
             /* return view('Patients::patient-allocation.work-list',compact('roleid'));  */
+            $module_id    = getPageModuleName();
+            $submodule_id = getPageSubModuleName();
+
             return Inertia::render('WorkList', [
                 'roleid' => $roleid,
+                'moduleId' => $module_id,
+                'componentId' => $submodule_id,
             ]);
         } else {
             return redirect('rcare-login');
