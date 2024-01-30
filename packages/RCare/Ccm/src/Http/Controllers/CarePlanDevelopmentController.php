@@ -115,7 +115,7 @@ class CarePlanDevelopmentController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -4098,14 +4098,17 @@ class CarePlanDevelopmentController extends Controller
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
                                 'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i],
+                                // 'high_val'              => $high_val[$labvalue][$i],
                                 'notes'                 => $notes[$labvalue],
-                                'lab_date'              => $labdate[$labvalue][0]
+                                'lab_date'              => $labdate[0]
                                 //'lab_date'              =>Carbon::now() 
                             );
-                            $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
-                            if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                            if (isset($high_val) && ($high_val != "")) {
+                                $labdata['high_val'] = $high_val[$labvalue][$i];
+                                $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
+                                if (isset($name_param[0]->parameter)) {
+                                    $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                                }
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');

@@ -17,27 +17,27 @@
                                 </select>
                             </div> 
                             <div class="col-md-3">
-                                <a href="/ccm/monthly-monitoring/call-wrap-up-word/" class="btn btn-primary" target="_blank">Care Manager Notes Word Format</a>   <!-- Docs Care Plan -->
+                                <a :href="`/ccm/monthly-monitoring/call-wrap-up-word/${patientId}`" class="btn btn-primary" target="_blank">Care Manager Notes Word Format</a>   <!-- Docs Care Plan -->
                             </div>
                         </div>
                     </div>
                     <div class="row m-1">
                         <div class="col-12"> 
-                   
-                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"/>
-
+                            <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"/>
                         </div>
                     </div>
-                    <form id="callwrapup_form" name="callwrapup_form" action="" method="post"> 
-                        <input type="hidden" name="uid" />
-                        <input type="hidden" name="patient_id" />
-                        <input type="hidden" name="start_time" value="00:00:00">
+                    <form id="callwrapup_form" name="callwrapup_form" action="" method="post">
+                        <input type="hidden" name="uid" :value="patientId"/>
+                        <input type="hidden" name="patient_id" :value="patientId"/>
+                        <input type="hidden" name="start_time" value="00:00:00"> 
                         <input type="hidden" name="end_time" value="00:00:00">
-                        <input type="hidden" name="module_id" />
-                        <input type="hidden" name="component_id" />
-                        <input type="hidden" name="stage_id" />
-                        <input type="hidden" name="step_id" value="0">
-                        <input type="hidden" name="form_name" value="callwrapup_form">
+                        <input type="hidden" name="module_id" :value="moduleId"/>
+                        <input type="hidden" name="component_id" :value="componentId"/>
+                        <input type="hidden" name="stage_id" :value="callWrapUpStageId"/>
+                        <input type="hidden" name="step_id" :value="callWrapUpStepId">
+                        <input type="hidden" name="form_name" value="number_tracking_vitals_form">
+                        <input type="hidden" name="billable" value="1">
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="callWrapUpTime" />
                         <div class="row ml-3"> 
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
@@ -199,12 +199,11 @@
 import {
     reactive,
     ref,
-    onBeforeMount,
     onMounted,
     AgGridTable,
-    // Add other common imports if needed
 } from '../../../commonImports';
 import axios from 'axios';
+
 export default {
     props: {
         patientId: Number,
@@ -214,105 +213,122 @@ export default {
     components: {
         AgGridTable,
     },
-    data() {
-        return {
-            uid: '', // Add default values or leave them as empty strings
-            patient_id: '',
-            start_time: '',
-            end_time: '',
-            module_id: '',
-            component_id: '',
-            stage_id: '',
-            step_id: '',
-            form_name: '',
-        };
-    },
-    methods: {
-        submitCallWrapUpFormData() {
-            const formData = {
-                uid: this.uid,
-                patient_id: this.patient_id,
-                start_time: this.start_time,
-                end_time: this.end_time,
-                module_id: this.module_id,
-                component_id: this.component_id,
-                stage_id: this.stage_id,
-                step_id: this.step_id,
-                form_name: this.form_name,
-            };
-            console.log("formData==>>", formData);
-            // axios.post('/your-api-endpoint', this.formData)
-            // 	.then(response => {
-            // 		console.log('Form submitted successfully!', response.data);
-            // 	})
-            // 	.catch(error => {
-            // 		// Handle error response
-            // 		console.error('Error submitting form:', error);
-            // 	});
-        },
-        deleteCallWrapup(callWrapId) {
-            // Perform deletion logic here using axios or any other method
-            // Example:
-            // axios.delete(`/api/callwrap/${callWrapId}`)
-            //     .then(response => {
-            //         // Handle success
-            //     })
-            //     .catch(error => {
-            //         // Handle error
-            //     });
-            console.log(`Deleting call wrap with ID ${callWrapId}`);
-        },
-    },
     setup(props) {
-        const callWrapRowData = ref( []); // Initialize rowData as an empty array
+        const callWrapRowData = ref([]);
         const loading = ref(false);
-       
+        const callWrapUpStageId = ref(0);
+        let callWrapUpTime = ref(null);
 
-        const callWrapColumnDefs = ref( [
-                {
-                    headerName: 'Seq.',
-                    valueGetter: 'node.rowIndex + 1',
-                    width: 20,
+        const callWrapColumnDefs = ref([
+            {
+                headerName: 'Seq.',
+                valueGetter: 'node.rowIndex + 1',
+                width: 20,
+            },
+            { headerName: 'Topic', field: 'topic', filter: true },
+            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
+            { headerName: 'Action Taken', field: 'action_taken', width: 60 },
+            {
+                headerName: 'Action', field: 'action', width: 20,
+                cellRenderer: function (params) {
+                    const row = params.data;
+                    return row.action;
                 },
-                { headerName: 'Topic', field: 'topic', filter: true },
-                { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
-                { headerName: 'Action Taken', field: 'action_taken', width: 60 },
-                {
-                    headerName: 'Action', field: 'action', width: 20,
-                    cellRenderer: function (params) {
-                        const row = params.data;
-                        return row.action;
-                    },
-                },
-            ]);
-
-       
+            },
+        ]);
 
         const fetchCallWrapUpList = async () => {
             try {
                 loading.value = true;
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                await new Promise((resolve) => setTimeout(resolve, 2000));
                 const response = await fetch(`/ccm/monthly-monitoring-call-wrap-up/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch call wrap up list');
                 }
                 loading.value = false;
                 const data = await response.json();
-                callWrapRowData.value = data.data; // Replace data with the actual fetched data
-                console.log("test--call wrap up", callWrapRowData.value);
+                callWrapRowData.value = data.data;
             } catch (error) {
                 console.error('Error fetching call wrap up list:', error);
                 loading.value = false;
             }
         };
-        // deleteCallWrap = async () => {
-        //     alert("test");
-        // };
 
+        const submitCallWrapUpFormData = () => {
+            const formData = {
+                uid: uid.value,
+                patient_id: patient_id.value,
+                start_time: start_time.value,
+                end_time: end_time.value,
+                module_id: module_id.value,
+                component_id: component_id.value,
+                stage_id: stage_id.value,
+                step_id: step_id.value,
+                form_name: form_name.value,
+            };
+            console.log("formData==>>", formData);
+            // axios.post('/your-api-endpoint', formData)
+            //   .then(response => {
+            //     console.log('Form submitted successfully!', response.data);
+            //   })
+            //   .catch(error => {
+            //     console.error('Error submitting form:', error);
+            //   });
+        };
+
+        const deleteCallWrapup = async (callWrapId) => {
+            if (window.confirm("Are you sure you want to delete this notes?")) {
+                const formData = {
+                    id: callWrapId,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                };
+                try {
+                    const deleteCallWrapupResponse = await axios.get(`/ccm/delete-callwrapup-notes/${props.patientId}`, {
+                        params: {
+                            id: callWrapId,
+                            start_time: "00:00:00",
+                            end_time: "00:00:00",
+                            form_start_time: document.getElementById('page_landing_times').value,
+                        }
+                    });
+                    // showDMEAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    console.log("deleteCallWrapupResponse", deleteCallWrapupResponse);
+                    $(".form_start_time").val((deleteCallWrapupResponse.data).trim());
+                    await fetchCallWrapUpList();
+                    setTimeout(() => {
+                        // showDMEAlert.value = false;
+                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
+            console.log(`Deleting call wrap with ID ${callWrapId}`);
+        };
+
+        let getStageID = async () => {
+            try {
+                let stageName = 'Call_Wrap_Up';
+                const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
+                callWrapUpStageId.value = response.data.stageID;
+            } catch (error) {
+                console.error('Error fetching stageID:', error);
+                throw new Error('Failed to fetch stageID');
+            }
+        };
+
+        const exposeDeleteCallWrapup = () => {
+            window.deleteCallWrapup = deleteCallWrapup;
+        };
 
         onMounted(async () => {
             try {
                 fetchCallWrapUpList();
+                exposeDeleteCallWrapup();
+                getStageID();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -322,12 +338,17 @@ export default {
             loading,
             callWrapColumnDefs,
             callWrapRowData,
+            callWrapUpStageId,
+            callWrapUpTime,
             fetchCallWrapUpList,
-            // deleteCallWrap,
+            submitCallWrapUpFormData,
+            deleteCallWrapup,
+            
         };
     }
 }
 </script>
+
 
 
 
