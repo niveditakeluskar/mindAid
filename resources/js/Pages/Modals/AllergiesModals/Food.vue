@@ -113,8 +113,12 @@ export default {
                     headerName: 'Last Modified By',
                     field: 'users.f_name',
                     cellRenderer: function (params) {
-                        const row = params.data;
-                        return row && row.users.f_name ? row.users.f_name + ' ' + row.users.l_name : 'N/A';
+                        const row = params.data; 
+                        if (row && row.users && row.users.f_name) {
+                            return row.users.f_name + ' ' + (row.users.l_name || ''); // Added a check for l_name as well
+                        } else {
+                            return 'N/A';
+                        }
                     },
                 },
                 { headerName: 'Last Modified On', field: 'updated_at' },
