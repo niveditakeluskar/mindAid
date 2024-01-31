@@ -4317,7 +4317,7 @@ class CarePlanDevelopmentController extends Controller
     }
     
     public function savePatientImagingData(PatientsImagingRequest $request)
-    {
+    { 
         $imaging              = sanitizeVariable($request->imaging);
         $imaging_date         = sanitizeVariable($request->imaging_date);
         $patient_id           = sanitizeVariable($request->patient_id);
@@ -4334,8 +4334,8 @@ class CarePlanDevelopmentController extends Controller
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            $DelPatientImaging = PatientImaging::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
-            PatientImaging::destroy($DelPatientImaging->toArray());
+            // $DelPatientImaging = PatientImaging::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
+            // PatientImaging::destroy($DelPatientImaging->toArray());
             $imaging_array_data = '';
             $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
             $new_sub_sequence = $last_sub_sequence + 1;
@@ -4424,8 +4424,8 @@ class CarePlanDevelopmentController extends Controller
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            $DelPatientHealthdata = PatientHealthData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
-            PatientHealthData::destroy($DelPatientHealthdata->toArray());
+            // $DelPatientHealthdata = PatientHealthData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
+            // PatientHealthData::destroy($DelPatientHealthdata->toArray());
             $health_data_array = '';
             foreach ($other_vitals as $key => $values) {
                 if ($health_date[$key] != '') {

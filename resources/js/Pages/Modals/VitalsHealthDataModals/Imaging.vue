@@ -3,7 +3,7 @@
     <div class="tab-pane fade show active" id="imaging" role="tabpanel" aria-labelledby="imaging-icon-pill">
         <div class="card">  
             <div class="card-header"><h4>Imaging</h4></div>
-            <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiLabsHealthDataForm">
+            <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiImagingHealthDataForm">
                 <div class="alert alert-success" :style="{ display: showImagingAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>
                     <strong> Imaging data saved successfully! </strong><span id="text"></span>
@@ -21,13 +21,14 @@
                     <input type="hidden" name="billable" value="1">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="imagingTime" />
                     <div v-for="(item, index) in imagingItems" :key="index" class="form-row">
+                        <input type="hidden" class="imaging_id" id="imaging_id">
                         <div class="col-md-4">
                             <label>Imaging : <span class="error">*</span></label>
-                            <input type="text" name="imaging[]" placeholder="Enter Imaging" class="forms-element form-control" />
+                            <input type="text" name="imaging[]"  placeholder="Enter Imaging" class="forms-element form-control" />
                         </div>
                         <div class="col-md-4">
                             <label >Date<span class="error">*</span> :</label>
-                            <input type="date" name="imaging_date[]" class="forms-element form-control"/>
+                            <input type="date" name="imaging_date[]"  class="forms-element form-control"/>
                         </div>
                         <div class="col-md-1">
                             <i v-if="index > 0" class="remove-icons i-Remove float-right mb-3" title="Remove Follow-up Task" @click="removeImagingItem(index)"></i>
@@ -107,16 +108,22 @@ export default {
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Imaging Date', field: 'imaging_date', filter: true },
-                { headerName: 'Imaging', field: 'imaging_details' },
                 {
-                    headerName: 'Action',
-                    field: 'action',
-                    cellRenderer: function (params) {
-                        const row = params.data;
-                        return row && row.action ? row.action : '';
+                    headerName: 'Imaging Date',
+                    field: 'imaging_date',
+                    filter: true,
+                    valueFormatter: params => {
+                    // Format the date here
+                    const date = params.value;
+                    if (date) {
+                        const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+                        return formattedDate;
+                    }
+                    return '';
                     },
                 },
+                { headerName: 'Imaging', field: 'imaging_details' },
+                
                 ]);
         
 
@@ -139,7 +146,7 @@ export default {
             }
         };
 
-        let submiLabsHealthDataForm = async () => {
+        let submiImagingHealthDataForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_imaging_form');
             let formData = new FormData(myForm);
@@ -150,10 +157,10 @@ export default {
             });
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
-                const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
+                const saveImagineResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
                     showImagingAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.form_start_time);
+                    $(".form_start_time").val(saveImagineResponse.form_start_time);
                     await fetchPatientImagingList();
                     document.getElementById("number_tracking_imaging_form").reset();
                     setTimeout(() => {
@@ -172,23 +179,8 @@ export default {
         }
 
         
-        const editImaging= async (id) => {
-            try {
-                const imagingToEdit = dmeServiceRowData.value.find(service => service.id == id);
-                if (imagingToEdit) {
-                    const form = document.getElementById('service_dme_form');
-                    form.querySelector('#service_id').value = imagingToEdit.id;
-                    form.querySelector('#type').value = imagingToEdit.type;
-                    form.querySelector('#purpose').value = imagingToEdit.purpose;
-                    form.querySelector('#specify').value = imagingToEdit.specify;
-                    form.querySelector('#brand').value = imagingToEdit.brand;
-                    form.querySelector('#notes').value = imagingToEdit.notes;
-                    form.scrollIntoView({ behavior: 'smooth' });
-                }
-            } catch (error) {
-                console.error('Error editing service:', error);
-            }
-        };
+       
+
 
         let getStepID = async (sid) => {
             try {
@@ -235,7 +227,7 @@ export default {
 
         return {
             loading,
-            submiLabsHealthDataForm,
+            submiImagingHealthDataForm,
             imagingStageId,
             imagingStepId,
             formErrors,
@@ -244,8 +236,6 @@ export default {
             imagingColumnDefs,
             imagingRowData,
             fetchPatientImagingList,
-            deleteServices,
-            editImaging,
             imaging,
             imagingItems,
             addImagingItem,

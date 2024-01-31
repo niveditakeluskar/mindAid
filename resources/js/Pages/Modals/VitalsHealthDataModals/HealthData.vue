@@ -107,7 +107,20 @@ export default {
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Health Date', field: 'health_date', filter: true },
+                {
+                    headerName: 'Health Date',
+                    field: 'health_date',
+                    filter: true,
+                    valueFormatter: params => {
+                    // Format the date here
+                    const date = params.value;
+                    if (date) {
+                        const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+                        return formattedDate;
+                    }
+                    return '';
+                    },
+                },
                 { headerName: 'Health Data', field: 'health_data' },
             ]);
 
