@@ -116,7 +116,6 @@
             <div class="modal-footer">
                 <!-- if ($role == 3 || $role == 2 || $role == 5)  -->
                     <button type="button" class="btn btn-primary float-right" @click="submit_patient_threshold_form()">Submit</button>
-                    <button type="button" class="btn btn-default float-left" data-dismiss="modal">Clossssse</button>
             </div>
         </form>
     </div>
