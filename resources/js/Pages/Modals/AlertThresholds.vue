@@ -76,8 +76,8 @@ export default {
     
     setup(props) {
         const tabs = ref([ 
-          { label: 'Tab 1', component: 'Custom Threshold' },
-          { label: 'Tab 2', component: 'Stanard Threshold' },
+          { label: 'Custom Threshold', component: 'Tab1Component' },
+          { label: 'Stanard Threshold', component: 'Tab2Component' },
          
         ]);
 
