@@ -61,108 +61,117 @@
                             </div>
                             <div class="col-md-12 forms-element">  
                                 <div class="row">
-                                <div class="col-md-4">
-                                    <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
-                                        <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed" formControlName="checkbox" />
-                                        <span>EMR system entry completed</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
+                                    <div class="col-md-4">
+                                        <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
+                                            <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed" formControlName="checkbox" />
+                                            <span>EMR system entry completed</span>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>  
                             <hr style="width:100%">
                             <div class="col-md-12 forms-element">  
+                                
                                 <div class="row">
                                     <div class="col-md-12"><b><span style="margin-left: 20px; color: #69aac2;">Additional Services :</span></b></div>
+                                    <div>groupedData==>{{ groupedData }}</div>
+                                    <div v-if="groupedData && groupedData.length > 0">
+        <h2>Grouped Data</h2>
+        <div v-for="(group, index) in groupedData" :key="index">
+          <h3>{{ group.name }}</h3>
+          <ul>
+            <li v-for="item in group.items" :key="item.id">{{ item.name }}</li>
+          </ul>
+        </div>
+      </div>
                                     <div class="col-md-4">
                                         <label for="routine_response" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="routine_response" id="routine_response" value="1" class="RRclass routine_response" formControlName="checkbox" />  
+                                            <input type="checkbox" name="routine_response" id="routine_response" value="1" class="RRclass routine_response" formControlName="checkbox" v-model="routine_response" />  
                                             <span>Routine Response</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="routinediv">
+                                        <div class="col-md-12" id="routinediv" v-if="routine_response == 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="urgent_emergent_response" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="urgent_emergent_response" id="urgent_emergent_response" value="1" class="RRclass urgent_emergent_response" formControlName="checkbox" />  
+                                            <input type="checkbox" name="urgent_emergent_response" id="urgent_emergent_response" value="1" class="RRclass urgent_emergent_response" formControlName="checkbox" v-model="urgent_emergent_response" />  
                                             <span>Urgent/Emergent Response</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="emergentdiv">
+                                        <div class="col-md-12" id="emergentdiv" v-if="urgent_emergent_response== 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="referral_order_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="referral_order_support" id="referral_order_support" value="1" class="RRclass referral_order_support" formControlName="checkbox" />
+                                            <input type="checkbox" name="referral_order_support" id="referral_order_support" value="1" class="RRclass referral_order_support" formControlName="checkbox" v-model="referral_order_support" />
                                             <span>Referral/Order Support</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="referraldiv">
+                                        <div class="col-md-12" id="referraldiv" v-if="referral_order_support == 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="medication_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="medication_support"  id="medication_support" value="1" class="RRclass medication_support" formControlName="checkbox" />
+                                            <input type="checkbox" name="medication_support" id="medication_support" value="1" class="RRclass medication_support" formControlName="checkbox" v-model="medication_support" />
                                             <span>Medication Support</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="medicationdiv">
+                                        <div class="col-md-12" id="medicationdiv" v-if="medication_support == 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="verbal_education_review_with_patient" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="verbal_education_review_with_patient"  id="verbal_education_review_with_patient" value="1" class="RRclass verbal_education_review_with_patient" formControlName="checkbox" />
+                                            <input type="checkbox" name="verbal_education_review_with_patient" id="verbal_education_review_with_patient" value="1" class="RRclass verbal_education_review_with_patient" formControlName="checkbox" v-model="verbal_education_review_with_patient" />
                                             <span>Verbal Education/Review with Patient</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="verbaldiv">
+                                        <div class="col-md-12" id="verbaldiv" v-if="verbal_education_review_with_patient == 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="mailed_documents" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="mailed_documents"  id="mailed_documents" value="1" class="RRclass mailed_documents" formControlName="checkbox" />
+                                            <input type="checkbox" name="mailed_documents"  id="mailed_documents" value="1" class="RRclass mailed_documents" formControlName="checkbox" v-model="mailed_documents" />
                                             <span>Mailed Documents</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="maileddiv">
+                                        <div class="col-md-12" id="maileddiv" v-if="mailed_documents ==  1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="resource_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="resource_support"  id="resource_support" value="1" class="RRclass resource_support" formControlName="checkbox" />
+                                            <input type="checkbox" name="resource_support"  id="resource_support" value="1" class="RRclass resource_support" formControlName="checkbox" v-model="resource_support" />
                                             <span>Resource Support</span>
                                             <span class="checkmark"></span>
                                         </label>
-                                        <div class="col-md-12" id="resourcediv">
+                                        <div class="col-md-12" id="resourcediv" v-if="resource_support == 1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="veterans_services" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="veterans_services"  id="veterans_services" value="1" class="RRclass veterans_services" formControlName="checkbox" />
+                                            <input type="checkbox" name="veterans_services"  id="veterans_services" value="1" class="RRclass veterans_services" formControlName="checkbox" v-model="veterans_services" />
                                             <span>Veterans Services</span>
                                             <span class="checkmark"></span>
                                         </label>
-
-                                        <div class="col-md-12" id="veteransdiv">
+                                        <div class="col-md-12" id="veteransdiv" v-if="veterans_services ==  1">
                                             <span class="checkmark"></span>
                                         </div>
                                     </div> 
                                     <div class="col-md-4">
                                         <label for="authorized_cm_only" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="authorized_cm_only"  id="authorized_cm_only" value="1" class="RRclass authorized_cm_only" formControlName="checkbox" />
+                                            <input type="checkbox" name="authorized_cm_only" id="authorized_cm_only" value="1" class="RRclass authorized_cm_only" formControlName="checkbox" v-model="authorized_cm_only" />
                                             <span><b>Authorized CM Only:</b></span>
                                             <span class="checkmark"></span>
                                         </label>
-
-                                        <div class="col-md-12" id="authorizeddiv">
+                                        <div class="col-md-12" id="authorizeddiv" v-if="authorized_cm_only == 1">
                                             <span class="checkmark"></span>
                                         </div> 
                                     </div>
@@ -188,7 +197,6 @@
                             </div>
                         </div>
                     </form>
-                    <div v-on:click="deleteCallWrapup(1)">testing</div>
                 </div>
             </div>
         </div>
@@ -201,6 +209,7 @@ import {
     ref,
     onMounted,
     AgGridTable,
+    computed,
 } from '../../../commonImports';
 import axios from 'axios';
 
@@ -218,6 +227,20 @@ export default {
         const loading = ref(false);
         const callWrapUpStageId = ref(0);
         let callWrapUpTime = ref(null);
+        const activityData = ref([]);
+        const groupedData = ref([]);
+        const routine_response = ref(false);
+        const urgent_emergent_response = ref(false);
+        const referral_order_support = ref(false);
+        // ... Other checkboxes ...
+
+        // Data property to hold the selected checkboxes and corresponding data
+        const selectedCheckboxes = ref({
+            routine_response: false,
+            urgent_emergent_response: false,
+            referral_order_support: false,
+            // ... Other checkboxes ...
+        });
 
         const callWrapColumnDefs = ref([
             {
@@ -324,11 +347,65 @@ export default {
             window.deleteCallWrapup = deleteCallWrapup;
         };
 
+        const fetchCheckboxData = async () => {
+            // if (routine_response.value) {
+                try {
+                    const response = await axios.get('/ccm/monthly-monitoring-call-wrap-up-activities/activities');
+                    console.log("data", response);
+                    activityData.value = response.data;
+                    groupedData.value = computeGroupedData();
+                    // for (let j = 0; j < response.data.length; j++) {
+                    //     let a = response.data[j].activity;
+                    //     let a2 = a.replace(/ /g, "_");
+                    //     let a1 = a2.replace(/\//g, "_");
+                    //     let acttype = [];
+                    //     let classname = "RRclass " + a1;
+                    //     // console.log("a1", a1);
+                    //     // console.log("classname", classname);
+                    //     if (response.data[j].activity_type == 'Routine Response') {
+                    //     console.log("a1", a1);
+                    //     console.log("classname", classname);
+                    //     }
+                    // }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            // } else {
+            //     this.data = [];
+            // }
+        }
+        
+        const computeGroupedData = () => {
+            const groups = [];
+            if (selectedCheckboxes.value.routine_response) {
+                groups.push({
+                    name: 'Routine Response',
+                    items: activityData.value.filter(item => item.type === 'routine_response'),
+                });
+            }
+            if (selectedCheckboxes.value.urgent_emergent_response) {
+                groups.push({
+                    name: 'Urgent/Emergent Response',
+                    items: activityData.value.filter(item => item.type === 'urgent_emergent_response'),
+                });
+            }
+            if (selectedCheckboxes.value.referral_order_support) {
+                groups.push({
+                    name: 'Referral/Order Support',
+                    items: activityData.value.filter(item => item.type === 'referral_order_support'),
+                });
+            }
+            // ... Add other groups ...
+
+            return groups;
+        };
+
         onMounted(async () => {
             try {
                 fetchCallWrapUpList();
                 exposeDeleteCallWrapup();
                 getStageID();
+                fetchCheckboxData();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -343,7 +420,12 @@ export default {
             fetchCallWrapUpList,
             submitCallWrapUpFormData,
             deleteCallWrapup,
-            
+            fetchCheckboxData,
+            groupedData,
+            routine_response,
+            urgent_emergent_response,
+            referral_order_support,
+            selectedCheckboxes,
         };
     }
 }

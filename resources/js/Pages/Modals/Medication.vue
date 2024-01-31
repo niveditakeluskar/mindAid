@@ -98,7 +98,7 @@
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="pharmacy_phone_no">Pharmacy Phone Number</label>
-                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" v-mask="'(###) ###-####'" />
+                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" v-mask="'(###) ###-####'" v-model="phoneNumber" />
                                                             <div class="invalid-feedback" v-if="formErrors.pharmacy_phone_no" style="display: block;">{{ formErrors.pharmacy_phone_no[0] }}</div>
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
@@ -173,12 +173,14 @@ export default {
             isOpen: false,
             formErrors: {},
             showAlert: false,
+            phoneNumber: '',
         };
     },
     directives: { VueMask },
     components: {
         LayoutComponent,
         AgGridTable,
+        VueMask,
     },
     methods: {
         openModal() {
