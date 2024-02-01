@@ -60,10 +60,9 @@ use RCare\Ccm\Http\Requests\CallCloseAddRequest;
 use RCare\Ccm\Http\Requests\CallwrapAddRequest;
 use RCare\Ccm\Http\Requests\FollowupAddRequest;
 use RCare\Ccm\Http\Requests\FollowupInertiaAddRequest;
-use RCare\Ccm\Http\Requests\TextAddRequest; 
+use RCare\Ccm\Http\Requests\TextAddRequest;
 use RCare\Ccm\src\Http\Requests\CarePlanSaveRequest;
 use RCare\Messaging\Models\MessageLog;
-
 use RCare\Org\OrgPackages\CarePlanTemplate\src\Models\CarePlanTemplate;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\Diagnosis;
@@ -3095,7 +3094,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $sequence            = 5;
         $emr_entry_completed = empty(sanitizeVariable($request->emr_entry_completed)) ? '0' : sanitizeVariable($request->emr_entry_completed);
         $emr_monthly_summary = sanitizeVariable($request->emr_monthly_summary);
-        $emr_monthly_summary_date = sanitizeVariable($request->emr_monthly_summary_date);
+        $emr_monthly_summary_date = $request->has('emr_monthly_summary_date') ? sanitizeVariable($request->emr_monthly_summary_date) : "";
         //record time
         $start_time          = sanitizeVariable($request->start_time);
         $end_time            = sanitizeVariable($request->end_time);
@@ -3114,26 +3113,27 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $last_sub_sequence   = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
         $new_sub_sequence    = $last_sub_sequence + 1;
 
-        $routine_response = sanitizeVariable($request->routine_response);
-        $urgent_emergent_response = sanitizeVariable($request->urgent_emergent_response);
-        $referral_order_support = sanitizeVariable($request->referral_order_support);
-        $medication_support = sanitizeVariable($request->medication_support);
-        $verbal_education_review_with_patient = sanitizeVariable($request->verbal_education_review_with_patient);
-        $mailed_documents = sanitizeVariable($request->mailed_documents);
-        $resource_support = sanitizeVariable($request->resource_support);
-        $veterans_services = sanitizeVariable($request->veterans_services);
-        $authorized_cm_only = sanitizeVariable($request->authorized_cm_only);
-        $no_additional_services_provided = sanitizeVariable($request->no_additional_services_provided);
+        $routine_response = $request->has('routine_response') ? sanitizeVariable($request->routine_response) : false;
+        $urgent_emergent_response = $request->has('urgent_emergent_response') ? sanitizeVariable($request->urgent_emergent_response) : false;
+        $referral_order_support = $request->has('referral_order_support') ? sanitizeVariable($request->referral_order_support) : false;
+        $medication_support = $request->has('medication_support') ? sanitizeVariable($request->medication_support) : false;
+        $verbal_education_review_with_patient = $request->has('verbal_education_review_with_patient') ? sanitizeVariable($request->verbal_education_review_with_patient) : false;
+        $mailed_documents = $request->has('mailed_documents') ? sanitizeVariable($request->mailed_documents) : false;
+        $resource_support = $request->has('resource_support') ? sanitizeVariable($request->resource_support) : false;
+        $veterans_services = $request->has('veterans_services') ? sanitizeVariable($request->veterans_services) : false;
+        $authorized_cm_only = $request->has('authorized_cm_only') ? sanitizeVariable($request->authorized_cm_only) : false;
+        $no_additional_services_provided = $request->has('no_additional_services_provided') ? sanitizeVariable($request->no_additional_services_provided) : false;
 
-        $routineresponse = sanitizeVariable($request->routineresponse);
-        $urgentemergentresponse = sanitizeVariable($request->urgentemergentresponse);
-        $referralordersupport = sanitizeVariable($request->referralordersupport);
-        $medicationsupport = sanitizeVariable($request->medicationsupport);
-        $verbaleducationreviewwithpatient = sanitizeVariable($request->verbaleducationreviewwithpatient);
-        $maileddocuments = sanitizeVariable($request->maileddocuments);
-        $resourcesupport = sanitizeVariable($request->resourcesupport);
-        $veteransservices = sanitizeVariable($request->veteransservices);
-        $authorizedcmonly = sanitizeVariable($request->authorizedcmonly);
+        $routineresponse = $request->has('routineresponse') ? sanitizeVariable($request->routineresponse) : [];
+        $urgentemergentresponse = $request->has('urgentemergentresponse') ? sanitizeVariable($request->urgentemergentresponse) : [];
+        $referralordersupport = $request->has('referralordersupport') ? sanitizeVariable($request->referralordersupport) : [];
+        $medicationsupport = $request->has('medicationsupport') ? sanitizeVariable($request->medicationsupport) : [];
+        $verbaleducationreviewwithpatient = $request->has('verbaleducationreviewwithpatient') ? sanitizeVariable($request->verbaleducationreviewwithpatient) : [];
+        $maileddocuments = $request->has('maileddocuments') ? sanitizeVariable($request->maileddocuments) : [];
+        $resourcesupport = $request->has('resourcesupport') ? sanitizeVariable($request->resourcesupport) : [];
+        $veteransservices = $request->has('veteransservices') ? sanitizeVariable($request->veteransservices) : [];
+        $authorizedcmonly = $request->has('authorizedcmonly') ? sanitizeVariable($request->authorizedcmonly) : [];
+        // dd($authorizedcmonly);
 
         $servicesdata1 = '';
         $servicesdata2 = '';
@@ -3250,7 +3250,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
             if ($routine_response == true) {
                 foreach ($routineresponse as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s1 = str_replace('_', ' ', $key);
                         $servicesdata1 = $servicesdata1 . $s1 . ", ";
                     }
@@ -3259,7 +3259,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             if ($urgent_emergent_response == true) {
                 foreach ($urgentemergentresponse as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s2 = str_replace('_', ' ', $key);
                         $servicesdata2 = $servicesdata2 . $s2 . ", ";
                     }
@@ -3267,8 +3267,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $additionalservices2 = "Urgent/Emergent Response:" . $servicesdata2 . ";";
             }
             if ($referral_order_support == true) {
-                foreach ($referralordersupport as $key1 => $value1) {
-                    if ($value1 == 1) {
+                foreach ($referralordersupport as $key1 => $value) {
+                    if ($value == 1 || $value == true) {
                         $s3 = str_replace('_', ' ', $key1);
                         $servicesdata3 = $servicesdata3 . $s3 . ", ";
                     }
@@ -3278,7 +3278,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
             if ($medication_support == true) {
                 foreach ($medicationsupport as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s4 = str_replace('_', ' ', $key);
                         $servicesdata4 = $servicesdata4 . $s4 . ", ";
                     }
@@ -3288,7 +3288,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             if ($verbal_education_review_with_patient == true) {
                 foreach ($verbaleducationreviewwithpatient as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s5 = str_replace('_', ' ', $key);
                         $servicesdata5 = $servicesdata5 . $s5 . ", ";
                     }
@@ -3298,7 +3298,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             if ($mailed_documents == true) {
                 foreach ($maileddocuments as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s6 = str_replace('_', ' ', $key);
                         $servicesdata6 = $servicesdata6 . $s6 . ", ";
                     }
@@ -3307,7 +3307,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             }
             if ($resource_support == true) {
                 foreach ($resourcesupport as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s7 = str_replace('_', ' ', $key);
                         $servicesdata7 = $servicesdata7 . $s7 . ", ";
                     }
@@ -3319,104 +3319,104 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
             if ($veterans_services == true) {
                 foreach ($veteransservices as $key => $value) {
-                    if ($value == 1) {
+                    if ($value == 1 || $value == true) {
                         $s8 = str_replace('_', ' ', $key);
                         $servicesdata8 = $servicesdata8 . $s8 . ", ";
                     }
 
                     $additionalservices8 = "Veterans Services:" . $servicesdata8 . ";";
                 }
-
-
-                if ($authorized_cm_only == true) {
-                    foreach ($authorizedcmonly as $key => $value) {
-                        if ($value == 1) {
-                            $s9 = str_replace('_', ' ', $key);
-                            $servicesdata9 = $servicesdata9 . $s9 . ", ";
-                        }
-                    }
-                    $additionalservices9 = "Authorized CM Only:" . $servicesdata9 . ";";
-                }
-
-
-                if ($no_additional_services_provided == true) {
-                    $additionalservices10 = "No Additional Services Provided";
-                    $servicedata =   $additionalservices10;
-                } else {
-                    $servicedata = $additionalservices1 . " " . $additionalservices2 . " " . $additionalservices3 . " " . $additionalservices4 . " " . $additionalservices5 . " " . $additionalservices6 . " " . $additionalservices7 . " " . $additionalservices8 . " " . $additionalservices9;
-                }
-
-
-                $additional_services_data = array(
-                    'uid'                       => $uid,
-                    'record_date'               => Carbon::now(),
-                    'topic'                     => 'Additional Services:',
-                    'notes'                     => $servicedata,
-                    'created_by'                => session()->get('userid'),
-                    'patient_id'                => $patient_id,
-                    'status'                    => 1
-                );
-
-                $cd =  CallWrap::where('patient_id', $patient_id)
-                    ->where('topic', 'like', 'Additional Services :%')
-                    ->whereMonth('created_at', date('m'))
-                    ->whereYear('created_at', date('Y'))
-                    ->update(['status' => 0]);
-                CallWrap::create($additional_services_data);
-                $record_time  = CommonFunctionController::recordTimeSpent(
-                    $start_time,
-                    $end_time,
-                    $patient_id,
-                    $module_id,
-                    $component_id,
-                    $stage_id,
-                    $billable,
-                    $uid,
-                    $step_id,
-                    $form_name,
-                    $form_start_time,
-                    $form_save_time
-                );
-                if ($additionalservices6 != '') {
-                    $form_name = $form_name . '_additional_services';
-                    $check =  PatientTimeRecords::where('patient_id', $patient_id)
-                        ->whereMonth('record_date', $currentmonth)->whereYear('record_date', $currentyear)
-                        ->where('form_name', $form_name)->exists();
-                    if ($check != true) {
-                        // print_r($start_time .'====='. $end_time); die;
-                        $start_time = "00:00:00";
-                        $time2 = "00:04:00";
-                        $st = strtotime("00-00-0000 00:00:00");
-                        $et = strtotime("00-00-0000 00:04:00");
-                        $form_start_time1 =  date("m-d-Y H:i:s", $st);
-                        $form_save_time1 =  date("m-d-Y H:i:s", $et);
-                        $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00");
-                        $end_time = date("H:i:s", strtotime($start_time) + $secs);
-                        $record_time  = CommonFunctionController::recordTimeSpent(
-                            $start_time,
-                            $end_time,
-                            $patient_id,
-                            $module_id,
-                            $component_id,
-                            $stage_id,
-                            $billable,
-                            $uid,
-                            $step_id,
-                            $form_name,
-                            $form_start_time1,
-                            $form_save_time1
-                        );
-                    }
-                }
-                DB::commit();
-                return response(['form_start_time' => $form_save_time]);
             }
+            if ($authorized_cm_only == true) {
+                foreach ($authorizedcmonly as $key => $value) {
+                    if ($value == 1 || $value == true) {
+                        $s9 = str_replace('_', ' ', $key);
+                        $servicesdata9 = $servicesdata9 . $s9 . ", ";
+                    }
+                }
+                $additionalservices9 = "Authorized CM Only:" . $servicesdata9 . ";";
+            }
+
+
+            if ($no_additional_services_provided == true) {
+                $additionalservices10 = "No Additional Services Provided";
+                $servicedata =   $additionalservices10;
+            } else {
+                $servicedata = $additionalservices1 . " " . $additionalservices2 . " " . $additionalservices3 . " " . $additionalservices4 . " " . $additionalservices5 . " " . $additionalservices6 . " " . $additionalservices7 . " " . $additionalservices8 . " " . $additionalservices9;
+            }
+
+            // dd($servicedata);
+            $additional_services_data = array(
+                'uid'                       => $uid,
+                'record_date'               => Carbon::now(),
+                'topic'                     => 'Additional Services:',
+                'notes'                     => $servicedata,
+                'created_by'                => session()->get('userid'),
+                'patient_id'                => $patient_id,
+                'status'                    => 1
+            );
+
+            $cd =  CallWrap::where('patient_id', $patient_id)
+                ->where('topic', 'like', 'Additional Services :%')
+                ->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))
+                ->update(['status' => 0]);
+            CallWrap::create($additional_services_data);
+            $record_time  = CommonFunctionController::recordTimeSpent(
+                $start_time,
+                $end_time,
+                $patient_id,
+                $module_id,
+                $component_id,
+                $stage_id,
+                $billable,
+                $uid,
+                $step_id,
+                $form_name,
+                $form_start_time,
+                $form_save_time
+            );
+
+            if ($additionalservices6 != '') {
+                $form_name = $form_name . '_additional_services';
+                $check =  PatientTimeRecords::where('patient_id', $patient_id)
+                    ->whereMonth('record_date', $currentmonth)->whereYear('record_date', $currentyear)
+                    ->where('form_name', $form_name)->exists();
+                if ($check != true) {
+                    // print_r($start_time .'====='. $end_time); die;
+                    $start_time = "00:00:00";
+                    $time2 = "00:04:00";
+                    $st = strtotime("00-00-0000 00:00:00");
+                    $et = strtotime("00-00-0000 00:04:00");
+                    $form_start_time1 =  date("m-d-Y H:i:s", $st);
+                    $form_save_time1 =  date("m-d-Y H:i:s", $et);
+                    $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00");
+                    $end_time = date("H:i:s", strtotime($start_time) + $secs);
+                    $record_time  = CommonFunctionController::recordTimeSpent(
+                        $start_time,
+                        $end_time,
+                        $patient_id,
+                        $module_id,
+                        $component_id,
+                        $stage_id,
+                        $billable,
+                        $uid,
+                        $step_id,
+                        $form_name,
+                        $form_start_time1,
+                        $form_save_time1
+                    );
+                }
+            }
+            // DB::commit();
+            // }
             // catch (\Exception $ex) {
             // DB::rollBack();
             // // return $ex;
             //     return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
             // }
             DB::commit();
+            return response(['form_start_time' => $form_save_time]);
         } catch (\Exception $ex) {
             DB::rollBack();
             // return $ex;
