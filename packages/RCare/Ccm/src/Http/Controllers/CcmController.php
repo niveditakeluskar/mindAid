@@ -1046,9 +1046,15 @@ class CcmController extends Controller
         $status_flag = sanitizeVariable($request->status_flag);
         $task_date = !empty(sanitizeVariable($request->task_date)) ? sanitizeVariable($request->task_date . '  12:00:00') : null;
         $id = sanitizeVariable($request->id);
-        $fetch_topic = ToDoList::where('id', $id)->get();
+        $fetch_topic = ToDoList::whereNotNull('id', $id)->get();
+        if(!empty($fetch_topic)){
         $task_date_cw = $fetch_topic[0]->task_date;
         $task_time = $fetch_topic[0]->task_time;
+        }else{
+            $task_date_cw = '';
+            $task_time = '';
+        }
+        
         if (!empty($task_date_cw)) {
             $date = explode(' ', $task_date);
             $t_date = '- Scheduled on -' . $date[0] . ' ' . $task_time;
@@ -1059,14 +1065,21 @@ class CcmController extends Controller
         if (!empty($assigned_on)) {
             $date = explode(' ', $assigned_on);
             $a_date = date('m-d-Y', strtotime($date[0]));
+            $task = $fetch_topic[0]->task_notes;
+            $task_id = $fetch_topic[0]->id;
+            $patient_id = $fetch_topic[0]->patient_id;
+            $mid = $fetch_topic[0]->module_id;
+            $cid = $fetch_topic[0]->component_id;
         } else {
+            $date = '';
             $a_date = '';
+            $task = '';
+            $task_id = '';
+            $patient_id = '';
+            $mid = '';
+            $cid = '';
         }
-        $task = $fetch_topic[0]->task_notes;
-        $task_id = $fetch_topic[0]->id;
-        $patient_id = $fetch_topic[0]->patient_id;
-        $mid = $fetch_topic[0]->module_id;
-        $cid = $fetch_topic[0]->component_id;
+
         $task_date_formate_change = date('m-d-Y');
         $sequence              = 7;
         $last_sub_sequence     = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
@@ -1084,7 +1097,7 @@ class CcmController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
-        try {
+      
             if ($status_flag == 1) {
                 $check = CallWrap::where('task_id', $task_id)->exists();
                 if ($check == true) {
@@ -1137,10 +1150,7 @@ class CcmController extends Controller
             }
             DB::commit();
             return response(['form_start_time' => $form_save_time]);
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+       
     }
 
     public function changeTodoStatusFlag(Request $request)
@@ -3628,7 +3638,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
     public function SaveFollowUpInertia(FollowupInertiaAddRequest $request)
     {
-        // dd($request);
+         //dd($request->all());
         $patient_id            = sanitizeVariable($request->input('patient_id'));
         $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete);
         $notes                 = sanitizeVariable($request->notes);
@@ -3650,8 +3660,9 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $folllowUpTaskData     = sanitizeVariable($request->folllowUpTaskData);
         // DB::beginTransaction();
         // try {
-        if ($folllowUpTaskData[0]['task_name'] != '') {
-        }
+     /*    if ($folllowUpTaskData[0]['task_name'] != '') {
+        
+        } */
 
         // if ($followupmaster_task[0] != '' && $emr_complete == '1') {
         //     foreach ($followupmaster_task as $i => $value) {

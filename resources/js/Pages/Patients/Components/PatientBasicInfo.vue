@@ -153,17 +153,17 @@
                                             <span v-for="(service, index) in enrolledServices" :key="index"
                                                 v-html="service"></span>
                                         </span>
-                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
+                                        <a v-if="hasCCMAndRPM" style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
                                             @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
                                                 data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
+                                        <AddDeviceModal v-if="hasCCMAndRPM" ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a v-if="hasCCMAndRPM" class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
-                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
+                                        <DeviceModal v-if="hasCCMAndRPM" ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
 
 
@@ -260,7 +260,7 @@
     </div>
 </template>
 <script>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted, defineProps,computed } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import axios from 'axios';
@@ -385,14 +385,21 @@ export default {
             callExternalFunctionWithParams(props.patientId, pstatus);
         }
 
+        const hasCCMAndRPM = computed(() => {
+            if (enrolledServices.value && enrolledServices.value.length > 0) {
+/*     const includesCCM = enrolledServices.value.some(service => service.includes('CCM')); */
+    const includesRPM = enrolledServices.value.some(service => service.includes('RPM'));
+    return includesRPM;
+  } else {
+    return false;
+  }  
+    });
 
         const add_devicesfunction = async () => {
-            console.log("openModeladdDevices");
             AddDeviceModalRef.value.openModal();
         };
 
         const add_additional_devicesfunction = async () => {
-            //additional_devicesRef.value.openModal();
             DeviceModalRef.value.openModal();
         };
 
@@ -403,7 +410,7 @@ export default {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
                 }
-                console.log('Fetched Patient VeteranService details:', response.data);
+
             } catch (error) {
                 console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
                 // Handle the error appropriately
@@ -416,7 +423,7 @@ export default {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
                 }
-                console.log('Fetched Patient alertThreshold details:', response.data);
+               
             } catch (error) {
                 console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
                 // Handle the error appropriately
@@ -424,27 +431,27 @@ export default {
         }
 
         const veteranServicefunction = async () => {
-            console.log("openMModelV called");
+        
             veteranRef.value.openModal();
             // patComDetails();
         }
 
         const alertThresholdfunction = async () => {
             // Access the modal component through the ref
-            console.log("openMModel called");
+   
             alertThresholdsRef.value.openModal();
             //   patComDetails();
         };
 
 
         const personalnotesfunction = async () => {
-            console.log("openMModelpersonal notes called");
+    
             personalnotesRef.value.openModal();
             // patComDetails();
         };
 
         const researchstudyfunction = async () => {
-            console.log("openModelResearchStudy");
+         
             researchstudyRef.value.openModal();
             // patComDetails();
         };
@@ -546,6 +553,7 @@ export default {
                     }
                 }
                 enrolledServices.value = enrollServices;
+            
 
             } catch (error) {
                 console.error('Error fetching Patient details:', error.message); // Log specific error message
@@ -667,6 +675,7 @@ export default {
         });
 
         return {
+            hasCCMAndRPM,
             patientServiceStatus,
             AddDeviceModalRef,
             DeviceModalRef,
