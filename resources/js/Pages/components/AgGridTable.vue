@@ -20,7 +20,7 @@
         </div>
         <ag-grid-vue class="ag-theme-quartz-dark" :gridOptions="gridOptions" :defaultColDef="defaultColDef"
             :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady" :suppressExcelExport="true"
-            :paginationPageSizeSelector="paginationPageSizeSelector"
+            :paginationPageSizeSelector="paginationPageSizeSelector" :headerHeight="headerHeight"
             :popupParent="popupParent"></ag-grid-vue>
 
     </div>
@@ -50,10 +50,11 @@ export default {
          const popupParent = ref(null);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
-
+        const headerHeight = ref(null);
   
 
         onBeforeMount(() => {
+            headerHeight.value = 70;
             if (!props.popupParent) {
         props.popupParent = document.body;
       }
@@ -100,6 +101,10 @@ export default {
 			flex: 1,
 			minWidth: 100,
 			editable: false,
+            resizable: true,
+      sortable: true,
+      wrapText: true,
+      autoHeight: true,
         });
 
         const gridOptions = ref({
@@ -237,7 +242,8 @@ export default {
             popupParent,
             copySelectedRows,
             exportAsPDF,
-            paginationPageSizeSelector
+            paginationPageSizeSelector,
+            headerHeight
         };
     },
 };
