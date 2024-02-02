@@ -743,3 +743,8 @@ export default {
 };
 
 </script> 
+<style>
+a:not([href]):not([tabindex]) {
+    color: #FFFFFF;
+}
+</style>
