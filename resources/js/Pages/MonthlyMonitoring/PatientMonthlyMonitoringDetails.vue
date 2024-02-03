@@ -72,21 +72,36 @@ export default {
       };
 
       const selectedComponent = computed(() => {
-         switch (activeTab.value) {
-            case 0:
-               return Preparation;
-            case 1:
-               return SubStepConditionReview;
-            case 2:
-               return Call;
-            case 3:
-               return FollowUp;
-            case 4:
-               return Text;
-            default:
-               return Preparation;
+      if (props.moduleId === 2) {
+            switch (activeTab.value) {
+               case 0:
+                  return Preparation;
+               case 1:
+                  return SubStepConditionReview;
+               case 2:
+                  return Call;
+               case 3:
+                  return FollowUp;
+               case 4:
+                  return Text;
+               default:
+                  return null;
+            }
+         } else {
+            switch (activeTab.value) {
+               case 0:
+                  return Preparation;
+               case 1:
+                  return Call;
+               case 2:
+                  return FollowUp;
+               case 3:
+                  return Text;
+               default:
+                  return null;
+            }
          }
-      });
+    });
       return {
          activeTab,
          tabs,
