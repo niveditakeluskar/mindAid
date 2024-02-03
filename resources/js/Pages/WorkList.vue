@@ -402,18 +402,29 @@ export default {
     }
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
-      try {
-        const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch patient list');
-        }
-        const data = await response.json();
-        passRowData.value = data.data || [];
-      } catch (error) {
-        console.error('Error fetching patient list:', error);
-        loading.value = false;
+  try {
+    const cacheKey = `${practice_id}_${patient_id}_${module_id}_${timeoption}_${time}_${activedeactivestatus}`;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    if (cachedData) {
+      // If cached data exists, use it directly
+      passRowData.value = JSON.parse(cachedData);
+    } else {
+      // Fetch data from the server
+      const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch patient list');
       }
-    };
+      const data = await response.json();
+      // Store fetched data in sessionStorage for caching
+      sessionStorage.setItem(cacheKey, JSON.stringify(data.data || []));
+      passRowData.value = data.data || [];
+    }
+  } catch (error) {
+    console.error('Error fetching patient list:', error);
+    loading.value = false;
+  }
+};
+
 
     return {
       PatientStatusRef,
