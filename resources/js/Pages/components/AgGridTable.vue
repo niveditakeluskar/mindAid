@@ -87,8 +87,8 @@ export default {
             gridApi.value.showLoadingOverlay();
             gridColumnApi.value = params.columnApi;
             paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-            params.api.sizeColumnsToFit(); 
-
+          /*   params.api.sizeColumnsToFit();  */
+            
             // Pass gridApi to the parent component
             if (props.onGridReady) {
                 props.onGridReady(params);
@@ -97,14 +97,11 @@ export default {
 
         const defaultColDef = ref({
             sortable: true,
-			filter: true,
-			flex: 1,
-			minWidth: 100,
 			editable: false,
-            resizable: true,
-      sortable: true,
-      wrapText: true,
+            resizable: false,
+       wrapText: true,
       autoHeight: true,
+      flex:1
         });
 
         const gridOptions = ref({
@@ -217,10 +214,6 @@ export default {
 
     doc.save('Renova_Healthcare.pdf');
 }
-
-
-
-
         const onFilterTextBoxChanged = () => {
             if (gridApi.value) {
                 gridApi.value.setGridOption(
@@ -271,8 +264,21 @@ export default {
     --ag-cell-horizontal-border: solid 1px #ddd;
     /* Border color for cells in the header */
     --ag-border-color: rgb(255, 255, 255);
-    --ag-font-size: 17px;
-    --ag-font-family: monospace;
+    --ag-font-size: 0.813rem;
+    --ag-font-family: Ubuntu, sans-serif;
+    --ag-font-color: #3f829a;
+    
+    --ag-grid-size: 10px;
+    --ag-list-item-height: 20px;
+
+}
+
+.ag-theme-quartz .ag-header-cell,
+.ag-theme-quartz-dark .ag-header-cell {
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+  width: 120px;
 }
 
 /* Borders for regular cells */
@@ -283,6 +289,13 @@ export default {
 /* Borders for header cells */
 .ag-header-cell {
     border: var(--ag-borders);
+}
+
+.ag-cell-value {
+  line-height: 20px !important;
+  word-break: normal; /* prevent words from breaking */
+  padding-top: 5px; /* space top */
+  padding-bottom: 5px; /* space bottom */
 }
 
 /* Borders for rows */
@@ -304,6 +317,8 @@ export default {
 .ag-root-wrapper {
     border: var(--ag-borders);
 }
+
+
 
 .loading-spinner {
     display: flex;
