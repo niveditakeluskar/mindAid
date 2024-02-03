@@ -1,7 +1,7 @@
 <template>
     <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
     <div class="modal fade" :class="{ 'open': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
-        <div class="modal-content">
+        <div class="modal-content followup-modal-content">
             <form name="followup_task_edit_notes" id="followup_task_edit_notes" @submit.prevent="submitFormModal">
             <div class="modal-header">
                 <h4 class="modal-title">Modify Followup Task</h4>
@@ -203,7 +203,7 @@ const formatDate = (dateString) => {
       display: block;
   }
 
-  .modal-content {
+  .followup-modal-content {
       overflow-y: auto !important;
       height: 500px !important;
   }

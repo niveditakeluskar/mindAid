@@ -29,7 +29,7 @@
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 
                                                     <div class="form-row col-md-12">
-                                                        <input type="hidden" name="id" id="medication_id"/>
+                                                        <input type="hidden" name="id" id="medication_id" v-model="medication_id"/>
                                                         <input type="hidden" name="uid" :value="patientId"/>
                                                         <input type="hidden" name="patient_id" :value="patientId"/>
                                                         <input type="hidden" name="start_time" value="00:00:00"> 
@@ -43,7 +43,7 @@
                                                         <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime">
                                                         <div class="col-md-6 form-group mb-3 med_id">
                                                             <label for="medication_med_id">Select Medication<span class='error'>*</span></label> 
-                                                            <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication">
+                                                            <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication" @change="onMedicationChanged()">
                                                                 <option value="">Select Medication</option>
                                                                 <option v-for="medication in medications" :key="medication.id" :value="medication.id">
                                                                     {{ medication.description }}
@@ -197,6 +197,7 @@ export default {
         let pharmacy_phone_no = ref('');
         let drug_reaction = ref('');
         let pharmacogenetic_test = ref('');
+        let medication_id = ref('');
         let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
@@ -235,13 +236,13 @@ export default {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-medications-medicationslist/${props.patientId}`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch followup task list');
+                    throw new Error('Failed to fetch patient medication list');
                 }
                 loading.value = false;
                 const data = await response.json();
                 passRowData.value = data.data;
             } catch (error) {
-                console.error('Error fetching followup task list:', error);
+                console.error('Error fetching patient medication list:', error);
                 loading.value = false;
             }
         };
@@ -286,6 +287,7 @@ export default {
                     pharmacy_phone_no.value = null;
                     drug_reaction.value = null;
                     pharmacogenetic_test.value = null;
+                    medication_id.value = null;
                     setTimeout(() => {
                         showAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
@@ -355,8 +357,9 @@ export default {
             try {
                 const serviceToEdit = passRowData.value.find(service => service.id == id);
                 if (serviceToEdit) {
-                    const form = document.getElementById('medications_form');
-                    form.querySelector('#medication_id').value = serviceToEdit.id;
+                    // const form = document.getElementById('medications_form');
+                    // form.querySelector('#medication_id').value = serviceToEdit.id;
+                    medication_id.value = serviceToEdit.id;
                     selectedMedication.value = serviceToEdit.med_id;
                     description.value = serviceToEdit.description;
                     purpose.value = serviceToEdit.purpose;
@@ -399,6 +402,37 @@ export default {
             isOpen.value = false;
         };
 
+        let onMedicationChanged = async () => {
+            let med_id = selectedMedication.value;
+            try {
+                loading.value = true;
+                const response = await axios.get(`/ccm/get-selected-medications_patient-by-id/${props.patientId}/${med_id}/selectedmedicationspatient`);
+                if (response && response.status == 200) {
+                    loading.value = false;
+                    let data = response.data?.medications_form?.static ?? null;
+                    if (data) {
+                        console.log("onMedChanged", data);
+                        medication_id.value = data.id;
+                        selectedMedication.value = data.med_id;
+                        description.value = data.description;
+                        purpose.value = data.purpose;
+                        strength.value = data.strength;
+                        dosage.value = data.dosage;
+                        route.value = data.route;
+                        frequency.value = data.frequency;
+                        duration.value = data.duration;
+                        pharmacy_name.value = data.pharmacy_name;
+                        pharmacy_phone_no.value = data.pharmacy_phone_no;
+                        drug_reaction.value = data.drug_reaction;
+                        pharmacogenetic_test.value = data.pharmacogenetic_test;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching patient medication:', error);
+                loading.value = false;
+            }
+        }
+
         onBeforeMount(() => {
             fetchPatientMedicationList();
             fetchMedications();
@@ -435,6 +469,7 @@ export default {
             pharmacy_phone_no,
             drug_reaction,
             pharmacogenetic_test,
+            medication_id,
             medicationTime,
             medicationStageId,
             stepID,
@@ -445,6 +480,7 @@ export default {
             openModal,
             closeModal,
             isOpen,
+            onMedicationChanged,
         };
     }
 

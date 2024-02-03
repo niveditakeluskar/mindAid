@@ -82,11 +82,7 @@ export default {
         const loading = ref(false);
        
         const dialysisServiceRowData = ref([]);
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        const columnDefs = ref({
-            value: [
+        const columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -116,8 +112,7 @@ export default {
                         return row && row.action ? row.action : '';
                     },
                 },
-            ]
-        });
+            ]);
         
         const fetchPatientDialysisServiceList = async () => {
             try {
@@ -125,13 +120,13 @@ export default {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/3`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch followup task list');
+                    throw new Error('Failed to fetch services list');
                 }
                 loading.value = false;
                 const data = await response.json();
                 dialysisServiceRowData.value = data.data;
             } catch (error) {
-                console.error('Error fetching followup task list:', error);
+                console.error('Error fetching services list:', error);
                 loading.value = false;
             }
         };
@@ -149,7 +144,7 @@ export default {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showDialysisAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.data.form_start_time);
+                    $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientDialysisServiceList();
                     document.getElementById("service_dialysis_form").reset();
                     setTimeout(() => {

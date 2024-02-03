@@ -18,18 +18,18 @@
                             <div class="col-md-11">
                                 <div class="form-row">
                                     <div class="col-md-2 right-divider">
-                                        <span data-toggle="tooltip" data-placement="top" title="Name"
-                                            :textContent="patientName"></span><br />
-                                        <span data-toggle="tooltip" title="Gender">
+                                        <div data-toggle="tooltip" data-placement="top" title="Name"
+                                            :textContent="patientName" class="mb-1"></div>
+                                        <div data-toggle="tooltip" title="Gender" class="mb-1">
                                             <span v-if="patientGender == '0'">Male | <span
                                                     :textContent="patientAge"></span></span>
                                             <span v-else-if="patientGender == '1'">Female |( <span
                                                     :textContent="patientAge"></span> )</span>
                                             <span v-else>'| '</span>
-                                        </span>
-                                        <span data-toggle="tooltip" title="DOB" :textContent="patientDob"></span><br />
-                                        <span data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
-                                            data-original-title="Patient FIN Number" style="padding-right:2px;">
+                                        </div>
+                                        <div data-toggle="tooltip" title="DOB" :textContent="patientDob" class="mb-1"></div>
+                                        <div data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
+                                            data-original-title="Patient FIN Number" class="mb-1 pr-4">
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber"
                                                 @click="patient_finnumber_function"
@@ -39,7 +39,7 @@
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
                                                 :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
-                                        </span><br />
+                                        </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
@@ -53,21 +53,21 @@
 
                                     </div>
                                     <div class="col-md-3 right-divider">
-                                        <span data-toggle="tooltip" data-placement="right" title="Contact Number"><i
-                                                class="text-muted i-Old-Telephone"></i> : <b></b><span
-                                                :textContent="patientMob"></span></span><br>
-                                        <span data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text"
-                                            data-original-title="Consent Text" style="padding-right:2px;"><i
+                                        <div data-toggle="tooltip" data-placement="right" title="Contact Number" class="mb-1"><i
+                                                class="text-muted i-Old-Telephone"></i> : <b><span
+                                                    :textContent="patientMob"></span></b></div>
+                                        <div data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text"
+                                            data-original-title="Consent Text" class="mb-1 pr-4"><i
                                                 class="text-muted i-Speach-Bubble-Dialog"></i> : <span id="concent_to_text"
                                                 class="patient_concent_to_text"> Consent to text -
                                                 <span v-if="consent_to_text == '0'">NO </span>
                                                 <span v-else-if="consent_to_text == '1'">Yes </span>
                                                 <span v-else>''</span>
-                                            </span></span><br />
-                                        <span data-toggle="tooltip" data-placement="right" title="Address"
-                                            style="padding-right:2px;"><i class="text-muted i-Post-Sign"></i>:
+                                            </span></div>
+                                        <div data-toggle="tooltip" data-placement="right" title="Address"
+                                            class="mb-1 pr-4"><i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
-                                        </span><br>
+                                        </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
@@ -88,30 +88,30 @@
                                             :patient_spirometerpeflow="patient_spirometerpeflow" />
                                     </div>
                                     <div class="col-md-2 right-divider">
-                                        <span data-toggle="tooltip" data-placement="top" title="Practice"
-                                            data-original-title="Patient Practice">
+                                        <div data-toggle="tooltip" data-placement="top" title="Practice"
+                                            data-original-title="Patient Practice" class="mb-1">
                                             <i class="text-muted i-Hospital"></i> :<sapn :textContent="practice_name">
                                             </sapn>
-                                        </span><br>
-                                        <span data-toggle="tooltip" data-placement="top" title="Provider"
-                                            data-original-title="Patient Provider">
+                                        </div>
+                                        <div data-toggle="tooltip" data-placement="top" title="Provider"
+                                            data-original-title="Patient Provider" class="mb-1">
                                             <i class="text-muted i-Doctor"></i> :<sapn :textContent="provider_name"> </sapn>
-                                        </span><br>
-                                        <span data-toggle="tooltip" data-placement="top" title="EMR"
-                                            data-original-title="Patient EMR">
+                                        </div>
+                                        <div data-toggle="tooltip" data-placement="top" title="EMR"
+                                            data-original-title="Patient EMR" class="mb-1">
                                             <i class="text-muted i-ID-Card"></i> :<sapn :textContent="practice_emr"> </sapn>
-                                        </span>
-                                        <br><span data-toggle="tooltip" data-placement="top" title="Assign CM"
-                                            data-original-title="Assign CM">
+                                        </div>
+                                        <div data-toggle="tooltip" data-placement="top" title="Assign CM"
+                                            data-original-title="Assign CM" class="mb-1">
                                             <i class="text-muted i-Talk-Man"></i> :<sapn :textContent="caremanager_name">
                                             </sapn>
-                                        </span>
+                                        </div>
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <i class="text-muted i-Search-People"></i>
                                         <span data-toggle="tooltip" data-placement="right" title="Enrollment Status"
                                             :textContent="patient_module" data-original-title="Patient Enrollment Status"
-                                            id="PatientStatus">
+                                            id="PatientStatus" class="mb-1">
                                         </span>
                                         <PatientStatus ref="PatientStatusRef" :moduleId="moduleId"
                                             :componentId="componentId" />
@@ -153,17 +153,17 @@
                                             <span v-for="(service, index) in enrolledServices" :key="index"
                                                 v-html="service"></span>
                                         </span>
-                                        <a v-if="hasCCMAndRPM" style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
+                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
                                             @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
                                                 data-placement="top" data-original-title="Additional Device"></i></a>
-                                        <AddDeviceModal v-if="hasCCMAndRPM" ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
+                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a v-if="hasCCMAndRPM" class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
-                                        <DeviceModal v-if="hasCCMAndRPM" ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
+                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
 
 
@@ -260,7 +260,7 @@
     </div>
 </template>
 <script>
-import { ref, onMounted, defineProps,computed } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import { usePage } from '@inertiajs/inertia-vue3';
 import moment from 'moment';
 import axios from 'axios';
@@ -385,21 +385,14 @@ export default {
             callExternalFunctionWithParams(props.patientId, pstatus);
         }
 
-        const hasCCMAndRPM = computed(() => {
-            if (enrolledServices.value && enrolledServices.value.length > 0) {
-/*     const includesCCM = enrolledServices.value.some(service => service.includes('CCM')); */
-    const includesRPM = enrolledServices.value.some(service => service.includes('RPM'));
-    return includesRPM;
-  } else {
-    return false;
-  }  
-    });
 
         const add_devicesfunction = async () => {
+            console.log("openModeladdDevices");
             AddDeviceModalRef.value.openModal();
         };
 
         const add_additional_devicesfunction = async () => {
+            //additional_devicesRef.value.openModal();
             DeviceModalRef.value.openModal();
         };
 
@@ -410,7 +403,7 @@ export default {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
                 }
-
+                console.log('Fetched Patient VeteranService details:', response.data);
             } catch (error) {
                 console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
                 // Handle the error appropriately
@@ -423,7 +416,7 @@ export default {
                 if (!response.ok) {
                     throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
                 }
-               
+                console.log('Fetched Patient alertThreshold details:', response.data);
             } catch (error) {
                 console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
                 // Handle the error appropriately
@@ -431,27 +424,27 @@ export default {
         }
 
         const veteranServicefunction = async () => {
-        
+            console.log("openMModelV called");
             veteranRef.value.openModal();
             // patComDetails();
         }
 
         const alertThresholdfunction = async () => {
             // Access the modal component through the ref
-   
+            console.log("openMModel called");
             alertThresholdsRef.value.openModal();
             //   patComDetails();
         };
 
 
         const personalnotesfunction = async () => {
-    
+            console.log("openMModelpersonal notes called");
             personalnotesRef.value.openModal();
             // patComDetails();
         };
 
         const researchstudyfunction = async () => {
-         
+            console.log("openModelResearchStudy");
             researchstudyRef.value.openModal();
             // patComDetails();
         };
@@ -470,7 +463,7 @@ export default {
                 patientDetails.value = data;
                 billable_time.value = data.billable_time;
                 non_billabel_time.value = data.non_billabel_time;
-                patientName.value = data.patient[0].fname + data.patient[0].lname;
+                patientName.value = data.patient[0].fname + " " + data.patient[0].lname;
                 patientGender.value = data.gender;
                 patientAge.value = data.age;
                 patientDob.value = data.patient[0].dob;
@@ -553,7 +546,6 @@ export default {
                     }
                 }
                 enrolledServices.value = enrollServices;
-            
 
             } catch (error) {
                 console.error('Error fetching Patient details:', error.message); // Log specific error message
@@ -675,7 +667,6 @@ export default {
         });
 
         return {
-            hasCCMAndRPM,
             patientServiceStatus,
             AddDeviceModalRef,
             DeviceModalRef,
