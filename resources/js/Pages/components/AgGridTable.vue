@@ -45,7 +45,7 @@ export default {
         AgGridVue,
     },
     setup(props) {
-        const paginationPageSizeSelector = ref(null);
+        const paginationPageSizeSelector = ref([10, 20, 30, 40, 50, 100]);
         const filterText = ref('');
          const popupParent = ref(null);
         const gridApi = ref(null);
