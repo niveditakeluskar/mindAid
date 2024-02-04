@@ -24,13 +24,13 @@
                   <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="preparationTime">
                   <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
                </div>
-            </div>
-            <div class="card-footer">
-               <div class="mc-footer">
-                  <div class="row"> 
-                     <div class="col-lg-12 text-right">
-                        <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft">Draft Save</button>
-                        <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
+               <div class="card-footer">
+                  <div class="mc-footer">
+                     <div class="row"> 
+                        <div class="col-lg-12 text-right">
+                           <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft">Draft Save</button>
+                           <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
+                        </div>
                      </div>
                   </div>
                </div>

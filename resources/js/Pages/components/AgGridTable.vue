@@ -364,12 +364,13 @@ export default {
 	/* Adjust margin between the search box and icons */
 }
 
-input[type="text"] {
+.oval-search-container input[type="text"] {
 	width: calc(100% - 0px);
 	/* Adjust the input width considering the icon */
 	/*  border: none; */
 	outline: none;
 	border-radius: 10px;
+    border-width: 1px;
 }
 
 .search-icon {

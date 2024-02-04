@@ -23,8 +23,6 @@
 import {
    ref,
    computed,
-   onBeforeMount,
-   onMounted,
 } from '../commonImports';
 import Preparation from './SubSteps/Preparation.vue';
 import SubStepConditionReview from './SubSteps/SubStepConditionReview.vue';

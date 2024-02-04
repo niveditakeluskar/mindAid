@@ -158,7 +158,6 @@ import {
     AgGridTable,
     // Add other common imports if needed
 } from '../commonImports';
-import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 import Inputmask from 'inputmask';
 
@@ -168,13 +167,7 @@ export default {
 		moduleId: Number,
         componentId: Number,
 	},
-    data() {
-        return {
-            phoneNumber: '',
-        };
-    },
     components: {
-        LayoutComponent,
         AgGridTable,
     },
 	setup(props) {
@@ -355,28 +348,25 @@ export default {
 
         let editMedications = async (id) => {
             try {
-                const serviceToEdit = passRowData.value.find(service => service.id == id);
-                if (serviceToEdit) {
-                    // const form = document.getElementById('medications_form');
-                    // form.querySelector('#medication_id').value = serviceToEdit.id;
-                    medication_id.value = serviceToEdit.id;
-                    selectedMedication.value = serviceToEdit.med_id;
-                    description.value = serviceToEdit.description;
-                    purpose.value = serviceToEdit.purpose;
-                    strength.value = serviceToEdit.strength;
-                    dosage.value = serviceToEdit.dosage;
-                    route.value = serviceToEdit.route;
-                    frequency.value = serviceToEdit.frequency;
-                    duration.value = serviceToEdit.duration;
-                    pharmacy_name.value = serviceToEdit.pharmacy_name;
-                    pharmacy_phone_no.value = serviceToEdit.pharmacy_phone_no;
-                    drug_reaction.value = serviceToEdit.drug_reaction;
-                    pharmacogenetic_test.value = serviceToEdit.pharmacogenetic_test;
-                    console.log("medication_id medications_form-->>", medications_form);
+                const medicationToEdit = passRowData.value.find(medication => medication.id == id);
+                if (medicationToEdit) {
+                    medication_id.value = medicationToEdit.id;
+                    selectedMedication.value = medicationToEdit.med_id;
+                    description.value = medicationToEdit.description;
+                    purpose.value = medicationToEdit.purpose;
+                    strength.value = medicationToEdit.strength;
+                    dosage.value = medicationToEdit.dosage;
+                    route.value = medicationToEdit.route;
+                    frequency.value = medicationToEdit.frequency;
+                    duration.value = medicationToEdit.duration;
+                    pharmacy_name.value = medicationToEdit.pharmacy_name;
+                    pharmacy_phone_no.value = medicationToEdit.pharmacy_phone_no;
+                    drug_reaction.value = medicationToEdit.drug_reaction;
+                    pharmacogenetic_test.value = medicationToEdit.pharmacogenetic_test;
                     form.scrollIntoView({ behavior: 'smooth' });
                 }
             } catch (error) {
-                console.error('Error editing service:', error);
+                console.error('Error editing medication:', error);
             }
         }
 
@@ -411,7 +401,6 @@ export default {
                     loading.value = false;
                     let data = response.data?.medications_form?.static ?? null;
                     if (data) {
-                        console.log("onMedChanged", data);
                         medication_id.value = data.id;
                         selectedMedication.value = data.med_id;
                         description.value = data.description;

@@ -1,4 +1,3 @@
-<!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="dialysis-services" role="tabpanel" aria-labelledby="dialysis-services-icon-pill">
         <div class="card">  
@@ -44,7 +43,6 @@
             <div class="row">
                 <div class="col-12">
                     <AgGridTable :rowData="dialysisServiceRowData" :columnDefs="columnDefs"/>
-
                 </div>
             </div>
         </div>
@@ -52,13 +50,11 @@
 </template>
 <script>
 import {
-    reactive,
     ref,
     watch,
     onBeforeMount,
     onMounted,
     AgGridTable,
-    // Add other common imports if needed
 } from '../../commonImports';
 import DialysisForm from './SubForms/ServicesLongForm.vue';
 import axios from 'axios';
@@ -277,7 +273,6 @@ export default {
             showDialysisAlert,
             columnDefs,
             dialysisServiceRowData,
-          
             fetchPatientDialysisServiceList,
             deleteServices,
             editService,

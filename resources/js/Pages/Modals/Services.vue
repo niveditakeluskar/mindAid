@@ -18,9 +18,10 @@
                                         v-for="(tab, index) in tabs"
                                         :key="index"
                                         @click="changeTab(index)"
-                                        :class="{ 'active': activeTab === index }"
                                         >
-                                            <a class="nav-link tabClick serviceslist" id="dme-services-icon-pill" data-toggle="pill" href="#dme" role="tab" aria-controls="dme-services" aria-selected="false" value="1">
+                                            <a class="nav-link tabClick serviceslist"
+                                            :class="{ 'active': activeTab === index }"
+                                            id="dme-services-icon-pill" data-toggle="pill" href="#dme" role="tab" aria-controls="dme-services" aria-selected="false" value="1">
                                                 <i class="nav-icon color-icon-2 i-Home1 mr-1"></i>
                                                 {{ tab.label }}
                                             </a>
@@ -31,14 +32,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="separator-breadcrumb border-top"></div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            
                         </div>
                     </div>
                 </div>
@@ -54,7 +47,6 @@
 import {
     ref,
     onBeforeMount,
-    onMounted
 } from '../commonImports';
 import DME from './ServicesModals/DME.vue';
 import HomeHealth from './ServicesModals/HomeHealth.vue';
@@ -93,6 +85,7 @@ export default {
         ]);
 
         const activeTab = ref(0);
+
         const changeTab = (index) => {
             activeTab.value = index;
         };
@@ -133,7 +126,6 @@ export default {
 
         onBeforeMount(async () => {
             await getStageID();
-
         });
         
         return {
