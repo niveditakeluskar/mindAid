@@ -33,14 +33,14 @@
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber"
                                                 @click="patient_finnumber_function"
-                                                style="background-color:#27a7de;border:none;" id="patient_finnumber">
+                                                style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="patient_finnumber">
                                                 <span id="fin_number" class="patient_fin_number"
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
                                                 :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
                                             <span v-if="military_status == 0">Yes</span>
@@ -68,7 +68,7 @@
                                             class="mb-1 pr-4"><i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
                                             :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
@@ -161,7 +161,7 @@
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
@@ -235,12 +235,12 @@
 
                                                 </div>
                                             </div>
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                                 id="personal_notes" @click="personalnotesfunction">Personal Notes</a>
                                             <PersonalNotes ref="personalnotesRef" :patientId="patientId"
                                                 :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                                 :personal_notes_data="personal_notes_data" />|
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                                 id="part_of_research_study" @click="researchstudyfunction">Research
                                                 Study</a>
                                             <ResearchStudy ref="researchstudyRef" :patientId="patientId"
@@ -742,9 +742,4 @@ export default {
     },
 };
 
-</script> 
-<style>
-a:not([href]):not([tabindex]) {
-    color: #FFFFFF;
-}
-</style>
+</script>
