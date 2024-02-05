@@ -40,6 +40,7 @@ use Auth;
 use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
 use RCare\Rpm\Models\Partner_Devices;
 use RCare\Org\OrgPackages\DeactivationReasons\src\Models\DeactivationReasons;
+use Illuminate\Support\Facades\Cache;
 
 class PatientWorklistController extends Controller
 {
@@ -771,112 +772,36 @@ class PatientWorklistController extends Controller
         $timeoption = sanitizeVariable($request->route('timeoption'));
         $time = sanitizeVariable($request->route('time'));
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
-        //this.saveUserFilters($practices,$patient,$module,$timeoption,$time,$activedeactivestatus);
-        $usersdetails = Users::where('id', $cid)->get();
-        $roleid = $usersdetails[0]->role;
-        $monthly = Carbon::now();
-        $monthlyto = Carbon::now();
-        $year = date('Y', strtotime($monthly));
-        $month = date('m', strtotime($monthly));
-        $configTZ = config('app.timezone');
-        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-        $p;
-        $pt;
-        $totime;
-        $status;
-        $iconcolor;
-        $icontitle;
-        $check_months = [];
-        $is_red_or_green_or_yellow = 0;
 
-        if ($practices != 'null') {
-            if ($practices == 0) {
-                $p = 'null';
-            } else {
-                $p = $practices;
-            }
-        } else {
-            $p = 'null';
-        }
+        // Cache key for storing query result
+        $cacheKey = md5(serialize([$practices, $patient, $module, $timeoption, $time, $activedeactivestatus]));
+   /*       // Check if the result is already cached
+    if (Cache::has($cacheKey)) {
+        $data = Cache::get($cacheKey);
+    } else {
+        
+           // Fetch user details
+           $user = Users::findOrFail($cid);
+           $roleid = $user->role;
+        // If not cached, execute the query
+        $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid,$roleid);
+        // Cache the result for future use
+        
+        Cache::put($cacheKey, $data, now()->addMinutes(60)); // Adjust the expiration time as needed
+    } */
 
-        if ($patient != "null") {
-            $pt = $patient;
-        } else {
-            $pt = "null";
-        }
+      // Check if the result is already cached
+      $data = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid) {
+        // Fetch user details
+        $user = Users::findOrFail($cid);
+        $roleid = $user->role;
 
-        if ($time == 'null' || $time == '') {
-            $timeoption = "1";
-            $totime = '00:20:00';
-        } else {
-            $totime = $time;
-        }
+        // Execute the query
+        return $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
+    });
 
-        if ($time != "null" && $time != "00:00:00") {
-            $totime = $time;
-        }
-
-        if ($timeoption == "3" && $time == "00:00:00") {
-            $timeoption = "5";
-        }
-
-        if ($timeoption == "2" && $time == '00:00:00') {
-            $timeoption = "6";
-        }
-
-        if ($activedeactivestatus == "null") {
-            $status = "null";
-        } else {
-            $status = $activedeactivestatus;
-        }
-
-        if ($module == "null") {
-            $module_id = "null";
-        } else {
-            $module_id = $module;
-        }
-
-        $run_score_procedure = 0;
-
-        //$query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,ptodate,to_char(csslastdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , pstatus, ptrtotaltime from 
-        //patients.worklist_v2($p,$pt,$month, $year,$timeoption,'".$totime."',$roleid, $cid,'".$configTZ ."','".$userTZ."',$status,$module_id)"; 
-
-        if ($roleid == 5) {
-
-            $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,
-                            ptodate,to_char(csslastdate at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , 
-                            pstatus, ptrtotaltime,psmodule_id , cciconcolor,ccicontitle,pssscore from 
-                            patients.worklist_v2($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
-        } else if ($roleid == 2) {
-
-            $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,
-                            ptodate,to_char(csslastdate at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , 
-                            pstatus, ptrtotaltime,psmodule_id , cciconcolor,ccicontitle,pssscore from 
-                            patients.worklist_admin_v2($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
-        } else {
-
-            // $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, 
-            // 		  pracpracticename,pfromdate,ptodate,to_char(csslastdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  ,
-            // 		  pstatus, ptrtotaltime,psmodule_id ,ccdiagnosis_count, ccreview_age_green,ccreview_age_yellow,iconcolor,icontitle from 
-            // 		  patients.worklist_tlm($p,$pt,$month, $year,$timeoption,'".$totime."',$roleid, $cid,'".$configTZ ."','".$userTZ."',$status,$module_id)";
-
-            $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,
-                            ptodate,to_char(csslastdate at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , 
-                            pstatus, ptrtotaltime,psmodule_id , cciconcolor,ccicontitle,pssscore from 
-                            patients.worklist_tlm_v2($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
-        }
-
-
-        // $data = DB::select( DB::raw($query) );  
-        if ($roleid  == 2) {
-            if ($module != "null" || $p != "null" || $pt != "null") {
-                $data = DB::select($query);
-            } else {
-                $data = [];
-            }
-        } else {
-            $data = DB::select($query);
-        }
+    
+    $run_score_procedure = 0;
 
 
         foreach ($data as $d) {
@@ -885,12 +810,7 @@ class PatientWorklistController extends Controller
             }
         }
 
-        if ($run_score_procedure == 1 || $run_score_procedure == '1') {
-
-
-            $query2 = "select * from patients.generate_patient_score()";
-            $data2 = DB::select($query2);
-
+        if ($run_score_procedure) {
             $run_score_procedure = 0;
         }
 
@@ -902,99 +822,110 @@ class PatientWorklistController extends Controller
                     ->latest()
                     ->first();
 
-                $PatientService = PatientServices::select("*")
-                    ->with('module')
-                    ->whereHas('module', function ($q) {
-                        $q->where('module', '=', 'RPM'); // '=' is optional
-                    })
-                    ->where('patient_id', $row->pid)
-                    ->where('status', 1)
-                    ->exists();
+                $PatientService = PatientServices::where('patient_id', $row->pid)
+                ->where('status', 1)
+                ->whereHas('module', function ($q) {
+                    $q->where('module', 'RPM'); // '=' is optional
+                })
+                ->exists();
+            
+                    $btn2 = '';
                 if ($PatientService == true) {
-                    if ($check == "" || $check == null) {
-                        $btn1 = '<a href="/rpm/care-plan-development/' . $row->pid . '" title="Action" >Care Plan </a>'; //cpd
-                        if ($row->cciconcolor == null || $row->cciconcolor == '') {
-                            $btn2 = '';
-                        } else {
-
-                            if ($row->cciconcolor == 'green' || $row->cciconcolor == "green") {
-                                $row->cciconcolor = '#33ff33';
-                            }
-                            $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"  title = "' . $row->ccicontitle . '" ><i class="i-Closee i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
-                        }
-
-                        $btn =  $btn1 . " " . $btn2;
+                    if (!empty($check)) {
+                        $btn1 = '<a href="/rpm/care-plan-development/' . $row->pid . '" title="Action" >Care Plan </a>'; //cpd                     
                     } else {
-
                         $btn1 = '<a href="/rpm/monthly-monitoring/' . $row->pid . '" title="Action" >CCM </a>'; //monthly
-                        if ($row->cciconcolor == null || $row->cciconcolor == '') {
-                            $btn2 = '';
-                        } else {
-                            if ($row->cciconcolor == 'green' || $row->cciconcolor == "green") {
-                                $row->cciconcolor = '#33ff33';
-                            }
-                            $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"   title = "' . $row->ccicontitle . '" ><i class="i-Closee  i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
-                        }
-                        $btn =  $btn1 . " " . $btn2;
                     }
+                    if (!empty($row->cciconcolor)) {
+                        $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"  title = "' . $row->ccicontitle . '" ><i class="i-Closee i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
+                    }
+                   $btn =  $btn1 . " " . $btn2;
                 } else {
-                    if ($check == "" || $check == null) {
-                        $btn1 = '<a href="/ccm/care-plan-development/' . $row->pid . '" title="Action" >Care Plan</a>'; //cpd
-                        if ($row->cciconcolor == null || $row->cciconcolor == '') {
-
-                            $btn2 = '';
-                        } else {
-
-                            if ($row->cciconcolor == 'green' || $row->cciconcolor == "green") {
-                                $row->cciconcolor = '#33ff33';
-                            }
-                            $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"   title = "' . $row->ccicontitle . '" ><i class="i-Closee  i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
-                        }
-
-                        $btn =  $btn1 . " " . $btn2;
-                    } else {
-
-
+                    if (!empty($check)) {
                         $btn1 = '<a href="/ccm/monthly-monitoring/' . $row->pid . '" title="Action" >CCM </a>'; //monthly
-
-                        if ($row->cciconcolor == null || $row->cciconcolor == '') {
-                            $btn2 = '';
-                        } else {
-
-                            if ($row->cciconcolor == 'green' || $row->cciconcolor == "green") {
-                                $row->cciconcolor = '#33ff33';
-                            }
+                        if (!empty($row->cciconcolor)) {
                             $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"  title ="' . $row->ccicontitle . '" ><i class="i-Closee  i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
                         }
-
+                        $btn =  $btn1 . " " . $btn2;
+                    } else {
+                        $btn1 = '<a href="/ccm/care-plan-development/' . $row->pid . '" title="Action" >Care Plan</a>'; //cpd
+                        if (!empty($row->cciconcolor)) {
+                            $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"   title = "' . $row->ccicontitle . '" ><i class="i-Closee  i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
+                        }
                         $btn =  $btn1 . " " . $btn2;
                     }
                 }
 
-                return $btn;
-            })
-
-            ->addColumn('activedeactive', function ($row) {
-
-                if ($row->pstatus == 1 && $row->pstatus != 0 && $row->pstatus != 2 && $row->pstatus != 3) {
-                    /* $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" data-toggle="modal"
-                    onclick=ccmcpdcommonJS.onActiveDeactiveClick("' . $row->pid . '","' . $row->pstatus . '") data-target="#active-deactive"  id="active_deactive">             
-                    <i class="i-Yess i-Yes"  title="Patient Status"></i></a>'; */
-                    $btn = 'a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click=callExternalFunctionWithParams('.$row->pid.','.$row->pstatus.')><i class="i-Yess i-Yes"  title="Patient Status"></i></a>';
-                } else {
-                    $btn = '<a href="javascript:void(0)" class="ActiveDeactiveClass" id="active_deactive" @click=callExternalFunctionWithParams('.$row->pid.','.$row->pstatus.')><i class="text-20 i-Stopwatch" style="color: red;"></a>';
-                }
-                return $btn;
-            })
-            ->addColumn('addaction', function ($row) {
-                $btn = '<a href="javascript:void(0)"  data-toggle="modal" data-id="' . $row->pid . '/' . $row->ptrtotaltime . '/' . $row->ppracticeid . '/' . $row->psmodule_id . '" data-target="#add-activities" id="add-activity"
-                  data-original-title="Patient Activity" class="patient_activity" title="Patient Activity"><i class="text-20 i-Stopwatch" style="color: #2cb8ea;"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action', 'activedeactive', 'addaction'])
             ->make(true);
     }
 
+    private function executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid,$roleid)
+{
+    $monthly = Carbon::now();
+    $year = date('Y', strtotime($monthly));
+    $month = date('m', strtotime($monthly));
+    $configTZ = config('app.timezone');
+    $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+    $p = ($practices !== 'null' && $practices != 0) ? $practices : 'null';
+    $pt = ($patient !== 'null') ? $patient : 'null';
+    $timeoption = ($time == 'null' || $time == '') ? '1' : $timeoption;
+    $totime = ($time == 'null' || $time == '') ? '00:20:00' : $time;
+    $totime = ($time != 'null' && $time != '00:00:00') ? $time : $totime;
+    $timeoption = ($timeoption == '3' && $time == '00:00:00') ? '5' : $timeoption;
+    $timeoption = ($timeoption == '2' && $time == '00:00:00') ? '6' : $timeoption;
+    $status = ($activedeactivestatus == 'null') ? 'null' : $activedeactivestatus;
+    $module_id = ($module == 'null') ? 'null' : $module;
+
+    $query = $this->constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid,$module_id,$roleid,$month,$year,$configTZ,$userTZ);
+    
+    // Execute the query
+    return DB::select($query);
+}
+
+private function constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid,$module_id,$roleid,$month,$year,$configTZ,$userTZ)
+{
+
+    $columns = [
+        'pid',
+        'pfname',
+        'plname',
+        'pmname',
+        'pprofileimg',
+        'pdob',
+        'pppracticeemr',
+        'ppracticeid',
+        'pracpracticename',
+        'pfromdate',
+        'ptodate',
+        "to_char(csslastdate at time zone '$configTZ' at time zone '$userTZ', 'MM-DD-YYYY HH24:MI:SS') as csslastdate",
+        'pstatus',
+        'ptrtotaltime',
+        'psmodule_id',
+        'cciconcolor',
+        'ccicontitle',
+        'pssscore'
+    ];
+
+    switch ($roleid) {
+        case 5:
+            $table = 'patients.worklist_v2';
+            break;
+        case 2:
+            $table = 'patients.worklist_admin_v2';
+            break;
+        default:
+            $table = 'patients.worklist_tlm_v2';
+    }
+
+    $columnsString = implode(', ', $columns);
+
+
+    return "SELECT $columnsString FROM $table($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
+
+}
     /*public function addCarePlanAge(Request $request){
 		PatientCareplanAge::truncate();
 		$generate_careplan_age = DB::select('SELECT patients.generate_patient_careplan_age()');

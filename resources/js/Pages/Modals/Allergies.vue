@@ -18,9 +18,8 @@
                                         v-for="(tab, index) in tabs"
                                         :key="index"
                                         @click="changeTab(index)"
-                                        :class="{ 'active': activeTab === index }"
                                         >
-                                            <a class="nav-link tabClick allergieslist" id="dme-allergies-icon-pill" data-toggle="pill" href="#dme" role="tab" aria-controls="durg-allergies" aria-selected="false" value="1">
+                                            <a class="nav-link tabClick allergieslist" :class="{ 'active': activeTab === index }" id="dme-allergies-icon-pill" data-toggle="pill" href="#dme" role="tab" aria-controls="durg-allergies" aria-selected="false" value="1">
                                                 <i class="nav-icon color-icon-2 i-Home1 mr-1"></i>
                                                 {{ tab.label }}
                                             </a>
