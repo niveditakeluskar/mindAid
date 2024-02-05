@@ -122,7 +122,7 @@
 				</div>
 				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
 			</div>
-			<div v-if="med_added_or_disconYesNo == 'Yes'">
+			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
 					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
 	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
@@ -272,7 +272,8 @@
 		</div>
 	</div>
 	<!-- end::form -->
-</div></template>
+</div>
+</template>
 
 <script>
 import ModalForm from '../../Modals/Medication.vue';
@@ -371,53 +372,55 @@ export default {
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				if(this.patientPrepSaveDetails.populateCallPreparation!=''){
-					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation[0].submited_to_emr;
-					this.conditionRequirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment1;
-					this.conditionRequirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment2;
-					this.conditionRequirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment3;
-					this.conditionRequirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment4;
+				console.log(data,this.patientPrepSaveDetails.populateCallPreparation,"populate ka value", this.patientPrepSaveDetails.populateCallPreparation.static);
+				const staticData = this.patientPrepSaveDetails.populateCallPreparation.static;
+					const keys = Object.keys(staticData);
+					if (keys.length > 0) {
+					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation.static.submited_to_emr;
+					this.conditionRequirnment1 = this.patientPrepSaveDetails.populateCallPreparation.static.condition_requirnment1;
+					this.conditionRequirnment2 = this.patientPrepSaveDetails.populateCallPreparation.static.condition_requirnment2;
+					this.conditionRequirnment3 = this.patientPrepSaveDetails.populateCallPreparation.static.condition_requirnment3;
+					this.conditionRequirnment4 = this.patientPrepSaveDetails.populateCallPreparation.static.condition_requirnment4;
 
-					this.condition_requirnment_notes = this.patientPrepSaveDetails.populateCallPreparation[0].condition_requirnment_notes;
-					this.officeVisitYesNo =  this.patientPrepSaveDetails.populateCallPreparation[0].newofficevisit;
-					this.officeVisitNotes =  this.patientPrepSaveDetails.populateCallPreparation[0].nov_notes; 
+					this.condition_requirnment_notes = this.patientPrepSaveDetails.populateCallPreparation.static.condition_requirnment_notes;
+					this.officeVisitYesNo =  this.patientPrepSaveDetails.populateCallPreparation.static.newofficevisit;
+					this.officeVisitNotes =  this.patientPrepSaveDetails.populateCallPreparation.static.nov_notes; 
 
-					this.newDiagnosisYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].newdiagnosis;
-					this.newDiagnosisNotes = this.patientPrepSaveDetails.populateCallPreparation[0].nd_notes;
+					this.newDiagnosisYesNo = this.patientPrepSaveDetails.populateCallPreparation.static.newdiagnosis;
+					this.newDiagnosisNotes = this.patientPrepSaveDetails.populateCallPreparation.static.nd_notes;
 					
-					this.med_added_or_disconYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon;
-					this.med_added_or_disconNotes = this.patientPrepSaveDetails.populateCallPreparation[0].med_added_or_discon_notes;
+					this.med_added_or_disconYesNo = this.patientPrepSaveDetails.populateCallPreparation.static.med_added_or_discon;
+					this.med_added_or_disconNotes = this.patientPrepSaveDetails.populateCallPreparation.static.med_added_or_discon_notes;
 
-					this.pcpReviwewdYesNo = this.patientPrepSaveDetails.populateCallPreparation[0].pcp_reviwewd;
+					this.pcpReviwewdYesNo = this.patientPrepSaveDetails.populateCallPreparation.static.pcp_reviwewd;
 					
-					this.report_requirnment1 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment1;
-					this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment2;
-					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment4;
-					this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment3;
-					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation[0].report_requirnment5;
+					this.report_requirnment1 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment1;
+					this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment2;
+					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment4;
+					this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment3;
+					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment5;
 					
-					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation[0].anything_else;
-					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation[0].patient_relationship_building;
-				}
-				console.log('Fetched Patient Preaparation details:', data);
-				
+					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation.static.anything_else;
+					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation.static.patient_relationship_building;
+				}else{
+					console.error('populateCallPreparation is empty or undefined');
+				}				
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
 		},
 		openModal() {
 			// Access the modal component through a ref
-			console.log("openMModel called");
+			// console.log("openMModel called");
 			this.$refs.modalForm.openModal();
 		},
 		openReviewCarePlanModalModal() {
 			// Access the modal component through a ref
-			console.log("ReviewCarePlanModal called");
+			// console.log("ReviewCarePlanModal called");
 			this.$refs.ReviewCarePlanModal.openModal();
-			this.$refs.modalForm.openModal();
 		},
 		openAllergiesModal() {
-			console.log("openAllergiesModal called");
+			// console.log("openAllergiesModal called");
 			this.$refs.allergiesModalForm.openModal();
 		},
 		openServicesModal() {

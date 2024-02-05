@@ -15,7 +15,7 @@
                     <input type="hidden" name="end_time" value="00:00:00">
                     <input type="hidden" name="module_id" :value="moduleId"/>
                     <input type="hidden" name="component_id" :value="componentId"/>
-                    <input type="hidden" name="stage_id" :value="labsStageId"/>
+                    <input type="hidden" name="stage_id" :value="stageId"/>
                     <input type="hidden" name="step_id" :value="labsStepId">
                     <input type="hidden" name="form_name" value="number_tracking_labs_form">
                     <input type="hidden" name="billable" value="1">
@@ -29,12 +29,12 @@
                                     {{ lab.description }}
                                 </option>
                             </select>
-                            <div class="invalid-feedback" v-if="formErrors.med_id" style="display: block;">{{ formErrors.med_id[0] }}</div>
-                            <!-- @selectlab("lab[]",["class"=>"col-md-10", "onchange"=>"carePlanDevelopment.getLabParamsOnLabChange(this)", "id"=>"lab"]) -->
+                            <div class="invalid-feedback" v-if="formErrors['lab.0']" style="display: block;">{{ formErrors['lab.0'][0] }}</div>
                         </div>
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
                             <input type="date" name="labdate[]" id="labdate" class="form-control" />
+                            <div class="invalid-feedback" v-if="formErrors['labdate.0']" style="display: block;">{{ formErrors['labdate.0'][0] }}</div>
                         </div>
                     </div>
                     <div v-html="labParams" class="form-row"></div>
@@ -57,21 +57,7 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="labs-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="columnDefs.value"
-                            :rowData="labsRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                    <AgGridTable :rowData="labsRowData" :columnDefs="columnDefs"/>
                 </div>
             </div>
         </div>
@@ -84,7 +70,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import axios from 'axios';
@@ -96,26 +82,21 @@ export default {
         stageId: Number,
     },
     components: {
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
-        let showLabsAlert = ref(false);
-        let labsStageId = ref(0);
-        let labsStepId = ref(0);
-        let labsTime = ref(null);
-        let labs = ref([]);
+        const showLabsAlert = ref(false);
+        const labsStepId = ref(0);
+        const labsTime = ref(null);
+        const labs = ref([]);
         const labParams = ref('');
-        let formErrors = ref([]);
-        let selectedLabs = ref(0);
+        const formErrors = ref([]);
+        const selectedLabs = ref(0);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const labsRowData = reactive({ value: [] });
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
-            value: [
+    
+        const labsRowData = ref([]);
+       
+        const columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -134,29 +115,7 @@ export default {
                     },
                 },
             ]
-        });
-
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
+        );
 
         const fetchPatientLabsList = async () => {
             try {
@@ -175,7 +134,7 @@ export default {
             }
         };
 
-        let submiLabsHealthDataForm = async () => {
+        const submiLabsHealthDataForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_labs_form');
             let formData = new FormData(myForm);
@@ -186,28 +145,32 @@ export default {
             });
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
-                const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-labs', formData);
+                const saveLabResponse = await axios.post('/ccm/care-plan-development-numbertracking-labs', formData);
+                if (saveLabResponse && saveLabResponse.status === 200) {
                     showLabsAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.form_start_time);
+                    $(".form_start_time").val(saveLabResponse.data.form_start_time);
                     await fetchPatientLabsList();
                     document.getElementById("number_tracking_labs_form").reset();
+                    selectedLabs.value = null;
+                    labParams.value = null;
                     setTimeout(() => {
                         showLabsAlert.value = false;
                         labsTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
-                // Handle the response here
-                formErrors.value = [];
+                    // Handle the response here
+                    formErrors.value = [];
+                }
             } catch (error) {
-                if (error.status && error.status === 422) {
-                    formErrors.value = error.responseJSON.errors;
+                if (error.response.status && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
                 } else {
                     console.error('Error submitting form:', error);
                 }
             }
         }
 
-        let onLabchange = async (event) => {
+        const onLabchange = async (event) => {
             const labId = event.target.value;
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
@@ -222,7 +185,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'NumberTracking-Labs';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -232,7 +195,7 @@ export default {
             }
         };
 
-        let fetchLabs = async () => {
+        const fetchLabs = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/org/active-labs`);
@@ -247,6 +210,65 @@ export default {
             }
         };
 
+        const deleteLabs = async (date, patient_id, lab_test_id, labdateexist) => {
+            if (window.confirm("Are you sure you want to delete this Service?")) {
+                const formData = {
+                    labid: lab_test_id,
+                    uid: props.patientId,
+                    patient_id: props.patientId,
+                    module_id: props.moduleId,
+                    component_id: props.componentId,
+                    stage_id: props.stageId,
+                    step_id: labsStepId.value,
+                    form_name: 'number_tracking_labs_form',
+                    billable: 1,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                    labdate: date,
+                    patientid: patient_id,
+                    labdateexist: labdateexist,
+                };
+                try {
+                    axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+                    const deleteServicesResponse = await axios.post(`/ccm/delete-lab`, formData);
+                    // showDMEAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(deleteServicesResponse.form_start_time);
+                    await fetchPatientLabsList();
+                    document.getElementById("service_dme_form").reset();
+                    setTimeout(() => {
+                        // showDMEAlert.value = false;
+                        DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
+        }
+
+        const exposeDeleteLab = () => {
+            window.deleteLabs = deleteLabs;
+        };
+
+        const editService = async (id) => {
+            try {
+                const serviceToEdit = dmeServiceRowData.value.find(service => service.id == id);
+                if (serviceToEdit) {
+                    const form = document.getElementById('service_dme_form');
+                    form.querySelector('#service_id').value = serviceToEdit.id;
+                    form.querySelector('#type').value = serviceToEdit.type;
+                    form.querySelector('#purpose').value = serviceToEdit.purpose;
+                    form.querySelector('#specify').value = serviceToEdit.specify;
+                    form.querySelector('#brand').value = serviceToEdit.brand;
+                    form.querySelector('#notes').value = serviceToEdit.notes;
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error editing service:', error);
+            }
+        };
+
         watch(() => props.stageId, (newValue, oldValue) => {
             getStepID(newValue);
         });
@@ -257,13 +279,6 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
             fetchLabs();
             fetchPatientLabsList();
         });
@@ -271,6 +286,7 @@ export default {
         onMounted(async () => {
             try {
                 labsTime.value = document.getElementById('page_landing_times').value;
+                exposeDeleteLab();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -279,15 +295,13 @@ export default {
         return {
             loading,
             submiLabsHealthDataForm,
-            labsStageId,
             labsStepId,
             formErrors,
             labsTime,
             showLabsAlert,
             columnDefs,
             labsRowData,
-            defaultColDef,
-            gridOptions,
+          
             fetchPatientLabsList,
             deleteServices,
             editService,

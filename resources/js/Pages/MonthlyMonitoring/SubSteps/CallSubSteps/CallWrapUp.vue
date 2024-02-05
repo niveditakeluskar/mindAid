@@ -1,57 +1,43 @@
 <template>
     <div class="row">
         <div class="col-lg-12 mb-3">
-            <div class="card"> 
-                <div class="card-body">
-                    <div class="mb-4 ml-4">
-                        <div class="alert alert-success" id="callwrapform-success-alert" style="display: none;">
-                            <button type="button" class="close" data-dismiss="alert">x</button>
-                            <strong>Call wrap-up data successfully! </strong><span id="text"></span>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-md-3"><h6><b>Call Notes for Review and Approval</b></h6></div>
-                            <div class="col-md-3">
-                                <select name="select_report" class ="custom-select show-tick mr-4"><!--  id="rpm-report" -->
-                                    <option>Select Report</option>
-                                    <option value="2">Daily History Report</option>
-                                </select>
-                            </div> 
-                            <div class="col-md-3">
-                                <a href="/ccm/monthly-monitoring/call-wrap-up-word/" class="btn btn-primary" target="_blank">Care Manager Notes Word Format</a>   <!-- Docs Care Plan -->
+            <form id="callwrapup_form" name="callwrapup_form" @submit.prevent="submitCallWrapUpFormData">
+                <div class="card"> 
+                    <div class="card-body">
+                        <div class="mb-4 ml-4">
+                            <div class="alert alert-success" id="callwrapform-success-alert" :style="{ display: showCallWrapUpAlert ? 'block' : 'none' }">
+                                <button type="button" class="close" data-dismiss="alert">x</button>
+                                <strong>Call wrap-up data successfully! </strong><span id="text"></span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="row m-1">
-                        <div class="col-12">
-                            <div class="table-responsive">
-                                <div class="table-responsive">
-                                    <ag-grid-vue
-                                        style="width: 100%; height: 100%;"
-                                        id="callwrap-list"
-                                        class="ag-theme-alpine"
-                                        :columnDefs="callWrapColumnDefs.value"
-                                        :rowData="callWrapRowData.value"
-                                        :defaultColDef="defaultColDef"
-                                        :gridOptions="gridOptions"
-                                        :loadingCellRenderer="loadingCellRenderer"
-                                                    :loadingCellRendererParams="loadingCellRendererParams"
-                                                    :rowModelType="rowModelType"
-                                                    :cacheBlockSize="cacheBlockSize"
-                                                    :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
+                            <div class="row mb-4">
+                                <div class="col-md-3"><h6><b>Call Notes for Review and Approval</b></h6></div>
+                                <div class="col-md-3">
+                                    <select name="select_report" class ="custom-select show-tick mr-4"><!--  id="rpm-report" -->
+                                        <option>Select Report</option>
+                                        <option value="2">Daily History Report</option>
+                                    </select>
+                                </div> 
+                                <div class="col-md-3">
+                                    <a :href="`/ccm/monthly-monitoring/call-wrap-up-word/${patientId}`" class="btn btn-primary" target="_blank">Care Manager Notes Word Format</a>   <!-- Docs Care Plan -->
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <form id="callwrapup_form" name="callwrapup_form" action="" method="post"> 
-                        <input type="hidden" name="uid" />
-                        <input type="hidden" name="patient_id" />
-                        <input type="hidden" name="start_time" value="00:00:00">
+                        <div class="row m-1">
+                            <div class="col-12"> 
+                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"/>
+                            </div>
+                        </div>
+                        <input type="hidden" name="uid" :value="patientId"/>
+                        <input type="hidden" name="patient_id" :value="patientId"/>
+                        <input type="hidden" name="start_time" value="00:00:00"> 
                         <input type="hidden" name="end_time" value="00:00:00">
-                        <input type="hidden" name="module_id" />
-                        <input type="hidden" name="component_id" />
-                        <input type="hidden" name="stage_id" />
-                        <input type="hidden" name="step_id" value="0">
+                        <input type="hidden" name="module_id" :value="moduleId"/>
+                        <input type="hidden" name="component_id" :value="componentId"/>
+                        <input type="hidden" name="stage_id" :value="callWrapUpStageId"/>
+                        <input type="hidden" name="step_id" :value="callWrapUpStepId">
                         <input type="hidden" name="form_name" value="callwrapup_form">
+                        <input type="hidden" name="billable" value="1">
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="callWrapUpTime" />
                         <div class="row ml-3"> 
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
@@ -59,7 +45,11 @@
                                         <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" ></textarea>
                                         <!-- onfocusout="saveEMR()" -->
                                     </label>
-                                    <div class="invalid-feedback"></div>  
+                                    <div class="invalid-feedback">
+                                        <!-- <div v-if="formErrors.value && formErrors.value.emr_monthly_summary">
+                                            {{ formErrors.value.emr_monthly_summary[0] }}
+                                        </div> -->
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-bottom: 40px;">
@@ -68,143 +58,83 @@
                                         <b><span style="margin-left: 20px; color: #69aac2;">Additional CCM Notes :</span></b>
                                     </div>
                                     <div class="col-md-1">
-                                        <i id="addnotes" type="button" qno="1" class="add i-Add" style="color: rgb(44, 184, 234); font-size: 25px;float: left;"></i>
+                                        <i @click="addNewNotesRow" id="addnotes" type="button" qno="1" class="add i-Add" style="color: rgb(44, 184, 234); font-size: 25px;float: left;"></i>
                                     </div>
                                 </div>
-                                <div class="row" id="additional_monthly_notes" style="margin-left: 0.05rem !important;"></div>
+                                <div class="row" id="additional_monthly_notes" style="margin-left: 0.05rem !important;">
+                                    <div class="additionalfeilds row" style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;" v-for="(notesRow, index) in notesRows" :key="index">
+                                        <div class="col-md-4">
+                                            <input type="date" v-model="notesRow.date" name="emr_monthly_summary_date[]" class="form-control emr_monthly_summary_date" :id="`emr_monthly_summary_date_${index}`" />
+                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`" ></textarea>
+                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary.' + index][0] }}</div>
+                                        </div>
+                                        <div class="col-md-1" style="top: 15px;">
+                                            <i @click="deleteNotesRow(index)" type="button" class="removenotes  i-Remove" style="color: #f44336; font-size: 22px;"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-12 forms-element">  
                                 <div class="row">
-                                <div class="col-md-4">
-                                    <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
-                                        <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed" formControlName="checkbox" />
-                                        <span>EMR system entry completed</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
+                                    <div class="col-md-4">
+                                        <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
+                                            <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed" formControlName="checkbox" />
+                                            <span>EMR system entry completed</span>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>  
                             <hr style="width:100%">
                             <div class="col-md-12 forms-element">  
                                 <div class="row">
                                     <div class="col-md-12"><b><span style="margin-left: 20px; color: #69aac2;">Additional Services :</span></b></div>
-                                    <div class="col-md-4">
-                                        <label for="routine_response" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="routine_response" id="routine_response" value="1" class="RRclass routine_response" formControlName="checkbox" />  
-                                            <span>Routine Response</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="routinediv">
-                                            <span class="checkmark"></span>
+                                    <div  v-if="groupedData && groupedData.length > 0" v-for="(group, index) in groupedData" :key="index"  class="col-md-4">
+                                        <div>
+                                            <label :for="`${ group.name.replace(/[\s/]/g, '_').toLowerCase() }`" class="checkbox checkbox-primary mr-3">
+                                                <input type="checkbox"  v-model="group.checked" :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" class="RRclass" :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />  
+                                                <span>{{ group.name }}</span>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <div v-if="group.checked" class="col-md-12" v-for="item in group.items" :key="item.id">
+                                                <label :for="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" class="checkbox checkbox-primary mr-3">
+                                                    <input type="checkbox" :name="`${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`" :id="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" :class="`${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />
+                                                    <span>{{ item.activity }}</span>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <span class="checkmark"></span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="urgent_emergent_response" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="urgent_emergent_response" id="urgent_emergent_response" value="1" class="RRclass urgent_emergent_response" formControlName="checkbox" />  
-                                            <span>Urgent/Emergent Response</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="emergentdiv">
-                                            <span class="checkmark"></span>
+                                        <div>
+                                            <label for="no_additional_services_provided" class="checkbox checkbox-primary mr-3">
+                                                <input type="checkbox" name="no_additional_services_provided" id="no_additional_services_provided" class="RRclass no_additional_services_provided" formcontrolname="checkbox" value="true" v-model="noAdditionalServicesProvided">
+                                                <span>No Additional Services Provided</span>
+                                                <span class="checkmark"></span>
+                                            </label><!---->
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="referral_order_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="referral_order_support" id="referral_order_support" value="1" class="RRclass referral_order_support" formControlName="checkbox" />
-                                            <span>Referral/Order Support</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="referraldiv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="medication_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="medication_support"  id="medication_support" value="1" class="RRclass medication_support" formControlName="checkbox" />
-                                            <span>Medication Support</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="medicationdiv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="verbal_education_review_with_patient" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="verbal_education_review_with_patient"  id="verbal_education_review_with_patient" value="1" class="RRclass verbal_education_review_with_patient" formControlName="checkbox" />
-                                            <span>Verbal Education/Review with Patient</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="verbaldiv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="mailed_documents" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="mailed_documents"  id="mailed_documents" value="1" class="RRclass mailed_documents" formControlName="checkbox" />
-                                            <span>Mailed Documents</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="maileddiv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="resource_support" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="resource_support"  id="resource_support" value="1" class="RRclass resource_support" formControlName="checkbox" />
-                                            <span>Resource Support</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <div class="col-md-12" id="resourcediv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="veterans_services" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="veterans_services"  id="veterans_services" value="1" class="RRclass veterans_services" formControlName="checkbox" />
-                                            <span>Veterans Services</span>
-                                            <span class="checkmark"></span>
-                                        </label>
-
-                                        <div class="col-md-12" id="veteransdiv">
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </div> 
-                                    <div class="col-md-4">
-                                        <label for="authorized_cm_only" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="authorized_cm_only"  id="authorized_cm_only" value="1" class="RRclass authorized_cm_only" formControlName="checkbox" />
-                                            <span><b>Authorized CM Only:</b></span>
-                                            <span class="checkmark"></span>
-                                        </label>
-
-                                        <div class="col-md-12" id="authorizeddiv">
-                                            <span class="checkmark"></span>
-                                        </div> 
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="no_additional_services_provided" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="no_additional_services_provided"  id="no_additional_services_provided" value="1" class="RRclass no_additional_services_provided" formControlName="checkbox" />
-                                            <span>No Additional Services Provided:</span>
-                                            <span class="checkmark"></span>
-                                        </label>
                                     </div>
                                 </div>
-                                <div id="checkboxerror" style="display:none; color:red; ">Please choose at least one response </div>
+                                <div id="checkboxerror" style="color:red; " v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
                             </div> 
                             <div class="form-row invalid-feedback"></div>
                         </div>
-                        <div class="card-footer">
-                            <div class="mc-footer">
-                                <div class="row"> 
-                                    <div class="col-lg-12 text-right">
-                                        <button type="submit" class="btn btn-primary m-1" id="submit">Submit</button>
-                                    </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="mc-footer">
+                            <div class="row"> 
+                                <div class="col-lg-12 text-right">
+                                    <button type="submit" class="btn btn-primary m-1" id="submit">Submit</button>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                    <div v-on:click="deleteCallWrapup(1)">testing</div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </template>
@@ -213,13 +143,13 @@
 import {
     reactive,
     ref,
-    onBeforeMount,
     onMounted,
-    AgGridVue,
-    // Add other common imports if needed
+    watch,
+    AgGridTable,
+    computed,
 } from '../../../commonImports';
-import LayoutComponent from '../../../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
+
 export default {
     props: {
         patientId: Number,
@@ -227,139 +157,239 @@ export default {
         componentId: Number,
     },
     components: {
-        LayoutComponent,
-        AgGridVue,
-    },
-    data() {
-        return {
-            uid: '', // Add default values or leave them as empty strings
-            patient_id: '',
-            start_time: '',
-            end_time: '',
-            module_id: '',
-            component_id: '',
-            stage_id: '',
-            step_id: '',
-            form_name: '',
-        };
-    },
-    methods: {
-        submitCallWrapUpFormData() {
-            const formData = {
-                uid: this.uid,
-                patient_id: this.patient_id,
-                start_time: this.start_time,
-                end_time: this.end_time,
-                module_id: this.module_id,
-                component_id: this.component_id,
-                stage_id: this.stage_id,
-                step_id: this.step_id,
-                form_name: this.form_name,
-            };
-            console.log("formData==>>", formData);
-            // axios.post('/your-api-endpoint', this.formData)
-            // 	.then(response => {
-            // 		console.log('Form submitted successfully!', response.data);
-            // 	})
-            // 	.catch(error => {
-            // 		// Handle error response
-            // 		console.error('Error submitting form:', error);
-            // 	});
-        },
-        deleteCallWrapup(callWrapId) {
-            // Perform deletion logic here using axios or any other method
-            // Example:
-            // axios.delete(`/api/callwrap/${callWrapId}`)
-            //     .then(response => {
-            //         // Handle success
-            //     })
-            //     .catch(error => {
-            //         // Handle error
-            //     });
-            console.log(`Deleting call wrap with ID ${callWrapId}`);
-        },
+        AgGridTable,
     },
     setup(props) {
-        const callWrapRowData = reactive({ value: [] }); // Initialize rowData as an empty array
+        const callWrapRowData = ref([]);
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
-        const maxBlocksInCache = ref(null);
-
-        let callWrapColumnDefs = reactive({
-            value: [
-                {
-                    headerName: 'Seq.',
-                    valueGetter: 'node.rowIndex + 1',
-                    width: 20,
+        const callWrapUpStageId = ref(0);
+        let callWrapUpTime = ref(null);
+        const activityData = ref([]);
+        const groupedData = ref([]);
+        let formErrors = ref([]);
+        let additionalErrors = ref(false);
+        let additionalErrorsMsg = ref(null);
+        const activities = ref([]);
+        let showCallWrapUpAlert = ref(false);
+        const noAdditionalServicesProvided = ref(false);
+        const notesRows = ref([]);
+        const callWrapColumnDefs = ref([
+            {
+                headerName: 'Seq.',
+                valueGetter: 'node.rowIndex + 1',
+                width: 20,
+            },
+            { headerName: 'Topic', field: 'topic', filter: true },
+            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
+            { headerName: 'Action Taken', field: 'action_taken', width: 60 },
+            {
+                headerName: 'Action', field: 'action', width: 20,
+                cellRenderer: function (params) {
+                    const row = params.data;
+                    return row.action;
                 },
-                { headerName: 'Topic', field: 'topic', filter: true },
-                { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
-                { headerName: 'Action Taken', field: 'action_taken', width: 60 },
-                {
-                    headerName: 'Action', field: 'action', width: 20,
-                    cellRenderer: function (params) {
-                        const row = params.data;
-                        return row.action;
-                    },
-                },
-            ]
-        });
-
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-            wrapText: true,
-            autoHeight: true,
-        });
-
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
+            },
+        ]);
 
         const fetchCallWrapUpList = async () => {
             try {
                 loading.value = true;
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                await new Promise((resolve) => setTimeout(resolve, 2000));
                 const response = await fetch(`/ccm/monthly-monitoring-call-wrap-up/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch call wrap up list');
                 }
                 loading.value = false;
                 const data = await response.json();
-                callWrapRowData.value = data.data; // Replace data with the actual fetched data
-                console.log("test--call wrap up", callWrapRowData.value);
+                callWrapRowData.value = data.data;
             } catch (error) {
                 console.error('Error fetching call wrap up list:', error);
                 loading.value = false;
             }
         };
-        // deleteCallWrap = async () => {
-        //     alert("test");
-        // };
 
-        onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
-        });
+        const checkAdditionalServicesSelected = () => {
+            const selectedServices = groupedData.value.some(group => group.checked);
+            return selectedServices;
+        };
+
+        const submitCallWrapUpFormData = async () => {
+            formErrors.value = {};
+            additionalErrors.value = false;
+            additionalErrorsMsg.value = null;
+            let myForm = document.getElementById('callwrapup_form');
+            let formData = new FormData(myForm);
+            const formDataObject = {};
+            const selectedValues = [];
+            if (!noAdditionalServicesProvided) {
+                const additionalServicesSelected = checkAdditionalServicesSelected();
+
+                if (!additionalServicesSelected) {
+                    additionalErrors.value = true;
+                    additionalErrorsMsg.value = 'Please choose at least one additional service';
+                    return;
+                }
+
+                const isValid = groupedData.value.every(group => {
+                    if (group.checked) {
+                        const hasSelectedActivities = group.items.some(item => {
+                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
+                            formDataObject[checkboxName] = formData.get(checkboxName);
+                            const isChecked = formDataObject[checkboxName] === 'true';
+                            if (isChecked) {
+                                selectedValues.push(checkboxName);
+                            }
+                            return isChecked;
+                        });
+
+                        if (!hasSelectedActivities) {
+                            additionalErrors.value = true;
+                            additionalErrorsMsg.value = 'Please choose at least one sub additional service';
+                        }
+                        return hasSelectedActivities;
+                    }
+                    return true;
+                });
+
+                if (!isValid) {
+                    return;
+                }
+            }
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            try {
+                const saveCallWrapUpFormResponse = await axios.post('/ccm/monthly-monitoring-call-callwrapup', formData);
+                if (saveCallWrapUpFormResponse && saveCallWrapUpFormResponse.status == 200) {
+                    console.log("saveCallWrapUpFormResponse.data.form_start_time", saveCallWrapUpFormResponse);
+                    $(".form_start_time").val(saveCallWrapUpFormResponse.data.form_start_time);
+                    showCallWrapUpAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    await fetchCallWrapUpList();
+                    document.getElementById("callwrapup_form").reset();
+                    setTimeout(() => {
+                        showCallWrapUpAlert.value = false;
+                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                    formErrors.value = [];
+                    additionalErrors.value = false;
+                    groupedData.value.forEach((group) => {
+                        group.checked = false;
+                        group.items.forEach((item) => {
+                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
+                            formDataObject[checkboxName] = false;
+                        });
+                    });
+                    notesRows.value = null;
+                }
+            } catch (error) {
+                if (error.response.status && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
+                } else {
+                    console.error('Error submitting form:', error);
+                }
+            }
+        };
+
+        const deleteCallWrapup = async (callWrapId) => {
+            if (window.confirm("Are you sure you want to delete this notes?")) {
+                const formData = {
+                    id: callWrapId,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                };
+                try {
+                    const deleteCallWrapupResponse = await axios.get(`/ccm/delete-callwrapup-notes/${props.patientId}`, {
+                        params: {
+                            id: callWrapId,
+                            start_time: "00:00:00",
+                            end_time: "00:00:00",
+                            form_start_time: document.getElementById('page_landing_times').value,
+                        }
+                    });
+                    // showDMEAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val((deleteCallWrapupResponse.data).trim());
+                    await fetchCallWrapUpList();
+                    setTimeout(() => {
+                        // showDMEAlert.value = false;
+                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
+        };
+
+        let getStageID = async () => {
+            try {
+                let stageName = 'Call_Wrap_Up';
+                const response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${stageName}`);
+                callWrapUpStageId.value = response.data.stageID;
+            } catch (error) {
+                console.error('Error fetching stageID:', error);
+                throw new Error('Failed to fetch stageID');
+            }
+        };
+
+        const exposeDeleteCallWrapup = () => {
+            window.deleteCallWrapup = deleteCallWrapup;
+        };
+
+        const groupActivitiesByType = async () => {
+            const groups = {};
+            try {
+                const response = await axios.get('/ccm/monthly-monitoring-call-wrap-up-activities/activities');
+                activityData.value = response.data;
+                activities.value = response.data;
+                activityData.value.forEach((activity) => {
+                    if (!groups[activity.activity_type]) {
+                        groups[activity.activity_type] = { name: activity.activity_type, items: [] };
+                    }
+                    groups[activity.activity_type].items.push(activity);
+                });
+                // Convert the object into an array
+                groupedData.value = Object.values(groups).map((group) => ({ ...group, checked: false }));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        watch(noAdditionalServicesProvided, (value) => {
+            const formDataObject = reactive({});
+            if (value) {
+                groupedData.value.forEach((group) => {
+                    group.checked = false;
+                    group.items.forEach((item) => {
+                        const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
+                        formDataObject[checkboxName] = false;
+                    });
+                });
+                additionalErrors.value = false;
+                additionalErrorsMsg.value = null;
+            }
+        }, { immediate: true });
+
+        watch(groupedData, (newValue) => {
+            const selectedServices = newValue.some(group => group.checked);
+            noAdditionalServicesProvided.value = !selectedServices;
+        }, { immediate: true });
+
+        const addNewNotesRow = () => {
+            const today = new Date().toISOString().split('T')[0];
+            notesRows.value.push({ date: today, text: '' });
+        };
+
+        const deleteNotesRow = (index) => {
+            notesRows.value.splice(index, 1);
+        };
 
         onMounted(async () => {
             try {
                 fetchCallWrapUpList();
+                exposeDeleteCallWrapup();
+                getStageID();
+                groupActivitiesByType();
+                callWrapUpTime.value = document.getElementById('page_landing_times').value;
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -369,27 +399,27 @@ export default {
             loading,
             callWrapColumnDefs,
             callWrapRowData,
-            defaultColDef,
-            gridOptions,
+            callWrapUpStageId,
+            callWrapUpTime,
             fetchCallWrapUpList,
-            // deleteCallWrap,
+            submitCallWrapUpFormData,
+            deleteCallWrapup,
+            groupedData,
+            checkAdditionalServicesSelected,
+            formErrors,
+            additionalErrors,
+            additionalErrorsMsg,
+            showCallWrapUpAlert,
+            noAdditionalServicesProvided,
+            notesRows,
+            addNewNotesRow,
+            deleteNotesRow,
         };
     }
 }
 </script>
-<style>
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
-/* Use the theme you prefer */
 
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    /* Adjust as needed */
-}
-</style>
+
 
 
 

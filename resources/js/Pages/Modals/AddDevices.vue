@@ -23,7 +23,6 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
     // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';

@@ -4,7 +4,7 @@
     <Header />
 
     <!-- Inertia's slot where individual pages will be rendered -->
-    <slot />
+    <slot :moduleId="moduleId" />
 
     <!-- Footer component -->
     <Footer />
@@ -22,6 +22,11 @@ export default {
     Footer,
     axios
   },
+  data() {
+    return {
+      moduleId: null, // Initialize moduleId to null
+    };
+  },
   async mounted() {
     try {
       var str = window.location.href;
@@ -30,10 +35,8 @@ export default {
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
-      const moduleID = await this.getPageModuleID(); // Fetch moduleID from the server
-
-      this.initializeScripts(moduleID, patientId);
-
+      const moduleId = await this.getPageModuleID(); // Fetch moduleID from the server
+      this.initializeScripts(moduleId, patientId);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
     }
@@ -41,27 +44,28 @@ export default {
   methods: {
     async getPageModuleID() {
       try {
-        var url = encodeURIComponent(window.location.href);
+     /*    var url = encodeURIComponent(window.location.href); */
         // Make an API call to your server to fetch the moduleID
         const response = await axios.get('/get_module_id'); // Replace this with your API endpoint
         return response.data.moduleID; // Assuming the server sends moduleID in the response
+
       } catch (error) {
         throw new Error('Failed to fetch moduleID');
       }
     },
-    async initializeScripts(moduleID, patientId) {
+    async initializeScripts(moduleId, patientId) {
       try {
-        const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleID}/list`);
+        const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleId}/list`);
         $("#toDoList").html(taskMangeResp.data);
         $('.badge').html($('#count_todo').val());
-        const patientStatus = await axios.get(`/patients/patient-status/${patientId}/${moduleID}/status`);
+        const patientStatus = await axios.get(`/patients/patient-status/${patientId}/${moduleId}/status`);
         $("#status_blockcontent").html(patientStatus.data);
-        const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleID}/careplanstatus`);
+        const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleId}/careplanstatus`);
         $("#careplan_blockcontent").html(carePlanStatus.data);
         let currentDate = new Date()
         let year = currentDate.getFullYear();
         let month = currentDate.getMonth() + 1;
-        const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleID}/${month}/${year}/previousstatus`);
+        const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleId}/${month}/${year}/previousstatus`);
         $("#previousMonthData").html(previousMonths.data);
       } catch (error) {
         console.error(error);
@@ -199,14 +203,5 @@ export default {
       });
     }
   },
-  // Include your script tags here as an array of objects
-  // Each object should contain `src` property for script import
-  // This will prevent duplicate <script> elements
-  scripts: [
-    { src: "{{ asset('assets/js/script.js') }}" },
-    { src: "{{ asset('assets/js/sidebar-horizontal.script.js') }}" },
-    { src: "{{ asset('assets/js/laravel/app.js') }}" },
-    { src: "{{ asset('assets/js/customizer.script.js') }}" }
-  ]
 };
 </script>

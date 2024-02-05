@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Create / Modify Care Plan</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
@@ -76,7 +76,8 @@
                                                                             <!-- ('Patients::components.care-plan') not in use -->
                                                                             <input type="hidden" name="billable" value="1">
                                                                             <div class="row col-md-12">
-                                                                                <div class="col-md-6"><label>Condition<span
+                                                                                <div class="col-md-6"><label>Condition
+                                                                                        <span
                                                                                             class="error">*</span>:</label>
                                                                                     <input type="hidden" name="condition"
                                                                                         v-model="selectedcondition">
@@ -275,8 +276,11 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
-                                                                            <input type="hidden"
+                                                                        <input type="hidden" name="timearr[form_start_time]"
+                                                                            class="timearr form_start_time"
+                                                                            :value="medicationTime"
+                                                                            v-model="medicationTime">
+                                                                        <input type="hidden"
                                                                             name="timearr['form_save_time']"
                                                                             class="form_save_time"><input type="hidden"
                                                                             name="timearr['pause_start_time']"><input
@@ -303,11 +307,7 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="table-responsive">
-                            <ag-grid-vue style="width: 100%; height: 100%;" class="ag-theme-quartz-dark"
-                                :gridOptions="gridOptions" :defaultColDef="defaultColDef" :columnDefs="columnDefs"
-                                :rowData="rowData" @grid-ready="onGridReady" :popupParent="popupParent"></ag-grid-vue>
-                        </div>
+                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
                     </div>
                 </div>
             </div>
@@ -324,10 +324,9 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable
     // Add other common imports if needed
 } from '../commonImports';
-import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
 import { getCurrentInstance, watchEffect, nextTick } from 'vue';
 
@@ -343,8 +342,7 @@ export default {
         };
     },
     components: {
-        LayoutComponent,
-        AgGridVue,
+        AgGridTable,
     },
     methods: {
         openModal() {
@@ -371,26 +369,14 @@ export default {
         const goalsText = ref(''); // Use ref for the concatenated goals string
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const rowData = ref([]); // Initialize rowData as an empty array
+        const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);
         let selectedMedication = ref('');
-        const gridApi = ref(null);
-        const gridColumnApi = ref(null);
-        const popupParent = ref(null);
-        const paginationPageSizeSelector = ref(null);
-        const paginationNumberFormatter = ref(null);
         const selectedEditDiagnosId = ref('');
         const selectedcondition = ref('');
-        const onGridReady = (params) => {
-            gridApi.value = params.api; // Set the grid API when the grid is ready
-            gridColumnApi.value = params.columnApi;
-            /* paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-            paginationNumberFormatter.value = (params) => {
-                return '[' + params.value.toLocaleString() + ']';
-            }; */
-        };
+
 
         let columnDefs = ref([
             {
@@ -451,20 +437,6 @@ export default {
 
         ]);
 
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-        });
-
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
 
         let medicationTime = ref(null);
         let medicationStageId = ref(0);
@@ -568,7 +540,7 @@ export default {
                 const data = await response.json();
                 // Check if data.data is not undefined before assigning it to rowData
                 if (data.data) {
-                    rowData.value = data.data;
+                    passRowData.value = data.data;
                 } else {
                     console.error('Data is undefined in the response:', data);
                 }
@@ -589,10 +561,11 @@ export default {
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
+                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    document.getElementById("care_plan_form").reset();
+
                     setTimeout(() => {
                         showSuccessAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
@@ -809,7 +782,6 @@ export default {
             $("form[name='" + formName + "'] #support").val("");
             $("form[name='" + formName + "'] textarea[name='comments']").val("");
             $("form[name='" + formName + "'] textarea[name='comments']").text('');
-            //let DiagnosisFormPopulateURL = '/ccm/get-all-code-by-id/' + id + '/' + currentPatientId + '/diagnosis';
 
             if (typeof id === "string" && id.trim().length === 0) {
                 isLoading.value = false;
@@ -820,6 +792,7 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
+                    console.log(response.data.care_plan_form,"kjhgfd");
                     const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
                     if (carePlanData && carePlanData.goals) {
                         goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
@@ -850,12 +823,7 @@ export default {
 
         };
 
-        onBeforeMount(() => {
-            popupParent.value = document.body;
-        });
-        const onFirstDataRendered = (params) => {
-            params.api.paginationGoToPage(1);
-        };
+
 
         onMounted(async () => {
             fetchCarePlanFormList();
@@ -880,16 +848,7 @@ export default {
             selectedCode,
             loading,
             columnDefs,
-            rowData,
-            defaultColDef,
-            onFirstDataRendered,
-            gridOptions,
-            popupParent,
-            gridApi,
-            gridColumnApi,
-            onGridReady,
-            paginationPageSizeSelector,
-            paginationNumberFormatter,
+            passRowData,
             diagnosisOptions,
             codeOptions,
             selectedMedication,
@@ -976,5 +935,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     height: 800px !important;
-}
-</style>
+}</style>

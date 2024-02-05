@@ -69,7 +69,6 @@ export default {
         patient_spirometerpefhigh:Number, 
         patient_spirometerpeflow:Number,
     },
-
     components: {
         Tab1Component,
         Tab2Component,
@@ -77,8 +76,8 @@ export default {
     
     setup(props) {
         const tabs = ref([ 
-          { label: 'Tab 1', component: 'Tab1Component' },
-          { label: 'Tab 2', component: 'Tab2Component' },
+          { label: 'Custom Threshold', component: 'Tab1Component' },
+          { label: 'Stanard Threshold', component: 'Tab2Component' },
          
         ]);
 

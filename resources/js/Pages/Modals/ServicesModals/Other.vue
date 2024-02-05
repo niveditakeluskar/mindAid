@@ -43,21 +43,8 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
-                    <div class="table-responsive">
-                        <ag-grid-vue
-                            style="width: 100%; height: 100%;"
-                            id="other-services-list"
-                            class="ag-theme-alpine"
-                            :columnDefs="columnDefs.value"
-                            :rowData="otherServiceRowData.value"
-                            :defaultColDef="defaultColDef"
-                            :gridOptions="gridOptions"
-                            :loadingCellRenderer="loadingCellRenderer"
-                                        :loadingCellRendererParams="loadingCellRendererParams"
-                                        :rowModelType="rowModelType"
-                                        :cacheBlockSize="cacheBlockSize"
-                                        :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                    </div>
+                    <AgGridTable :rowData="otherServiceRowData" :columnDefs="columnDefs"/>
+
                 </div>
             </div>
         </div>
@@ -70,7 +57,7 @@ import {
     watch,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../../commonImports';
 import OtherForm from './SubForms/ServicesShortForm.vue';
@@ -84,7 +71,7 @@ export default {
     },
     components: {
         OtherForm,
-        AgGridVue,
+        AgGridTable,
     },
     setup(props) {
         let showOtherAlert = ref(false);
@@ -95,12 +82,11 @@ export default {
         const loading = ref(false);
         const loadingCellRenderer = ref(null);
         const loadingCellRendererParams = ref(null);
-        const otherServiceRowData = reactive({ value: [] });
+        const otherServiceRowData = ref([]);
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
-            value: [
+        const columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -128,28 +114,8 @@ export default {
                     },
                 },
             ]
-        });
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            flex: 1,
-            editable: false,
-            cellClass: "cell-wrap-text",
-            autoHeight: true,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-            defaultColDef: {
-                resizable: true,
-                wrapHeaderText: true,
-                autoHeaderHeight: true,
-            },
-        });
-
+        );
+        
         const fetchPatientOtherServiceList = async () => {
             try {
                 loading.value = true;
@@ -167,7 +133,7 @@ export default {
             }
         };
 
-        let submitServicesForm = async () => {
+        const submitServicesForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('service_other_health_form');
             let formData = new FormData(myForm);
@@ -198,7 +164,7 @@ export default {
             }
         }
 
-        let getStepID = async (sid) => {
+        const getStepID = async (sid) => {
             try {
                 let stepname = 'Service-Other-Health';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
@@ -208,7 +174,7 @@ export default {
             }
         };
         
-        let deleteServices = async (id, obj) => {
+        const deleteServices = async (id, obj) => {
             if (window.confirm("Are you sure you want to delete this Service?")) {
                 const formData = {
                     id: id,
@@ -241,7 +207,7 @@ export default {
             }
         }
 
-        let editService = async (id) => {
+        const editService = async (id) => {
             try {
                 const serviceToEdit = otherServiceRowData.value.find(service => service.id == id);
                 if (serviceToEdit) {
@@ -277,13 +243,6 @@ export default {
         );
 
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
             fetchPatientOtherServiceList();
         });
 
@@ -307,8 +266,6 @@ export default {
             showOtherAlert,
             columnDefs,
             otherServiceRowData,
-            defaultColDef,
-            gridOptions,
             fetchPatientOtherServiceList,
             deleteServices,
             editService,

@@ -46,7 +46,7 @@ use RCare\Patients\Models\CarePlanUpdateLogs;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
 use RCare\Ccm\Http\Requests\AllergiesAddRequest;
-use RCare\Ccm\src\Http\Requests\ServicesAddRequest;
+use RCare\Ccm\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
 use RCare\Ccm\Http\Requests\PatientsVitalsDataAddRequest;
@@ -56,11 +56,11 @@ use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsDiagnosisRequest;
+use RCare\Ccm\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\Http\Requests\PatientsLabRequest;
-use RCare\Ccm\src\Http\Requests\PatientsImagingRequest;
+use RCare\Ccm\Http\Requests\PatientsImagingRequest;
 use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsHealthDataRequest;
+use RCare\Ccm\Http\Requests\PatientsHealthDataRequest;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
 use RCare\Org\OrgPackages\StageCodes\src\Models\StageCode;
 use RCare\Org\OrgPackages\HealthServices\src\Models\HealthServices;
@@ -115,7 +115,7 @@ class CarePlanDevelopmentController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -393,15 +393,9 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" 
-                onclick=editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit">
-                <i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" 
-                onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) 
-                data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=carePlanDevelopment.editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=carePlanDevelopment.deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
-
-               
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -435,6 +429,28 @@ class CarePlanDevelopmentController extends Controller
             $result['review_allergy_other_allergy_form'] = $PatientOtherAllergy;
         }
         return $result;
+    }
+
+    public function getImagingData(Request $Request)
+    {
+        $patientId               = sanitizeVariable($Request->route('patientid'));
+        $lastMonthImaging = "";
+        $dataexist        = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+        if ($dataexist == true) {
+            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                ->orderBy('created_at', 'desc')->get();
+        } else {
+            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->where('created_at', '>=', Carbon::now()->subMonth())->get();
+        }
+        return Datatables::of($lastMonthImaging)
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editImaging("' . $row->id . '") data-original-title="Edit" class="editimaging" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
     public function Services_list(Request $Request)
@@ -1440,8 +1456,8 @@ class CarePlanDevelopmentController extends Controller
         );
     }
 
-    public function saveAllergy(AllergiesAddRequest $request) //AllergiesAddRequest 
-    {  
+    public function saveAllergy(AllergiesAddRequest $request)
+    { //
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -3754,55 +3770,55 @@ class CarePlanDevelopmentController extends Controller
         $billable             = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        // DB::beginTransaction();
-        // try {
-        if (isset($med_description)) {
-            $insert_med_id  = array(
-                'description' => $med_description,
-                'created_by'  => session()->get('userid')
+        DB::beginTransaction();
+        try {
+            if (isset($med_description)) {
+                $insert_med_id  = array(
+                    'description' => $med_description,
+                    'created_by'  => session()->get('userid')
+                );
+                $new_med_id     = Medication::create($insert_med_id);
+            }
+            if ($med_id == 'other') {
+                $med_id           = $new_med_id->id;
+            }
+            $insert_medicationData = array(
+                'patient_id'           => $patient_id,
+                'uid'                  => $uid,
+                'med_id'               => $med_id,
+                'purpose'              => $purpose,
+                'description'          => $description,
+                'strength'             => $strength,
+                'dosage'               => $dosage,
+                'frequency'            => $frequency,
+                'route'                => $route,
+                'duration'             => $duration,
+                'drug_reaction'        => $drug_reaction,
+                'pharmacy_name'        => $pharmacy_name,
+                'pharmacy_phone_no'    => $pharmacy_phone_no,
+                'pharmacogenetic_test' => $pharmacogenetic_test
             );
-            $new_med_id     = Medication::create($insert_med_id);
+            if ($tab == "review-medication") {
+                $insert_medicationData['review'] = 1;
+            }
+            //record time
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            $check_med_id = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+            if ($check_med_id == true) {
+                $insert_medicationData['updated_by'] = session()->get('userid');
+                $update_query = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->orderBy('id', 'desc')->update($insert_medicationData);
+            } else {
+                $insert_medicationData['updated_by'] = session()->get('userid');
+                $insert_medicationData['created_by'] = session()->get('userid');
+                $insert_query                        = PatientMedication::create($insert_medicationData);
+            }
+            $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
+            DB::commit();
+            return response(['form_start_time' => $form_save_time]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
-        if ($med_id == 'other') {
-            $med_id           = $new_med_id->id;
-        }
-        $insert_medicationData = array(
-            'patient_id'           => $patient_id,
-            'uid'                  => $uid,
-            'med_id'               => $med_id,
-            'purpose'              => $purpose,
-            'description'          => $description,
-            'strength'             => $strength,
-            'dosage'               => $dosage,
-            'frequency'            => $frequency,
-            'route'                => $route,
-            'duration'             => $duration,
-            'drug_reaction'        => $drug_reaction,
-            'pharmacy_name'        => $pharmacy_name,
-            'pharmacy_phone_no'    => $pharmacy_phone_no,
-            'pharmacogenetic_test' => $pharmacogenetic_test
-        );
-        if ($tab == "review-medication") {
-            $insert_medicationData['review'] = 1;
-        }
-        //record time
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
-        $check_med_id = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
-        if ($check_med_id == true) {
-            $insert_medicationData['updated_by'] = session()->get('userid');
-            $update_query = PatientMedication::where('patient_id', $patient_id)->where('status', 1)->where('med_id', $med_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->orderBy('id', 'desc')->update($insert_medicationData);
-        } else {
-            $insert_medicationData['updated_by'] = session()->get('userid');
-            $insert_medicationData['created_by'] = session()->get('userid');
-            $insert_query                        = PatientMedication::create($insert_medicationData);
-        }
-        $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
-        //     DB::commit();
-        //     return response(['form_start_time' => $form_save_time]);
-        // } catch (\Exception $ex) {
-        //     DB::rollBack();
-        //     return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        // }
     }
 
     public function saveHealthServices(ServicesAddRequest $request)
@@ -4104,14 +4120,17 @@ class CarePlanDevelopmentController extends Controller
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
                                 'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i],
+                                // 'high_val'              => $high_val[$labvalue][$i],
                                 'notes'                 => $notes[$labvalue],
-                                'lab_date'              => $labdate[$labvalue][0]
+                                'lab_date'              => $labdate[0]
                                 //'lab_date'              =>Carbon::now() 
                             );
-                            $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
-                            if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                            if (isset($high_val) && ($high_val != "")) {
+                                $labdata['high_val'] = $high_val[$labvalue][$i];
+                                $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
+                                if (isset($name_param[0]->parameter)) {
+                                    $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                                }
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
@@ -4316,8 +4335,8 @@ class CarePlanDevelopmentController extends Controller
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            $DelPatientImaging = PatientImaging::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
-            PatientImaging::destroy($DelPatientImaging->toArray());
+            // $DelPatientImaging = PatientImaging::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
+            // PatientImaging::destroy($DelPatientImaging->toArray());
             $imaging_array_data = '';
             $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
             $new_sub_sequence = $last_sub_sequence + 1;
@@ -4406,8 +4425,8 @@ class CarePlanDevelopmentController extends Controller
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            $DelPatientHealthdata = PatientHealthData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
-            PatientHealthData::destroy($DelPatientHealthdata->toArray());
+            // $DelPatientHealthdata = PatientHealthData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
+            // PatientHealthData::destroy($DelPatientHealthdata->toArray());
             $health_data_array = '';
             foreach ($other_vitals as $key => $values) {
                 if ($health_date[$key] != '') {
@@ -4463,6 +4482,29 @@ class CarePlanDevelopmentController extends Controller
             DB::rollBack();
             return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
+    }
+
+    public function getHealthData(Request $request)
+    {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth();
+        $configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+        $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
+            from patients.patient_health_data
+            where  patient_id =" . $patientId . "
+            and created_at::timestamp between '" . $dateS . "' and '" . $dateE . "' 
+            group by health_data,health_date order by updated_at desc";
+        $data = DB::select($qry);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
     }
 
     public function saveTravelData(PatientsTravelAddRequest $request)
