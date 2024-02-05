@@ -1,5 +1,5 @@
 <template>
-	<div class="card">
+	<div class="">
 		<div class="row" style="margin-bottom:5px;">
 			<div class="col-lg-12 mb-3">
 				<select name="top_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire" v-on:change="fetchMonthlyQuestion">
@@ -44,7 +44,6 @@ export default {
 			questionnaire: null,
 			decisionTree: null,
 			start_time: null,
-
 		};
 	},
 	mounted() {
@@ -52,14 +51,11 @@ export default {
 	},
 	methods: {
 		async fetchQuestionnaireData() {
-			
 			await axios.get(`/org/stage_code/${this.moduleId}/17/stage_code_list`)
 				.then(response => {
 					this.questionnaire = response.data;
-					//console.log("questionnaire===>", this.questionnaire);
 					this.selectedQuestionnaire = 38;
 					this.fetchMonthlyQuestion();
-					//console.log("gen"+selectedQuestionnaire.value);
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);
@@ -68,14 +64,10 @@ export default {
 
 		async fetchMonthlyQuestion(){
 			$("#preloader").show();
-			console.log('fetch questions'+this.selectedQuestionnaire);
 			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/${this.componentId}/question_list`)
 				.then(response => {
 					this.decisionTree = response.data;
-					console.log(document.getElementById('page_landing_times').value);
-					//document.getElementsByClassName("timearr").value = document.getElementById('page_landing_times').value;
 					this.start_time = document.getElementById('page_landing_times').value;
-					console.log("timer="+this.start_time);
 					this.savedGeneralQuestion();
 				})
 				.catch(error => {
@@ -102,12 +94,10 @@ export default {
 		checkQuestion(obj,i){
 			var tree = JSON.stringify(obj);
             var treeobj = JSON.parse(tree);
-			console.log(treeobj);
             for (var j = 1; j < 15; j++) {
 				//Object.keys(treeobj.qs.opt).forEach(function(j) {
                 if ((treeobj.qs.opt).hasOwnProperty(j)) {
                     var prnt = $('input[value="' + (treeobj.qs.q).replace( /[\r\n]+/gm, "" ) + '"]').parents('.mb-4').attr('id');
-					console.log(prnt);
                     $('#' + prnt).find('input:radio[value="' + treeobj.qs.opt[j].val + '"], input:checkbox[value="' + treeobj.qs.opt[j].val + '"]').attr('checked', true).change();
                     if($('#' + prnt).find('input[type=text]').attr('id')){
                         var textid = $('#' + prnt).find('input[type=text]').attr('id');
@@ -156,10 +146,6 @@ export default {
 				this.renderEditquestion(objj, z, nct);
 			}
 		},
-		
 	},
-	
 };
-
-
 </script>

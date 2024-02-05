@@ -12,8 +12,7 @@
                             <input type="hidden" name="service_status" id="service_status">
                             <input type="hidden" id="timer_runing_status" value="0">
                             <div class="col-md-1">
-
-                                <img src="" class='user-image' style="width: 60px;" />
+                                <img src="/../assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
                             <div class="col-md-11">
                                 <div class="form-row">

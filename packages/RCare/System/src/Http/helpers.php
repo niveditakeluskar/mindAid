@@ -1572,7 +1572,7 @@
                                 }
                             }
                             $q_arr         = $question_data->question->q;
-                            //$content = $content . '<div class="card-title">'.$step_name.'</div>';
+                            // $content = $content . '<div class="card-title">' . $step_name . '</div>';
                             //$content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[\'template_id\']" value="'.json_decode($questionnaire[0]->id).'">';
 
                             $content = $content . "<input type='hidden' name=" . $step_name_trimmed . "[template_id] value=" . json_decode($questionnaire->id) . ">";
