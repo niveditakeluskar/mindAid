@@ -45,7 +45,7 @@ use RCare\Patients\Models\PatientImaging;
 use RCare\Patients\Models\CarePlanUpdateLogs;
 use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
-use RCare\Ccm\src\Http\Requests\AllergiesAddRequest;
+use RCare\Ccm\Http\Requests\AllergiesAddRequest;
 use RCare\Ccm\Http\Requests\ServicesAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
 use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
