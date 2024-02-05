@@ -27,7 +27,7 @@ export default {
         const table = ref();
       
 
-        const colDefs = [
+        let colDefs = [
             {
                 headerName: 'TimeStamp',
                 field: 'csseffdate',
@@ -136,7 +136,7 @@ export default {
             table.value = 'observationsbp';
         }
 
-        const columnDefs = ref(
+        let columnDefs = ref(
             colDefs
         );
 
