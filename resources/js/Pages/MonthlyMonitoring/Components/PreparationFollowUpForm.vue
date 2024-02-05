@@ -407,16 +407,16 @@ export default {
 		},
 		openModal() {
 			// Access the modal component through a ref
-			console.log("openMModel called");
+			// console.log("openMModel called");
 			this.$refs.modalForm.openModal();
 		},
 		openReviewCarePlanModalModal() {
 			// Access the modal component through a ref
-			console.log("ReviewCarePlanModal called");
+			// console.log("ReviewCarePlanModal called");
 			this.$refs.ReviewCarePlanModal.openModal();
 		},
 		openAllergiesModal() {
-			console.log("openAllergiesModal called");
+			// console.log("openAllergiesModal called");
 			this.$refs.allergiesModalForm.openModal();
 		},
 		openServicesModal() {

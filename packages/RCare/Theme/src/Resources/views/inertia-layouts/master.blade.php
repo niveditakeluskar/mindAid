@@ -57,11 +57,12 @@
     $layout = session('layout');
     @endphp
     <!-- Pre Loader Strat  -->
-    <div class='loadscreen' id="preloader">
-        <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->
+    <!-- <div class='loadscreen' id="preloader">
+        <div class="loader ">
             <img src="{{'/images/loading.gif'}}" width="150" height="150">
         </div>
-    </div> <!-- Pre Loader end  -->
+    </div>  -->
+    <!-- Pre Loader end  -->
     <div class="app-admin-wrap layout-horizontal-bar clearfix">
         @include('Theme::layouts_2.header-menu') <!-- ============ end of header menu ============= -->
 
