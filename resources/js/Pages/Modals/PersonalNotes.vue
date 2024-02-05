@@ -83,6 +83,7 @@ export default {
         const openModal = () => {
             console.log('Open personal modal called');
             isOpen.value = true;
+            personalnotesTime.value = document.getElementById('page_landing_times').value;
         };
 
         const closeModal = () => {
@@ -121,9 +122,9 @@ export default {
         onMounted(async () => {
             
             try {
+                personalnotesTime.value = document.getElementById('page_landing_times').value;
                 personal_notes_data.value = props.personal_notes_data;
                 // console.log(props.personal_notes_data,'personal_notes_data=======');
-                personalnotesTime.value = document.getElementById('page_landing_times').value;
             } catch (error) {
                 console.error('Error on page load:', error);
             }

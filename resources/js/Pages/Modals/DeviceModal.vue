@@ -99,6 +99,7 @@ export default {
     data() {
         return {
             isOpen: false,
+            medicationTime: false,
         };
     },
     components: {
@@ -107,6 +108,7 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
+            this.medicationTime = document.getElementById('page_landing_times').value;
         },
         closeModal() {
             this.isOpen = false;
