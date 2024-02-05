@@ -1,4 +1,3 @@
-<!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="dme" role="tabpanel" aria-labelledby="dme-services-icon-pill">
         <div class="card">  
@@ -39,12 +38,10 @@
                     <strong> Please Fill All mandatory Fields! </strong><span id="text"></span>
                 </div>
             </form> 
-
             <div class="separator-breadcrumb border-top"></div>
             <div class="row">
                 <div class="col-12">
                     <AgGridTable :rowData="dmeServiceRowData" :columnDefs="columnDefs"/>
-
                 </div>
             </div>
         </div>
@@ -52,13 +49,11 @@
 </template>
 <script>
 import {
-    reactive,
     ref,
     watch,
     onBeforeMount,
     onMounted,
     AgGridTable,
-    // Add other common imports if needed
 } from '../../commonImports';
 import DMEForm from './SubForms/ServicesShortForm.vue';
 import axios from 'axios';
@@ -118,13 +113,13 @@ export default {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/1`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch followup task list');
+                    throw new Error('Failed to fetch DME Service list');
                 }
                 loading.value = false;
                 const data = await response.json();
                 dmeServiceRowData.value = data.data;
             } catch (error) {
-                console.error('Error fetching followup task list:', error);
+                console.error('Error fetching DME Service list:', error);
                 loading.value = false;
             }
         };

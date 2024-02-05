@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Create / Modify Care Plan</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
@@ -76,7 +76,8 @@
                                                                             <!-- ('Patients::components.care-plan') not in use -->
                                                                             <input type="hidden" name="billable" value="1">
                                                                             <div class="row col-md-12">
-                                                                                <div class="col-md-6"><label>Condition<span
+                                                                                <div class="col-md-6"><label>Condition
+                                                                                        <span
                                                                                             class="error">*</span>:</label>
                                                                                     <input type="hidden" name="condition"
                                                                                         v-model="selectedcondition">
@@ -275,8 +276,11 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime" v-model="medicationTime">
-                                                                            <input type="hidden"
+                                                                        <input type="hidden" name="timearr[form_start_time]"
+                                                                            class="timearr form_start_time"
+                                                                            :value="medicationTime"
+                                                                            v-model="medicationTime">
+                                                                        <input type="hidden"
                                                                             name="timearr['form_save_time']"
                                                                             class="form_save_time"><input type="hidden"
                                                                             name="timearr['pause_start_time']"><input
@@ -303,7 +307,7 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
+                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
                     </div>
                 </div>
             </div>
@@ -557,10 +561,11 @@ export default {
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
+                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    document.getElementById("care_plan_form").reset();
+
                     setTimeout(() => {
                         showSuccessAlert.value = false;
                         medicationTime.value = document.getElementById('page_landing_times').value;
@@ -777,7 +782,6 @@ export default {
             $("form[name='" + formName + "'] #support").val("");
             $("form[name='" + formName + "'] textarea[name='comments']").val("");
             $("form[name='" + formName + "'] textarea[name='comments']").text('');
-            //let DiagnosisFormPopulateURL = '/ccm/get-all-code-by-id/' + id + '/' + currentPatientId + '/diagnosis';
 
             if (typeof id === "string" && id.trim().length === 0) {
                 isLoading.value = false;
@@ -788,6 +792,7 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
+                    console.log(response.data.care_plan_form,"kjhgfd");
                     const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
                     if (carePlanData && carePlanData.goals) {
                         goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
@@ -930,5 +935,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     height: 800px !important;
-}
-</style>
+}</style>

@@ -3,7 +3,7 @@
     <div class="tab-pane fade show active" id="imaging" role="tabpanel" aria-labelledby="imaging-icon-pill">
         <div class="card">  
             <div class="card-header"><h4>Imaging</h4></div>
-            <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiLabsHealthDataForm">
+            <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiImagingHealthDataForm">
                 <div class="alert alert-success" :style="{ display: showImagingAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>
                     <strong> Imaging data saved successfully! </strong><span id="text"></span>
@@ -21,13 +21,14 @@
                     <input type="hidden" name="billable" value="1">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="imagingTime" />
                     <div v-for="(item, index) in imagingItems" :key="index" class="form-row">
+                        <input type="hidden" class="imaging_id" id="imaging_id">
                         <div class="col-md-4">
                             <label>Imaging : <span class="error">*</span></label>
-                            <input type="text" name="imaging[]" placeholder="Enter Imaging" class="forms-element form-control" />
+                            <input type="text" name="imaging[]"  placeholder="Enter Imaging" class="forms-element form-control" />
                         </div>
                         <div class="col-md-4">
                             <label >Date<span class="error">*</span> :</label>
-                            <input type="date" name="imaging_date[]" class="forms-element form-control"/>
+                            <input type="date" name="imaging_date[]"  class="forms-element form-control"/>
                         </div>
                         <div class="col-md-1">
                             <i v-if="index > 0" class="remove-icons i-Remove float-right mb-3" title="Remove Follow-up Task" @click="removeImagingItem(index)"></i>
@@ -57,7 +58,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
-                        <AgGridTable :rowData="imagingRowData" :columnDefs="columnDefs"/>
+                        <AgGridTable :rowData="imagingRowData" :columnDefs="imagingColumnDefs"/>
+                      
+
                     </div>
                 </div>
             </div>
@@ -70,9 +73,9 @@ import {
     ref,
     watch,
     onBeforeMount,
-    onMounted,
+    onMounted, 
+    AgGridTable,
 } from '../../commonImports';
-import AgGridTable from '../../components/AgGridTable.vue';
 import axios from 'axios';
 export default {
     props: {
@@ -99,16 +102,32 @@ export default {
                 imaging_date: ''
             }
         ]);
-        let columnDefs = ref([
+        let imagingColumnDefs =ref( [
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Imaging Date', field: 'description', filter: true },
-                { headerName: 'Imaging', field: 'notes' },
-            ]);
+                {
+                    headerName: 'Imaging Date',
+                    field: 'imaging_date',
+                    filter: true,
+                    valueFormatter: params => {
+                    // Format the date here
+                    const date = params.value;
+                    if (date) {
+                        const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
+                        return formattedDate;
+                    }
+                    return '';
+                    },
+                },
+                { headerName: 'Imaging', field: 'imaging_details' },
+                
+                ]);
+        
 
+        
         const fetchPatientImagingList = async () => {
             try {
                 loading.value = true;
@@ -120,13 +139,14 @@ export default {
                 loading.value = false;
                 const data = await response.json();
                 imagingRowData.value = data.data;
+                console.log(data.data,'imaging_Data');
             } catch (error) {
                 console.error('Error fetching imaging list:', error);
                 loading.value = false;
             }
         };
 
-        let submiLabsHealthDataForm = async () => {
+        let submiImagingHealthDataForm = async () => {
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_imaging_form');
             let formData = new FormData(myForm);
@@ -137,10 +157,10 @@ export default {
             });
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
-                const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
+                const saveImagineResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
                     showImagingAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveServicesResponse.form_start_time);
+                    $(".form_start_time").val(saveImagineResponse.form_start_time);
                     await fetchPatientImagingList();
                     document.getElementById("number_tracking_imaging_form").reset();
                     setTimeout(() => {
@@ -157,6 +177,10 @@ export default {
                 }
             }
         }
+
+        
+       
+
 
         let getStepID = async (sid) => {
             try {
@@ -203,17 +227,15 @@ export default {
 
         return {
             loading,
-            submiLabsHealthDataForm,
+            submiImagingHealthDataForm,
             imagingStageId,
             imagingStepId,
             formErrors,
             imagingTime,
             showImagingAlert,
-            columnDefs,
+            imagingColumnDefs,
             imagingRowData,
             fetchPatientImagingList,
-            deleteServices,
-            editService,
             imaging,
             imagingItems,
             addImagingItem,

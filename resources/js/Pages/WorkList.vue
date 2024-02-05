@@ -1,5 +1,5 @@
 <template>
-  <LayoutComponent ref="layoutComponentRef">
+  <LayoutComponent ref="layoutComponentRef" >
     <div>
       <div class="breadcrusmb">
         <div class="row" style="margin-top: 10px">
@@ -20,7 +20,7 @@
                   <div class="col-md-6 form-group mb-6">
                     <label for="practicename">Practice Name</label>
                     <!-- Your selectworklistpractices component -->
-                    <select id="practices" class="custom-select show-tick select2" v-model="selectedPractice"
+                    <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                         {{ practice.name }}
@@ -86,7 +86,7 @@
                   </div>
                 </div>
               </form>
-            <PatientStatus ref="PatientStatusRef"/>
+            <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId"/>
             </div>
           </div>
         </div>
@@ -95,12 +95,9 @@
         <div class="col-md-12 mb-4">
           <div class="card text-left">
             <div class="card-body">
-              <div style="height: 100vh;">
                 <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
-              </div>
             </div>
           </div> <!--End of card-->
-
         </div>
       </div>
 
@@ -124,7 +121,6 @@ import axios from 'axios';
 
 export default {
   props: {
-      patientId: Number,
       moduleId: Number,
       componentId: Number,
     },
@@ -158,7 +154,6 @@ export default {
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
     const PatientStatusRef = ref();
-
 
     onMounted(async () => {
       try {
@@ -202,18 +197,23 @@ export default {
     const columnDefs = ref([
       {
         headerName: 'Sr. No.',
-        valueGetter: 'node.rowIndex + 1',
-        width: 20
+        valueGetter: 'node.rowIndex + 1',     flex: 1
       },
-      { headerName: 'EMR No.', field: 'pppracticeemr', filter: true },
+      { headerName: 'EMR No.', field: 'pppracticeemr'},
       {
-        headerName: 'Patient Name',
-        field: 'pfname',
-        cellRenderer: function (params) {
-          const row = params.data;
-          return row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
-        },
-      },
+    headerName: 'Patient Name',
+    field: 'pfname',
+    cellRenderer: function (params) {
+        const row = params.data;
+        const fullName = row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
+        const upperCaseFullName = fullName.toUpperCase();
+
+        return `<div style="display: flex; align-items: center;">
+                    <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
+                    <span style="margin-left: 4px;">${upperCaseFullName}</span>
+                </div>`;
+    },    flex: 2
+},
       {
         headerName: 'DOB',
         field: 'pdob',
@@ -222,16 +222,32 @@ export default {
           if (!date) return null;
 
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          });
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            }).replace(/\//g, '-'); // Replace slashes with dashes
 
           return formattedDate; // Returns the date in MM-DD-YYYY format
         },
       },
-      { headerName: 'Practice', field: 'pracpracticename' },
-      { headerName: 'Last contact Date', field: 'csslastdate' },
+      { headerName: 'Practice', field: 'pracpracticename', flex: 2 },
+      {
+    headerName: 'Last contact Date',
+    field: 'csslastdate',
+    cellRenderer: function (params) {
+        const date = params.data.csslastdate;
+        if (date) {
+          const formattedDate = new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            }).replace(/\//g, '-'); // Replace slashes with dashes
+            return formattedDate;
+        } else {
+            return 'N/A';
+        }
+    },
+},
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
       { headerName: 'Action', field: 'action', cellRenderer: customCellRenderer, },
       {
@@ -240,12 +256,16 @@ export default {
         , cellRenderer: (params) => {
           const link = document.createElement('a');
           const icon = document.createElement('i');
-          icon.classList.add('text-20', 'i-Stopwatch');
+         
           const { data } = params;
           if (data.pstatus === 1) {
+            icon.classList.add('text-20', 'i-Yes');
             icon.style.color = 'green';
+            
           } else {
+            icon.classList.add('text-20', 'i-Close');
             icon.style.color = 'red';
+            
           }
           link.appendChild(icon);
           link.classList.add('ActiveDeactiveClass');
@@ -382,18 +402,29 @@ export default {
     }
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
-      try {
-        const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch patient list');
-        }
-        const data = await response.json();
-        passRowData.value = data.data || [];
-      } catch (error) {
-        console.error('Error fetching patient list:', error);
-        loading.value = false;
+  try {
+    const cacheKey = `${practice_id}_${patient_id}_${module_id}_${timeoption}_${time}_${activedeactivestatus}`;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    if (cachedData) {
+      // If cached data exists, use it directly
+      passRowData.value = JSON.parse(cachedData);
+    } else {
+      // Fetch data from the server
+      const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch patient list');
       }
-    };
+      const data = await response.json();
+      // Store fetched data in sessionStorage for caching
+      sessionStorage.setItem(cacheKey, JSON.stringify(data.data || []));
+      passRowData.value = data.data || [];
+    }
+  } catch (error) {
+    console.error('Error fetching patient list:', error);
+    loading.value = false;
+  }
+};
+
 
     return {
       PatientStatusRef,
@@ -418,4 +449,3 @@ export default {
   },
 };
 </script>
-  
