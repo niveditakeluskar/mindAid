@@ -2,7 +2,7 @@
 <template>
     <div class="tab-pane fade show active" id="other" role="tabpanel" aria-labelledby="other-allergies-icon-pill">
         <div class="card">  
-            <div class="card-header"><h4>other</h4></div>
+            <div class="card-header"><h4>Other</h4></div>
             <form id="allergy_other_allergy_form" name="allergy_other_allergy_form" @submit.prevent="submitAllergiesForm">
                 <div class="alert alert-success" :style="{ display: showOtherAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>

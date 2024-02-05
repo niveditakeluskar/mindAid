@@ -2,7 +2,7 @@
 <template>
     <div class="tab-pane fade show active" id="food" role="tabpanel" aria-labelledby="food-allergies-icon-pill">
         <div class="card">  
-            <div class="card-header"><h4>food</h4></div>
+            <div class="card-header"><h4>Food</h4></div>
             <form id="allergy_food_form" name="allergy_food_form" @submit.prevent="submitAllergiesForm">
                 <div class="alert alert-success" :style="{ display: showfoodAlert ? 'block' : 'none' }">
                     <button type="button" class="close" data-dismiss="alert">x</button>
