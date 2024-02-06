@@ -789,16 +789,17 @@ $start = microtime(true);
     // Fetch data from the database if not found in cache
     $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
 
-
+    $run_score_procedure = 0;
+    
         foreach ($data as $d) {
             if ($d->pssscore == 0) {
-                $run_score_procedure = 1;
+                if ($run_score_procedure == 1) {
+                    $run_score_procedure = 0;
+                }
             }
         }
 
-        if ($run_score_procedure) {
-            $run_score_procedure = 0;
-        }
+        
 
         return Datatables::of($data)
             ->addIndexColumn()

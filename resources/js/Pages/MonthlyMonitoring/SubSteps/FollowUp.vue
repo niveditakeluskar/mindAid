@@ -6,6 +6,8 @@
 
 			<div class="card">
 				<div class="card-body">
+					<div id="followUpPageAlert"></div>
+
 					<form id="followup_form" ref="followupFormRef" name="followup_form"
 							@submit.prevent="submitFollowupForm">
 							<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
@@ -178,7 +180,7 @@ export default {
 			end_time: '',
 			form_name: '',
 			billable: '',
-			emr_complete: 0,
+			emr_complete: ref(0),
 			folllowUpTaskData: {},
 		};
 	},
@@ -344,14 +346,21 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
 				console.log('Form submitted successfully!', response);
 				if (response && response.status == 200) {
-					alert("Form submitted successfully");
+                    $('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+					updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+					time.value = response.data.form_start_time;
 				}
 			} catch (error) {
 				isLoading.value = false;
 				if (error.response && error.response.status === 422) {
 					formErrors.value = error.response.data.errors;
+					setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
 					console.log(error.response.data.errors);
 				} else {
+					$('#followUpPageAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
 					// Handle other types of errors
 					console.error('Error submitting form:', error);
 				}
@@ -360,7 +369,7 @@ export default {
 		};
 
 		const handleCheckboxChange = (event) => {
-			emr_complete.value = event.target.checked;
+			emr_complete.value = 1;
 		};
 
 
@@ -414,11 +423,9 @@ $('body').on('click', '.change_status_flag', function () {
 			data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name + '&startTime=' + startTime,
 			success: function success(response) {
 				$(".form_start_time").val(response.form_start_time);
-				$("#time-container").val(AppStopwatch.pauseClock);
-				$("#timer_start").val(timer_paused);
-				$("#timer_end").val(timer_paused);
-				$("#time-container").val(AppStopwatch.startClock);
+
 				updateTimer(props.patientId, '1', props.moduleId);
+
 				time.value = document.getElementById('page_landing_times').value;
 
 			}
