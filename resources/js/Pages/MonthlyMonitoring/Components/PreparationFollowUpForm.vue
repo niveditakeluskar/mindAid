@@ -48,7 +48,7 @@
 				<textarea class="form-control" name="condition_requirnment_notes"
 					:id="`${sectionName}_condition_requirnment_notes`" v-model="condition_requirnment_notes"></textarea>
 				<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
-				<div class="invalid-feedback" v-if="formErrors.condition_requirnment_notes" style="display: block;">{{ formErrors.condition_requirnment_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.condition_requirnment_notes }}</div>
 			</div>
 			<!-- New Office Visit  -->
 			<div class="form-row mb-4">
@@ -73,7 +73,7 @@
 			</div>
 			<div v-if="officeVisitYesNo == '1'" :id="`${sectionName}_new-office-visit-note`" class="office_visit_note mb-4">
 				<textarea class="form-control" name="nov_notes" :id="`${sectionName}_nov_notes`" v-model="officeVisitNotes"></textarea>
-				<div class="invalid-feedback" v-if="formErrors.nov_notes" style="display: block;">{{ formErrors.nov_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.nov_notes }}</div>
 			</div>
 			<!-- End New Office Visit  -->
 			<!-- New Dignosis -->
