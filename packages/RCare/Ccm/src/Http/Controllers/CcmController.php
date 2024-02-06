@@ -899,12 +899,17 @@ class CcmController extends Controller
         $module_id    = getPageModuleName();
         $submodule_id = getPageSubModuleName();
         $stage_id =  getFormStageId($module_id, $submodule_id, 'Preparation');
+        $ccmrpm = 0;
+        if ((PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) || $module_id == 2) {
+            $ccmrpm = 1;
+        }
 
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => $module_id,
             'componentId' => $submodule_id,
             'stageid' => $stage_id,
+            'ccmRpm' => $ccmrpm,
         ]);
         // return view(
         //     'Ccm::monthly-monitoring.patient-details',
