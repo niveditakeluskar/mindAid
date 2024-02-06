@@ -144,6 +144,7 @@ export default {
     const timeValue = ref('00:20:00');
     const activedeactivestatus = ref(null);
     const patientsmodules = ref('3');
+  
     // Compute the values with checks
     const practice_id = computed(() => selectedPractice.value);
     const patient_id = computed(() => selectedPatients.value);
@@ -153,8 +154,9 @@ export default {
     const activedeactivestatusComputed = computed(() =>
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
-    const PatientStatusRef = ref();
 
+    const PatientStatusRef = ref();
+  
     onMounted(async () => {
       try {
         fetchPractices();
@@ -235,9 +237,9 @@ export default {
     headerName: 'Last contact Date',
     field: 'csslastdate',
     cellRenderer: function (params) {
-        const date = params.data.csslastdate;
-        if (date) {
-          const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        if (params.data && params.data.csslastdate) {
+            const date = params.data.csslastdate;
+            const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -258,6 +260,7 @@ export default {
           const icon = document.createElement('i');
          
           const { data } = params;
+          if (params.data && params.data.pstatus) {
           if (data.pstatus === 1) {
             icon.classList.add('text-20', 'i-Yes');
             icon.style.color = 'green';
@@ -267,6 +270,11 @@ export default {
             icon.style.color = 'red';
             
           }
+
+        } else {
+            // Handle cases where data or pstatus is undefined
+            return 'N/A';
+        }
           link.appendChild(icon);
           link.classList.add('ActiveDeactiveClass');
           link.href = 'javascript:void(0)';
@@ -309,12 +317,16 @@ export default {
 
     const fetchPatients = async (practiceId) => {
       try {
-        if (practiceId === undefined || practiceId === null) {
+        if (practiceId === undefined) {
           //console.error('Practice ID is empty or invalid.');
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
-        const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist'); // Call the API endpoint
-        if (!response.ok) {
+
+        if(practiceId == null){
+          practiceId.value = 0;
+        }
+        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
+       if (!response.ok) {
           throw new Error('Failed to fetch patients');
         }
         const data = await response.json();
@@ -403,22 +415,15 @@ export default {
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
   try {
-    const cacheKey = `${practice_id}_${patient_id}_${module_id}_${timeoption}_${time}_${activedeactivestatus}`;
-    const cachedData = sessionStorage.getItem(cacheKey);
-    if (cachedData) {
-      // If cached data exists, use it directly
-      passRowData.value = JSON.parse(cachedData);
-    } else {
       // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      // Store fetched data in sessionStorage for caching
-      sessionStorage.setItem(cacheKey, JSON.stringify(data.data || []));
+      
       passRowData.value = data.data || [];
-    }
+    
   } catch (error) {
     console.error('Error fetching patient list:', error);
     loading.value = false;
