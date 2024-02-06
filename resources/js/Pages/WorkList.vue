@@ -237,7 +237,6 @@ export default {
     headerName: 'Last contact Date',
     field: 'csslastdate',
     cellRenderer: function (params) {
-        if (params.data && params.data.csslastdate) {
             const date = params.data.csslastdate;
             const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -245,9 +244,6 @@ export default {
                 day: '2-digit',
             }).replace(/\//g, '-'); // Replace slashes with dashes
             return formattedDate;
-        } else {
-            return 'N/A';
-        }
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -260,21 +256,13 @@ export default {
           const icon = document.createElement('i');
          
           const { data } = params;
-          if (params.data && params.data.pstatus) {
           if (data.pstatus === 1) {
             icon.classList.add('text-20', 'i-Yes');
             icon.style.color = 'green';
-            
           } else {
             icon.classList.add('text-20', 'i-Close');
             icon.style.color = 'red';
-            
           }
-
-        } else {
-            // Handle cases where data or pstatus is undefined
-            return 'N/A';
-        }
           link.appendChild(icon);
           link.classList.add('ActiveDeactiveClass');
           link.href = 'javascript:void(0)';
