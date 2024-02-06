@@ -491,7 +491,7 @@ export default {
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status;
 
                 personal_notes_data.value = data.personal_notes;
-                research_study_data.value = data.research_study_data;
+                research_study_data.value = data.research_study;
 
                 patient_systolichigh.value = data.systolichigh;
                 patient_systoliclow.value = data.systoliclow;
