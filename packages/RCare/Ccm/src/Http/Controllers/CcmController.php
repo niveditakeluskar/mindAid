@@ -3552,7 +3552,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $last_sub_sequence     = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
         $new_sub_sequence      = $last_sub_sequence + 1;
         DB::beginTransaction();
-
+        try {
             if ($followupmaster_task[0] != '' && $emr_complete == '1') {
                 foreach ($followupmaster_task as $i => $value) {
                     if (!empty($status_flag[$i]) == '0') {
@@ -3713,7 +3713,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             } //end else
             DB::commit();
             return response(['form_start_time' => $form_save_time]);
-
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
     }
 
     public function UpdateCallWrapUpInline(Request $request, $id)

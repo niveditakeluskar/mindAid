@@ -264,8 +264,14 @@ if (!element || element.value === null) {
                 const response = await axios.post('/patients/patient-active-deactive', formData);
                 if (response && response.status == 200) {
                   console.log(response);
+                  updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+				            	time.value = response.data.form_start_time;
                   $('#patientalertdiv').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("active_deactive_form").reset();
+                    setTimeout(function () {
+                      $('#patientalertdiv').html('');
+                                    }, 3000);
                 }
                 setTimeout(function () {
                   closeModal();
@@ -276,10 +282,16 @@ if (!element || element.value === null) {
               isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                     console.log(error.response.data.errors);
                 } else {
                   $('#patientalertdiv').html('<div class="alert alert-danger">Error: ' + error + '</div>');
                     console.error('Error submitting form:', error);
+                    setTimeout(function () {
+                      $('#patientalertdiv').html('');
+                                    }, 3000);
                 }
             }
             // this.closeModal();

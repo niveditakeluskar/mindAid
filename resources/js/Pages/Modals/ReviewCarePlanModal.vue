@@ -576,6 +576,9 @@ export default {
 
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }

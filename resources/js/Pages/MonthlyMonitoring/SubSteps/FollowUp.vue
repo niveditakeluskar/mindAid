@@ -346,10 +346,14 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
 				console.log('Form submitted successfully!', response);
 				if (response && response.status == 200) {
+					fetchFollowupMasterTaskList();
                     $('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
 					time.value = response.data.form_start_time;
+					setTimeout(function () {
+                      $('#followUpPageAlert').html('');
+                                    }, 3000);
 				}
 			} catch (error) {
 				isLoading.value = false;
@@ -363,6 +367,9 @@ export default {
 					$('#followUpPageAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
 					// Handle other types of errors
 					console.error('Error submitting form:', error);
+					setTimeout(function () {
+                      $('#followUpPageAlert').html('');
+                                    }, 3000);
 				}
 			}
 			isLoading.value = false;
@@ -371,8 +378,6 @@ export default {
 		const handleCheckboxChange = (event) => {
 			emr_complete.value = 1;
 		};
-
-
 
 		onMounted(async () => {
 			try {
@@ -410,6 +415,7 @@ $('body').on('click', '.change_status_flag', function () {
 	var id = $(this).data('id');
 	var component_id = $("form[name='followup_form'] input[name='component_id']").val();
 	var module_id = $("form[name='followup_form'] input[name='module_id']").val();
+	var patient_id = $("form[name='followup_form'] input[name='patient_id']").val();
 	var stage_id = $("form[name='followup_form'] input[name='stage_id']").val();
 	var step_id = $("form[name='followup_form'] input[name='step_id']").val();
 	var timer_start = $("#timer_start").val();
@@ -417,17 +423,23 @@ $('body').on('click', '.change_status_flag', function () {
 	var startTime = $("form[name='followup_form'] .form_start_time").val();
 	var form_name = $("#form_name").val();
 	if (confirm("Are you sure you want to change the Status")) {
+		$.ajaxSetup({
+   headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+   }
+});
 		$.ajax({
 			type: 'post',
 			url: '/ccm/completeIncompleteTask',
 			data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name + '&startTime=' + startTime,
 			success: function success(response) {
+				$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 				$(".form_start_time").val(response.form_start_time);
-
-				updateTimer(props.patientId, '1', props.moduleId);
-
-				time.value = document.getElementById('page_landing_times').value;
-
+				updateTimer(patient_id, '1', module_id);
+				time.value = response.form_start_time;
+				setTimeout(function () {
+					$('#followUpPageAlert').html('');
+          },3000);
 			}
 		});
 	} else {
