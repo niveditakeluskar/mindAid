@@ -136,7 +136,7 @@ class RpmEnrolledReportController extends Controller
             ->addColumn('action', function($row) use ($monthly){ 
                 $btn='';
                 $cm='';
-                $cm .= "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail'onclick ='shippingdetail(".$row->pid.")'>Shipping Details</button> |<a href='/rpm/timeline-daily-activity/".$row->pid."/timelinedailyactivity' target='_blank' data-id='".$row->pid."' id='timeline' class='btn btn-primary mt-4' type='button'>RPM Timeline</a>";
+                $cm .= "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail'onclick ='shippingdetail(".$row->pid.")'>Shipping Details</button> <a href='/rpm/timeline-daily-activity/".$row->pid."/timelinedailyactivity' target='_blank' data-id='".$row->pid."' id='timeline' class='btn btn-primary mt-4' type='button'>RPM Timeline</a>";
                 $btn .= $cm;   
                 return  $btn;
             })
