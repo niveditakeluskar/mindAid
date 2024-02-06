@@ -44,20 +44,36 @@ export default {
 			questionnaire: null,
 			decisionTree: null,
 			start_time: null,
-
+			module_id: null,
+			stage_id: null,
+			step :null,
 		};
 	},
 	mounted() {
-		this.fetchQuestionnaireData();
+		this.patientEnrolled();
+		//this.fetchQuestionnaireData();
 	},
 	methods: {
+		async patientEnrolled() {
+			await axios.get(`/ccm/enrolled/${this.patientId}/${this.moduleId}/${this.componentId}/ccm_enrolled`)
+				.then(response => {
+					this.module_id = response.data.module_id;
+					this.stage_id =  response.data.stage_id;
+					this.step = response.data.step;
+					this.fetchQuestionnaireData();
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		},
+
 		async fetchQuestionnaireData() {
 			
-			await axios.get(`/org/stage_code/${this.moduleId}/17/stage_code_list`)
+			await axios.get(`/org/stage_code/${this.module_id}/${this.stage_id}/stage_code_list`)
 				.then(response => {
 					this.questionnaire = response.data;
 					//console.log("questionnaire===>", this.questionnaire);
-					this.selectedQuestionnaire = 38;
+					this.selectedQuestionnaire = this.step;
 					this.fetchMonthlyQuestion();
 					//console.log("gen"+selectedQuestionnaire.value);
 				})
