@@ -826,6 +826,24 @@ class CcmController extends Controller
         ]);
     }
 
+    public function getEnrolledStatus($patient_id, $module_id, $component_id){
+        
+        $module_id = $module_id;
+        $component_id = $component_id;
+         if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
+            $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
+            $module_id = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+            $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $module_id)->where('status', 1)->get('id');
+            $component_id = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+         }
+        $stage_id = getFormStageId($module_id, $component_id, 'General Question');
+        $step = getFormStepId($module_id, $component_id, $stage_id, 'General Questions');
+        $data['module_id'] = $module_id;
+        $data['stage_id'] = $stage_id;
+        $data['step'] = $step;
+        return $data;
+    }
+
     public function getDevice($patient_id)
     {
         $PatientDevices = PatientDevices::where('patient_id', $patient_id)->where('status', 1)->orderby('id', 'desc')->get();

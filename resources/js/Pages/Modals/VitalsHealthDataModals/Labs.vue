@@ -120,7 +120,7 @@ export default {
         const fetchPatientLabsList = async () => {
             try {
                 loading.value = true;
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
@@ -254,19 +254,20 @@ export default {
         const editlabsformnew = async (lab_date, patient_id, lab_test_id, lab_date_exist) => {
             console.log("lab_date" + lab_date +", patient_id" + patient_id+", lab_test_id" + lab_test_id+", lab_date_exist"+ lab_date_exist);
             try {
-                const labToEdit = labsRowData.value.find(lab => lab.id == lab_test_id);
-                if (labToEdit) {
-                    // const form = document.getElementById('service_dme_form');
-                    // form.querySelector('#service_id').value = serviceToEdit.id;
-                    // form.querySelector('#type').value = serviceToEdit.type;
-                    // form.querySelector('#purpose').value = serviceToEdit.purpose;
-                    // form.querySelector('#specify').value = serviceToEdit.specify;
-                    // form.querySelector('#brand').value = serviceToEdit.brand;
-                    // form.querySelector('#notes').value = serviceToEdit.notes;
-                    form.scrollIntoView({ behavior: 'smooth' });
+                loading.value = true;
+                // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                const response = await fetch(`/ccm/care-plan-development-populateLabs/${patient_id}/${lab_date}/${lab_test_id}/${lab_date_exist}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch labs list');
                 }
+                loading.value = false;
+                const data = await response.json();
+                const labs = ref([]);
+                labs.value = data.data;
+                console.log("labs details", labs);
             } catch (error) {
-                console.error('Error editing service:', error);
+                console.error('Error fetching labs list:', error);
+                loading.value = false;
             }
         };
 

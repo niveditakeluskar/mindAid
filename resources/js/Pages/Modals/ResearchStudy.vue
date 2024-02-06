@@ -81,6 +81,7 @@ export default {
 
         const openModal = () => {
             isOpen.value = true;
+            researchstudyTime.value = document.getElementById('page_landing_times').value;
         };
 
         const closeModal = () => {
