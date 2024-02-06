@@ -11,15 +11,19 @@
                 <div class="col-md-12">
                     <input type="hidden" name="uid" :value="patientId"/>
                     <input type="hidden" name="patient_id" :value="patientId"/>
-                    <input type="hidden" name="start_time" value="00:00:00"> 
-                    <input type="hidden" name="end_time" value="00:00:00">
-                    <input type="hidden" name="module_id" :value="moduleId"/>
-                    <input type="hidden" name="component_id" :value="componentId"/>
-                    <input type="hidden" name="stage_id" :value="stageId"/>
-                    <input type="hidden" name="step_id" :value="labsStepId">
-                    <input type="hidden" name="form_name" value="number_tracking_labs_form">
-                    <input type="hidden" name="billable" value="1">
+                    <input type="hidden" name="start_time" value="00:00:00" /> 
+                    <input type="hidden" name="end_time" value="00:00:00" />
+                    <input type="hidden" name="module_id" :value="moduleId" />
+                    <input type="hidden" name="component_id" :value="componentId" />
+                    <input type="hidden" name="stage_id" :value="stageId" />
+                    <input type="hidden" name="step_id" :value="labsStepId" />
+                    <input type="hidden" name="form_name" value="number_tracking_labs_form" />
+                    <input type="hidden" name="billable" value="1" />
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="labsTime" />
+                    <input type="hidden" name="editform" id="editform" :value="editform" />
+                    <input type="hidden" name="olddate" id="olddate" :value="olddate" />
+                    <input type="hidden" name="oldlab" id="oldlab" :value="oldlab" />
+                    <input type="hidden" name="labdateexist" id="labdateexist" :value="labdateexist" />
                     <div class="form-row">
                         <div class="col-md-4 form-group mb-3">
                             <label>Labs<span class="error">*</span> :</label><br>
@@ -74,6 +78,7 @@ import {
     // Add other common imports if needed
 } from '../../commonImports';
 import axios from 'axios';
+import moment from 'moment';
 export default {
     props: {
         patientId: Number,
@@ -94,7 +99,10 @@ export default {
         const selectedLabs = ref(0);
         const labDate = ref('');
         const loading = ref(false);
-    
+        const editform = ref('');
+        const olddate = ref('');
+        const oldlab = ref('');
+        const labdateexist = ref('');
         const labsRowData = ref([]);
        
         const columnDefs = ref( [
@@ -155,6 +163,10 @@ export default {
                     document.getElementById("number_tracking_labs_form").reset();
                     selectedLabs.value = null;
                     labParams.value = null;
+                    editform.value = null;
+                    olddate.value = null;
+                    oldlab.value = null;
+                    labdateexist.value = null;
                     setTimeout(() => {
                         showLabsAlert.value = false;
                         labsTime.value = document.getElementById('page_landing_times').value;
@@ -266,8 +278,13 @@ export default {
                 const labs = data.number_tracking_labs_details.dynamic.lab;
                 console.log("data labs", labs);
                 selectedLabs.value = lab_test_id;
-                labDate.value = new Date(lab_date).toISOString().split('T')[0];
+                let dt = moment(lab_date, 'DD-MM-YYYY').format('YYYY-MM-DD'); //new Date(lab_date).toISOString().split('T')[0];
+                labDate.value = dt;
                 labParams.value = generateLabParams(lab_test_id, labs);
+                editform.value = 'edit';
+                olddate.value = dt;
+                oldlab.value = lab_test_id;
+                labdateexist.value = dt;
             } catch (error) {
                 console.error('Error fetching labs details:', error);
                 loading.value = false;
@@ -360,6 +377,10 @@ export default {
             labs,
             onLabchange,
             labParams,
+            editform,
+            olddate,
+            oldlab,
+            labdateexist,
         };
     }
 };
