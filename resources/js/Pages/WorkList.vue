@@ -1,6 +1,7 @@
 <template>
   <LayoutComponent ref="layoutComponentRef" >
     <div>
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <div class="breadcrusmb">
         <div class="row" style="margin-top: 10px">
           <div class="col-md-8">
@@ -133,7 +134,7 @@ export default {
     const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
-    const loading = ref(false);
+    const isLoading = ref(false);
     const tableInstance = ref(null); // Define tableInstance using ref()
     const showModal = ref(false);
     const selectedPractice = ref(null);
@@ -237,8 +238,8 @@ export default {
     headerName: 'Last contact Date',
     field: 'csslastdate',
     cellRenderer: function (params) {
-            const date = params.data.csslastdate;
-            const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        const date = params.data.csslastdate;
+          const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
@@ -259,9 +260,11 @@ export default {
           if (data.pstatus === 1) {
             icon.classList.add('text-20', 'i-Yes');
             icon.style.color = 'green';
+            
           } else {
             icon.classList.add('text-20', 'i-Close');
             icon.style.color = 'red';
+            
           }
           link.appendChild(icon);
           link.classList.add('ActiveDeactiveClass');
@@ -351,7 +354,7 @@ export default {
 
     const handleSubmit = async () => {
       try {
-        
+        isLoading.value = true;
         await getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedPatients.value === '' ? null : selectedPatients.value,
@@ -411,10 +414,10 @@ export default {
       const data = await response.json();
       
       passRowData.value = data.data || [];
-    
+      isLoading.value = false;
   } catch (error) {
     console.error('Error fetching patient list:', error);
-    loading.value = false;
+    isLoading.value = false;
   }
 };
 
@@ -422,7 +425,7 @@ export default {
     return {
       PatientStatusRef,
       columnDefs,
-      loading,
+      isLoading,
       tableInstance,
       showModal,
       selectedPractice,
