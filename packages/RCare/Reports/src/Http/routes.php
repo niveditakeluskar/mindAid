@@ -23,6 +23,11 @@ Route::get('/time-logs-report', function(){
         return view('Reports::task-status-report.task-status-list');
     })->name('task.status.report');
 
+    
+    Route::get('/rpm-enrolled-patient-report', function(){
+        return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
+    })->name('rpm.enrolled.patient.report');
+    
 
         
     Route::middleware(["auth", "web"])->group(function () { 
@@ -115,6 +120,21 @@ Route::get('/time-logs-report', function(){
         // Route::get('/task-status-report-search/{caremanagerid}/{practicesgrp}/{practiceid}/{patient}/{taskstatus}
         // /{fromdate}/{activedeactivestatus}',
         // 'RCare\Reports\Http\Controllers\TaskStatusReportController@TaskStatusReportSearch')->name('task.status.search.report'); 
+        Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
+        Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
+        Route::post('/shipping-statuschange', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@changeStatusShipping')->name('save.status');  
+        // Route::get('ajax/shippingreports_populate/{id}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshipping')->name("ajax.shipping.populate");
+        Route::get('ajax/shippingreports_populate/{patinet_id}/{device_code}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshippingdevicewise')->name("ajax.shipping.populate");
+        
+        Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
+        
+       
+        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+ 
+
 
         Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
         Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
