@@ -130,8 +130,13 @@ const formatDate = (dateString) => {
                 const response = await axios.post('/ccm/saveFollowupListData-edit', formData);
                 if (response && response.status == 200) {
                     document.getElementById("followup_task_edit_notes").reset();
-                    console.log(response);
                     $('#followUpAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+					updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+					followupTime.value = response.data.form_start_time;
+					setTimeout(function () {
+                      $('#followUpAlert').html('');
+                                    }, 3000);
                 }
                 setTimeout(function () {
                     closeModal();
@@ -142,9 +147,15 @@ const formatDate = (dateString) => {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     console.log(error.response.data.errors);
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                 } else {
                     $('#followUpAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
                     console.error('Error submitting form:', error);
+                    setTimeout(function () {
+                      $('#followUpAlert').html('');
+                                    }, 3000);
                 }
             }
             // this.closeModal();

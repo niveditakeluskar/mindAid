@@ -119,14 +119,23 @@ export default {
                     preparationTime.value = document.getElementById('page_landing_times').value;
                 $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
                     document.getElementById("call_preparation_preparation_followup_form").reset();
+                    setTimeout(function () {
+                      $('#preparationAlert').html('');
+                                    }, 3000);
                 }
                 isLoading.value = false;
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                 } else {
-                  $('#preparationAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+                  $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
                     console.error('Error submitting form:', error);
+                    setTimeout(function () {
+                      $('#preparationAlert').html('');
+                                    }, 3000);
                 }
                 isLoading.value = false;
             }
