@@ -816,6 +816,10 @@ class CcmController extends Controller
         $module_id    = getPageModuleName();
         $submodule_id = getPageSubModuleName();
         $stage_id =  getFormStageId($module_id, $submodule_id, 'Preparation');
+        $ccmrpm = 0;
+        if ((PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) || $module_id == 2) {
+            $ccmrpm = 1;
+        }
 
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
@@ -823,19 +827,21 @@ class CcmController extends Controller
             'componentId' => $submodule_id,
             'stageid' => $stage_id,
             'landingTime' => $landingTime,
+            'ccmRpm' => $ccmrpm,
         ]);
     }
 
-    public function getEnrolledStatus($patient_id, $module_id, $component_id){
-        
+    public function getEnrolledStatus($patient_id, $module_id, $component_id)
+    {
+
         $module_id = $module_id;
         $component_id = $component_id;
-         if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
+        if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
             $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
             $module_id = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
             $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $module_id)->where('status', 1)->get('id');
             $component_id = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
-         }
+        }
         $stage_id = getFormStageId($module_id, $component_id, 'General Question');
         $step = getFormStepId($module_id, $component_id, $stage_id, 'General Questions');
         $data['module_id'] = $module_id;

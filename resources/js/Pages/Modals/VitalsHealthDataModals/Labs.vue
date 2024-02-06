@@ -266,16 +266,52 @@ export default {
                 const labs = data.number_tracking_labs_details.dynamic.lab;
                 console.log("data labs", labs);
                 selectedLabs.value = lab_test_id;
-                labDate.value = lab_date;
-                generateLabParams(labs);
+                labDate.value = new Date(lab_date).toISOString().split('T')[0];
+                labParams.value = generateLabParams(lab_test_id, labs);
             } catch (error) {
                 console.error('Error fetching labs details:', error);
                 loading.value = false;
             }
         };
 
-        const generateLabParams = (labParams) => {
+        const generateLabParams = (lab, labParams) => {
+            let params = '';
+            let labNotes = '';
             console.log("labParams", labParams);
+            labParams.forEach((value) => {
+                params += `<div class='col-md-6 mb-3'>`;
+                params += `<label>${value.parameter} <span class='error'>*</span></label>`;
+                params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
+                params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
+
+                if (value.parameter === 'COVID-19') {
+                    params += `<div class='form-row'><div class='col-md-5'>`;
+                    params += `<select class='forms-element form-control mr-1 pl-3' name='reading[${lab}][]'>`;
+                    params += `<option value=''>Select Reading</option>`;
+                    params += `<option value='positive' ${value.reading === 'positive' ? 'selected' : ''}>Positive</option>`;
+                    params += `<option value='negative' ${value.reading === 'negative' ? 'selected' : ''}>Negative</option></select>`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                } else {
+                    params += `<div class='form-row'><div class='col-md-5'>`;
+                    params += `<select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[${lab}][]'>`;
+                    params += `<option value=''>Select Reading</option>`;
+                    params += `<option value='high' ${value.reading === 'high' ? 'selected' : ''}>High</option>`;
+                    params += `<option value='normal' ${value.reading === 'normal' ? 'selected' : ''}>Normal</option>`;
+                    params += `<option value='low' ${value.reading === 'low' ? 'selected' : ''}>Low</option>`;
+                    params += `<option value='test_not_performed' ${value.reading === 'test_not_performed' ? 'selected' : ''}>Test not performed</option></select>`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                    params += `<div class='col-md-6'>`;
+                    params += `<input type='text' class='forms-element form-control' name='high_val[${lab}][]' value='${value.high_val}' />`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                }
+                labNotes = value.notes;
+                params += `</div></div>`;
+            });
+
+            params += `<div class="col-md-12 mb-3"><label>Notes:</label>`;
+            params += `<textarea class="forms-element form-control" name="notes[${lab}]">${labNotes}</textarea>`;
+            params += `<div class="invalid-feedback"></div></div>`;
+            return params;
         };
 
         const exposeEditLab = () => {

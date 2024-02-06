@@ -36,6 +36,7 @@ export default {
       moduleId: Number,
       componentId: Number,
       stageid:Number,
+      ccmRpm:Number
    },
 
    components: {
@@ -54,7 +55,7 @@ export default {
          componentId: props.componentId,
       });
 
-      const tabs = ['Preparation', props.moduleId === 2 ? 'Review RPM' : '', 'Call', 'Follow-up', 'Text'].filter(tab => tab !== '');
+      const tabs = ['Preparation', props.ccmRpm === 1 ? 'Review RPM' : '', 'Call', 'Follow-up', 'Text'].filter(tab => tab !== '');
 
       const changeTab = async (index) => {
          activeTab.value = index;
@@ -70,7 +71,7 @@ export default {
       };
 
       const selectedComponent = computed(() => {
-      if (props.moduleId === 2) {
+      if (props.ccmRpm === 1) {
             switch (activeTab.value) {
                case 0:
                   return Preparation;
