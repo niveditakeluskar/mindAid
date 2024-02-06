@@ -37,7 +37,7 @@
     "@inertiajs/progress": "^0.2.7",
     "@inertiajs/vue3": "^1.0.14",
     "@vue/compat": "^3.4.15",
-    "ag-grid-community": "^31.0.1",
+    "ag-grid-community": "^31.0.3",
     "ag-grid-vue3": "^31.0.1",
     "hash-generator": "^0.1.0",
     "highcharts": "^9.3.0",

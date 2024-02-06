@@ -773,39 +773,25 @@ class PatientWorklistController extends Controller
         $time = sanitizeVariable($request->route('time'));
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
 
-        // Cache key for storing query result
-        $cacheKey = md5(serialize([$practices, $patient, $module, $timeoption, $time, $activedeactivestatus]));
-   /*       // Check if the result is already cached
-    if (Cache::has($cacheKey)) {
-        $data = Cache::get($cacheKey);
-    } else {
-        
-           // Fetch user details
-           $user = Users::findOrFail($cid);
-           $roleid = $user->role;
-        // If not cached, execute the query
-        $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid,$roleid);
-        // Cache the result for future use
-        
-        Cache::put($cacheKey, $data, now()->addMinutes(60)); // Adjust the expiration time as needed
-    } */
+        // Pagination parameters
+ 
+     // Fetch user details
+    $user = Users::findOrFail($cid);
+    $roleid = $user->role;
+/* 
+// Enable query logging in Laravel
+DB::connection()->enableQueryLog();
 
-      // Check if the result is already cached
-      $data = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid) {
-        // Fetch user details
-        $user = Users::findOrFail($cid);
-        $roleid = $user->role;
+// Start measuring time
+$start = microtime(true);
+ */
 
-        // Execute the query
-        return $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
-    });
-
-    
-    $run_score_procedure = 0;
+    // Fetch data from the database if not found in cache
+    $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
 
 
         foreach ($data as $d) {
-            if ($d->pssscore == 0 || $d->pssscore == 0) {
+            if ($d->pssscore == 0) {
                 $run_score_procedure = 1;
             }
         }
@@ -819,8 +805,7 @@ class PatientWorklistController extends Controller
             ->addColumn('action', function ($row) {
                 $check = DB::table('patients.patient_diagnosis_codes')
                     ->where('patient_id', $row->pid)
-                    ->latest()
-                    ->first();
+                    ->exists();
 
                 $PatientService = PatientServices::where('patient_id', $row->pid)
                 ->where('status', 1)
@@ -860,6 +845,7 @@ class PatientWorklistController extends Controller
             })
             ->rawColumns(['action', 'activedeactive', 'addaction'])
             ->make(true);
+
     }
 
     private function executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid,$roleid)

@@ -239,7 +239,7 @@ export default {
                     document.getElementById("service_dme_form").reset();
                     setTimeout(() => {
                         // showDMEAlert.value = false;
-                        DMEServicesTime.value = document.getElementById('page_landing_times').value;
+                        labsTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -251,22 +251,27 @@ export default {
             window.deleteLabs = deleteLabs;
         };
 
-        const editService = async (id) => {
+        const editlabsformnew = async (lab_date, patient_id, lab_test_id, lab_date_exist) => {
+            console.log("lab_date" + lab_date +", patient_id" + patient_id+", lab_test_id" + lab_test_id+", lab_date_exist"+ lab_date_exist);
             try {
-                const serviceToEdit = dmeServiceRowData.value.find(service => service.id == id);
-                if (serviceToEdit) {
-                    const form = document.getElementById('service_dme_form');
-                    form.querySelector('#service_id').value = serviceToEdit.id;
-                    form.querySelector('#type').value = serviceToEdit.type;
-                    form.querySelector('#purpose').value = serviceToEdit.purpose;
-                    form.querySelector('#specify').value = serviceToEdit.specify;
-                    form.querySelector('#brand').value = serviceToEdit.brand;
-                    form.querySelector('#notes').value = serviceToEdit.notes;
+                const labToEdit = labsRowData.value.find(lab => lab.id == lab_test_id);
+                if (labToEdit) {
+                    // const form = document.getElementById('service_dme_form');
+                    // form.querySelector('#service_id').value = serviceToEdit.id;
+                    // form.querySelector('#type').value = serviceToEdit.type;
+                    // form.querySelector('#purpose').value = serviceToEdit.purpose;
+                    // form.querySelector('#specify').value = serviceToEdit.specify;
+                    // form.querySelector('#brand').value = serviceToEdit.brand;
+                    // form.querySelector('#notes').value = serviceToEdit.notes;
                     form.scrollIntoView({ behavior: 'smooth' });
                 }
             } catch (error) {
                 console.error('Error editing service:', error);
             }
+        };
+
+        const exposeEditLab = () => {
+            window.editlabsformnew = editlabsformnew;
         };
 
         watch(() => props.stageId, (newValue, oldValue) => {
@@ -287,6 +292,7 @@ export default {
             try {
                 labsTime.value = document.getElementById('page_landing_times').value;
                 exposeDeleteLab();
+                exposeEditLab();
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -301,7 +307,7 @@ export default {
             showLabsAlert,
             columnDefs,
             labsRowData,
-          
+            selectedLabs,
             fetchPatientLabsList,
             deleteServices,
             editService,
