@@ -99,6 +99,7 @@ export default {
     data() {
         return {
             isOpen: false,
+            medicationTime: false,
         };
     },
     components: {
@@ -107,6 +108,7 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
+            this.medicationTime = document.getElementById('page_landing_times').value;
         },
         closeModal() {
             this.isOpen = false;
@@ -340,13 +342,13 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     fetchDeviceList();
-                    alert("Saved Successfully");
-                    updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(response.data.form_start_time);
+                    //alert("Saved Successfully");
+                    //updateTimer(props.patientId, '1', props.moduleId);
+                    //$(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("devices_form").reset();
                     showSuccessAlert.value = false;
                     setTimeout(() => {
-                        medicationTime.value = document.getElementById('page_landing_times').value;
+                       // medicationTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
                 isLoading.value = false;

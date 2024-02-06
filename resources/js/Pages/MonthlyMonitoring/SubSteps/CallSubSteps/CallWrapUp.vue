@@ -11,10 +11,12 @@
                             </div>
                             <div class="row mb-4">
                                 <div class="col-md-3"><h6><b>Call Notes for Review and Approval</b></h6></div>
-                                <div class="col-md-3">
-                                    <select name="select_report" class ="custom-select show-tick mr-4"><!--  id="rpm-report" -->
+                                <div class="col-md-3" v-if="moduleId === 2"> <!-- show only for RPM-->
+                                    <select name="select_report" class ="custom-select show-tick mr-4" v-model="selectedReport" @change="onRPMReportChanged()"><!--  id="rpm-report" -->
                                         <option>Select Report</option>
+                                        <!-- <option value="1">Summary Report</option> -->
                                         <option value="2">Daily History Report</option>
+                                        <!-- <option value="3">Alert History Report</option> -->
                                     </select>
                                 </div> 
                                 <div class="col-md-3">
@@ -42,7 +44,7 @@
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
                                     <label class="col-md-12">EMR Monthly Summary
-                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" ></textarea>
+                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" @blur="saveEMRNotes"></textarea>
                                         <!-- onfocusout="saveEMR()" -->
                                     </label>
                                     <div class="invalid-feedback">
@@ -68,7 +70,7 @@
                                             <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
                                         </div>
                                         <div class="col-md-6">
-                                            <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`" ></textarea>
+                                            <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`"  @blur="saveEMRNotes"></textarea>
                                             <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary.' + index][0] }}</div>
                                         </div>
                                         <div class="col-md-1" style="top: 15px;">
@@ -173,6 +175,7 @@ export default {
         let showCallWrapUpAlert = ref(false);
         const noAdditionalServicesProvided = ref(false);
         const notesRows = ref([]);
+        let selectedReport = ref('');
         const callWrapColumnDefs = ref([
             {
                 headerName: 'Seq.',
@@ -259,7 +262,6 @@ export default {
             try {
                 const saveCallWrapUpFormResponse = await axios.post('/ccm/monthly-monitoring-call-callwrapup', formData);
                 if (saveCallWrapUpFormResponse && saveCallWrapUpFormResponse.status == 200) {
-                    console.log("saveCallWrapUpFormResponse.data.form_start_time", saveCallWrapUpFormResponse);
                     $(".form_start_time").val(saveCallWrapUpFormResponse.data.form_start_time);
                     showCallWrapUpAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
@@ -383,6 +385,46 @@ export default {
             notesRows.value.splice(index, 1);
         };
 
+        const onRPMReportChanged = () => {
+            let report_id = selectedReport.value;
+            if (report_id == 2) {
+                window.open(`/reports/device-data-report/${props.patientId}`, '_blank');
+            } else if (report_id == 3) {
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth() + 1;
+                window.open(`/rpm/alert-history/${props.patientId}/${currentMonth}`, '_blank');
+            }
+        };
+
+        const saveEMRNotes = async () => {
+            formErrors.value = {};
+            let myForm = document.getElementById('callwrapup_form');
+            let formData = new FormData(myForm);
+            const formDataObject = {};
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            try {
+                const saveEMRResponse = await axios.post('/ccm/saveEmrSummary', formData);
+                console.log("saveEMRResponse.data.form_start_time", saveEMRResponse);
+                if (saveEMRResponse && saveEMRResponse.status == 200) {
+                    $(".form_start_time").val(saveEMRResponse.data.form_start_time);
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    await fetchCallWrapUpList();
+                    setTimeout(() => {
+                        showCallWrapUpAlert.value = false;
+                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                    formErrors.value = [];
+                    additionalErrors.value = false;
+                }
+            } catch (error) {
+                if (error.response.status && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
+                } else {
+                    console.error('Error submitting form:', error);
+                }
+            }
+        };
+
         onMounted(async () => {
             try {
                 fetchCallWrapUpList();
@@ -414,6 +456,9 @@ export default {
             notesRows,
             addNewNotesRow,
             deleteNotesRow,
+            onRPMReportChanged,
+            selectedReport,
+            saveEMRNotes,
         };
     }
 }

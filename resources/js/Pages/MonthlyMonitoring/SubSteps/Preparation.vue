@@ -139,8 +139,11 @@ export default {
                     formErrors.value = error.response.data.errors;
                     console.log(formErrors);
                 } else {
-                  $('#preparationAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
+                  $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
                     console.error('Error submitting form:', error);
+                    setTimeout(function () {
+                      $('#preparationAlert').html('');
+                                    }, 3000);
                 }
                 isLoading.value = false;
             }
@@ -163,3 +166,4 @@ export default {
   margin-top: 10px;
 }
 </style>
+ 

@@ -14,7 +14,7 @@
                         </ul>
                     </div>
                     <div class="tab-content">
-                        <component :is="selectedCallComponent" v-bind="componentCallProps" :patientId="patientId" :moduleId="moduleId" :componentId="componentId"></component>
+                        <component :is="selectedCallComponent" v-bind="componentCallProps" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" @updateverification="enabledTab"></component>
                     </div>
                 </div>
             </div>
@@ -101,6 +101,10 @@ export default {
 			}
 	    },
 
+        enabledTab(){
+            this.verification = 1;
+        },
+
         isTabDisabled(index) {
             // Add your logic to determine if the tab is disabled
             // Return true if the tab is disabled, false otherwise
@@ -116,7 +120,7 @@ export default {
         changeCallTab(index) {
             // console.log(this.verification+"XXXXXXXXXXXXXXXX");
             if(this.verification !=1 && (index==2 || index==3 || index==4 ||index==5)){
-            this.activeCallTabs = '';
+            //this.activeCallTabs = '';
             }else{
                 this.activeCallTabs = index; 
             }

@@ -106,7 +106,7 @@ export default {
 
         const gridOptions = ref({
             pagination: true,
-            paginationPageSize: 10, // Set the number of rows per page
+            paginationPageSize: 20, // Set the number of rows per page
             domLayout: 'autoHeight',
         });
 

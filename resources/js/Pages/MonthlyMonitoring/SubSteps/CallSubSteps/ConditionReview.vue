@@ -11,7 +11,6 @@
                </div> 
                <div class="card-title">Condition Review</div>
                <div class="form-row mb-4">
-               <div class="card-title">Call Preparation</div>
                <input type="hidden" name="uid" />
                <input type="hidden" name="patient_id" />
                <input type="hidden" name="module_id" />

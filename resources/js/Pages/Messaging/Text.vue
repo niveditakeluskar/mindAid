@@ -1,7 +1,7 @@
 <template>
     <div class="card-title">Text</div>
     <div class="mb-4">
-        <div class="form-group" id="template_content">
+        <div class="form-group" id="template_content"  v-if="valid == 1">
             <div class="twilo-error"></div>
             <div class="row">
                 <div class="col-md-4 form-group mb-3" id="cntctlist">
@@ -34,6 +34,9 @@
                 </div>    
             </div>
         </div>
+        <div class='alert alert-warning mt-2 ml-2' v-if="valid == 2">Texting has been disabled for the system</div> <input type='hidden' name='error' value='Texting has been disabled for the system.' />
+      <div class='alert alert-warning mt-2 ml-2' v-if="valid == 3">Texting is disabled for Patient's Organization</div> <input type='hidden' name='error' value="Texting is disabled for Patient's Organization." />
+      <div class='alert alert-warning mt-2 ml-2' v-if="valid == 0">Patient has not given consent to send text message</div> <input type='hidden' name='error' value='Patient has not given consent to send text message.' />
     </div>
 </template>
 <script>

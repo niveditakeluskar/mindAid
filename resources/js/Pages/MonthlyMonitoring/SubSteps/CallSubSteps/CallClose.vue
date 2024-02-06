@@ -62,7 +62,7 @@
 									</label>
 								</div>
 								<div class="">
-									<label class="mr-3 col-lg-12">Monthly Notes:
+									<label style="width: 100%;">Monthly Notes:
 										<textarea class="forms-element form-control" name="q2_notes" v-model="q2_notes"></textarea>
 									</label>
 									<div class="invalid-feedback"></div>
@@ -71,6 +71,7 @@
 									<hr />
 									<div class="col-12 text-center"><h3>Best Time to contact</h3></div>
 									<ContactTime />  
+									<hr />
 								</div> 
 							</div>
 						</div>

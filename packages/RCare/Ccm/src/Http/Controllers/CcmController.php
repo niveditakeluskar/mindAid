@@ -812,124 +812,42 @@ class CcmController extends Controller
     public function fetchMonthlyMonitoringPatientDetails(Request $request)
     {
         $patient_id   = sanitizeVariable($request->route('id'));
-        // $module_id    = getPageModuleName();
-
-        // $SID = getFormStageId(getPageModuleName(), getPageSubModuleName(), 'General Question');
-
-        // $last_time_spend                = CommonFunctionController::getCcmNetTime($patient_id, $module_id);;
-        // //$decisionTree = QuestionnaireTemplate::where('module_id', $module_id )->where('status',1)->where('stage_id',$SID)->where('template_type_id', 6)->orderBy('stage_code', 'ASC')->orderBy('sequence','ASC')->get()->toArray();
-
-        // $enrollinRPM = 1;
-        // if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
-        //     $enrollinRPM = 2;
-        // }
-
-        // $enrollCount = PatientServices::where('patient_id', $patient_id)->where('status', 1)->count();
-        // $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
-        // $ccmModule = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
-        // $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
-        // $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
-        // $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
-        // if ($enrollinRPM > 1) {
-        //     $decisionTree = QuestionnaireTemplate::where('module_id', $ccmModule)->where('status', 1)->where('stage_id', $ccmSID)->orderBy('stage_code', 'ASC')->orderBy('sequence', 'ASC')->get()->toArray();
-        //     $dtsteps = StageCode::where('stage_id', $ccmSID)->get();
-        // } else {
-        //     $decisionTree = QuestionnaireTemplate::where('module_id', $module_id)->where('status', 1)->where('stage_id', $SID)->orderBy('stage_code', 'ASC')->orderBy('sequence', 'ASC')->get()->toArray();
-        //     $dtsteps = StageCode::where('stage_id', $SID)->get();
-        // }
-
-        // $stepWiseDecisionTree = [];
-        // $i = -1;
-        // foreach ($decisionTree as $key => $value) {
-        //     if (array_key_exists($value['stage_code'], $stepWiseDecisionTree)) {
-        //         $i++;
-        //     } else {
-        //         $i = 0;
-        //     }
-        //     $stepWiseDecisionTree[$value['stage_code']][$i] = $value;
-        // }
-        // if ($enrollinRPM > 1) {
-        //     $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
-        // } else {
-        //     $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
-        // }
-        // $patient             = Patients::where('id', $patient_id)->first();
-        // $patient_providers   = PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id', 1)
-        //     ->where('is_active', 1)->orderby('id', 'desc')->first();
-        // if ($patient_providers == null || $patient_providers == '' || $patient_providers == " ") {
-        //     $billable = null;
-        // } else {
-        //     $billable            =  $patient_providers->practice['billable'];
-        // }
-        // $patient_enroll_date = PatientServices::latest_module($patient_id, $module_id);
-        // if (PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->exists()) {
-        //     $enroll_in_rpm   = 1;
-        // } else {
-        //     $enroll_in_rpm   = 0;
-        // }
-        // $PatientDevices = PatientDevices::where('patient_id', $patient_id)->where('status', 1)->orderby('id', 'desc')->get();
-
-        // $devices   = Devices::where('status', '1')->orderby('id', 'asc')->get();
-        // $deviceid = 1;
-        // $patient_assign_device = "";
-        // $patient_assign_deviceid = "";
-        // if (!empty($PatientDevices[0])) {
-        //     $data = json_decode($PatientDevices[0]->vital_devices);
-        //     $show_device = "";
-        //     $show_device_id = "";
-        //     if (isset($data)) {
-        //         foreach ($data as $dev_data) {
-        //             $dev =  Devices::where('id', $dev_data->vid)->where('status', '1')->orderby('id', 'asc')->first();
-        //             $show_device .= $dev->device_name . ", ";
-        //             $show_device_id .= $dev->id . ", ";
-        //         }
-        //         $patient_assign_device = rtrim($show_device, ', ');
-        //         $patient_assign_deviceid = rtrim($show_device_id, ', ');
-        //     } else {
-        //         $patient_assign_device = "";
-        //         $patient_assign_deviceid = "";
-        //     }
-        // }
-        // Inertia::setRootView('Theme::inertia-layouts/master');
-        // return Inertia::render('Test', [
-        //     'patientId' => $patient_id,
-        //     'moduleId' => 3,
-        //     'componentId' => 19,
-        // ]);
+        $landingTime  = CommonFunctionController::getLandingTime();
         $module_id    = getPageModuleName();
         $submodule_id = getPageSubModuleName();
         $stage_id =  getFormStageId($module_id, $submodule_id, 'Preparation');
+        $ccmrpm = 0;
+        if ((PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) || $module_id == 2) {
+            $ccmrpm = 1;
+        }
 
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
             'moduleId' => $module_id,
             'componentId' => $submodule_id,
             'stageid' => $stage_id,
+            'landingTime' => $landingTime,
+            'ccmRpm' => $ccmrpm,
         ]);
-        // return view(
-        //     'Ccm::monthly-monitoring.patient-details',
-        //     compact(
-        //         'last_time_spend',
-        //         'patient_enroll_date',
-        //         'enroll_in_rpm',
-        //         'billable',
-        //         'devices',
-        //         'deviceid',
-        //         'patient',
-        //         'patient_providers',
-        //         'genQuestion',
-        //         'stepWiseDecisionTree',
-        //         'dtsteps',
-        //         'PatientDevices',
-        //         'patient_assign_device',
-        //         'patient_assign_deviceid',
-        //         'ccmModule',
-        //         'ccmSubModule',
-        //         'enrollinRPM',
-        //         'enrollCount'
-        //     )
-        // );
+    }
 
+    public function getEnrolledStatus($patient_id, $module_id, $component_id)
+    {
+
+        $module_id = $module_id;
+        $component_id = $component_id;
+        if (PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) {
+            $ccmModule = Module::where('module', 'CCM')->where('status', 1)->get('id');
+            $module_id = (isset($ccmModule) && ($ccmModule->isNotEmpty())) ? $ccmModule[0]->id : 0;
+            $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $module_id)->where('status', 1)->get('id');
+            $component_id = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
+        }
+        $stage_id = getFormStageId($module_id, $component_id, 'General Question');
+        $step = getFormStepId($module_id, $component_id, $stage_id, 'General Questions');
+        $data['module_id'] = $module_id;
+        $data['stage_id'] = $stage_id;
+        $data['step'] = $step;
+        return $data;
     }
 
     public function getDevice($patient_id)
@@ -1037,14 +955,14 @@ class CcmController extends Controller
         $task_date = !empty(sanitizeVariable($request->task_date)) ? sanitizeVariable($request->task_date . '  12:00:00') : null;
         $id = sanitizeVariable($request->id);
         $fetch_topic = ToDoList::whereNotNull('id', $id)->get();
-        if(!empty($fetch_topic)){
-        $task_date_cw = $fetch_topic[0]->task_date;
-        $task_time = $fetch_topic[0]->task_time;
-        }else{
+        if (!empty($fetch_topic)) {
+            $task_date_cw = $fetch_topic[0]->task_date;
+            $task_time = $fetch_topic[0]->task_time;
+        } else {
             $task_date_cw = '';
             $task_time = '';
         }
-        
+
         if (!empty($task_date_cw)) {
             $date = explode(' ', $task_date);
             $t_date = '- Scheduled on -' . $date[0] . ' ' . $task_time;
@@ -1087,60 +1005,59 @@ class CcmController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
-      
-            if ($status_flag == 1) {
-                $check = CallWrap::where('task_id', $task_id)->exists();
-                if ($check == true) {
-                    CallWrap::where('task_id', $task_id)->delete();
-                }
-                $status = 'Completed';
-                $task_completed_at = Carbon::now();
-                $callWrapUp = array(
-                    'uid'                 => $patient_id,
-                    'record_date'         => Carbon::now(),
-                    'topic'               => $callwrapup_topic,
-                    'notes'               => $notes,
-                    'created_by'          => session()->get('userid'),
-                    'update_by'           => session()->get('userid'),
-                    'patient_id'          => $patient_id,
-                    'sequence'            => $sequence,
-                    'sub_sequence'        => $new_sub_sequence,
-                    'task_id'             => $task_id
-                );
-                CallWrap::create($callWrapUp);
-                $todo_data = array(
-                    'status_flag' => $status_flag,
-                    'status' => $status,
-                    'notes' => $notes,
-                    'task_date' => $task_date,
-                    'task_completed_at' => $task_completed_at,
-                    'created_by' => session()->get('userid'),
-                    'updated_by' => session()->get('userid')
-                );
-                ToDoList::where('id', $id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-            } else {
-                $check = CallWrap::where('task_id', $task_id)->exists();
-                if ($check == true) {
-                    CallWrap::where('task_id', $task_id)->delete();
-                }
-                $status = 'Pending';
-                $task_completed_at = null;
-                $todo_data = array(
-                    'status_flag' => $status_flag,
-                    'status' => $status,
-                    'notes' => $notes,
-                    'task_date' => $task_date,
-                    'task_completed_at' => $task_completed_at,
-                    'created_by' => session()->get('userid'),
-                    'updated_by' => session()->get('userid')
-                );
-                ToDoList::where('id', $id)->update($todo_data);
-                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+
+        if ($status_flag == 1) {
+            $check = CallWrap::where('task_id', $task_id)->exists();
+            if ($check == true) {
+                CallWrap::where('task_id', $task_id)->delete();
             }
-            DB::commit();
-            return response(['form_start_time' => $form_save_time]);
-       
+            $status = 'Completed';
+            $task_completed_at = Carbon::now();
+            $callWrapUp = array(
+                'uid'                 => $patient_id,
+                'record_date'         => Carbon::now(),
+                'topic'               => $callwrapup_topic,
+                'notes'               => $notes,
+                'created_by'          => session()->get('userid'),
+                'update_by'           => session()->get('userid'),
+                'patient_id'          => $patient_id,
+                'sequence'            => $sequence,
+                'sub_sequence'        => $new_sub_sequence,
+                'task_id'             => $task_id
+            );
+            CallWrap::create($callWrapUp);
+            $todo_data = array(
+                'status_flag' => $status_flag,
+                'status' => $status,
+                'notes' => $notes,
+                'task_date' => $task_date,
+                'task_completed_at' => $task_completed_at,
+                'created_by' => session()->get('userid'),
+                'updated_by' => session()->get('userid')
+            );
+            ToDoList::where('id', $id)->update($todo_data);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+        } else {
+            $check = CallWrap::where('task_id', $task_id)->exists();
+            if ($check == true) {
+                CallWrap::where('task_id', $task_id)->delete();
+            }
+            $status = 'Pending';
+            $task_completed_at = null;
+            $todo_data = array(
+                'status_flag' => $status_flag,
+                'status' => $status,
+                'notes' => $notes,
+                'task_date' => $task_date,
+                'task_completed_at' => $task_completed_at,
+                'created_by' => session()->get('userid'),
+                'updated_by' => session()->get('userid')
+            );
+            ToDoList::where('id', $id)->update($todo_data);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+        }
+        DB::commit();
+        return response(['form_start_time' => $form_save_time]);
     }
 
     public function changeTodoStatusFlag(Request $request)
@@ -2783,10 +2700,11 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $stage_id            = sanitizeVariable($request->stage_id);
         $step_id             = sanitizeVariable($request->step_id);
         $form_name           = sanitizeVariable($request->form_name);
-
-        $currentmonth = date('m');
-        $currentyear  = date('Y');
-        $record_date  = Carbon::now();
+        $form_start_time     = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time      = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $currentmonth        = date('m');
+        $currentyear         = date('Y');
+        $record_date         = Carbon::now();
         $billable            = 1;
         $last_sub_sequence   = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
         $new_sub_sequence    = $last_sub_sequence + 1;
@@ -2834,12 +2752,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $additionalservices9 = '';
         $additionalservices10 = '';
 
+
         DB::beginTransaction();
         try {
-
-
             $v = 'Summary notes added on';
-
             $c = CallWrap::where('patient_id', $patient_id)
                 ->whereMonth('created_at',  date('m'))
                 ->whereYear('created_at',  date('Y'))
@@ -2850,7 +2766,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     'updated_at' => Carbon::now()
                 ]);
 
-            $e =    EmrMonthlySummary::where('patient_id', $patient_id)
+            $e = EmrMonthlySummary::where('patient_id', $patient_id)
                 ->whereMonth('created_at', date('m'))
                 ->whereYear('created_at',  date('Y'))
                 ->where(function ($query) use ($v) {
@@ -2876,7 +2792,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     $monthlydate =  Carbon::now();
                     $emr_type = 1;
                     // $is_old_emr = 1;
-
                 } else {
                     $d = explode("-", $emr_monthly_summary_date[$key - 1]);
                     $summary = 'Summary notes added on ' . $d[1] . "-" . $d[2] . "-" . $d[0];
@@ -2890,9 +2805,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         'patient_id'                => $patient_id,
                         'sequence'                  => $sequence,
                         'sub_sequence'              => $new_sub_sequence
-
                     );
-
                     $currentdatetime =  Carbon::now();
                     $dt1 = DatesTimezoneConversion::userTimeStamp($currentdatetime);
                     $datetimearray = explode(" ", $dt1);
@@ -2902,27 +2815,36 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 }
 
                 /*******ccm-emr-monthly-summarytable-start************/
-
                 $emr_monthly_summary_data['record_date'] = $monthlydate;
                 $emr_monthly_summary_data['status'] = 1;
                 $emr_monthly_summary_data['emr_type'] = $emr_type;
-
                 $e = EmrMonthlySummary::create($emr_monthly_summary_data);
-
-
                 /*******ccm-emr-monthly-summarytable-end************/
-
-
                 $emr_monthly_summary_data['uid']     = $uid;
                 $emr_monthly_summary_data['emr_monthly_summary'] = $emr_monthly_summary_notes;
-                $emr_monthly_summary_data['emr_monthly_summary_date']     = $monthlydate;
+                $emr_monthly_summary_data['emr_monthly_summary_date'] = $monthlydate;
 
                 //some fields are added seperately bcz these fields are not present in ccm_emr_monthly_summary
-
                 CallWrap::create($emr_monthly_summary_data);
             }
 
+            $record_time  = CommonFunctionController::recordTimeSpent(
+                $start_time,
+                $end_time,
+                $patient_id,
+                $module_id,
+                $component_id,
+                $stage_id,
+                $billable,
+                $uid,
+                $step_id,
+                $form_name,
+                $form_start_time,
+                $form_save_time
+            );
+
             DB::commit();
+            return response(['form_start_time' => $form_save_time]);
         } catch (\Exception $ex) {
             DB::rollBack();
             return $ex;
@@ -3629,10 +3551,15 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
     public function SaveFollowUpInertia(FollowupInertiaAddRequest $request)
     {
-         //dd($request->all());
+        //dd($request->all());
         $patient_id            = sanitizeVariable($request->input('patient_id'));
-        $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete);
+        $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete); //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
+        $task_name             = sanitizeVariable($request->task_name);
+        $followupmaster_task   = sanitizeVariable($request->followupmaster_task);
+        $selected_task_name    = sanitizeVariable($request->selected_task_name);
         $notes                 = sanitizeVariable($request->notes);
+        $task_date             = sanitizeVariable($request->task_date);
+        $status_flag           = sanitizeVariable($request->status_flag);
         $start_time            = sanitizeVariable($request->start_time);
         $end_time              = sanitizeVariable($request->end_time);
         $uid                   = sanitizeVariable($request->uid);
@@ -3648,177 +3575,172 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $sequence              = 7;
         $last_sub_sequence     = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
         $new_sub_sequence      = $last_sub_sequence + 1;
-        $folllowUpTaskData     = sanitizeVariable($request->folllowUpTaskData);
-        // DB::beginTransaction();
-        // try {
-     /*    if ($folllowUpTaskData[0]['task_name'] != '') {
-        
-        } */
-
-        // if ($followupmaster_task[0] != '' && $emr_complete == '1') {
-        //     foreach ($followupmaster_task as $i => $value) {
-        //         if (!empty($status_flag[$i]) == '0') {
-        //             $status = 'Pending';
-        //             $task_completed_at = null;
-        //         }
-        //         if (!empty($status_flag[$i]) == '1') {
-        //             $status = 'Completed';
-        //             $task_completed_at = Carbon::now();
-        //         }
-        //         $to_do = array(
-        //             'uid'                         => $patient_id,
-        //             'module_id'                   => $module_id,
-        //             'component_id'                => $component_id,
-        //             'stage_id'                    => $stage_id,
-        //             'step_id'                     => $step_id,
-        //             'task_notes'                  => $task_name[$i],
-        //             'notes'                       => $notes[$i],
-        //             'assigned_to'                 => session()->get('userid'),
-        //             'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
-        //             'assigned_on'                 => Carbon::now(),
-        //             'status'                      => $status,
-        //             'task_completed_at'           => $task_completed_at,
-        //             'select_task_category'        => $followupmaster_task[$i],
-        //             'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
-        //             'created_by'                  => session()->get('userid'),
-        //             'patient_id'                  => $patient_id
-        //         );
-        //         if ($value != "") {
-        //             $insert = ToDoList::create($to_do);
-        //             $last_insert_id = $insert->id;
-        //             if (!empty($status_flag[$i]) == '1') {
-        //                 $status = 'Completed';
-        //                 $task_completed_at = Carbon::now();
-        //                 $callWrapUp = array(
-        //                     'uid'                 => $patient_id,
-        //                     'record_date'         => Carbon::now(),
-        //                     'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
-        //                     'notes'               => $notes[$i],
-        //                     'created_by'          => session()->get('userid'),
-        //                     'update_by'           => session()->get('userid'),
-        //                     'patient_id'          => $patient_id,
-        //                     'sequence'            => $sequence,
-        //                     'sub_sequence'        => $new_sub_sequence,
-        //                     'task_id'             => $last_insert_id
-        //                 );
-        //                 CallWrap::create($callWrapUp);
-        //             }
-        //         } //end value if
-        //     } //end foreach
-        //     //checkbox array
-        //     $data = array(
-        //         'uid'                 => $patient_id,
-        //         'rec_date'            => Carbon::now(),
-        //         'emr_complete'        => $emr_complete,
-        //         'patient_id'          => $patient_id,
-        //         'update_status'       => 1,
-        //     );
-        //     $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
-        //     if ($check_id == true) {
-        //         $data['updated_by'] = session()->get('userid');
-        //         $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
-        //     } else {
-        //         $data['created_by'] = session()->get('userid');
-        //         $insert_query = FollowUp::create($data);
-        //     }
-        //     //record time
-        //     $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-        // } else if ($followupmaster_task[0] != '' || $emr_complete == '1') {
-        //     if ($followupmaster_task[0] != '') {
-        //         foreach ($followupmaster_task as $i => $value) {
-        //             if (!empty($status_flag[$i]) == '0') {
-        //                 $status = 'Pending';
-        //                 $task_completed_at = null;
-        //             }
-        //             if (!empty($status_flag[$i]) == '1') {
-        //                 $status = 'Completed';
-        //                 $task_completed_at = Carbon::now();
-        //             }
-        //             $to_do = array(
-        //                 'uid'                         => $patient_id,
-        //                 'module_id'                   => $module_id,
-        //                 'component_id'                => $component_id,
-        //                 'stage_id'                    => $stage_id,
-        //                 'step_id'                     => $step_id,
-        //                 'task_notes'                  => $task_name[$i],
-        //                 'notes'                       => $notes[$i],
-        //                 'assigned_to'                 => session()->get('userid'),
-        //                 'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
-        //                 'assigned_on'                 => Carbon::now(),
-        //                 'status'                      => $status,
-        //                 'task_completed_at'           => $task_completed_at,
-        //                 'select_task_category'        => $followupmaster_task[$i],
-        //                 'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
-        //                 'created_by'                  => session()->get('userid'),
-        //                 'patient_id'                  => $patient_id
-        //             );
-        //             if ($value != "") {
-        //                 $insert = ToDoList::create($to_do);
-        //                 $last_insert_id = $insert->id;
-        //                 if (!empty($status_flag[$i]) == '1') {
-        //                     $status = 'Completed';
-        //                     $task_completed_at = Carbon::now();
-        //                     $callWrapUp = array(
-        //                         'uid'                 => $patient_id,
-        //                         'record_date'         => Carbon::now(),
-        //                         'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
-        //                         'notes'               => $notes[$i],
-        //                         'created_by'          => session()->get('userid'),
-        //                         'update_by'           => session()->get('userid'),
-        //                         'patient_id'          => $patient_id,
-        //                         'sequence'            => $sequence,
-        //                         'sub_sequence'        => $new_sub_sequence,
-        //                         'task_id'             => $last_insert_id
-        //                     );
-        //                     CallWrap::create($callWrapUp);
-        //                 }
-        //             } //end value if
-        //         } //end foreach
-        //         $data = array(
-        //             'uid'                 => $patient_id,
-        //             'rec_date'            => Carbon::now(),
-        //             'emr_complete'        => $emr_complete,
-        //             'patient_id'          => $patient_id,
-        //             'update_status'       => 1,
-        //         );
-        //         $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
-        //         if ($check_id == true) {
-        //             $data['updated_by'] = session()->get('userid');
-        //             $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
-        //         } else {
-        //             $data['created_by'] = session()->get('userid');
-        //             $insert_query = FollowUp::create($data);
-        //         }
-        //         //record time
-        //         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-        //     } else {
-        //         $data = array(
-        //             'uid'                 => $patient_id,
-        //             'rec_date'            => Carbon::now(),
-        //             'emr_complete'        => $emr_complete,
-        //             'patient_id'          => $patient_id,
-        //             'update_status'       => 1,
-        //         );
-        //         $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
-        //         if ($check_id == true) {
-        //             $data['updated_by'] = session()->get('userid');
-        //             $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
-        //         } else {
-        //             $data['created_by'] = session()->get('userid');
-        //             $insert_query = FollowUp::create($data);
-        //         }
-        //         //record time
-        //         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-        //     }
-        // } else {
-        //     return 'blank form';
-        // } //end else
-        //     DB::commit();
-        //     return response(['form_start_time' => $form_save_time]);
-        // } catch (\Exception $ex) {
-        //     DB::rollBack();
-        //     return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        // }
+        DB::beginTransaction();
+        try {
+            if ($followupmaster_task[0] != '' && $emr_complete == '1') {
+                foreach ($followupmaster_task as $i => $value) {
+                    if (!empty($status_flag[$i]) == '0') {
+                        $status = 'Pending';
+                        $task_completed_at = null;
+                    }
+                    if (!empty($status_flag[$i]) == '1') {
+                        $status = 'Completed';
+                        $task_completed_at = Carbon::now();
+                    }
+                    $to_do = array(
+                        'uid'                         => $patient_id,
+                        'module_id'                   => $module_id,
+                        'component_id'                => $component_id,
+                        'stage_id'                    => $stage_id,
+                        'step_id'                     => $step_id,
+                        'task_notes'                  => $task_name[$i],
+                        'notes'                       => $notes[$i],
+                        'assigned_to'                 => session()->get('userid'),
+                        'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
+                        'assigned_on'                 => Carbon::now(),
+                        'status'                      => $status,
+                        'task_completed_at'           => $task_completed_at,
+                        'select_task_category'        => $followupmaster_task[$i],
+                        'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
+                        'created_by'                  => session()->get('userid'),
+                        'patient_id'                  => $patient_id
+                    );
+                    if ($value != "") {
+                        $insert = ToDoList::create($to_do);
+                        $last_insert_id = $insert->id;
+                        if (!empty($status_flag[$i]) == '1') {
+                            $status = 'Completed';
+                            $task_completed_at = Carbon::now();
+                            $callWrapUp = array(
+                                'uid'                 => $patient_id,
+                                'record_date'         => Carbon::now(),
+                                'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
+                                'notes'               => $notes[$i],
+                                'created_by'          => session()->get('userid'),
+                                'update_by'           => session()->get('userid'),
+                                'patient_id'          => $patient_id,
+                                'sequence'            => $sequence,
+                                'sub_sequence'        => $new_sub_sequence,
+                                'task_id'             => $last_insert_id
+                            );
+                            CallWrap::create($callWrapUp);
+                        }
+                    } //end value if
+                } //end foreach
+                //checkbox array
+                $data = array(
+                    'uid'                 => $patient_id,
+                    'rec_date'            => Carbon::now(),
+                    'emr_complete'        => $emr_complete,
+                    'patient_id'          => $patient_id,
+                    'update_status'       => 1,
+                );
+                $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+                if ($check_id == true) {
+                    $data['updated_by'] = session()->get('userid');
+                    $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+                } else {
+                    $data['created_by'] = session()->get('userid');
+                    $insert_query = FollowUp::create($data);
+                }
+                //record time
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+            } else if ($followupmaster_task[0] != '' || $emr_complete == '1') {
+                if ($followupmaster_task[0] != '') {
+                    foreach ($followupmaster_task as $i => $value) {
+                        if (!empty($status_flag[$i]) == '0') {
+                            $status = 'Pending';
+                            $task_completed_at = null;
+                        }
+                        if (!empty($status_flag[$i]) == '1') {
+                            $status = 'Completed';
+                            $task_completed_at = Carbon::now();
+                        }
+                        $to_do = array(
+                            'uid'                         => $patient_id,
+                            'module_id'                   => $module_id,
+                            'component_id'                => $component_id,
+                            'stage_id'                    => $stage_id,
+                            'step_id'                     => $step_id,
+                            'task_notes'                  => $task_name[$i],
+                            'notes'                       => $notes[$i],
+                            'assigned_to'                 => session()->get('userid'),
+                            'task_date'                   => empty($task_date[$i]) ? null : $task_date[$i],
+                            'assigned_on'                 => Carbon::now(),
+                            'status'                      => $status,
+                            'task_completed_at'           => $task_completed_at,
+                            'select_task_category'        => $followupmaster_task[$i],
+                            'status_flag'                 => isset($status_flag[$i]) ? $status_flag[$i] : '0',
+                            'created_by'                  => session()->get('userid'),
+                            'patient_id'                  => $patient_id
+                        );
+                        if ($value != "") {
+                            $insert = ToDoList::create($to_do);
+                            $last_insert_id = $insert->id;
+                            if (!empty($status_flag[$i]) == '1') {
+                                $status = 'Completed';
+                                $task_completed_at = Carbon::now();
+                                $callWrapUp = array(
+                                    'uid'                 => $patient_id,
+                                    'record_date'         => Carbon::now(),
+                                    'topic'               => 'Follow Up Task : ' . $task_name[$i] . ' - Created on ' . date("m-d-Y", strtotime($task_date[$i])) . ' - Scheduled on ' . date("m-d-Y", strtotime($task_date[$i])), //('.$selected_task_name[$i].')
+                                    'notes'               => $notes[$i],
+                                    'created_by'          => session()->get('userid'),
+                                    'update_by'           => session()->get('userid'),
+                                    'patient_id'          => $patient_id,
+                                    'sequence'            => $sequence,
+                                    'sub_sequence'        => $new_sub_sequence,
+                                    'task_id'             => $last_insert_id
+                                );
+                                CallWrap::create($callWrapUp);
+                            }
+                        } //end value if
+                    } //end foreach
+                    $data = array(
+                        'uid'                 => $patient_id,
+                        'rec_date'            => Carbon::now(),
+                        'emr_complete'        => $emr_complete,
+                        'patient_id'          => $patient_id,
+                        'update_status'       => 1,
+                    );
+                    $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+                    if ($check_id == true) {
+                        $data['updated_by'] = session()->get('userid');
+                        $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+                    } else {
+                        $data['created_by'] = session()->get('userid');
+                        $insert_query = FollowUp::create($data);
+                    }
+                    //record time
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                } else {
+                    $data = array(
+                        'uid'                 => $patient_id,
+                        'rec_date'            => Carbon::now(),
+                        'emr_complete'        => $emr_complete,
+                        'patient_id'          => $patient_id,
+                        'update_status'       => 1,
+                    );
+                    $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
+                    if ($check_id == true) {
+                        $data['updated_by'] = session()->get('userid');
+                        $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
+                    } else {
+                        $data['created_by'] = session()->get('userid');
+                        $insert_query = FollowUp::create($data);
+                    }
+                    //record time
+                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                }
+            } else {
+                return 'blank form';
+            } //end else
+            DB::commit();
+            return response(['form_start_time' => $form_save_time]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
     }
 
     public function UpdateCallWrapUpInline(Request $request, $id)

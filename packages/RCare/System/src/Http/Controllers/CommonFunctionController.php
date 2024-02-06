@@ -60,19 +60,19 @@ class CommonFunctionController extends Controller
         $timeArray                      = [];
 
         $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
-	    $checkBillableTime              = (isset($billableTime) && ($billableTime!='0')) ? $billableTime : '00:00:00';
+        $checkBillableTime              = (isset($billableTime) && ($billableTime != '0')) ? $billableTime : '00:00:00';
 
-	    $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
-	    $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime!='0')) ? $nonBillableTime : '00:00:00';
-	    
-        $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
-        $returnTotalTime                = (isset($totalTime) && ($totalTime!='0')) ? $totalTime : '00:00:00';
-    	$timeArray['total_time']        = $returnTotalTime;
+        $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+        $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
 
-        if($billable == 1){
+        $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+        $returnTotalTime                = (isset($totalTime) && ($totalTime != '0')) ? $totalTime : '00:00:00';
+        $timeArray['total_time']        = $returnTotalTime;
+
+        if ($billable == 1) {
             $timeArray['billable_time']     = $checkBillableTime;
             return $timeArray;
-        }else{
+        } else {
             $timeArray['non_billable_time'] = $checkNonBillableTime;
             return $timeArray;
         }
@@ -327,11 +327,11 @@ class CommonFunctionController extends Controller
 
         //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
         $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time, 1));
-		
-		 //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
-        
+
+        //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
+
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time, 0));
-		
+
         $timer_data = array(
             'uid'          => $patient_id,
             'patient_id'   => $patient_id,
@@ -356,7 +356,7 @@ class CommonFunctionController extends Controller
             'comment' => $comments
         );
         //dd($timer_data);  
-        $insert_query = PatientTimeRecords::create($timer_data);  
+        $insert_query = PatientTimeRecords::create($timer_data);
         $assignpatient = assingSessionUser($patient_id);
     }
 
@@ -384,9 +384,9 @@ class CommonFunctionController extends Controller
             $form_net_time = '00:00:00';
             $pause_start_time = sanitizeVariable($request->pause_start_time);
             $pause_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        }else{
-            $splitStartTime = explode(" ",$form_start_time);
-            $splitEndTime = explode(" ",$form_save_time);
+        } else {
+            $splitStartTime = explode(" ", $form_start_time);
+            $splitEndTime = explode(" ", $form_save_time);
             //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
             $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time, 1));
         }
@@ -399,7 +399,7 @@ class CommonFunctionController extends Controller
         }
 
         $net_time   = getNetTime($start_time, $end_time, 0);
-        
+
         $timer_data = array(
             'uid'          => $uid,
             'patient_id'   => $patient_id,
@@ -869,7 +869,7 @@ class CommonFunctionController extends Controller
     //     }
     // }
 
-    public function getLandingTime()
+    public static function getLandingTime()
     {
         $timeArray['landing_time'] = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         return $timeArray;
@@ -881,14 +881,14 @@ class CommonFunctionController extends Controller
         $module_id                      = sanitizeVariable($moduleId);
         $timeArray                      = [];
         $nowTime = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        if($patient_id != '0'){
-            
-            if($patientID == 'null'){
+        if ($patient_id != '0') {
+
+            if ($patientID == 'null') {
                 $totalTime = '00:00:00';
-                if($startTime != 'null'){
+                if ($startTime != 'null') {
                     //$StartTime = explode(" ",$startTime);
                     $totalTime = getNetTime($startTime, $nowTime, 1);
-                   // $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
+                    // $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
 
                 }
             } else {
@@ -899,13 +899,13 @@ class CommonFunctionController extends Controller
                 $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
                 $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
                 $timeArray['non_billable_time'] = $checkNonBillableTime;
-    
-                if($startTime == 'null'){
-                    $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
-                }else{
+
+                if ($startTime == 'null') {
+                    $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+                } else {
                     //$StartTime = explode(" ",$startTime);
                     $dff = getNetTime($startTime, $nowTime, 1);
-                    $totalTime = date("H:i:s",strtotime($dff)+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+                    $totalTime = date("H:i:s", strtotime($dff) + strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
                 }
             }
 

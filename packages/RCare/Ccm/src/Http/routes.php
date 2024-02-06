@@ -32,6 +32,8 @@ Route::middleware(["auth", "web"])->group(function () {
             return $d;
         });
 
+        Route::get('/enrolled/{patient_id}/{module_id}/{component_id}/ccm_enrolled', 'RCare\Ccm\Http\Controllers\CcmController@getEnrolledStatus');
+
         Route::get('/get_revew_notes/{patient_id}', 'RCare\Ccm\Http\Controllers\CcmController@getReviewNotes');
         Route::get('/get_device_list/{patient_id}/device_list', 'RCare\Ccm\Http\Controllers\CcmController@getDevice')->name('get.device.list');
 
