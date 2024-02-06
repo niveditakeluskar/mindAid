@@ -121,7 +121,7 @@
                             <th>Shipping Status</th>
                             <th>Welcome Call</th>
                             <th>Device</th>
-                            <th>Action</th> 
+                            <th width="270px">Action</th> 
                         </tr>
                     </thead>
                     <tbody>
