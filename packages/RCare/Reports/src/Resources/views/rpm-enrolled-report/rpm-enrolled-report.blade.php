@@ -808,15 +808,6 @@ function shippingdetail(rowid) {
     // getshippinglist(rowid);
 }
 
-<<<<<<< HEAD
-// function rpm_timeline(rowid){
-//     alert(rowid);
-//     url = window.location.href;
-//     window.open(url);
-// }
-
-=======
->>>>>>> cfe56e82d1d339c5ea880283addcd21ad3e8506b
 function devicedetails(rowid) {
     // Set the patient_id value in the hidden field
     $('#patientIdField1').val(rowid); 
