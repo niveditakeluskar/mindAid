@@ -5,7 +5,6 @@ $number_days = cal_days_in_month(CAL_GREGORIAN, date($month), date($year)); // 3
 // //echo date('M Y');
 // echo "There are {$number_days} days";
 ?>
-<input type="text" id="total_num_days" name ="total_num_days" value="{{$number_days}}">
 <div class="col-md-12">
   <div class="card-body mt-5">
     <?php 

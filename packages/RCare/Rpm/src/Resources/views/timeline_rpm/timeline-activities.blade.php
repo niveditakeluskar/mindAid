@@ -196,7 +196,6 @@
 <div class="separator-breadcrumb border-top"></div>  
 <div class="container" id="search_timeline_activity">
 <?php $number_days = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));?>
-<input type="text" id="total_num_days" name ="total_num_days" value="{{$number_days}}">
 @include('Rpm::timeline_rpm.timeline-activities-ui')
 </div>
 <div id="app"></div>
