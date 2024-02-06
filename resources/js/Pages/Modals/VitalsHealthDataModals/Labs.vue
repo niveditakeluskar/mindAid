@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
-                            <input type="date" name="labdate[]" id="labdate" class="form-control" />
+                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate"/>
                             <div class="invalid-feedback" v-if="formErrors['labdate.0']" style="display: block;">{{ formErrors['labdate.0'][0] }}</div>
                         </div>
                     </div>
@@ -92,6 +92,7 @@ export default {
         const labParams = ref('');
         const formErrors = ref([]);
         const selectedLabs = ref(0);
+        const labDate = ref('');
         const loading = ref(false);
     
         const labsRowData = ref([]);
@@ -255,20 +256,26 @@ export default {
             console.log("lab_date" + lab_date +", patient_id" + patient_id+", lab_test_id" + lab_test_id+", lab_date_exist"+ lab_date_exist);
             try {
                 loading.value = true;
-                // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-populateLabs/${patient_id}/${lab_date}/${lab_test_id}/${lab_date_exist}`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch labs list');
+                    throw new Error('Failed to fetch labs details');
                 }
                 loading.value = false;
                 const data = await response.json();
-                const labs = ref([]);
-                labs.value = data.data;
-                console.log("labs details", labs);
+                console.log("data", data);
+                const labs = data.number_tracking_labs_details.dynamic.lab;
+                console.log("data labs", labs);
+                selectedLabs.value = lab_test_id;
+                labDate.value = lab_date;
+                generateLabParams(labs);
             } catch (error) {
-                console.error('Error fetching labs list:', error);
+                console.error('Error fetching labs details:', error);
                 loading.value = false;
             }
+        };
+
+        const generateLabParams = (labParams) => {
+            console.log("labParams", labParams);
         };
 
         const exposeEditLab = () => {
@@ -309,6 +316,7 @@ export default {
             columnDefs,
             labsRowData,
             selectedLabs,
+            labDate,
             fetchPatientLabsList,
             deleteServices,
             editService,
