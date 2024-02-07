@@ -40,7 +40,8 @@
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
                             <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate" data-date-format="MM/DD/YYYY" />
-                            <div class="invalid-feedback" v-if="formErrors[`labdate.${selectedLabs}.0`]" style="display: block;">{{ formErrors[`labdate.${selectedLabs}.0`][0] }}</div>
+                            <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.${selectedLabs}.0`]" style="display: block;">{{ formErrors[`labdate.${selectedLabs}.0`][0] }}</div>
+                            <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.0`]" style="display: block;">{{ formErrors[`labdate.0`][0] }}</div>
                         </div>
                     </div>
                     <div v-html="labParams" class="form-row"></div>
@@ -98,7 +99,7 @@ export default {
         const labs = ref([]);
         const labParams = ref('');
         const formErrors = ref([]);
-        const selectedLabs = ref(0);
+        const selectedLabs = ref('');
         const labDate = ref('');
         const loading = ref(false);
         const editform = ref('');
@@ -190,8 +191,13 @@ export default {
                                 const errorMessages = formErrors.value[field];
                                 console.log("Error Messages:", errorMessages);
                                 console.log("field name --> form[name = 'number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][" + i + "]']");
-                                $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").addClass("is-invalid");
+                                // $("#reading-1-0").html(errorMessages);
+                                // $("#reading-1-0").show();
+                                // $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").addClass("is-invalid");
                                 $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").next(".invalid-feedback").html(errorMessages);
+                                if (errorMessages.includes('reading')) {
+                                    $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "]["+i+"]']").next(".invalid-feedback").html(errorMessages);
+                                }
                             }
                             i++;
                         }
