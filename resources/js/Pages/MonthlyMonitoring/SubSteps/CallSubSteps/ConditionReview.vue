@@ -1,5 +1,5 @@
 <template>
-<form method="post" > 
+<form :id="`${sectionName}_preparation_followup_form`" :name="`${sectionName}_preparation_followup_form`"  @submit.prevent="submitResearchFollowForm"> 
    <div class="row call mb-4 ">
       <!-- start Solid Bar -->
       <div class="col-lg-12 mb-4 ">
@@ -11,14 +11,17 @@
                </div> 
                <div class="card-title">Condition Review</div>
                <div class="form-row mb-4">
-               <input type="hidden" name="uid" />
-               <input type="hidden" name="patient_id" />
-               <input type="hidden" name="module_id" />
-               <input type="hidden" name="component_id" />
-               <input type="hidden" name="" />
-               <input type="hidden" name="form_name" value="_preparation_followup_form" />
-               <input type="hidden" name="stage_id" />
-	            <input type="hidden" name="step_id"  value="0">
+                  <input type="hidden" name="uid" :value="patientId"/>
+                  <input type="hidden" name="patient_id" :value="patientId" /> <!-- Bind patientId to the input field -->
+                  <input type="hidden" name="module_id" :value="moduleId" /> <!-- Bind moduleId to the input field -->
+                  <input type="hidden" name="component_id" :value="componentId" /> <!-- Bind componentId to the input field -->      
+                  <input type="hidden" name="start_time" :value="'00:00:00'">
+                  <input type="hidden" name="end_time" :value="'00:00:00'">
+                  <input type="hidden" :name="sectionName" :value="sectionName" v-model="sectionName" />
+                  <input type="hidden" name="form_name" :value="`${sectionName}_preparation_followup_form`" />
+                  <input type="hidden" name="stage_id" :value="conditionReviewStageID">
+                  <input type="hidden" name="step_id" value="0">
+                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="preparationTime">
                   <div class="col-md-12 forms-element">
                      <span class="mr-3 mb-4"><b>Call preparation completed?</b></span>
                      <div class="mr-3 d-inline-flex align-self-center"> 
@@ -39,7 +42,7 @@
                   <div class="invalid-feedback">office visit</div>
                </div>
                <div id="data_present_in_emr_show">
-               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+               <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :formErrors="formErrors" />
                </div>
             </div>
             <div class="card-footer">
@@ -59,25 +62,96 @@
 </template>
 
 <script>
-   import PreparationForm from '../../Components/PreparationFollowUpForm.vue';
-// import stepWizard from 'js/app.js';
+import PreparationForm from '../../Components/PreparationFollowUpForm.vue';
+import {
+   ref,
+   onBeforeMount,
+   onMounted
+} from '../../../commonImports';
+import axios from 'axios';
+
 export default {
    props: {
 		sectionName: String,
 		patientId: Number,
-        moduleId: Number,
-        componentId: Number,
-    },
-   data() {
-      return {
-         sectionName: 'research_follow_up',
-      };
+      moduleId: Number,
+      componentId: Number,
    },
    components: {
       PreparationForm
    },
-   mounted() {
-      // console.log('Component mounted.');
+   setup(props) {
+      const sectionName = 'research_follow_up';
+      let preparationTime = ref();
+      const isLoading = ref(false);
+      let formErrors = ref();
+      let conditionReviewStageID  = ref(0);
+
+      const submitResearchFollowForm = async () => {
+         // isLoading.value = true;
+         let myForm = document.getElementById(`${sectionName}_preparation_followup_form`);
+         let formData = new FormData(myForm);
+         axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+         try {
+            let myForm = document.getElementById(`${sectionName}_preparation_followup_form`);
+            let formData = new FormData(myForm);
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            const response = await axios.post('/ccm/monthly-monitoring-call-preparation-form', formData);
+            if (response && response.status == 200) {
+               // $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
+               updateTimer(props.patientId, '1', props.moduleId);
+               $(".form_start_time").val(response.data.form_start_time);
+               preparationTime.value = document.getElementById('page_landing_times').value;
+               setTimeout(function () {
+                  formErrors.value = {};
+               }, 3000);
+            }
+            isLoading.value = false;
+         } catch (error) {
+            if (error.response && error.response.status === 422) {
+               formErrors.value = error.response.data.errors;
+               console.log(formErrors);
+            } else {
+               $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
+               console.error('Error submitting form:', error);
+               setTimeout(function () {
+                  $('#preparationAlert').html('');
+               }, 3000);
+            }
+            isLoading.value = false;
+         }
+      };
+
+      let getConditionReviewStageID = async () => {
+         try {
+            let conditionReviewStageName = 'Condition_Review';
+            let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${conditionReviewStageName}`);
+            conditionReviewStageID.value = response.data.stageID;
+         } catch (error) {
+            console.error('Error fetching condition review stageID:', error);
+         }
+      };
+
+      onBeforeMount(async () => {
+         await getConditionReviewStageID();
+      });
+
+      onMounted(async () => {
+         try {
+            preparationTime.value = document.getElementById('page_landing_times').value;
+         } catch (error) {
+            console.error('Error on page load:', error);
+         }
+      });
+
+      return {
+         sectionName,
+         preparationTime,
+         submitResearchFollowForm,
+         isLoading,
+         formErrors,
+         conditionReviewStageID,
+      };
    }
 };
 </script>

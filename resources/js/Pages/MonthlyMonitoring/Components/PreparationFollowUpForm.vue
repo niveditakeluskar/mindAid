@@ -40,15 +40,14 @@
 						</label>
 					</div> 
 				</div> 
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.condition_requirnment1 }}
-				</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.condition_requirnment1" style="display: block;">{{ formErrors.condition_requirnment1[0] }}</div>
 			</div>
 			<div v-if="((conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1) &&  conditionRequirnment4!=1)"
 				:id="`${sectionName}_note`" class="notes mb-4">
 				<textarea class="form-control" name="condition_requirnment_notes"
 					:id="`${sectionName}_condition_requirnment_notes`" v-model="condition_requirnment_notes"></textarea>
 				<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.condition_requirnment_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.condition_requirnment_notes" style="display: block;">{{ formErrors.condition_requirnment_notes[0] }}</div>
 			</div>
 			<!-- New Office Visit  -->
 			<div class="form-row mb-4">
@@ -69,11 +68,11 @@
 						</label>
 					</div>
 				</div>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.newofficevisit }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.newofficevisit" style="display: block;">{{ formErrors.newofficevisit[0] }}</div>
 			</div>
 			<div v-if="officeVisitYesNo == '1'" :id="`${sectionName}_new-office-visit-note`" class="office_visit_note mb-4">
 				<textarea class="form-control" name="nov_notes" :id="`${sectionName}_nov_notes`" v-model="officeVisitNotes"></textarea>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.nov_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.nov_notes" style="display: block;">{{ formErrors.nov_notes[0] }}</div>
 			</div>
 			<!-- End New Office Visit  -->
 			<!-- New Dignosis -->
@@ -95,12 +94,12 @@
 						</label>
 					</div>
 				</div>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.newdiagnosis }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.newdiagnosis" style="display: block;">{{ formErrors.newdiagnosis[0] }}</div>
 			</div>
 
 			<div v-if="newDiagnosisYesNo == '1'"  :id="`${sectionName}_new-dignosis`" class="new_diagnosis_note mb-4">
 				<textarea class="form-control" name="nd_notes" :id="`${sectionName}_nd_notes`" v-model="newDiagnosisNotes"></textarea>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.nd_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.nd_notes" style="display: block;">{{ formErrors.nd_notes[0] }}</div>
 			</div>
 			<!-- End New Dignosis -->
 			<!-- Medications added or discontinued -->
@@ -122,7 +121,7 @@
 						</label>
 					</div>
 				</div>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.med_added_or_discon }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.med_added_or_discon" style="display: block;">{{ formErrors.med_added_or_discon[0] }}</div>
 			</div>
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
@@ -132,7 +131,7 @@
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
 				<textarea class="form-control" name="med_added_or_discon_notes"
 					:id="`${sectionName}_med_added_or_discon_notes`" V-model="med_added_or_disconNotes"></textarea>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.med_added_or_discon_notes }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.med_added_or_discon_notes" style="display: block;">{{ formErrors.med_added_or_discon_notes[0] }}</div>
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
@@ -164,7 +163,7 @@
 						</label>
 					</div>
 				</div>
-				<div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.pcp_reviwewd }}</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.pcp_reviwewd" style="display: block;">{{ formErrors.pcp_reviwewd[0] }}</div>
 			</div>
 			<!-- <input type="hidden" name="this_month" value="0"> -->
 			<!-- End Medications added or discontinued -->
@@ -210,7 +209,7 @@
 						</label>
 					</div>
 				</div>
-				<div class="invalid-feedback"  v-if="formErrors" style="display: block;">{{ formErrors.report_requirnment1 }}</div>
+				<div class="invalid-feedback"  v-if="formErrors && formErrors.report_requirnment1" style="display: block;">{{ formErrors.report_requirnment1[0] }}</div>
 				
 			</div>
 			<div v-if="report_requirnment1 == 1 || report_requirnment2 == 1 || report_requirnment4 == 1 || report_requirnment5 == 1"
@@ -248,7 +247,7 @@
 						<span><b>Patient Relationship Building<span class='error'>*</span></b></span>
 						<textarea class="form-control forms-element" name="patient_relationship_building"
 							:id="`${sectionName}_patient_relationship_building`" v-model="patient_relationship_building"></textarea>
-							<div class="invalid-feedback" v-if="formErrors	" style="display: block;">{{ formErrors.patient_relationship_building }}</div>
+							<div class="invalid-feedback" v-if="formErrors && formErrors.patient_relationship_building" style="display: block;">{{ formErrors.patient_relationship_building[0] }}</div>
 					</div>
 				</div>
 			</div>

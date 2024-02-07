@@ -15,6 +15,8 @@
                     <input type="hidden" name="end_time" value="00:00:00" />
                     <input type="hidden" name="module_id" :value="moduleId" />
                     <input type="hidden" name="component_id" :value="componentId" />
+                    <input type="hidden" name="module_name" :value="module_name" />
+                    <input type="hidden" name="component_name" :value="component_name" />
                     <input type="hidden" name="stage_id" :value="stageId" />
                     <input type="hidden" name="step_id" :value="labsStepId" />
                     <input type="hidden" name="form_name" value="number_tracking_labs_form" />
@@ -37,8 +39,8 @@
                         </div>
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
-                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate"/>
-                            <div class="invalid-feedback" v-if="formErrors['labdate.0']" style="display: block;">{{ formErrors['labdate.0'][0] }}</div>
+                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate" data-date-format="MM/DD/YYYY" />
+                            <div class="invalid-feedback" v-if="formErrors[`labdate.${selectedLabs}.0`]" style="display: block;">{{ formErrors[`labdate.${selectedLabs}.0`][0] }}</div>
                         </div>
                     </div>
                     <div v-html="labParams" class="form-row"></div>
@@ -102,6 +104,8 @@ export default {
         const editform = ref('');
         const olddate = ref('');
         const oldlab = ref('');
+        const module_name = ref('');
+        const component_name = ref('');
         const labdateexist = ref('');
         const labsRowData = ref([]);
        
@@ -155,6 +159,7 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const saveLabResponse = await axios.post('/ccm/care-plan-development-numbertracking-labs', formData);
+                console.log("saveLabResponse save labs", saveLabResponse);
                 if (saveLabResponse && saveLabResponse.status === 200) {
                     showLabsAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
@@ -162,6 +167,7 @@ export default {
                     await fetchPatientLabsList();
                     document.getElementById("number_tracking_labs_form").reset();
                     selectedLabs.value = null;
+                    labDate.value = null;
                     labParams.value = null;
                     editform.value = null;
                     olddate.value = null;
@@ -177,6 +183,18 @@ export default {
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    console.log("formErrors.value", formErrors.value);
+                    let i = 0;
+                        for (const field in formErrors.value) {
+                            if (Object.prototype.hasOwnProperty.call(formErrors.value, field)) {
+                                const errorMessages = formErrors.value[field];
+                                console.log("Error Messages:", errorMessages);
+                                console.log("field name --> form[name = 'number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][" + i + "]']");
+                                $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").addClass("is-invalid");
+                                $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").next(".invalid-feedback").html(errorMessages);
+                            }
+                            i++;
+                        }
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -189,6 +207,7 @@ export default {
             try {
                 const getLabResponse = await axios.post('/ccm/lab-param', { lab: labId });
                 labParams.value = getLabResponse.data;
+                $("#labdate").attr('name', 'labdate[' + labId + '][]');
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
@@ -245,9 +264,10 @@ export default {
                 try {
                     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
                     const deleteServicesResponse = await axios.post(`/ccm/delete-lab`, formData);
+                    console.log("delete lab deleteServicesResponse", deleteServicesResponse);
                     // showDMEAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(deleteServicesResponse.form_start_time);
+                    $(".form_start_time").val(deleteServicesResponse.data.form_start_time);
                     await fetchPatientLabsList();
                     document.getElementById("service_dme_form").reset();
                     setTimeout(() => {
@@ -274,17 +294,16 @@ export default {
                 }
                 loading.value = false;
                 const data = await response.json();
-                console.log("data", data);
                 const labs = data.number_tracking_labs_details.dynamic.lab;
-                console.log("data labs", labs);
                 selectedLabs.value = lab_test_id;
-                let dt = moment(lab_date, 'DD-MM-YYYY').format('YYYY-MM-DD'); //new Date(lab_date).toISOString().split('T')[0];
+                let dt = moment(lab_date, 'MM-DD-YYYY').format('YYYY-MM-DD'); //new Date(lab_date).toISOString().split('T')[0];
                 labDate.value = dt;
                 labParams.value = generateLabParams(lab_test_id, labs);
                 editform.value = 'edit';
                 olddate.value = dt;
                 oldlab.value = lab_test_id;
                 labdateexist.value = dt;
+                $("#labdate").attr('name', 'labdate[' + lab_test_id + '][]');
             } catch (error) {
                 console.error('Error fetching labs details:', error);
                 loading.value = false;
@@ -347,6 +366,11 @@ export default {
         onBeforeMount(() => {
             fetchLabs();
             fetchPatientLabsList();
+            const pathname = window.location.pathname;
+            const segments = pathname.split('/');
+            segments.shift();
+            module_name.value = segments[0];
+            component_name.value = segments[1];
         });
 
         onMounted(async () => {
@@ -381,6 +405,8 @@ export default {
             olddate,
             oldlab,
             labdateexist,
+            module_name,
+            component_name,
         };
     }
 };
