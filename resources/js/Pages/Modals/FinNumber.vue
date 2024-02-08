@@ -27,7 +27,7 @@
                         <label>FIN Number<span class='error'>*</span></label>
                         <textarea name="fin_number" class="form-control forms-element" v-model="finNumber"></textarea>
                         <div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.fin_number }}
-                            <span :textContent="formErrors.fin_number"></span>
+                            <span :textContent="formErrors.fin_number[0]"></span>
                         </div>
                         </form>
                     </div>
@@ -110,7 +110,7 @@ export default {
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
-                    console.log(formErrors.value,"FROMERROR");
+                    // console.log(formErrors.value,"FROMERROR");
                 } else { 
                     console.error('Error submitting form:', error);
                 }
