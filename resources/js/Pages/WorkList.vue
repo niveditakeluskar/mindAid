@@ -23,6 +23,7 @@
                     <!-- Your selectworklistpractices component -->
                     <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
+                      <option value="" selected>All Practices</option>
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                         {{ practice.name }}
                       </option>
@@ -160,18 +161,9 @@ export default {
   
     onMounted(async () => {
       try {
+        fetchUserFilters();
         fetchPractices();
         fetchPatients();
-        await fetchUserFilters();
-        await getPatientList(
-          selectedPractice.value === '' ? null : selectedPractice.value,
-          selectedPatients.value === '' ? null : selectedPatients.value,
-          patientsmodules.value === '' ? null : patientsmodules.value,
-          selectedOption.value === '' ? null : selectedOption.value,
-          timeValue.value === '' ? null : timeValue.value,
-          activedeactivestatus.value === '' ? null : activedeactivestatus.value
-        );
-
       } catch (error) {
         console.error('Error on page load:', error);
       }
@@ -313,9 +305,10 @@ export default {
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
 
-        if(practiceId == null){
-          practiceId.value = 0;
+        if(!practiceId){
+          practiceId.value = null;
         }
+        
         const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
        if (!response.ok) {
           throw new Error('Failed to fetch patients');
@@ -334,11 +327,38 @@ export default {
       try {
         const response = await fetch('/patients/getuser-filters');
         const data = await response.json();
-        selectedPractice.value = data.practice;
-        selectedPatients.value = data.patient;
+        if(!data.practice){
+          selectedPractice.value = "";
+        }else{
+          selectedPractice.value = data.practice;
+        }
+        if(!data.patient){
+          selectedPatients.value = "";
+        }else if(data.patient == null){
+          selectedPatients.value = "";
+        }else{
+          selectedPatients.value = data.patient;
+        }
+
         selectedOption.value = data.timeoption;
+
         timeValue.value = data.time;
-        activedeactivestatus.value = data.patientstatus;
+
+        if(!data.activedeactivestatus){
+          activedeactivestatus.value = "";
+        }else{
+          activedeactivestatus.value = data.activedeactivestatus;
+        }
+
+         getPatientList(
+          selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
+          timeValue.value === '' ? null : timeValue.value,
+          activedeactivestatus.value === '' ? null : activedeactivestatus.value
+        );
+
       } catch (error) {
         console.error('Error fetching user filters:', error);
       }
@@ -355,7 +375,7 @@ export default {
     const handleSubmit = async () => {
       try {
         isLoading.value = true;
-        await getPatientList(
+         getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedPatients.value === '' ? null : selectedPatients.value,
           patientsmodules.value === '' ? null : patientsmodules.value,
@@ -363,8 +383,7 @@ export default {
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
-        // Destroy and reinitialize DataTable on form submission
-        await saveFilters();
+         saveFilters();
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -380,7 +399,17 @@ export default {
         tmeoption = selectedOption.value || null;
         tme = timeValue.value || null;
         actvedeactivestatus = activedeactivestatus.value || null;
-        console
+        if (!patents) {
+          // If patient_id is empty or null, assign null to it
+          patents = null;
+        }
+        if (!pratices) {
+          // If patient_id is empty or null, assign null to it
+          pratices = null;
+        }
+        if(!actvedeactivestatus){
+          actvedeactivestatus = null;
+        }
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const response = await fetch(`/patients/worklist/saveuser-filters/${pratices}/${patents}/${patentsmodules}/${tmeoption}/${tme}/${actvedeactivestatus}`, {
           method: 'POST',
@@ -400,12 +429,21 @@ export default {
 
     const handleReset = async () => {
       // Reset form fields and table data
-      selectedPractice.value = null;
-      selectedPatients.value = [];
+      selectedPractice.value = "";
+      selectedPatients.value = "";
     }
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
   try {
+ 
+        if (!patient_id) {
+          // If patient_id is empty or null, assign null to it
+          patient_id = null;
+        }
+        if (!practice_id) {
+          // If patient_id is empty or null, assign null to it
+          practice_id = null;
+        }
       // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {

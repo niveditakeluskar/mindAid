@@ -346,6 +346,12 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
 				console.log('Form submitted successfully!', response);
 				if (response && response.status == 200) {
+					document.getElementById("followup_form").reset();
+					const formReset = document.getElementById('followup_form');
+					formReset.reset();
+									// Reset specific fields that might not be cleared by form.reset()
+				console.log(items,"itemszz");
+					emr_complete.value = 0; 
 					fetchFollowupMasterTaskList();
                     $('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
