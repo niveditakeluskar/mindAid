@@ -139,7 +139,7 @@
 				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
-			<input type="hidden" name="this_month" value="1">
+			<input type="hidden" name="this_month" :value="this_month" />
 			<!-- // $section == 'call_preparation' &&  -->
 			<div class="form-row mb-4 mt-2" v-if="isDecemberOrJanuary">
 				<div class="col-md-12 forms-element">
@@ -323,6 +323,7 @@ export default {
 			
 			data_present_in_emrYesNO: '',
 			currentMonth: new Date().getMonth(),
+			this_month: 0,
 		};
 	},
 	mounted() {
@@ -344,7 +345,11 @@ export default {
 	},
 	computed: {
 		isDecemberOrJanuary() {
-			return this.currentMonth === 11 || this.currentMonth === 0; // 11 is December, 0 is January
+			if (this.currentMonth === 11 || this.currentMonth === 0) { // 11 is December, 0 is January
+				this.this_month = 1;
+				return true;
+			}
+			return false;
 		},
 	},
 	methods: {
