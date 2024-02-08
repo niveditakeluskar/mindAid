@@ -207,13 +207,17 @@ export default {
             }
         }
 
-        const onLabchange = async (event) => {
-            const labId = event.target.value;
+        const onLabchange = async () => {
+            const labId = selectedLabs.value;
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const getLabResponse = await axios.post('/ccm/lab-param', { lab: labId });
                 labParams.value = getLabResponse.data;
-                $("#labdate").attr('name', 'labdate[' + labId + '][]');
+                if (labId == "" || labId == null) {
+                    $("#labdate").attr('name', 'labdate[]');
+                } else {
+                    $("#labdate").attr('name', 'labdate[' + labId + '][]');
+                }
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
