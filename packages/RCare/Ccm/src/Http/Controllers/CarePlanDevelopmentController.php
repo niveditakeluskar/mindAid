@@ -4072,7 +4072,7 @@ class CarePlanDevelopmentController extends Controller
                     $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='positive'>Positive</option><option value='negative'>Negative</option></select><div class='invalid-feedback' id='reading-" . $lab . "-" . $i . "'></div></div>";
                 } else {
                     $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='high'>High</option><option value='normal'>Normal</option><option value='low'>Low</option><option value='test_not_performed'>Test not performed</option></select><div class='invalid-feedback' id='reading-" . $lab . "-" . $i . "'></div></div>";
-                    $params = $params . "<div class='col-md-6'><input type='text' class='forms-element form-control' name='high_val[" . $lab . "][]' value='' /><div class='invalid-feedback'></div></div>";
+                    $params = $params . "<div class='col-md-6'><input type='text' class='forms-element form-control' name='high_val[" . $lab . "][]' value='' /><div class='invalid-feedback' id='high_val-" . $lab . "-" . $i . "'></div></div>";
                 }
                 $params = $params . "</div></div>";
                 $i++;
