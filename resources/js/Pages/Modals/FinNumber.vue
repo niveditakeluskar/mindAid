@@ -4,7 +4,7 @@
   <div v-if="isOpen" class="modal fade open">
       <div class="modal-content">
           <div class="modal-header">
-              <h4 class="modal-title">FIN Number</h4> 
+              <h4 class="modal-title">FIN Number</h4>  
               <button type="button" class="close" @click="closeModal">×</button>
           </div>
           <div class="modal-body">
@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <form id="fin_number_form" name="fin_number_form" @submit.prevent="submitFinNumberForm" :formErrors="formErrors">
+                        <form id="fin_number_form" name="fin_number_form" @submit.prevent="submitFinNumberForm">
                             <input type="hidden" name="patient_id" id="hidden_id" :value="patientId">
                             <input type="hidden" name="module_id" id="page_module_id" :value="moduleId">
                             <input type="hidden" name="component_id" id="page_component_id" :value="componentId">
@@ -26,7 +26,9 @@
                             <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="finnumberTime">
                         <label>FIN Number<span class='error'>*</span></label>
                         <textarea name="fin_number" class="form-control forms-element" v-model="finNumber"></textarea>
-                        <div class="invalid-feedback"></div>
+                        <div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.fin_number }}
+                            <span :textContent="formErrors.fin_number"></span>
+                        </div>
                         </form>
                     </div>
                 </div>
@@ -93,7 +95,7 @@ export default {
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
-                formErrors.value = {};
+                formErrors.value == {};
                 const response = await axios.post('/patients/save-patient-fin-number', formData);
                 if (response && response.status == 200) {
                     showAlert.value = true;
@@ -108,11 +110,12 @@ export default {
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
-                } else {
+                    console.log(formErrors.value,"FROMERROR");
+                } else { 
                     console.error('Error submitting form:', error);
                 }
             }
-            this.closeModal();
+            //closeModal();
         }
 
         onMounted(() => {
@@ -139,6 +142,7 @@ export default {
             closeModal,
             showAlert,
           finnumberTime,
+          formErrors,
           finNumber,
           submitFinNumberForm,
       };
