@@ -141,7 +141,7 @@
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			<input type="hidden" name="this_month" value="1">
 			<!-- // $section == 'call_preparation' &&  -->
-			<div class="form-row mb-4 mt-2">
+			<div class="form-row mb-4 mt-2" v-if="isDecemberOrJanuary">
 				<div class="col-md-12 forms-element">
 					<span class="mr-3 mb-4"><b>Is a current copy of the Care Plan signed by the PCP and in the EMR?
 						</b></span>
@@ -321,7 +321,8 @@ export default {
 
 			med_added_or_disconYesNo:'',
 			
-			data_present_in_emrYesNO:'',
+			data_present_in_emrYesNO: '',
+			currentMonth: new Date().getMonth(),
 		};
 	},
 	mounted() {
@@ -340,6 +341,11 @@ export default {
 		};
 		document.body.appendChild(script); 
 		this.populateFuntion(this.patientId); 
+	},
+	computed: {
+		isDecemberOrJanuary() {
+			return this.currentMonth === 11 || this.currentMonth === 0; // 11 is December, 0 is January
+		},
 	},
 	methods: {
 	

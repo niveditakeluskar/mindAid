@@ -51,7 +51,8 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // 'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/public',
             'visibility' => 'public',
             'cache' => [
                 'max_age' => 31536000, // Cache assets for 1 year

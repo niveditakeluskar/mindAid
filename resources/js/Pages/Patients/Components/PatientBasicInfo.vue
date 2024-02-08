@@ -462,8 +462,6 @@ export default {
 
                 const dobParts = data.patient[0].dob.split('-');
                 const formattedDob = `${dobParts[1]}-${dobParts[2]}-${dobParts[0]}`;
-  
-
                 patientDetails.value = data;
                 billable_time.value = data.billable_time;
                 non_billabel_time.value = data.non_billabel_time;
@@ -488,7 +486,8 @@ export default {
                 caremanager_name.value = data.caremanager_name;
                 date_enrolled.value = data.date_enrolled;
                 patient_module.value = data.patient_services[0].module.module;
-                patient_module_status.value = data.patient_services[0].module.status;
+                patient_module_status.value = data.patient_services[0].status;
+              
                 suspended_from_date.value = data.patient_services[0].suspended_from;
                 suspended_to_date.value = data.patient_services[0].suspended_to;
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status

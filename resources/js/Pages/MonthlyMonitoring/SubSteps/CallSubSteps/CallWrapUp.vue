@@ -121,7 +121,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="checkboxerror" style="color:red; " v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
+                                <div style="color:red;" v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
                             </div> 
                             <div class="form-row invalid-feedback"></div>
                         </div>
@@ -369,12 +369,16 @@ export default {
                 additionalErrors.value = false;
                 additionalErrorsMsg.value = null;
             }
-        }, { immediate: true });
+        }
+            , { immediate: true }
+        );
 
         watch(groupedData, (newValue) => {
             const selectedServices = newValue.some(group => group.checked);
             noAdditionalServicesProvided.value = !selectedServices;
-        }, { immediate: true });
+        }
+            // , { immediate: true }
+        );
 
         const addNewNotesRow = () => {
             const today = new Date().toISOString().split('T')[0];

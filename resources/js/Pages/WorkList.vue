@@ -115,7 +115,8 @@ import {
   onMounted,
   computed,
   watch,
-  AgGridTable
+  AgGridTable,
+  onBeforeMount
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
 import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
@@ -158,15 +159,14 @@ export default {
     );
 
     const PatientStatusRef = ref();
-  
-    onMounted(async () => {
-      try {
-        fetchUserFilters();
-        fetchPractices();
+    
+    onBeforeMount(() => {
+       fetchPractices();
         fetchPatients();
-      } catch (error) {
-        console.error('Error on page load:', error);
-      }
+    });
+
+    onMounted(async () => {
+      fetchUserFilters();
     });
 
     // Define a custom cell renderer function
@@ -269,8 +269,6 @@ export default {
       },
       { headerName: 'Call Score', field: 'pssscore' },
     ]);
-
-
     // Watch for changes in selectedPractice
     watch(selectedPractice, (newPracticeId) => {
       fetchPatients(newPracticeId);
@@ -280,8 +278,6 @@ export default {
       PatientStatusRef.value.openModal();
       callExternalFunctionWithParams(pid, pstatus);
     };
-
-
     // Similarly, define other methods like fetchPractices, fetchPatients, etc.
 
     const fetchPractices = async () => {
@@ -323,42 +319,25 @@ export default {
       }
     };
 
+    let pratices, patents, patentsmodules, tmeoption, tme, actvedeactivestatus;
     const fetchUserFilters = async () => {
       try {
         const response = await fetch('/patients/getuser-filters');
-        const data = await response.json();
-        if(!data.practice){
-          selectedPractice.value = "";
-        }else{
-          selectedPractice.value = data.practice;
-        }
-        if(!data.patient){
-          selectedPatients.value = "";
-        }else if(data.patient == null){
-          selectedPatients.value = "";
-        }else{
-          selectedPatients.value = data.patient;
-        }
-
-        selectedOption.value = data.timeoption;
-
-        timeValue.value = data.time;
-
-        if(!data.activedeactivestatus){
-          activedeactivestatus.value = "";
-        }else{
-          activedeactivestatus.value = data.activedeactivestatus;
-        }
-
+        const data = await response.json();  
          getPatientList(
-          selectedPractice.value === '' ? null : selectedPractice.value,
-          selectedPatients.value === '' ? null : selectedPatients.value,
-          patientsmodules.value === '' ? null : patientsmodules.value,
-          selectedOption.value === '' ? null : selectedOption.value,
-          timeValue.value === '' ? null : timeValue.value,
-          activedeactivestatus.value === '' ? null : activedeactivestatus.value
+          data.practice,
+           data.patient,
+           patientsmodules.value,
+         data.timeoption,
+          data.time,
+           data.patientstatus
         );
-
+        selectedPractice.value = data.practice;
+        patientsmodules.value = patientsmodules.value;
+          selectedOption.value = data.timeoption;
+          timeValue.value = data.time;
+          activedeactivestatus.value = data.patientstatus;
+          selectedPatients.value = data.patient;
       } catch (error) {
         console.error('Error fetching user filters:', error);
       }
@@ -390,7 +369,6 @@ export default {
       }
     };
 
-    let pratices, patents, patentsmodules, tmeoption, tme, actvedeactivestatus;
     const saveFilters = async () => {
       try {
         pratices = selectedPractice.value || null;
