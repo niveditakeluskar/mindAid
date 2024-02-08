@@ -26,8 +26,8 @@
                             <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="finnumberTime">
                         <label>FIN Number<span class='error'>*</span></label>
                         <textarea name="fin_number" class="form-control forms-element" v-model="finNumber"></textarea>
-                        <div class="invalid-feedback" v-if="formErrors" style="display: block;">{{ formErrors.fin_number }}
-                            <span :textContent="formErrors.fin_number[0]"></span>
+                        <div class="invalid-feedback" v-if="formErrors" style="display: block;"> 
+                            <span :textContent="formErrors.fin_number"></span>
                         </div>
                         </form>
                     </div>
