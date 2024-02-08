@@ -154,6 +154,12 @@ export default {
             let formData = new FormData(myForm);
             let formDataObject = {};
 
+            $('div[id^="reading-"]').html("");
+            $('div[id^="reading-"]').hide();
+
+            $('div[id^="high_val-"]').html("");
+            $('div[id^="high_val-"]').hide();
+
             formData.forEach((value, key) => {
                 formDataObject[key] = value;
             });
@@ -189,14 +195,13 @@ export default {
                         for (const field in formErrors.value) {
                             if (Object.prototype.hasOwnProperty.call(formErrors.value, field)) {
                                 const errorMessages = formErrors.value[field];
-                                console.log("Error Messages:", errorMessages);
-                                console.log("field name --> form[name = 'number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][" + i + "]']");
-                                // $("#reading-1-0").html(errorMessages);
-                                // $("#reading-1-0").show();
-                                // $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").addClass("is-invalid");
-                                $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").next(".invalid-feedback").html(errorMessages);
-                                if (errorMessages.includes('reading')) {
-                                    $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "]["+i+"]']").next(".invalid-feedback").html(errorMessages);
+                                if (field.includes('reading')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
+                                }
+                                if (field.includes('high_val')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
                                 }
                             }
                             i++;
