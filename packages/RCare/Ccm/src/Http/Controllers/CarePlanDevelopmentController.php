@@ -114,7 +114,7 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
                 $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
                 return $btn;
             })
@@ -153,6 +153,17 @@ class CarePlanDevelopmentController extends Controller
         $labdate      = sanitizeVariable($request->labdate);
         $labid        = sanitizeVariable($request->labid);
         $labdateexist = sanitizeVariable($request->labdateexist);
+        $form_start_time = sanitizeVariable($request->form_start_time);
+        $start_time            = sanitizeVariable($request->start_time);
+        $end_time              = sanitizeVariable($request->end_time);
+        $module_id             = sanitizeVariable($request->module_id);
+        $component_id          = sanitizeVariable($request->component_id);
+        $stage_id              = sanitizeVariable($request->stage_id);
+        $step_id               = sanitizeVariable($request->step_id);
+        $form_name             = sanitizeVariable($request->form_name);
+        $billable              = sanitizeVariable($request->billable);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+
         DB::beginTransaction();
         try {
             $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $labid)->get();
@@ -190,7 +201,9 @@ class CarePlanDevelopmentController extends Controller
                         ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
                 }
             }
+            $record_time   = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
+            return response(['form_start_time' => $form_save_time]);
         } catch (\Exception $ex) {
             DB::rollBack();
             return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
@@ -4051,18 +4064,20 @@ class CarePlanDevelopmentController extends Controller
         $lab    = sanitizeVariable($request->lab);
         if ($lab != 0) {
             $param = LabsParam::where('lab_test_id', $lab)->where('status', 1)->get();
+            $i = 0;
             foreach ($param as $value) {
                 $params = $params . "<div class='col-md-6 mb-3'>";
                 $params = $params . "<label>" . $value->parameter . " <span class='error'>*</span></label>";
                 $params = $params . "<input type='hidden' name='lab_test_id[" . $lab . "][]'  value='" . $value->lab_test_id . "'>";
                 $params = $params . "<input type='hidden' name='lab_params_id[" . $lab . "][]' value='" . $value->id . "'>";
                 if ($value->parameter == "COVID-19") {
-                    $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='positive'>Positive</option><option value='negative'>Negative</option></select><div class='invalid-feedback'></div></div>";
+                    $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='positive'>Positive</option><option value='negative'>Negative</option></select><div class='invalid-feedback' id='reading-" . $lab . "-" . $i . "'></div></div>";
                 } else {
-                    $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='high'>High</option><option value='normal'>Normal</option><option value='low'>Low</option><option value='test_not_performed'>Test not performed</option></select><div class='invalid-feedback'></div></div>";
+                    $params = $params . "<div class='form-row'><div class='col-md-5'><select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[" . $lab . "][]'><option value=''>Select Reading</option><option value='high'>High</option><option value='normal'>Normal</option><option value='low'>Low</option><option value='test_not_performed'>Test not performed</option></select><div class='invalid-feedback' id='reading-" . $lab . "-" . $i . "'></div></div>";
                     $params = $params . "<div class='col-md-6'><input type='text' class='forms-element form-control' name='high_val[" . $lab . "][]' value='' /><div class='invalid-feedback'></div></div>";
                 }
                 $params = $params . "</div></div>";
+                $i++;
             }
             $params = $params . '<div class="col-md-12 mb-3"><label>Notes:</label><textarea class="forms-element form-control" name="notes[' . $lab . ']"></textarea><div class="invalid-feedback"></div></div>';
         } else {
@@ -4122,17 +4137,14 @@ class CarePlanDevelopmentController extends Controller
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
                                 'reading'               => $reading[$labvalue][$i],
-                                // 'high_val'              => $high_val[$labvalue][$i],
+                                'high_val'              => $high_val[$labvalue][$i] ?? null,
                                 'notes'                 => $notes[$labvalue],
-                                'lab_date'              => $labdate[0]
+                                'lab_date'              => $labdate[$labvalue][0]
                                 //'lab_date'              =>Carbon::now() 
                             );
-                            if (isset($high_val) && ($high_val != "")) {
-                                $labdata['high_val'] = $high_val[$labvalue][$i];
-                                $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
-                                if (isset($name_param[0]->parameter)) {
-                                    $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
-                                }
+                            $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
+                            if (isset($name_param[0]->parameter)) {
+                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
@@ -4257,13 +4269,13 @@ class CarePlanDevelopmentController extends Controller
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
                                 'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i],
+                                'high_val'              => $high_val[$labvalue][$i] ?? null,
                                 'notes'                 => $notes[$labvalue],
                                 'lab_date'              => $labdate[$labvalue][0]
                             );
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
                             if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] . ', ';
+                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');

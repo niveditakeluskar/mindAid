@@ -15,7 +15,8 @@
 							class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment2"
 								:id="`${sectionName}_condition_requirnment_er_visit`" class="CRclass"
-								formControlName="checkbox" v-model="conditionRequirnment2" @change="checkConditionRequirnments()"  :checked="conditionRequirnment2" value="1">
+								formControlName="checkbox" v-model="conditionRequirnment2" @change="checkConditionRequirnments()" 
+								 :checked="conditionRequirnment2" value="1">
 							<span>ER Visits</span>
 							<span class="checkmark"></span>
 						</label>
@@ -23,7 +24,8 @@
 							class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment3"
 								:id="`${sectionName}_condition_requirnment_urgent_care`" class="CRclass"
-								formControlName="checkbox" v-model="conditionRequirnment3" @change="checkConditionRequirnments()"  :checked="conditionRequirnment3" value="1">
+								formControlName="checkbox" v-model="conditionRequirnment3" @change="checkConditionRequirnments()"  
+								:checked="conditionRequirnment3" value="1">
 							<span>Urgent Care</span>
 							<span class="checkmark"></span>
 						</label>
@@ -31,20 +33,21 @@
 						<label :for="`${sectionName}_condition_requirnment_none`" class="checkbox  checkbox-primary mr-3">
 							<input type="checkbox" name="condition_requirnment4"
 								:id="`${sectionName}_condition_requirnment_none`" class="CRclass" formControlName="checkbox"
-								v-model="conditionRequirnment4" @click="noneConditionRequireement()"  :checked="conditionRequirnment4" value="0">
+								v-model="conditionRequirnment4" @click="noneConditionRequireement()"  :checked="conditionRequirnment4" value="1"> 	
 							<span>None</span>
 							<span class="checkmark"></span>
 							<span class="error">*</span>
 						</label>
-					</div>
+					</div> 
 				</div> 
-				<div :id="`${sectionName}_CPmsg`" class="invalid-feedback" style="font-size: 13px;"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.condition_requirnment1" style="display: block;">{{ formErrors.condition_requirnment1[0] }}</div>
 			</div>
 			<div v-if="((conditionRequirnment1 == 1 || conditionRequirnment2 == 1 || conditionRequirnment3 == 1) &&  conditionRequirnment4!=1)"
 				:id="`${sectionName}_note`" class="notes mb-4">
 				<textarea class="form-control" name="condition_requirnment_notes"
 					:id="`${sectionName}_condition_requirnment_notes`" v-model="condition_requirnment_notes"></textarea>
 				<div :id="`${sectionName}_condition_requirnment_notes`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.condition_requirnment_notes" style="display: block;">{{ formErrors.condition_requirnment_notes[0] }}</div>
 			</div>
 			<!-- New Office Visit  -->
 			<div class="form-row mb-4">
@@ -65,11 +68,11 @@
 						</label>
 					</div>
 				</div>
-				<div :id="`${sectionName}_newofficevisit`" class="invalid-feedback">office visit</div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.newofficevisit" style="display: block;">{{ formErrors.newofficevisit[0] }}</div>
 			</div>
 			<div v-if="officeVisitYesNo == '1'" :id="`${sectionName}_new-office-visit-note`" class="office_visit_note mb-4">
 				<textarea class="form-control" name="nov_notes" :id="`${sectionName}_nov_notes`" v-model="officeVisitNotes"></textarea>
-				<div :id="`${sectionName}_nov_notes`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.nov_notes" style="display: block;">{{ formErrors.nov_notes[0] }}</div>
 			</div>
 			<!-- End New Office Visit  -->
 			<!-- New Dignosis -->
@@ -91,14 +94,12 @@
 						</label>
 					</div>
 				</div>
-				<div :id="`${sectionName}_newdiagnosis`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.newdiagnosis" style="display: block;">{{ formErrors.newdiagnosis[0] }}</div>
 			</div>
-			<div :id="`${sectionName}_new-dignosis-model`" class="new_diagnosis_note mb-4">
-				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
-			</div>
+
 			<div v-if="newDiagnosisYesNo == '1'"  :id="`${sectionName}_new-dignosis`" class="new_diagnosis_note mb-4">
 				<textarea class="form-control" name="nd_notes" :id="`${sectionName}_nd_notes`" v-model="newDiagnosisNotes"></textarea>
-				<div :id="`${sectionName}_nd_notes`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.nd_notes" style="display: block;">{{ formErrors.nd_notes[0] }}</div>
 			</div>
 			<!-- End New Dignosis -->
 			<!-- Medications added or discontinued -->
@@ -120,18 +121,17 @@
 						</label>
 					</div>
 				</div>
-				<div :id="`${sectionName}_med_added_or_discon`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.med_added_or_discon" style="display: block;">{{ formErrors.med_added_or_discon[0] }}</div>
 			</div>
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
 					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
 	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-				<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
 				<textarea class="form-control" name="med_added_or_discon_notes"
 					:id="`${sectionName}_med_added_or_discon_notes`" V-model="med_added_or_disconNotes"></textarea>
-				<div :id="`${sectionName}_med_added_or_discon_notes`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.med_added_or_discon_notes" style="display: block;">{{ formErrors.med_added_or_discon_notes[0] }}</div>
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
@@ -163,7 +163,7 @@
 						</label>
 					</div>
 				</div>
-				<div :id="`${sectionName}_pcp_reviwewd`" class="invalid-feedback"></div>
+				<div class="invalid-feedback" v-if="formErrors && formErrors.pcp_reviwewd" style="display: block;">{{ formErrors.pcp_reviwewd[0] }}</div>
 			</div>
 			<!-- <input type="hidden" name="this_month" value="0"> -->
 			<!-- End Medications added or discontinued -->
@@ -203,14 +203,14 @@
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
-								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" value="0">
+								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" value="1">
 							<span>None</span><span class="error">*</span>
 							<span class="checkmark"></span>
-							<!-- <span class="error">*</span> -->
 						</label>
 					</div>
 				</div>
-				<div :id="`${sectionName}_report_requirnment`" class="invalid-feedback" style="font-size: 13px;"></div>
+				<div class="invalid-feedback"  v-if="formErrors && formErrors.report_requirnment1" style="display: block;">{{ formErrors.report_requirnment1[0] }}</div>
+				
 			</div>
 			<div v-if="report_requirnment1 == 1 || report_requirnment2 == 1 || report_requirnment4 == 1 || report_requirnment5 == 1"
 			 :id="`${sectionName}_requirnment`" class="rep_req_note mb-4">
@@ -221,7 +221,6 @@
 		 				<vitalsHealthDataModalForm ref="vitalsHealthDataModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
-				<div :id="`${sectionName}_report_requirnment_notes`" class="invalid-feedback"></div>
 			</div>
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
@@ -248,7 +247,7 @@
 						<span><b>Patient Relationship Building<span class='error'>*</span></b></span>
 						<textarea class="form-control forms-element" name="patient_relationship_building"
 							:id="`${sectionName}_patient_relationship_building`" v-model="patient_relationship_building"></textarea>
-						<div :id="`${sectionName}_patient_relationship_building`" class="invalid-feedback"></div>
+							<div class="invalid-feedback" v-if="formErrors && formErrors.patient_relationship_building" style="display: block;">{{ formErrors.patient_relationship_building[0] }}</div>
 					</div>
 				</div>
 			</div>
@@ -287,6 +286,7 @@ export default {
 		patientId: Number,
         moduleId: Number,
         componentId: Number,
+		formErrors:Array, 
     },
 	components: {
 		ModalForm ,
@@ -300,6 +300,7 @@ export default {
 		ReviewCarePlanModal
 	},
 	data() {
+		
 		return {
 			// time:null,
 			conditionRequirnment1:'',
@@ -341,10 +342,13 @@ export default {
 		this.populateFuntion(this.patientId); 
 	},
 	methods: {
+	
+
 		noneConditionRequireement() {
 			this.conditionRequirnment1 = 0;
 			this.conditionRequirnment2 = 0;
 			this.conditionRequirnment3 = 0;
+
 		},
 		checkConditionRequirnments() {
 		    this.conditionRequirnment4 = 0;
@@ -411,16 +415,16 @@ export default {
 		},
 		openModal() {
 			// Access the modal component through a ref
-			console.log("openMModel called");
+			// console.log("openMModel called");
 			this.$refs.modalForm.openModal();
 		},
 		openReviewCarePlanModalModal() {
 			// Access the modal component through a ref
-			console.log("ReviewCarePlanModal called");
+			// console.log("ReviewCarePlanModal called"); 
 			this.$refs.ReviewCarePlanModal.openModal();
 		},
 		openAllergiesModal() {
-			console.log("openAllergiesModal called");
+			// console.log("openAllergiesModal called");
 			this.$refs.allergiesModalForm.openModal();
 		},
 		openServicesModal() {

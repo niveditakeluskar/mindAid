@@ -3,6 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
+      cacheDir: '.vite', // Enable cache directory for faster builds
     plugins: [
         laravel({
             input: [

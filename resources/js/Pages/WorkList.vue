@@ -1,6 +1,7 @@
 <template>
   <LayoutComponent ref="layoutComponentRef" >
     <div>
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <div class="breadcrusmb">
         <div class="row" style="margin-top: 10px">
           <div class="col-md-8">
@@ -133,7 +134,7 @@ export default {
     const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
-    const loading = ref(false);
+    const isLoading = ref(false);
     const tableInstance = ref(null); // Define tableInstance using ref()
     const showModal = ref(false);
     const selectedPractice = ref(null);
@@ -144,6 +145,7 @@ export default {
     const timeValue = ref('00:20:00');
     const activedeactivestatus = ref(null);
     const patientsmodules = ref('3');
+  
     // Compute the values with checks
     const practice_id = computed(() => selectedPractice.value);
     const patient_id = computed(() => selectedPatients.value);
@@ -153,8 +155,9 @@ export default {
     const activedeactivestatusComputed = computed(() =>
       activedeactivestatus.value === '' ? null : activedeactivestatus.value
     );
-    const PatientStatusRef = ref();
 
+    const PatientStatusRef = ref();
+  
     onMounted(async () => {
       try {
         fetchPractices();
@@ -236,16 +239,12 @@ export default {
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
-        if (date) {
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
             }).replace(/\//g, '-'); // Replace slashes with dashes
             return formattedDate;
-        } else {
-            return 'N/A';
-        }
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -309,12 +308,16 @@ export default {
 
     const fetchPatients = async (practiceId) => {
       try {
-        if (practiceId === undefined || practiceId === null) {
+        if (practiceId === undefined) {
           //console.error('Practice ID is empty or invalid.');
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
-        const response = await fetch('/patients/ajax/rpmpatientlist/' + practiceId + '/patientlist'); // Call the API endpoint
-        if (!response.ok) {
+
+        if(practiceId == null){
+          practiceId.value = 0;
+        }
+        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
+       if (!response.ok) {
           throw new Error('Failed to fetch patients');
         }
         const data = await response.json();
@@ -351,7 +354,7 @@ export default {
 
     const handleSubmit = async () => {
       try {
-        
+        isLoading.value = true;
         await getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedPatients.value === '' ? null : selectedPatients.value,
@@ -403,25 +406,18 @@ export default {
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
   try {
-    const cacheKey = `${practice_id}_${patient_id}_${module_id}_${timeoption}_${time}_${activedeactivestatus}`;
-    const cachedData = sessionStorage.getItem(cacheKey);
-    if (cachedData) {
-      // If cached data exists, use it directly
-      passRowData.value = JSON.parse(cachedData);
-    } else {
       // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      // Store fetched data in sessionStorage for caching
-      sessionStorage.setItem(cacheKey, JSON.stringify(data.data || []));
+      
       passRowData.value = data.data || [];
-    }
+      isLoading.value = false;
   } catch (error) {
     console.error('Error fetching patient list:', error);
-    loading.value = false;
+    isLoading.value = false;
   }
 };
 
@@ -429,7 +425,7 @@ export default {
     return {
       PatientStatusRef,
       columnDefs,
-      loading,
+      isLoading,
       tableInstance,
       showModal,
       selectedPractice,

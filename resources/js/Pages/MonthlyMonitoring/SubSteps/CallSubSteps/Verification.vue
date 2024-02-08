@@ -11,7 +11,8 @@
 								<button type="button" class="close" data-dismiss="alert">x</button>
 								<strong> Hippa data saved successfully! </strong><span id="text"></span>
 							</div>
-							<p class="mb-4"><b>Verify HIPAA script</b><br/></p>
+							<p class="mb-4"><b>Verify HIPAA script</b><br/>
+									Before we get started, to comply with HIPAA guidelines I need to verify your date of birth and your address.</p>
 							<div class="forms-element form-group d-inline-flex mb-2">
 								<label class="radio radio-primary mr-4" for="verification">
 									<input type="radio" name="verification" id="verification" value="1" formControlName="radio" v-model="verification" :checked="verification=='1'">
@@ -120,6 +121,7 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-call-hippa', formData);
 				if (response && response.status == 200) {
 					this.showAlert = true;
+					this.$emit('updateverification');
 					updateTimer(this.patientId, 1, this.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {

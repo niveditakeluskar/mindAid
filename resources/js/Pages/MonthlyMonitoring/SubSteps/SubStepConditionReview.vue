@@ -82,7 +82,7 @@
                     <hr>
                     <ul class="nav nav-tabs" id="patientdevicetab" role="tablist">
                         <li class="nav-item" v-for="list in  devicelist ">
-                            <a :class="{ active: deviceID == list.id }" class="nav-link" @Click="tabChange(list.id)"
+                            <a :class="{ active: deviceID == list.id }" class="nav-link" @click="tabChange(list.id)"
                                 id="device-icon-tab_" data-toggle="tab" href="#deviceid_" role="tab"
                                 aria-controls="ccm-call" aria-selected="false"><i
                                     class="nav-icon color-icon i-Control-2 mr-1"></i>{{ list.device_name }}</a>
@@ -402,7 +402,6 @@ export default {
             var current_MonthYear = c_year + '-' + c_month;
             //calender and graph click js
             var abc = $("#calender").find(".fc-toolbar-title").html();
-            //alert(deviceid);
             if (abc != undefined) {
                 this.changedevice = false;
                 this.ajexChart();

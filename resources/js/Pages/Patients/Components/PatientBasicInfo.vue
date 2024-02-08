@@ -12,8 +12,7 @@
                             <input type="hidden" name="service_status" id="service_status">
                             <input type="hidden" id="timer_runing_status" value="0">
                             <div class="col-md-1">
-
-                                <img src="" class='user-image' style="width: 60px;" />
+                                <img src="/../assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
                             <div class="col-md-11">
                                 <div class="form-row">
@@ -33,14 +32,14 @@
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber"
                                                 @click="patient_finnumber_function"
-                                                style="background-color:#27a7de;border:none;" id="patient_finnumber">
+                                                style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="patient_finnumber">
                                                 <span id="fin_number" class="patient_fin_number"
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
                                                 :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
                                             <span v-if="military_status == 0">Yes</span>
@@ -68,7 +67,7 @@
                                             class="mb-1 pr-4"><i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
                                             :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
@@ -161,7 +160,7 @@
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                             id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
@@ -235,12 +234,12 @@
 
                                                 </div>
                                             </div>
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                                 id="personal_notes" @click="personalnotesfunction">Personal Notes</a>
                                             <PersonalNotes ref="personalnotesRef" :patientId="patientId"
                                                 :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                                 :personal_notes_data="personal_notes_data" />|
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
                                                 id="part_of_research_study" @click="researchstudyfunction">Research
                                                 Study</a>
                                             <ResearchStudy ref="researchstudyRef" :patientId="patientId"
@@ -491,7 +490,7 @@ export default {
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status;
 
                 personal_notes_data.value = data.personal_notes;
-                research_study_data.value = data.research_study_data;
+                research_study_data.value = data.research_study;
 
                 patient_systolichigh.value = data.systolichigh;
                 patient_systoliclow.value = data.systoliclow;
@@ -742,9 +741,4 @@ export default {
     },
 };
 
-</script> 
-<style>
-a:not([href]):not([tabindex]) {
-    color: #FFFFFF;
-}
-</style>
+</script>

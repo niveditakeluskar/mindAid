@@ -2,11 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <?php
-    $component_name = \Request::segment(2);
-    $module_name = \Request::segment(1);
-    $patient_list = \Request::segment(3);
-    ?>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -43,12 +39,7 @@
         $themeMode = "dark-theme";
     }
     ?>
-    <!-- Pre Loader Strat  -->
-    <div class='loadscreen' id="preloader">
-        <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->
-            <img src="{{'/images/loading.gif'}}" width="150" height="150">
-        </div>
-    </div> <!-- Pre Loader end  -->
+
     @inertiaHead
 </head>
 
@@ -57,7 +48,11 @@
     @php
     $layout = session('layout');
     @endphp
-
+    <?php
+    $component_name = \Request::segment(2);
+    $module_name = \Request::segment(1);
+    $patient_list = \Request::segment(3);
+    ?>
     <div class="app-admin-wrap layout-horizontal-bar clearfix">
         @include('Theme::layouts_2.header-menu') <!-- ============ end of header menu ============= -->
 
@@ -116,7 +111,6 @@
     <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     <script defer src="{{asset(mix('assets/js/laravel/commonHighchart.js'))}}"></script>
     <script defer src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
-
 
 </body>
 
