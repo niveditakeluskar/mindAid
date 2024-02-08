@@ -25,7 +25,7 @@ class FinNumberRequest extends FormRequest
     {
 		//$insurance_primary_idnum_check = $request->post('insurance_primary_idnum_check');
         return [
-            "fin_number"                      => "alpha_num|min:10|max:10"		
+            "fin_number" => "required|alpha_num|min:10|max:10"		
         ];
     }
 

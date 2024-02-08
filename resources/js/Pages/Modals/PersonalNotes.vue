@@ -87,7 +87,6 @@ export default {
         };
 
         const closeModal = () => {
-            console.log('Close personal modal called');
             isOpen.value = false;
         };
         
