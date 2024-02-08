@@ -10,8 +10,8 @@
         <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div id="patientalertdiv"></div>
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
-          <input type="hidden" name="patient_id" id="patientid" />
-          <input type="hidden" name="uid" id="patientid">
+          <input type="hidden" name="patient_id" id="patientStatId"/>
+          <input type="hidden" name="uid" id="uid" >
           <input type="hidden" name="start_time" value="00:00:00">
           <input type="hidden" name="end_time" value="00:00:00">
           <input type="hidden" name="module_id" :value="moduleId" />
@@ -129,35 +129,51 @@ export default {
   props: {
     moduleId: Number,
     componentId: Number,
-  }, mounted() {
-    const element = document.getElementById('page_landing_times');
-if (!element || element.value === null) {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    if (formattedDate) {
-        this.time = formattedDate;
-    } else {
-        console.error('Server time not provided.');
-    }
-}else{
-  this.time = element.value;
-
-}
-   },
+  }, 
   setup(props) {
     const Deactivations = ref([]);
     const isOpen = ref(false);
     const isLoading = ref(false);
     const formErrors = ref({});
+    const time = ref('');
     const openModal = () => {
       isOpen.value = true;
       fetchActiveDeactiveReasons();
-    };
+      const element = document.getElementById('page_landing_times');
+if (!element || element.value === null) {
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    if (formattedDate) {
+        time.value = formattedDate;
+    } else {
+        console.error('Server time not provided.');
+    }
+}else{
+  time.value = element.value;
 
+}
+    };
+    let selectPatientId = ref('');
     const closeModal = () => {
       isOpen.value = false;
       $("#status").prop("checked", false);
     };
+
+    onMounted(async () => {
+      const element = document.getElementById('page_landing_times');
+if (!element || element.value === null) {
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
+    if (formattedDate) {
+        time.value = formattedDate;
+    } else {
+        console.error('Server time not provided.');
+    }
+}else{
+  time.value = element.value;
+
+}
+    });
 
     const fetchActiveDeactiveReasons = async () => {
       try {
@@ -203,7 +219,7 @@ if (!element || element.value === null) {
 
       if ($.isNumeric(param1) == true) {
 
-        const patientId = param1;
+         const patientId = param1;
         var selmoduleId = $("#modules").val();
         axios({
           method: "GET",
@@ -219,9 +235,13 @@ if (!element || element.value === null) {
         }).catch(function (error) {
           console.error(error, error.response);
         });
+   
         var status = param2;
         $("form[name='active_deactive_form'] #worklistclick").val("1");
         $("form[name='active_deactive_form'] #patientid").val(patientId);
+        $("form[name='active_deactive_form'] #patientStatId").val(patientId);
+        $("form[name='active_deactive_form'] #uid").val(patientId);
+
         $("form[name='active_deactive_form'] #date_value").hide();
         $("form[name='active_deactive_form'] #fromdate").hide();
         $("form[name='active_deactive_form'] #todate").hide();
@@ -264,7 +284,19 @@ if (!element || element.value === null) {
                 const response = await axios.post('/patients/patient-active-deactive', formData);
                 if (response && response.status == 200) {
                   console.log(response);
-                  updateTimer(props.patientId, '1', props.moduleId);
+                  // Get the current URL
+const currentUrl = window.location.href;
+
+// Split the URL by "/"
+const urlParts = currentUrl.split("/");
+
+// Extract the ID from the URL
+const id = urlParts[urlParts.length - 1];
+                  if(!isNaN(id)){
+                    console.log(id , 'asdasdasd', props.moduleId);
+
+                  updateTimer(id, '1', props.moduleId);
+                      }
                     $(".form_start_time").val(response.data.form_start_time);
 				            	time.value = response.data.form_start_time;
                   $('#patientalertdiv').html('<div class="alert alert-success"> Data Saved Successfully </div>');
@@ -298,6 +330,8 @@ if (!element || element.value === null) {
         };
 
     return {
+      selectPatientId,
+      time,
       submitPatientForm,
       showReasonOptions,
       callExternalFunctionWithParams,
