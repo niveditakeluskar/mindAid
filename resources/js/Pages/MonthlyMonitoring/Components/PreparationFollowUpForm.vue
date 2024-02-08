@@ -405,7 +405,12 @@ export default {
 					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment5;
 					
 					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation.static.anything_else;
-					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation.static.patient_relationship_building;
+					this.patient_relationship_building = this.patientPrepSaveDetails.populateCallPreparation.static.patient_relationship_building;
+					if (this.conditionRequirnment1 == 1 || this.conditionRequirnment2 == 1 || this.conditionRequirnment3 == 1 || this.conditionRequirnment4 == 1) {
+						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_yes").prop("checked", true);
+					} else {
+						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
+					}
 				}else{
 					console.error('populateCallPreparation is empty or undefined');
 				}				
