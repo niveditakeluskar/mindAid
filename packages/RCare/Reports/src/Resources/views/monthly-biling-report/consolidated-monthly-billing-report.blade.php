@@ -145,7 +145,7 @@ Consolidate Billing Report
     <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
     <script type="text/javascript">
 
-var getMonthlyBillingPatientList = function(practicesgrp=null,practice = null,provider=null,modules=null,monthly=null,monthlyto=null,activedeactivestatus=null,callstatus=null) {
+var getMonthlyBillingPatientList = function(practicesgrp=null,practice = null,provider=null,modules=null,monthly=null,monthlyto=null,activedeactivestatus=null,callstatus=null,onlycode) {
        
        if(practicesgrp=='')    
        {
@@ -182,7 +182,7 @@ $('.table-responsive').html('<table id="patient-list-'+randomval+'" class="displ
            
 $.ajax({
 type: 'GET',
-url: "/reports/consolidate-monthly-billing-report/search/"+practicesgrp+'/'+practice+"/"+provider+"/"+modules+"/"+monthly+"/"+monthlyto+"/"+activedeactivestatus+"/"+callstatus,
+url: "/reports/consolidate-monthly-billing-report/search/"+practicesgrp+'/'+practice+"/"+provider+"/"+modules+"/"+monthly+"/"+monthlyto+"/"+activedeactivestatus+"/"+callstatus+"/"+onlycode,
 //data: data,
 success: function (datatest) {
 
@@ -337,7 +337,11 @@ $('#load-monthly-billing-tbl').hide();
             var monthlyto = $('#monthlyto').val();
             var activedeactivestatus= $("#activedeactivestatus").val();
             var callstatus = $("#callstatus").val();
-
+            var only_code = 0;
+            if($("#only_code").is(':checked')){
+                only_code = 1;
+            }
+    
             if(monthlyto < monthly)
             {
                 $('#monthlyto').addClass("is-invalid");
@@ -352,7 +356,7 @@ $('#load-monthly-billing-tbl').hide();
                 $('#monthlyto').removeClass("invalid-feedback");
                 $('#monthly').removeClass("is-invalid");
                 $('#monthly').removeClass("invalid-feedback");
-                getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus); 
+                getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus,only_code); 
             }
     
         });
@@ -376,6 +380,7 @@ $('#load-monthly-billing-tbl').hide();
                 var provider = null;
                 var monthly =  $("#monthly").val();
                 var monthlyto = $("#monthlyto").val(); 
+                var only_code
                
         $('#practicesgrp').val('').trigger('change');
         $('#practices').val('').trigger('change'); 
@@ -383,7 +388,7 @@ $('#load-monthly-billing-tbl').hide();
         $('#modules').val('').trigger('change'); 
         $('#activedeactivestatus').val('').trigger('change');
         $('#callstatus').val('').trigger('change');
-        getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus); 
+        getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus,only_code); 
         });
 
         
