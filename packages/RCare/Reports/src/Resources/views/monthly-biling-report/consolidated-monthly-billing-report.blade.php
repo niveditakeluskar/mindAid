@@ -281,7 +281,7 @@ $('#load-monthly-billing-tbl').hide();
                 $('#monthlyto').removeClass("invalid-feedback");
                 $('#monthly').removeClass("is-invalid");
                 $('#monthly').removeClass("invalid-feedback");
-                getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
+                getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null,0); 
             }
             
             util.getToDoListData(0, {{getPageModuleName()}});
@@ -380,7 +380,7 @@ $('#load-monthly-billing-tbl').hide();
                 var provider = null;
                 var monthly =  $("#monthly").val();
                 var monthlyto = $("#monthlyto").val(); 
-                var only_code
+                var only_code = 0;
                
         $('#practicesgrp').val('').trigger('change');
         $('#practices').val('').trigger('change'); 

@@ -57,7 +57,7 @@
                     <div class="col-md-2 form-group mt-4 ml-2">
                         <label for="only_code" class="checkbox checkbox-primary mr-3">
                             <input type="checkbox" name="only_code" id="only_code" class="CRclass" formcontrolname="checkbox" value="1">
-                            <span>Only Code</span><span class="checkmark"></span>
+                            <span>Only With Billing Code</span><span class="checkmark"></span>
                         </label>
                     </div>
                     <div class="row col-md-2 mb-2">
