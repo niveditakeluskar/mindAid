@@ -44,6 +44,7 @@ class ConsolidateBillingReportController extends Controller
         $monthlyto   = sanitizeVariable($request->route('monthlyto'));
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
         $callstatus = sanitizeVariable($request->route('callstatus'));
+        $onlycode =  sanitizeVariable($request->route('onlycode'));
         if($module_id=='null')
         {
            $module_id=3; 
@@ -100,7 +101,7 @@ class ConsolidateBillingReportController extends Controller
                     inner join patients.patient_services ps on pd.patient_id=ps.patient_id
                     where pd.created_at between '".$dt1."'and '".$dt2."' and pd.status =1 and pp.provider_type_id = 1 and pp.is_active =1
                     "; 
-    
+
                 if($practices!="" && $practices !='null'){
                   $query .= " and pp.practice_id =".$practices;
                 }
@@ -117,9 +118,12 @@ class ConsolidateBillingReportController extends Controller
     
               //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
     
-                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
+                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid"; 
+                    if($onlycode == 1){
+                      $query .= " where sp.billingcode != 'null'";
+                    }
                     $data = DB::select( DB::raw($query) );
-                        //  dd($query);
+                         
                         //  dd($data);
                         
                 
