@@ -2089,14 +2089,15 @@ class PatientController extends Controller
 //optimized query and cached for 24Hrs
 public function practicePatientsNew($practice)
 {
-    $cid = session()->get('userid');
+
      // Check if the data is cached
      $cacheKey = 'practice_patients_'.$practice;
      if (Cache::has($cacheKey)) {
          //return Cache::get($cacheKey);
          return response()->json(Cache::get($cacheKey));
      }
- 
+     
+     $cid = session()->get('userid');
      $usersDetails = Users::where('id', $cid)->first();
      $roleid = $usersDetails->role;
  
