@@ -23,7 +23,6 @@
                     <!-- Your selectworklistpractices component -->
                     <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
-                      <option value="" selected>All Practices</option>
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                         {{ practice.name }}
                       </option>
@@ -302,7 +301,7 @@ export default {
         }
 
         if(!practiceId){
-          practiceId.value = null;
+          practiceId = null;
         }
         
         const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
@@ -423,7 +422,7 @@ export default {
           practice_id = null;
         }
       // Fetch data from the server
-      const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
+      const response =  fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }

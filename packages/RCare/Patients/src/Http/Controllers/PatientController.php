@@ -2093,7 +2093,8 @@ public function practicePatientsNew($practice)
      // Check if the data is cached
      $cacheKey = 'practice_patients_'.$cid.$practice;
      if (Cache::has($cacheKey)) {
-         return Cache::get($cacheKey);
+         //return Cache::get($cacheKey);
+         return response()->json(Cache::get($cacheKey));
      }
  
      $usersDetails = Users::where('id', $cid)->first();
