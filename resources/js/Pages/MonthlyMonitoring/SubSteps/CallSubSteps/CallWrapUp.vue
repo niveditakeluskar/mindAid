@@ -44,10 +44,10 @@
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
                                     <label class="col-md-12">EMR Monthly Summary
-                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary"
-                                        v-model="emr_monthly_summary" @blur="saveEMRNotes">{{ emr_monthly_summary }}</textarea>
-                                        <!-- onfocusout="saveEMR()" -->
+                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" 
+                                        @blur="saveEMRNotes"  v-model="emr_monthly_summary" ></textarea>
                                     </label>
+                                    <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.0']" style="display: block;">{{ formErrors['emr_monthly_summary.0'][0] }}</div>
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-bottom: 40px;">
@@ -63,11 +63,11 @@
                                     <div class="additionalfeilds row" style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;" v-for="(notesRow, index) in notesRows" :key="index">
                                         <div class="col-md-4">
                                             <input type="date" v-model="notesRow.date" name="emr_monthly_summary_date[]" class="form-control emr_monthly_summary_date" :id="`emr_monthly_summary_date_${index}`" />
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
                                         </div>
                                         <div class="col-md-6">
                                             <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`"  @blur="saveEMRNotes"></textarea>
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.' + (index + 1)]" style="display: block;">{{ formErrors['emr_monthly_summary.' + (index + 1)][0] }}</div>
                                         </div>
                                         <div class="col-md-1" style="top: 15px;">
                                             <i @click="deleteNotesRow(index)" type="button" class="removenotes  i-Remove" style="color: #f44336; font-size: 22px;"></i>
@@ -81,7 +81,7 @@
                                         <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
                                             <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed"
                                              v-model="emr_entry_completed" :checked="emr_entry_completed"
-                                            formControlName="checkbox" />
+                                            formControlName="checkbox" /> 
                                             <span>EMR system entry completed</span>
                                             <span class="checkmark"></span>
                                         </label>
@@ -119,7 +119,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="checkboxerror" style="color:red; " v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
+                                <div style="color:red;" v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
                             </div> 
                             <div class="form-row invalid-feedback"></div>
                         </div>
@@ -171,7 +171,7 @@ export default {
         let additionalErrorsMsg = ref(null);
         const activities = ref([]);
         let showCallWrapUpAlert = ref(false);
-        const noAdditionalServicesProvided = ref(false);
+        const noAdditionalServicesProvided = ref('');
         const notesRows = ref([]);
         // let patient_Emr_monthly_summary = ref([]);
         const emr_monthly_summary =ref([]);
@@ -225,7 +225,7 @@ export default {
             let formData = new FormData(myForm);
             const formDataObject = {};
             const selectedValues = [];
-            if (!noAdditionalServicesProvided) {
+            if (!noAdditionalServicesProvided.value) {
                 const additionalServicesSelected = checkAdditionalServicesSelected();
 
                 if (!additionalServicesSelected) {
@@ -281,7 +281,7 @@ export default {
                             formDataObject[checkboxName] = false;
                         });
                     });
-                    notesRows.value = null;
+                    notesRows.value = [];
                 }
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
@@ -397,12 +397,16 @@ export default {
                 additionalErrors.value = false;
                 additionalErrorsMsg.value = null;
             }
-        }, { immediate: true });
+        }, { immediate: true }
+        );
 
         watch(groupedData, (newValue) => {
             const selectedServices = newValue.some(group => group.checked);
-            noAdditionalServicesProvided.value = !selectedServices;
-        }, { immediate: true });
+            if (selectedServices) {
+                noAdditionalServicesProvided.value = false;
+            }
+        }, { deep: true, immediate: true }
+        );
 
         const addNewNotesRow = () => {
             const today = new Date().toISOString().split('T')[0];
@@ -432,7 +436,6 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const saveEMRResponse = await axios.post('/ccm/saveEmrSummary', formData);
-                console.log("saveEMRResponse.data.form_start_time", saveEMRResponse);
                 if (saveEMRResponse && saveEMRResponse.status == 200) {
                     $(".form_start_time").val(saveEMRResponse.data.form_start_time);
                     updateTimer(props.patientId, '1', props.moduleId);

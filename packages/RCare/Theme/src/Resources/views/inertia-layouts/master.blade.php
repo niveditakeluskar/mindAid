@@ -98,7 +98,6 @@
         </div>
     </div>
 
-
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}

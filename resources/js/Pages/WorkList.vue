@@ -114,7 +114,8 @@ import {
   onMounted,
   computed,
   watch,
-  AgGridTable
+  AgGridTable,
+  onBeforeMount
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
 import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
@@ -157,24 +158,14 @@ export default {
     );
 
     const PatientStatusRef = ref();
-  
-    onMounted(async () => {
-      try {
-        fetchPractices();
+    
+    onBeforeMount(() => {
+       fetchPractices();
         fetchPatients();
-        await fetchUserFilters();
-        await getPatientList(
-          selectedPractice.value === '' ? null : selectedPractice.value,
-          selectedPatients.value === '' ? null : selectedPatients.value,
-          patientsmodules.value === '' ? null : patientsmodules.value,
-          selectedOption.value === '' ? null : selectedOption.value,
-          timeValue.value === '' ? null : timeValue.value,
-          activedeactivestatus.value === '' ? null : activedeactivestatus.value
-        );
+    });
 
-      } catch (error) {
-        console.error('Error on page load:', error);
-      }
+    onMounted(async () => {
+      fetchUserFilters();
     });
 
     // Define a custom cell renderer function
@@ -223,7 +214,6 @@ export default {
         cellRenderer: function (params) {
           const date = params.value; // Assuming pdob contains a date string
           if (!date) return null;
-
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
@@ -239,12 +229,13 @@ export default {
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
+        if (!date) return null;
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
             }).replace(/\//g, '-'); // Replace slashes with dashes
-            return formattedDate;
+          return formattedDate; // Returns the date in MM-DD-YYYY format
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -277,8 +268,6 @@ export default {
       },
       { headerName: 'Call Score', field: 'pssscore' },
     ]);
-
-
     // Watch for changes in selectedPractice
     watch(selectedPractice, (newPracticeId) => {
       fetchPatients(newPracticeId);
@@ -288,8 +277,6 @@ export default {
       PatientStatusRef.value.openModal();
       callExternalFunctionWithParams(pid, pstatus);
     };
-
-
     // Similarly, define other methods like fetchPractices, fetchPatients, etc.
 
     const fetchPractices = async () => {
@@ -313,9 +300,10 @@ export default {
           return; // Don't proceed with the fetch if practiceId is empty or invalid
         }
 
-        if(practiceId == null){
-          practiceId.value = 0;
+        if(!practiceId){
+          practiceId = null;
         }
+        
         const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
        if (!response.ok) {
           throw new Error('Failed to fetch patients');
@@ -330,15 +318,25 @@ export default {
       }
     };
 
+    let pratices, patents, patentsmodules, tmeoption, tme, actvedeactivestatus;
     const fetchUserFilters = async () => {
       try {
         const response = await fetch('/patients/getuser-filters');
-        const data = await response.json();
+        const data = await response.json();  
+         getPatientList(
+          data.practice,
+           data.patient,
+           patientsmodules.value,
+         data.timeoption,
+          data.time,
+           data.patientstatus
+        );
         selectedPractice.value = data.practice;
-        selectedPatients.value = data.patient;
-        selectedOption.value = data.timeoption;
-        timeValue.value = data.time;
-        activedeactivestatus.value = data.patientstatus;
+        patientsmodules.value = patientsmodules.value;
+          selectedOption.value = data.timeoption;
+          timeValue.value = data.time;
+          activedeactivestatus.value = data.patientstatus;
+          selectedPatients.value = data.patient;
       } catch (error) {
         console.error('Error fetching user filters:', error);
       }
@@ -355,7 +353,7 @@ export default {
     const handleSubmit = async () => {
       try {
         isLoading.value = true;
-        await getPatientList(
+         getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedPatients.value === '' ? null : selectedPatients.value,
           patientsmodules.value === '' ? null : patientsmodules.value,
@@ -363,15 +361,13 @@ export default {
           timeValue.value === '' ? null : timeValue.value,
           activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
-        // Destroy and reinitialize DataTable on form submission
-        await saveFilters();
+         saveFilters();
 
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    let pratices, patents, patentsmodules, tmeoption, tme, actvedeactivestatus;
     const saveFilters = async () => {
       try {
         pratices = selectedPractice.value || null;
@@ -380,7 +376,17 @@ export default {
         tmeoption = selectedOption.value || null;
         tme = timeValue.value || null;
         actvedeactivestatus = activedeactivestatus.value || null;
-        console
+        if (!patents) {
+          // If patient_id is empty or null, assign null to it
+          patents = null;
+        }
+        if (!pratices) {
+          // If patient_id is empty or null, assign null to it
+          pratices = null;
+        }
+        if(!actvedeactivestatus){
+          actvedeactivestatus = null;
+        }
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const response = await fetch(`/patients/worklist/saveuser-filters/${pratices}/${patents}/${patentsmodules}/${tmeoption}/${tme}/${actvedeactivestatus}`, {
           method: 'POST',
@@ -400,19 +406,23 @@ export default {
 
     const handleReset = async () => {
       // Reset form fields and table data
-      selectedPractice.value = null;
-      selectedPatients.value = [];
+      selectedPractice.value = "";
+      selectedPatients.value = "";
     }
 
     const getPatientList = async (practice_id, patient_id, module_id, timeoption, time, activedeactivestatus) => {
   try {
+ 
+        if (!patient_id) {
+          // If patient_id is empty or null, assign null to it
+          patient_id = null;
+        }
       // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      
       passRowData.value = data.data || [];
       isLoading.value = false;
   } catch (error) {

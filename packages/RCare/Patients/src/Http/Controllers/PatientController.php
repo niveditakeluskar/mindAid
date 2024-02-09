@@ -71,6 +71,7 @@ use DataTables;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use File, DB;
+use Illuminate\Support\Facades\Cache;
 
 
 class PatientController extends Controller
@@ -2010,7 +2011,7 @@ class PatientController extends Controller
     }
 
 
-    public function practicePatientsNew($practice) //modified by ashvini on 10th nov 2020
+   /*  public function practicePatientsNew($practice) //modified by ashvini on 10th nov 2020
     {
         $patients = [];
         $cid = session()->get('userid');
@@ -2082,7 +2083,56 @@ class PatientController extends Controller
         }
 
         return response()->json($patients);
-    }
+    } */
+
+
+//optimized query and cached for 24Hrs
+public function practicePatientsNew($practice)
+{
+
+     // Check if the data is cached
+     $cacheKey = 'practice_patients_'.$practice;
+     if (Cache::has($cacheKey)) {
+         //return Cache::get($cacheKey);
+         return response()->json(Cache::get($cacheKey));
+     }
+     
+     $cid = session()->get('userid');
+     $usersDetails = Users::where('id', $cid)->first();
+     $roleid = $usersDetails->role;
+ 
+     $query = DB::table('patients.patient')
+         ->select('patients.patient.id', 'patients.patient.fname', 'patients.patient.lname', 'patients.patient.mname', 'patients.patient.dob', 'patients.patient.mob')
+         ->distinct()
+         ->join('patients.patient_services', 'patients.patient.id', '=', 'patients.patient_services.patient_id')
+         ->join('patients.patient_providers as pp', 'patients.patient.id', '=', 'pp.patient_id')
+         ->where('pp.provider_type_id', 1)
+         ->where('pp.is_active', 1)
+         ->orderBy('patients.patient.fname');
+ 
+     if ($practice != "null" && $practice != 0) {
+         $query->where('pp.practice_id', $practice);
+     }
+ 
+     if ($roleid == 5) {
+         $query->join('task_management.user_patients as up', function ($join) use ($cid) {
+             $join->on('patients.patient.id', '=', 'up.patient_id')
+                 ->where('up.status', 1)
+                 ->where('up.user_id', $cid);
+         });
+     } elseif ($roleid != 2) {
+         $query->whereIn('pp.practice_id', function ($subQuery) use ($cid) {
+             $subQuery->select('practice_id')->from('ren_core.user_practices')->where('user_id', $cid);
+         });
+     }
+ 
+     $patients = $query->get();
+ 
+     // Cache the result
+     Cache::put($cacheKey, $patients, now()->addHours(36));
+ 
+     return response()->json($patients);
+ }
 
 
     //created by ashvini 12 jan 2021  

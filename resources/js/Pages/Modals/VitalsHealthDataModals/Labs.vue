@@ -154,13 +154,18 @@ export default {
             let formData = new FormData(myForm);
             let formDataObject = {};
 
+            $('div[id^="reading-"]').html("");
+            $('div[id^="reading-"]').hide();
+
+            $('div[id^="high_val-"]').html("");
+            $('div[id^="high_val-"]').hide();
+
             formData.forEach((value, key) => {
                 formDataObject[key] = value;
             });
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const saveLabResponse = await axios.post('/ccm/care-plan-development-numbertracking-labs', formData);
-                console.log("saveLabResponse save labs", saveLabResponse);
                 if (saveLabResponse && saveLabResponse.status === 200) {
                     showLabsAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
@@ -184,22 +189,18 @@ export default {
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
-                    console.log("formErrors.value", formErrors.value);
-                    let i = 0;
                         for (const field in formErrors.value) {
                             if (Object.prototype.hasOwnProperty.call(formErrors.value, field)) {
                                 const errorMessages = formErrors.value[field];
-                                console.log("Error Messages:", errorMessages);
-                                console.log("field name --> form[name = 'number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][" + i + "]']");
-                                // $("#reading-1-0").html(errorMessages);
-                                // $("#reading-1-0").show();
-                                // $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").addClass("is-invalid");
-                                $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "][]']").next(".invalid-feedback").html(errorMessages);
-                                if (errorMessages.includes('reading')) {
-                                    $("form[name='number_tracking_labs_form'] input[name='reading[" + selectedLabs.value + "]["+i+"]']").next(".invalid-feedback").html(errorMessages);
+                                if (field.includes('reading')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
+                                }
+                                if (field.includes('high_val')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
                                 }
                             }
-                            i++;
                         }
                 } else {
                     console.error('Error submitting form:', error);
@@ -274,7 +275,6 @@ export default {
                 try {
                     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
                     const deleteServicesResponse = await axios.post(`/ccm/delete-lab`, formData);
-                    console.log("delete lab deleteServicesResponse", deleteServicesResponse);
                     // showDMEAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(deleteServicesResponse.data.form_start_time);
@@ -295,7 +295,6 @@ export default {
         };
 
         const editlabsformnew = async (lab_date, patient_id, lab_test_id, lab_date_exist) => {
-            console.log("lab_date" + lab_date +", patient_id" + patient_id+", lab_test_id" + lab_test_id+", lab_date_exist"+ lab_date_exist);
             try {
                 loading.value = true;
                 const response = await fetch(`/ccm/care-plan-development-populateLabs/${patient_id}/${lab_date}/${lab_test_id}/${lab_date_exist}`);
@@ -323,7 +322,6 @@ export default {
         const generateLabParams = (lab, labParams) => {
             let params = '';
             let labNotes = '';
-            console.log("labParams", labParams);
             labParams.forEach((value) => {
                 params += `<div class='col-md-6 mb-3'>`;
                 params += `<label>${value.parameter} <span class='error'>*</span></label>`;

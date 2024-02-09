@@ -459,13 +459,16 @@ export default {
                     throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
+
+                const dobParts = data.patient[0].dob.split('-');
+                const formattedDob = `${dobParts[1]}-${dobParts[2]}-${dobParts[0]}`;
                 patientDetails.value = data;
                 billable_time.value = data.billable_time;
                 non_billabel_time.value = data.non_billabel_time;
                 patientName.value = data.patient[0].fname + " " + data.patient[0].lname;
                 patientGender.value = data.gender;
                 patientAge.value = data.age;
-                patientDob.value = data.patient[0].dob;
+                patientDob.value = formattedDob;
                 patientMob.value = data.patient[0].mob;
                 consent_to_text.value = data.consent_to_text;
                 finNumber.value = data.patient[0].fin_number;
@@ -483,7 +486,8 @@ export default {
                 caremanager_name.value = data.caremanager_name;
                 date_enrolled.value = data.date_enrolled;
                 patient_module.value = data.patient_services[0].module.module;
-                patient_module_status.value = data.patient_services[0].module.status;
+                patient_module_status.value = data.patient_services[0].status;
+              
                 suspended_from_date.value = data.patient_services[0].suspended_from;
                 suspended_to_date.value = data.patient_services[0].suspended_to;
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status

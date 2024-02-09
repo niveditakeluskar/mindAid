@@ -182,18 +182,22 @@ return [
 
         //preparation 
         'condition_requirnment1' => [
-            'required' => 'Please select atleast  option.'
+            'required' => 'Please select at least one option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'condition_requirnment2' => [
-            'required' => 'Please select atleast  option.'
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'condition_requirnment3' => [
-            'required' => 'Please select atleast  option.'
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'condition_requirnment4' => [
-            'required' => 'Please select atleast  option.'
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        
+
         'newofficevisit' => [
             'required' => 'The new office Visit field is required.'
         ],
@@ -213,16 +217,20 @@ return [
             'required_if' => 'The new medications added or discontinued notes field is required.'
         ],
         'report_requirnment1' => [
-            'required' => 'Please select any option.'
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'report_requirnment2' => [
-            'required' => 'Please select any option.'
-        ], 
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
         'report_requirnment3' => [
-            'required' => 'Please select any option.'
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'report_requirnment4' => [
-            'required' => 'Please select any option.'
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
         'report_requirnment5' => [
             'required' => 'Please select any option.'
