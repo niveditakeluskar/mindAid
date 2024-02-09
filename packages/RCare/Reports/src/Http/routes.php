@@ -160,7 +160,7 @@ Route::get('/time-logs-report', function(){
         Route::get('/clinicalreportsearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
          'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalReportSearch')->name('initial.search.report');
 		 
-		Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
+		Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}/{onlycode}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
 		
 		Route::get('/noreadingslastthreedaysInRPM-patients-details/{practiceid}', 'RCare\Reports\Http\Controllers\RpmStatusReportController@PatientNoReadingsReport')->name('rpm.no.readings');
 
