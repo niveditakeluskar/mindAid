@@ -3862,18 +3862,19 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $patientId = sanitizeVariable($request->patient_id);
         $module_id = sanitizeVariable($request->module_id);
         $component_id = sanitizeVariable($request->component_id);
-        $from_email = sanitizeVariable($request->email_from);
-        $subject = sanitizeVariable($request->email_sub);
+        $from_email = "renova@d-insights.global";
+        //$subject = sanitizeVariable($request->email_sub);
         $email_content = sanitizeVariable($request->mail_content);
         $stage_id = sanitizeVariable($request->stage_id);
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
         $device_ids = sanitizeVariable($request->device_ids);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $step_id = 0;
         $form_name = 'patient_add_device_form';
         $billable = 1;
         $to_email = Partner::where('category', '0')->orderBy('created_at', 'desc')->first();
-
         $to = isset($to_email) ? $to_email->email : '';
         $patient_device = PatientDevices::where('patient_id', $patientId)->where('status', 1)->latest()->first();
         $pdevices = array();
@@ -3925,13 +3926,22 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             );
             PatientDevices::where('id', $patient_device->id)->update($patientdevicedata);
         }
-        $msg = $email_content;
-        Mail::send(array(), array(), function ($message) use ($msg, $to, $subject) {
+
+        $datas = array(
+            'email'=>'renova@d-insights.global', 
+            'name'=> 'Renova System', 
+            'subject' => $subject,
+        );
+
+        $meg = $email_content;
+        Mail::send([], [], function ($message) use ($meg, $to, $subject) {
+        //Mail::send(array(), array(), function ($message) use ($meg, $to, $subject) {
             $message->from('renova@d-insights.global', 'Renova System');
             $message->to($to);
             $message->subject($subject);
-            $message->setBody($msg, 'text/html');
+            $message->html($meg);
         });
+       
         if (count(Mail::failures()) == 0) {
             echo 'Mail Send ' . Carbon::now();
         }
@@ -3949,7 +3959,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             'updated_by' => session()->get('userid')
         );
         EmailLog::create($data);
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' => $form_save_time]);
     }
 
     public function listMessageHistory($id)
