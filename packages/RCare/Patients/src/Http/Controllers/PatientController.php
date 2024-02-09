@@ -2091,7 +2091,7 @@ public function practicePatientsNew($practice)
 {
     $cid = session()->get('userid');
      // Check if the data is cached
-     $cacheKey = 'practice_patients_'.$cid.$practice;
+     $cacheKey = 'practice_patients_'.$practice;
      if (Cache::has($cacheKey)) {
          //return Cache::get($cacheKey);
          return response()->json(Cache::get($cacheKey));
@@ -2128,7 +2128,7 @@ public function practicePatientsNew($practice)
      $patients = $query->get();
  
      // Cache the result
-     Cache::put($cacheKey, $patients, now()->addHours(24));
+     Cache::put($cacheKey, $patients, now()->addHours(36));
  
      return response()->json($patients);
  }

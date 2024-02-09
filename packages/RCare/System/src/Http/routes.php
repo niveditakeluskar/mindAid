@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,8 +69,17 @@ Route::middleware("web")->group(function () {
 
         Route::get('/get_module_id', function () {
             $url = $_SERVER['HTTP_REFERER'];
+            // Check if the response is cached
+    $cacheKey = 'module_id_' . md5($url);
+    if (Cache::has($cacheKey)) {
+        return Cache::get($cacheKey);
+    }
             $moduleID = getPageModuleNameWithUrl($url); // Assuming getPageModuleName() is accessible here
-            return response()->json(['moduleID' => $moduleID]);
+           
+              // Cache the response for 1 hour (you can adjust the expiration time as needed)
+    Cache::put($cacheKey, ['moduleID' => $moduleID], now()->addHours(36));
+
+    return response()->json(['moduleID' => $moduleID]);
         });
 
         Route::get('/get_stage_id/{module_id}/{component_id}/{stage_name}', function ($module_id, $component_id, $stage_name) {

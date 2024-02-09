@@ -140,18 +140,18 @@ export default {
       isOpen.value = true;
       fetchActiveDeactiveReasons();
       const element = document.getElementById('page_landing_times');
-if (!element || element.value === null) {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    if (formattedDate) {
-        time.value = formattedDate;
-    } else {
-        console.error('Server time not provided.');
-    }
-}else{
-  time.value = element.value;
-
-}
+      if (!element || element.value === null) {
+        const serverTime = window.serverTime;
+/*         const currentDate = new Date();
+        const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`; */
+          if (serverTime) {
+              time.value = serverTime;
+          } else {
+              console.error('Server time not provided.');
+          }
+      }else{
+        time.value = element.value;
+      }
     };
     let selectPatientId = ref('');
     const closeModal = () => {
@@ -162,10 +162,11 @@ if (!element || element.value === null) {
     onMounted(async () => {
       const element = document.getElementById('page_landing_times');
 if (!element || element.value === null) {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    if (formattedDate) {
-        time.value = formattedDate;
+  const serverTime = window.serverTime;
+  /* const currentDate = new Date();
+  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`; */
+    if (serverTime) {
+        time.value = serverTime;
     } else {
         console.error('Server time not provided.');
     }

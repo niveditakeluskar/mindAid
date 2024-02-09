@@ -214,7 +214,6 @@ export default {
         cellRenderer: function (params) {
           const date = params.value; // Assuming pdob contains a date string
           if (!date) return null;
-
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
@@ -230,12 +229,13 @@ export default {
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
+        if (!date) return null;
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
             }).replace(/\//g, '-'); // Replace slashes with dashes
-            return formattedDate;
+          return formattedDate; // Returns the date in MM-DD-YYYY format
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -417,17 +417,12 @@ export default {
           // If patient_id is empty or null, assign null to it
           patient_id = null;
         }
-        if (!practice_id) {
-          // If patient_id is empty or null, assign null to it
-          practice_id = null;
-        }
       // Fetch data from the server
-      const response =  fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
+      const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      
       passRowData.value = data.data || [];
       isLoading.value = false;
   } catch (error) {
