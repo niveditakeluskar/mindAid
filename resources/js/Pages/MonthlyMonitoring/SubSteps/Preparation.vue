@@ -89,18 +89,27 @@ export default {
                   updateTimer(props.patientId, '1', props.moduleId);
                   $(".form_start_time").val(response.data.form_start_time);
                   preparationTime.value = document.getElementById('page_landing_times').value;
-                  setTimeout(function () {
-						formErrors.value = {};
+                setTimeout(function () {
+						$('#preparationAlert').html('');
                 }, 3000);
                }
                 isLoading.value = false;
-
                 clearValidationErrors();
-
             } catch (error) {
-               isLoading.value = false;
-               $('#preparationAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
-                console.error('Error:', error);
+               if (error.response && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
+                    console.log(formErrors);
+                } else {
+                  $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
+                    console.error('Error submitting form:', error);
+                    setTimeout(function () {
+                      $('#preparationAlert').html('');
+                                    }, 3000);
+                }
+                isLoading.value = false;
             }
         }
 
@@ -112,11 +121,8 @@ export default {
         }
 
       const submitPrepareForm = async () => {
-            // isLoading.value = true;
-            let myForm = document.getElementById('call_preparation_preparation_followup_form');
-            let formData = new FormData(myForm);
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
+               isLoading.value = true;
                let myForm = document.getElementById('call_preparation_preparation_followup_form');
                let formData = new FormData(myForm);
                axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -127,8 +133,8 @@ export default {
                   $(".form_start_time").val(response.data.form_start_time);
                   preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
-						formErrors.value = {};
-                }, 3000);
+                      $('#preparationAlert').html('');
+                                    }, 3000);
                }
                 isLoading.value = false;
 
@@ -137,6 +143,9 @@ export default {
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                     console.log(formErrors);
                 } else {
                   $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
