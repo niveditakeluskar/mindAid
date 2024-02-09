@@ -136,16 +136,14 @@ export default {
     const isLoading = ref(false);
     const formErrors = ref({});
     const time = ref('');
-    const openModal = () => {
+    const openModal = async () => {
       isOpen.value = true;
       fetchActiveDeactiveReasons();
       const element = document.getElementById('page_landing_times');
       if (!element || element.value === null) {
-        const serverTime = window.serverTime;
-/*         const currentDate = new Date();
-        const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`; */
-          if (serverTime) {
-              time.value = serverTime;
+        const landingTime = await fetchLandingTime();
+          if (landingTime) {
+              time.value = landingTime;
           } else {
               console.error('Server time not provided.');
           }
@@ -158,6 +156,23 @@ export default {
       isOpen.value = false;
       $("#status").prop("checked", false);
     };
+
+    const fetchLandingTime = async () => {
+  try {
+    const response = await fetch('/system/get-landing-time');
+    if (!response.ok) {
+      throw new Error('Failed to fetch landing time');
+    }
+    const data = await response.json();
+    return data.landing_time;
+  } catch (error) {
+    console.error('Error fetching landing time:', error);
+    // Handle the error appropriately (show a message, retry, etc.)
+    return null;
+  }
+};
+
+
 
     onMounted(async () => {
       const element = document.getElementById('page_landing_times');
@@ -331,6 +346,7 @@ const id = urlParts[urlParts.length - 1];
         };
 
     return {
+      fetchLandingTime,
       selectPatientId,
       time,
       submitPatientForm,
