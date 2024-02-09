@@ -23,6 +23,11 @@ Route::get('/time-logs-report', function(){
         return view('Reports::task-status-report.task-status-list');
     })->name('task.status.report');
 
+    
+    Route::get('/rpm-enrolled-patient-report', function(){
+        return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
+    })->name('rpm.enrolled.patient.report');
+    
 
         
     Route::middleware(["auth", "web"])->group(function () { 
@@ -35,11 +40,17 @@ Route::get('/time-logs-report', function(){
             //     return view('Reports::to-do-list-report.to-do-list-report');
             // })->name('to-do-list-report');
 			//call additional services ashwini
+
+            Route::get('/rpm-enrolled-patient-report', function(){
+                return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
+            })->name('rpm.enrolled.patient.report');
+            
             Route::get('/call-and-additional-services-practicewise-count-report', function(){
                 return view('Reports::call-additional-ccm-note.call-additional-services-report');
             })->name('call.additional.ccm.call.report'); 
 
 			 Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
+			 Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
 			 
              Route::get('/Clinical-insight', function(){
                 return view('Reports::initial-report.initial-report');
@@ -109,8 +120,39 @@ Route::get('/time-logs-report', function(){
         // Route::get('/task-status-report-search/{caremanagerid}/{practicesgrp}/{practiceid}/{patient}/{taskstatus}
         // /{fromdate}/{activedeactivestatus}',
         // 'RCare\Reports\Http\Controllers\TaskStatusReportController@TaskStatusReportSearch')->name('task.status.search.report'); 
+        Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
+        Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
+        Route::post('/shipping-statuschange', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@changeStatusShipping')->name('save.status');  
+        // Route::get('ajax/shippingreports_populate/{id}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshipping')->name("ajax.shipping.populate");
+        Route::get('ajax/shippingreports_populate/{patinet_id}/{device_code}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshippingdevicewise')->name("ajax.shipping.populate");
+        
+        Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
+        
+       
+        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+ 
+
+
+        Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
+        Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
+        Route::post('/shipping-statuschange', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@changeStatusShipping')->name('save.status');  
+        // Route::get('ajax/shippingreports_populate/{id}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshipping')->name("ajax.shipping.populate");
+        Route::get('ajax/shippingreports_populate/{patinet_id}/{device_code}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshippingdevicewise')->name("ajax.shipping.populate");
+        
+        Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
+        
+       
+        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+ 
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
+		Route::get('/patient_questionaire_list/search/{practice}/{patient}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReportSearch')->name('Patient.Questionaire.search.report');
 		
 		Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}','RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report'); 
 		
