@@ -98,10 +98,6 @@
         </div>
     </div>
 
-    <script>
-    window.serverTime = "{{ date('m-d-Y H:i:s', $_SERVER['REQUEST_TIME']) }}";
-</script>
-
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}
