@@ -9,23 +9,21 @@
 					<div id="followUpPageAlert"></div>
 
 					<form id="followup_form" ref="followupFormRef" name="followup_form"
-							@submit.prevent="submitFollowupForm">
-							<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
-							<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
-							<input type="hidden" name="start_time" v-model="this.start_time" value="00:00:00">
-							<input type="hidden" name="end_time" v-model="this.end_time" value="00:00:00">
-							<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
-							<input type="hidden" name="component_id" v-model="this.component_id"
-								:value="`${componentId}`" />
-							<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
-							<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
-								:value="time">
-							<input type="hidden" name="step_id" v-model="this.step_id" value="0">
-							<input type="hidden" name="form_name" v-model="this.form_name" value="followup_form">
-					<div id='error-msg'></div>
-					<div class="card-title">Follow-up</div>
-					<div>
-					
+						@submit.prevent="submitFollowupForm">
+						<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
+						<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
+						<input type="hidden" name="start_time" v-model="this.start_time" value="00:00:00">
+						<input type="hidden" name="end_time" v-model="this.end_time" value="00:00:00">
+						<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
+						<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
+						<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
+						<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+						<input type="hidden" name="step_id" v-model="this.step_id" value="0">
+						<input type="hidden" name="form_name" v-model="this.form_name" value="followup_form">
+						<div id='error-msg'></div>
+						<div class="card-title">Follow-up</div>
+						<div>
+
 							<div v-for="(item, index) in items" :key="index">
 								<div class="col-md-12">
 									<div class='row ml-1'>
@@ -94,31 +92,33 @@
 								</div>
 							</div>
 							<!-- <div class="col-md-12 form-group mb-3" id="append_followup_task"><hr></div> -->
-					</div>
-					<div class="mb-4">
-						<div class="form-row">
-							<div class="form-group col-md-12">
-								<label class="forms-element checkbox checkbox-outline-primary">
-									<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete"
-										@click="handleCheckboxChange"><span>EMR system entry completed</span><span
-										class="checkmark"></span>
-								</label>
-								<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
-									v-if="formErrors.emr_complete" style="display: block;">{{ formErrors.emr_complete[0]
-									}}</div>
-							</div>
 						</div>
-						<div class="row">
-							<div class="col-lg-12 text-right">
-								<button type="submit" class="btn  btn-primary m-1 office-visit-save">Save</button>
+						<div class="mb-4">
+							<div class="form-row">
+								<div class="form-group col-md-12">
+									<label class="forms-element checkbox checkbox-outline-primary">
+										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete"
+											@click="handleCheckboxChange"><span>EMR system entry completed</span><span
+											class="checkmark"></span>
+									</label>
+									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
+										v-if="formErrors.emr_complete" style="display: block;">{{ formErrors.emr_complete[0]
+										}}
+									</div>
+								</div>
 							</div>
+							<div class="row">
+								<div class="col-lg-12 text-right">
+									<button type="submit" class="btn  btn-primary m-1 office-visit-save">Save</button>
+								</div>
 
+							</div>
 						</div>
-					</div>
-				</form>
+					</form>
 				</div>
-			
-				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId" :stageId="followupStageId"/>
+
+				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId"
+					:stageId="followupStageId" />
 
 				<hr>
 				<div class="col-md-12">
@@ -162,15 +162,6 @@ export default {
 	},
 	data() {
 		return {
-			items: [
-				{
-					task_name: '',
-					selectedFollowupMasterTask: '',
-					status_flag: '',
-					notes: '',
-					task_date: ''
-				}
-			],
 			uid: '',
 			patient_id: '',
 			module_id: '',
@@ -181,35 +172,7 @@ export default {
 			form_name: '',
 			billable: '',
 			emr_complete: ref(0),
-			folllowUpTaskData: {},
 		};
-	},
-	methods: {
-		handleScheduledSelected(item, index) {
-			if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
-				item.task_date = ''; // Clear the task date
-			}
-		},
-		setCurrentDateIfCompleted(item, index) {
-			if (item.status_flag === '1') { // 'Completed' radio button is selected
-				item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
-			} else if (item.status_flag === '0') { // 'To be Scheduled' radio button is selected
-				item.task_date = ''; // Remove the date by assigning an empty string
-			}
-		},
-		addNewItem() {
-			this.items.push({
-				task_name: '',
-				selectedFollowupMasterTask: '',
-				status_flag: '',
-				notes: '',
-				task_date: ''
-			});
-		},
-		removeItem(index) {
-			this.items.splice(index, 1);
-		},
-
 	},
 	setup(props) {
 		let time = ref(null);
@@ -285,6 +248,34 @@ export default {
 			},
 		]);
 
+		const handleScheduledSelected = (item, index)=> {
+			if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
+				item.task_date = ''; // Clear the task date
+			}
+		};
+	const setCurrentDateIfCompleted= (item, index)=> {
+			if (item.status_flag === '1') { // 'Completed' radio button is selected
+				item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
+			} else if (item.status_flag === '0') { // 'To be Scheduled' radio button is selected
+				item.task_date = ''; // Remove the date by assigning an empty string
+			}
+		};
+
+		const addNewItem= ()=> {
+			const newItem = {
+        task_name: '',
+        selectedFollowupMasterTask: '',
+        status_flag: '',
+        notes: '',
+        task_date: ''
+    };
+    items.value.push(newItem);
+		};
+		
+		const removeItem= (index)=> {
+		items.value.splice(index, 1);
+		};
+
 		const fetchFollowupMasterTask = async () => {
 			await axios.get(`/org/get_future_followup_task`)
 				.then(response => {
@@ -346,20 +337,24 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
 				console.log('Form submitted successfully!', response);
 				if (response && response.status == 200) {
-					document.getElementById("followup_form").reset();
-					const formReset = document.getElementById('followup_form');
-					formReset.reset();
-									// Reset specific fields that might not be cleared by form.reset()
-				console.log(items,"itemszz");
-					emr_complete.value = 0; 
+					myForm.reset();
+					items.value.splice(1);
+					items.value[0] = {
+                task_name: '',
+                selectedFollowupMasterTask: '',
+                status_flag: '',
+                notes: '',
+                task_date: ''
+            };
+					emr_complete.value = 0;
 					fetchFollowupMasterTaskList();
-                    $('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+					$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(response.data.form_start_time);
+					$(".form_start_time").val(response.data.form_start_time);
 					time.value = response.data.form_start_time;
 					setTimeout(function () {
-                      $('#followUpPageAlert').html('');
-                                    }, 3000);
+						$('#followUpPageAlert').html('');
+					}, 3000);
 				}
 			} catch (error) {
 				isLoading.value = false;
@@ -367,15 +362,15 @@ export default {
 					formErrors.value = error.response.data.errors;
 					setTimeout(function () {
 						formErrors.value = {};
-                }, 3000);
+					}, 3000);
 					console.log(error.response.data.errors);
 				} else {
 					$('#followUpPageAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
 					// Handle other types of errors
 					console.error('Error submitting form:', error);
 					setTimeout(function () {
-                      $('#followUpPageAlert').html('');
-                                    }, 3000);
+						$('#followUpPageAlert').html('');
+					}, 3000);
 				}
 			}
 			isLoading.value = false;
@@ -397,6 +392,11 @@ export default {
 		});
 
 		return {
+			items,
+		handleScheduledSelected,
+		setCurrentDateIfCompleted,
+		addNewItem,
+		removeItem,
 			FollowupModalRef,
 			time,
 			isLoading,
@@ -430,10 +430,10 @@ $('body').on('click', '.change_status_flag', function () {
 	var form_name = $("#form_name").val();
 	if (confirm("Are you sure you want to change the Status")) {
 		$.ajaxSetup({
-   headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-   }
-});
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
 		$.ajax({
 			type: 'post',
 			url: '/ccm/completeIncompleteTask',
@@ -445,7 +445,7 @@ $('body').on('click', '.change_status_flag', function () {
 				time.value = response.form_start_time;
 				setTimeout(function () {
 					$('#followUpPageAlert').html('');
-          },3000);
+				}, 3000);
 			}
 		});
 	} else {
@@ -498,4 +498,5 @@ $('body').on('click', '.change_status_flag', function () {
 .modal-content {
 	overflow-y: auto !important;
 	height: 500px !important;
-}</style>
+}
+</style>
