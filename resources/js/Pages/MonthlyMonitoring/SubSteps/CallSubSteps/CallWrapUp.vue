@@ -80,7 +80,7 @@
                                     <div class="col-md-4">
                                         <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
                                             <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed"
-                                             v-model="emr_entry_completed" :checked="emr_entry_completed"
+                                             v-model="emr_monthly_summary_completed" :checked="emr_monthly_summary_completed"
                                             formControlName="checkbox" /> 
                                             <span>EMR system entry completed</span>
                                             <span class="checkmark"></span>
@@ -341,21 +341,13 @@ export default {
                     throw new Error(`Failed to fetch Patient Preparation - ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                console.log(data.callwrapup_form.emr_monthly_summary[0].notes ,"CHECKED!!!!!!!"); 
+                console.log(data.callwrapup_form.summary[0].notes,"CHECKED!!!!!!!"); 
+
                 if (data.ccm_emr_monthly_summary !== '') {
                     emr_monthly_summary.value = data.callwrapup_form.emr_monthly_summary[0].notes;
                     emr_monthly_summary_completed.value = data.callwrapup_form.checklist_data.emr_entry_completed;
+                    
                 }
-                // var emr_monthly_summarys = result[key].static['emr_monthly_summary'];
-                //         var summarys = result[key].static['summary'];
-                //         if (summarys != null && summarys != undefined && summarys != "") {
-                //             var summaryslength = result[key].static['summary'].length;
-                //         } else {
-                //             var summaryslength = "";
-                //         }                        
-
-                //         var checklist_data = result[key].static['checklist_data'];
-
             } catch (error) {
                 console.error('Error fetching Patient Preparation:', error);
             }
