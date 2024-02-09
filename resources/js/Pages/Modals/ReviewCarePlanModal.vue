@@ -59,7 +59,7 @@
                                                                             <input type="hidden" name="component_id"
                                                                                 :value="componentId" />
                                                                             <input type="hidden" name="stage_id"
-                                                                                value="11" /><!-- :value="medicationStageId"/> -->
+                                                                                value="11" />
                                                                             <input type="hidden" name="step_id"
                                                                                 :value="stepID">
                                                                             <input type="hidden" name="form_name"
@@ -102,11 +102,7 @@
                                                                                 <div class="col-md-2">
                                                                                     <label><span class="error"></span>&nbsp;
                                                                                     </label>
-                                                                                    <button type="button"
-                                                                                        class="col-md-12 btn btn-primary"
-                                                                                        @click="() => changeCondition('care_plan_form')"
-                                                                                        id="render_plan_form">Display Care
-                                                                                        Plan</button>
+<button type="button" class="col-md-12 btn btn-primary" @click="() => changeCondition('care_plan_form')"  id="render_plan_form"> Display Care Plan</button>
                                                                                 </div>
 
                                                                                 <div class="col-md-4 emaillist">
@@ -119,11 +115,8 @@
                                                                                         @change="handleCodeAlert">
                                                                                         <option value="">Select Code
                                                                                         </option>
-                                                                                        <option v-for="items in codeOptions"
-                                                                                            :key="items.code"
-                                                                                            :value="items.code">
-                                                                                            {{ items.code }}
-                                                                                        </option>
+                                                                                        <option v-for="code in codeOptions" :key="code" :value="code">{{ code }}</option>
+
                                                                                     </select>
                                                                                     <div class="invalid-feedback"
                                                                                         v-if="formErrors.code"
@@ -278,8 +271,8 @@
                                                                         </div>
                                                                         <input type="hidden" name="timearr[form_start_time]"
                                                                             class="timearr form_start_time"
-                                                                            :value="medicationTime"
-                                                                            v-model="medicationTime">
+                                                                            :value="reviewCarePlanTimer"
+                                                                            v-model="reviewCarePlanTimer">
                                                                         <input type="hidden"
                                                                             name="timearr['form_save_time']"
                                                                             class="form_save_time"><input type="hidden"
@@ -438,8 +431,8 @@ export default {
         ]);
 
 
-        let medicationTime = ref(null);
-        let medicationStageId = ref(0);
+        let reviewCarePlanTimer = ref(null);
+        let reviewCarePlanStageId = ref(0);
         let stepID = ref(0);
 
         const editPatientDignosis = async (id) => {
@@ -568,7 +561,7 @@ export default {
 
                     setTimeout(() => {
                         showSuccessAlert.value = false;
-                        medicationTime.value = document.getElementById('page_landing_times').value;
+                        reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
                 isLoading.value = false;
@@ -577,8 +570,8 @@ export default {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     setTimeout(function () {
-						formErrors.value = {};
-                }, 3000);
+                        formErrors.value = {};
+                    }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -618,6 +611,20 @@ export default {
             }
         };
 
+       const getCodeData = async()=>{
+        try {
+            const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`); 
+				if(!response.ok){ 
+						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+				}
+                const codeData = await response.json();
+                codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
+
+        } catch (error) {
+            console.error('Error fetching Code:', error); // Log specific error message
+        }
+       };
+
         let fetchCode = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
@@ -626,8 +633,7 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
-                const codeArray = Object.entries(codeData).map(([description, code]) => ({ description, code }));
-                codeOptions.value = codeArray;
+                codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
 
             } catch (error) {
                 console.error('Error fetching code list:', error);
@@ -638,9 +644,8 @@ export default {
             try {
                 let medicationSageName = 'Preparation';
                 let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${medicationSageName}`);
-                medicationStageId = response.data.stageID;
-                console.log("care plan stage id", medicationStageId);
-                getStepID(medicationStageId);
+                reviewCarePlanStageId = response.data.stageID;
+                getStepID(reviewCarePlanStageId);
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
@@ -651,7 +656,6 @@ export default {
                 let stepname = 'Care Plan';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
                 stepID = response.data.stepID;
-                console.log("stepIDstepID", stepID);
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
@@ -773,6 +777,7 @@ export default {
             var id = selectedDiagnosis.value;
             var condition_name = $("form[name='" + formName + "'] #diagnosis_condition option:selected").text();
             var code = $("form[name='" + formName + "'] #diagnosis_code").val();
+            getCodeData();
             getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
             $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
             $("form[name='" + formName + "'] #diagnosis_code").val("");
@@ -795,7 +800,6 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
-                    console.log(response.data.care_plan_form,"kjhgfd");
                     const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
                     if (carePlanData && carePlanData.goals) {
                         goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
@@ -837,14 +841,15 @@ export default {
             additionalsymptoms();
             additionaltasks();
             try {
-                medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
+                reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
+                console.log("medication time", reviewCarePlanTimer);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
         });
 
         return {
+            getCodeData,
             isSaveButtonDisabled,
             selectedDiagnosisId,
             comments,
@@ -855,8 +860,8 @@ export default {
             diagnosisOptions,
             codeOptions,
             selectedMedication,
-            medicationTime,
-            medicationStageId,
+            reviewCarePlanTimer,
+            reviewCarePlanStageId,
             selectedDiagnosis,
             handleDiagnosisChange,
             handleCodeAlert,
@@ -938,4 +943,5 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     height: 800px !important;
-}</style>
+}
+</style>
