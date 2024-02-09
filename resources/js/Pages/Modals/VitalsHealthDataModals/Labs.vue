@@ -11,15 +11,21 @@
                 <div class="col-md-12">
                     <input type="hidden" name="uid" :value="patientId"/>
                     <input type="hidden" name="patient_id" :value="patientId"/>
-                    <input type="hidden" name="start_time" value="00:00:00"> 
-                    <input type="hidden" name="end_time" value="00:00:00">
-                    <input type="hidden" name="module_id" :value="moduleId"/>
-                    <input type="hidden" name="component_id" :value="componentId"/>
-                    <input type="hidden" name="stage_id" :value="stageId"/>
-                    <input type="hidden" name="step_id" :value="labsStepId">
-                    <input type="hidden" name="form_name" value="number_tracking_labs_form">
-                    <input type="hidden" name="billable" value="1">
+                    <input type="hidden" name="start_time" value="00:00:00" /> 
+                    <input type="hidden" name="end_time" value="00:00:00" />
+                    <input type="hidden" name="module_id" :value="moduleId" />
+                    <input type="hidden" name="component_id" :value="componentId" />
+                    <input type="hidden" name="module_name" :value="module_name" />
+                    <input type="hidden" name="component_name" :value="component_name" />
+                    <input type="hidden" name="stage_id" :value="stageId" />
+                    <input type="hidden" name="step_id" :value="labsStepId" />
+                    <input type="hidden" name="form_name" value="number_tracking_labs_form" />
+                    <input type="hidden" name="billable" value="1" />
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="labsTime" />
+                    <input type="hidden" name="editform" id="editform" :value="editform" />
+                    <input type="hidden" name="olddate" id="olddate" :value="olddate" />
+                    <input type="hidden" name="oldlab" id="oldlab" :value="oldlab" />
+                    <input type="hidden" name="labdateexist" id="labdateexist" :value="labdateexist" />
                     <div class="form-row">
                         <div class="col-md-4 form-group mb-3">
                             <label>Labs<span class="error">*</span> :</label><br>
@@ -33,8 +39,9 @@
                         </div>
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
-                            <input type="date" name="labdate[]" id="labdate" class="form-control" />
-                            <div class="invalid-feedback" v-if="formErrors['labdate.0']" style="display: block;">{{ formErrors['labdate.0'][0] }}</div>
+                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate" data-date-format="MM/DD/YYYY" />
+                            <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.${selectedLabs}.0`]" style="display: block;">{{ formErrors[`labdate.${selectedLabs}.0`][0] }}</div>
+                            <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.0`]" style="display: block;">{{ formErrors[`labdate.0`][0] }}</div>
                         </div>
                     </div>
                     <div v-html="labParams" class="form-row"></div>
@@ -74,6 +81,7 @@ import {
     // Add other common imports if needed
 } from '../../commonImports';
 import axios from 'axios';
+import moment from 'moment';
 export default {
     props: {
         patientId: Number,
@@ -91,9 +99,15 @@ export default {
         const labs = ref([]);
         const labParams = ref('');
         const formErrors = ref([]);
-        const selectedLabs = ref(0);
+        const selectedLabs = ref('');
+        const labDate = ref('');
         const loading = ref(false);
-    
+        const editform = ref('');
+        const olddate = ref('');
+        const oldlab = ref('');
+        const module_name = ref('');
+        const component_name = ref('');
+        const labdateexist = ref('');
         const labsRowData = ref([]);
        
         const columnDefs = ref( [
@@ -120,7 +134,7 @@ export default {
         const fetchPatientLabsList = async () => {
             try {
                 loading.value = true;
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                 const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
@@ -140,6 +154,12 @@ export default {
             let formData = new FormData(myForm);
             let formDataObject = {};
 
+            $('div[id^="reading-"]').html("");
+            $('div[id^="reading-"]').hide();
+
+            $('div[id^="high_val-"]').html("");
+            $('div[id^="high_val-"]').hide();
+
             formData.forEach((value, key) => {
                 formDataObject[key] = value;
             });
@@ -153,7 +173,12 @@ export default {
                     await fetchPatientLabsList();
                     document.getElementById("number_tracking_labs_form").reset();
                     selectedLabs.value = null;
+                    labDate.value = null;
                     labParams.value = null;
+                    editform.value = null;
+                    olddate.value = null;
+                    oldlab.value = null;
+                    labdateexist.value = null;
                     setTimeout(() => {
                         showLabsAlert.value = false;
                         labsTime.value = document.getElementById('page_landing_times').value;
@@ -164,18 +189,36 @@ export default {
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                        for (const field in formErrors.value) {
+                            if (Object.prototype.hasOwnProperty.call(formErrors.value, field)) {
+                                const errorMessages = formErrors.value[field];
+                                if (field.includes('reading')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
+                                }
+                                if (field.includes('high_val')) {
+                                    $("#"+field.replaceAll('.', '-')).html(errorMessages);
+                                    $("#"+field.replaceAll('.', '-')).show();
+                                }
+                            }
+                        }
                 } else {
                     console.error('Error submitting form:', error);
                 }
             }
         }
 
-        const onLabchange = async (event) => {
-            const labId = event.target.value;
+        const onLabchange = async () => {
+            const labId = selectedLabs.value;
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const getLabResponse = await axios.post('/ccm/lab-param', { lab: labId });
                 labParams.value = getLabResponse.data;
+                if (labId == "" || labId == null) {
+                    $("#labdate").attr('name', 'labdate[]');
+                } else {
+                    $("#labdate").attr('name', 'labdate[' + labId + '][]');
+                }
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
@@ -234,7 +277,7 @@ export default {
                     const deleteServicesResponse = await axios.post(`/ccm/delete-lab`, formData);
                     // showDMEAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(deleteServicesResponse.form_start_time);
+                    $(".form_start_time").val(deleteServicesResponse.data.form_start_time);
                     await fetchPatientLabsList();
                     document.getElementById("service_dme_form").reset();
                     setTimeout(() => {
@@ -252,22 +295,67 @@ export default {
         };
 
         const editlabsformnew = async (lab_date, patient_id, lab_test_id, lab_date_exist) => {
-            console.log("lab_date" + lab_date +", patient_id" + patient_id+", lab_test_id" + lab_test_id+", lab_date_exist"+ lab_date_exist);
             try {
-                const labToEdit = labsRowData.value.find(lab => lab.id == lab_test_id);
-                if (labToEdit) {
-                    // const form = document.getElementById('service_dme_form');
-                    // form.querySelector('#service_id').value = serviceToEdit.id;
-                    // form.querySelector('#type').value = serviceToEdit.type;
-                    // form.querySelector('#purpose').value = serviceToEdit.purpose;
-                    // form.querySelector('#specify').value = serviceToEdit.specify;
-                    // form.querySelector('#brand').value = serviceToEdit.brand;
-                    // form.querySelector('#notes').value = serviceToEdit.notes;
-                    form.scrollIntoView({ behavior: 'smooth' });
+                loading.value = true;
+                const response = await fetch(`/ccm/care-plan-development-populateLabs/${patient_id}/${lab_date}/${lab_test_id}/${lab_date_exist}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch labs details');
                 }
+                loading.value = false;
+                const data = await response.json();
+                const labs = data.number_tracking_labs_details.dynamic.lab;
+                selectedLabs.value = lab_test_id;
+                let dt = moment(lab_date, 'MM-DD-YYYY').format('YYYY-MM-DD'); //new Date(lab_date).toISOString().split('T')[0];
+                labDate.value = dt;
+                labParams.value = generateLabParams(lab_test_id, labs);
+                editform.value = 'edit';
+                olddate.value = dt;
+                oldlab.value = lab_test_id;
+                labdateexist.value = dt;
+                $("#labdate").attr('name', 'labdate[' + lab_test_id + '][]');
             } catch (error) {
-                console.error('Error editing service:', error);
+                console.error('Error fetching labs details:', error);
+                loading.value = false;
             }
+        };
+
+        const generateLabParams = (lab, labParams) => {
+            let params = '';
+            let labNotes = '';
+            labParams.forEach((value) => {
+                params += `<div class='col-md-6 mb-3'>`;
+                params += `<label>${value.parameter} <span class='error'>*</span></label>`;
+                params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
+                params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
+
+                if (value.parameter === 'COVID-19') {
+                    params += `<div class='form-row'><div class='col-md-5'>`;
+                    params += `<select class='forms-element form-control mr-1 pl-3' name='reading[${lab}][]'>`;
+                    params += `<option value=''>Select Reading</option>`;
+                    params += `<option value='positive' ${value.reading === 'positive' ? 'selected' : ''}>Positive</option>`;
+                    params += `<option value='negative' ${value.reading === 'negative' ? 'selected' : ''}>Negative</option></select>`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                } else {
+                    params += `<div class='form-row'><div class='col-md-5'>`;
+                    params += `<select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[${lab}][]'>`;
+                    params += `<option value=''>Select Reading</option>`;
+                    params += `<option value='high' ${value.reading === 'high' ? 'selected' : ''}>High</option>`;
+                    params += `<option value='normal' ${value.reading === 'normal' ? 'selected' : ''}>Normal</option>`;
+                    params += `<option value='low' ${value.reading === 'low' ? 'selected' : ''}>Low</option>`;
+                    params += `<option value='test_not_performed' ${value.reading === 'test_not_performed' ? 'selected' : ''}>Test not performed</option></select>`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                    params += `<div class='col-md-6'>`;
+                    params += `<input type='text' class='forms-element form-control' name='high_val[${lab}][]' value='${value.high_val}' />`;
+                    params += `<div class='invalid-feedback'></div></div>`;
+                }
+                labNotes = value.notes;
+                params += `</div></div>`;
+            });
+
+            params += `<div class="col-md-12 mb-3"><label>Notes:</label>`;
+            params += `<textarea class="forms-element form-control" name="notes[${lab}]">${labNotes}</textarea>`;
+            params += `<div class="invalid-feedback"></div></div>`;
+            return params;
         };
 
         const exposeEditLab = () => {
@@ -286,6 +374,11 @@ export default {
         onBeforeMount(() => {
             fetchLabs();
             fetchPatientLabsList();
+            const pathname = window.location.pathname;
+            const segments = pathname.split('/');
+            segments.shift();
+            module_name.value = segments[0];
+            component_name.value = segments[1];
         });
 
         onMounted(async () => {
@@ -308,6 +401,7 @@ export default {
             columnDefs,
             labsRowData,
             selectedLabs,
+            labDate,
             fetchPatientLabsList,
             deleteServices,
             editService,
@@ -315,6 +409,12 @@ export default {
             labs,
             onLabchange,
             labParams,
+            editform,
+            olddate,
+            oldlab,
+            labdateexist,
+            module_name,
+            component_name,
         };
     }
 };

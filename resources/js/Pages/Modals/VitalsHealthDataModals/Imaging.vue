@@ -25,10 +25,12 @@
                         <div class="col-md-4">
                             <label>Imaging : <span class="error">*</span></label>
                             <input type="text" name="imaging[]"  placeholder="Enter Imaging" class="forms-element form-control" />
+                            <div class="invalid-feedback" v-if="formErrors['imaging.' + index]" style="display: block;">{{ formErrors['imaging.' + index][0] }}</div>
                         </div>
                         <div class="col-md-4">
                             <label >Date<span class="error">*</span> :</label>
                             <input type="date" name="imaging_date[]"  class="forms-element form-control"/>
+                            <div class="invalid-feedback" v-if="formErrors['imaging_date.' + index]" style="display: block;">{{ formErrors['imaging_date.' + index][0] }}</div>
                         </div>
                         <div class="col-md-1">
                             <i v-if="index > 0" class="remove-icons i-Remove float-right mb-3" title="Remove Follow-up Task" @click="removeImagingItem(index)"></i>
@@ -170,8 +172,8 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
-                if (error.status && error.status === 422) {
-                    formErrors.value = error.responseJSON.errors;
+                if (error.response.status && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
                 } else {
                     console.error('Error submitting form:', error);
                 }

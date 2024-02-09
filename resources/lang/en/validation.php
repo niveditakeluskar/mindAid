@@ -180,13 +180,24 @@ return [
 
         //ccm validation
 
-        //preparation
-        'condition_requirnment' => [
-            'required' => 'Please select atleast option.'
+        //preparation 
+        'condition_requirnment1' => [
+            'required' => 'Please select at least one option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'condition_requirnment_notes' => [
-            'required_if' => 'The condition requirnment notes field is required.'
+        'condition_requirnment2' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
+        'condition_requirnment3' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'condition_requirnment4' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+
         'newofficevisit' => [
             'required' => 'The new office Visit field is required.'
         ],
@@ -194,10 +205,10 @@ return [
             'required_if' => 'The new office visit notes field is required.'
         ],
         'newdiagnosis' => [
-            'required' => 'The new diagnosis field is required.'
+            'required' => 'The new condition field is required.'
         ],
         'nd_notes' => [
-            'required_if' => 'The new diagnosis notes field is required.'
+            'required_if' => 'The new condition notes field is required.'
         ],
         'med_added_or_discon' => [
             'required' => 'The medications added or discontinued field is required.'
@@ -205,12 +216,26 @@ return [
         'med_added_or_discon_notes' => [
             'required_if' => 'The new medications added or discontinued notes field is required.'
         ],
-        'report_requirnment' => [
+        'report_requirnment1' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'report_requirnment2' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'report_requirnment3' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'report_requirnment4' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'report_requirnment5' => [
             'required' => 'Please select any option.'
         ],
-        'report_requirnment_notes' => [
-            'required_if' => 'The report requirnment notes field is required.'
-        ],
+
         'newdme' => [
             'required' => 'The new dme field is required.'
         ],

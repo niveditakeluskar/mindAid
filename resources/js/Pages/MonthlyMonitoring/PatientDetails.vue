@@ -5,7 +5,7 @@
       <div class="col-md-12">
           <input type="hidden" id="page_landing_times" name="timearr[form_start_time]" class="timearr form_start_time" :value='landingtime' />
           <PatientBasicInfo :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
-          <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" :stageid="stageid" :componentId="componentId" />
+          <PatientMonthlyMonitoringDetails :patientId="patientId" :moduleId="moduleId" :stageid="stageid" :componentId="componentId" :ccmRpm="ccmRpm" />
       </div>
     </div>
   </LayoutComponent>
@@ -26,6 +26,7 @@ export default {
       componentId: Number,
       stageid: Number,
       landingTime: String,
+      ccmRpm:Number
   },
   components: { 
       LayoutComponent,

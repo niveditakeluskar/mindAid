@@ -121,7 +121,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="checkboxerror" style="color:red; " v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
+                                <div style="color:red;" v-if="additionalErrors">{{ additionalErrorsMsg }}</div>
                             </div> 
                             <div class="form-row invalid-feedback"></div>
                         </div>
@@ -173,7 +173,7 @@ export default {
         let additionalErrorsMsg = ref(null);
         const activities = ref([]);
         let showCallWrapUpAlert = ref(false);
-        const noAdditionalServicesProvided = ref(false);
+        const noAdditionalServicesProvided = ref('');
         const notesRows = ref([]);
         let selectedReport = ref('');
         const callWrapColumnDefs = ref([
@@ -224,7 +224,7 @@ export default {
             let formData = new FormData(myForm);
             const formDataObject = {};
             const selectedValues = [];
-            if (!noAdditionalServicesProvided) {
+            if (!noAdditionalServicesProvided.value) {
                 const additionalServicesSelected = checkAdditionalServicesSelected();
 
                 if (!additionalServicesSelected) {
@@ -280,7 +280,7 @@ export default {
                             formDataObject[checkboxName] = false;
                         });
                     });
-                    notesRows.value = null;
+                    notesRows.value = [];
                 }
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
@@ -369,12 +369,16 @@ export default {
                 additionalErrors.value = false;
                 additionalErrorsMsg.value = null;
             }
-        }, { immediate: true });
+        }, { immediate: true }
+        );
 
         watch(groupedData, (newValue) => {
             const selectedServices = newValue.some(group => group.checked);
-            noAdditionalServicesProvided.value = !selectedServices;
-        }, { immediate: true });
+            if (selectedServices) {
+                noAdditionalServicesProvided.value = false;
+            }
+        }, { deep: true, immediate: true }
+        );
 
         const addNewNotesRow = () => {
             const today = new Date().toISOString().split('T')[0];
@@ -404,7 +408,6 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const saveEMRResponse = await axios.post('/ccm/saveEmrSummary', formData);
-                console.log("saveEMRResponse.data.form_start_time", saveEMRResponse);
                 if (saveEMRResponse && saveEMRResponse.status == 200) {
                     $(".form_start_time").val(saveEMRResponse.data.form_start_time);
                     updateTimer(props.patientId, '1', props.moduleId);

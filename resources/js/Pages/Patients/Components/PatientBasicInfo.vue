@@ -460,13 +460,15 @@ export default {
                 }
                 const data = await response.json();
 
+                const dobParts = data.patient[0].dob.split('-');
+                const formattedDob = `${dobParts[1]}-${dobParts[2]}-${dobParts[0]}`;
                 patientDetails.value = data;
                 billable_time.value = data.billable_time;
                 non_billabel_time.value = data.non_billabel_time;
                 patientName.value = data.patient[0].fname + " " + data.patient[0].lname;
                 patientGender.value = data.gender;
                 patientAge.value = data.age;
-                patientDob.value = data.patient[0].dob;
+                patientDob.value = formattedDob;
                 patientMob.value = data.patient[0].mob;
                 consent_to_text.value = data.consent_to_text;
                 finNumber.value = data.patient[0].fin_number;
@@ -492,7 +494,7 @@ export default {
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status;
 
                 personal_notes_data.value = data.personal_notes;
-                research_study_data.value = data.research_study_data;
+                research_study_data.value = data.research_study;
 
                 patient_systolichigh.value = data.systolichigh;
                 patient_systoliclow.value = data.systoliclow;

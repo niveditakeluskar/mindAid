@@ -73,7 +73,7 @@ export default {
     
     setup(props) {
       let researchstudyTime = ref(null);
-      const research_study_data = ref(null);
+      let research_study_data = ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
         let formErrors = ref([]);
@@ -81,6 +81,7 @@ export default {
 
         const openModal = () => {
             isOpen.value = true;
+            researchstudyTime.value = document.getElementById('page_landing_times').value;
         };
 
         const closeModal = () => {
