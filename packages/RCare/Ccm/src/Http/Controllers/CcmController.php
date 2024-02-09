@@ -132,15 +132,10 @@ class CcmController extends Controller
 
     public function getActiveDiagnosiscode()
     {
-        $options = [];
+        $conditionCode =  DiagnosisCode::where("status", 1)->WhereNotNull('code')->get();
+        return $conditionCode;
 
-        foreach (DiagnosisCode::activeDiagnosiscode() as $DiagnosisCode) {
-            $options[$DiagnosisCode->code] = $DiagnosisCode->code;
-        }
-
-        $options = array_unique($options);
-
-        return response()->json($options);
+      /*   return response()->json($options); */
     }
 
 

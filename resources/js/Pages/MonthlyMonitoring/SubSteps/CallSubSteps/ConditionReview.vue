@@ -5,11 +5,9 @@
       <div class="col-lg-12 mb-4 ">
          <div class="card" >
             <div class="card-body"> 
-               <div class="alert alert-success" id="success-alert" style="display: none;">
-                  <button type="button" class="close" data-dismiss="alert">x</button>
-                  <strong>Research Follow up Completed!</strong><span id="text"></span>
-               </div> 
+              
                <div class="card-title">Condition Review</div>
+               <div id="conditionpreparationAlert"></div>
                <div class="form-row mb-4">
                   <input type="hidden" name="uid" :value="patientId"/>
                   <input type="hidden" name="patient_id" :value="patientId" /> <!-- Bind patientId to the input field -->
@@ -88,34 +86,34 @@ export default {
       let conditionReviewStageID  = ref(0);
 
       const submitResearchFollowForm = async () => {
-         // isLoading.value = true;
-         let myForm = document.getElementById(`${sectionName}_preparation_followup_form`);
-         let formData = new FormData(myForm);
-         axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+         isLoading.value = true;
          try {
             let myForm = document.getElementById(`${sectionName}_preparation_followup_form`);
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             const response = await axios.post('/ccm/monthly-monitoring-call-preparation-form', formData);
             if (response && response.status == 200) {
-               // $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
+                $('#conditionpreparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
                updateTimer(props.patientId, '1', props.moduleId);
                $(".form_start_time").val(response.data.form_start_time);
                preparationTime.value = document.getElementById('page_landing_times').value;
                setTimeout(function () {
-                  formErrors.value = {};
-               }, 3000);
-            }
+						$('#conditionpreparationAlert').html('');
+                }, 3000);
+               }
             isLoading.value = false;
          } catch (error) {
             if (error.response && error.response.status === 422) {
                formErrors.value = error.response.data.errors;
+               setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                console.log(formErrors);
             } else {
-               $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
+               $('#conditionpreparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
                console.error('Error submitting form:', error);
                setTimeout(function () {
-                  $('#preparationAlert').html('');
+                  $('#conditionpreparationAlert').html('');
                }, 3000);
             }
             isLoading.value = false;
