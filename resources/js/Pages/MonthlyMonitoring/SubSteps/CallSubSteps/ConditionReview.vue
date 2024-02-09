@@ -26,13 +26,13 @@
                      <span class="mr-3 mb-4"><b>Call preparation completed?</b></span>
                      <div class="mr-3 d-inline-flex align-self-center"> 
                         <label for="_data_present_in_emr_yes" class="radio radio-primary mr-3">
-                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_yes" v-model="data_present_in_emrYesNO" 
+                           <input type="radio" formControlName="radio" name="data_present_in_emr" :id="`${sectionName}_data_present_in_emr_yes`" v-model="data_present_in_emrYesNO" 
                             :checked = "data_present_in_emrYesNO=='1'" value="1">
                            <span>Yes</span>
                            <span class="checkmark"></span>
                         </label>
                         <label for="_data_present_in_emr_no" class="radio radio-primary mr-3">
-                           <input type="radio" formControlName="radio" name="data_present_in_emr" id="_data_present_in_emr_no" v-model="data_present_in_emrYesNO" 
+                           <input type="radio" formControlName="radio" name="data_present_in_emr" :id="`${sectionName}_data_present_in_emr_no`" v-model="data_present_in_emrYesNO" 
                             :checked = "data_present_in_emrYesNO=='0'" value="0">
                            <span>No</span>
                            <span class="checkmark"></span>

@@ -139,9 +139,9 @@
 				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
-			<input type="hidden" name="this_month" value="1">
+			<input type="hidden" name="this_month" :value="this_month" />
 			<!-- // $section == 'call_preparation' &&  -->
-			<div class="form-row mb-4 mt-2">
+			<div class="form-row mb-4 mt-2" v-if="isDecemberOrJanuary">
 				<div class="col-md-12 forms-element">
 					<span class="mr-3 mb-4"><b>Is a current copy of the Care Plan signed by the PCP and in the EMR?
 						</b></span>
@@ -321,7 +321,9 @@ export default {
 
 			med_added_or_disconYesNo:'',
 			
-			data_present_in_emrYesNO:'',
+			data_present_in_emrYesNO: '',
+			currentMonth: new Date().getMonth(),
+			this_month: 0,
 		};
 	},
 	mounted() {
@@ -340,6 +342,15 @@ export default {
 		};
 		document.body.appendChild(script); 
 		this.populateFuntion(this.patientId); 
+	},
+	computed: {
+		isDecemberOrJanuary() {
+			if (this.currentMonth === 11 || this.currentMonth === 0) { // 11 is December, 0 is January
+				this.this_month = 1;
+				return true;
+			}
+			return false;
+		},
 	},
 	methods: {
 	
@@ -405,7 +416,12 @@ export default {
 					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment5;
 					
 					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation.static.anything_else;
-					this.patient_relationship_building =  this.patientPrepSaveDetails.populateCallPreparation.static.patient_relationship_building;
+					this.patient_relationship_building = this.patientPrepSaveDetails.populateCallPreparation.static.patient_relationship_building;
+					if (this.conditionRequirnment1 == 1 || this.conditionRequirnment2 == 1 || this.conditionRequirnment3 == 1 || this.conditionRequirnment4 == 1) {
+						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_yes").prop("checked", true);
+					} else {
+						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
+					}
 				}else{
 					console.error('populateCallPreparation is empty or undefined');
 				}				

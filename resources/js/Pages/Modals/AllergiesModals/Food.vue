@@ -26,17 +26,17 @@
                     
                     
 					<input type="hidden" name="noallergymsg" id="noallergymsg" value="No Known Food Allergies">   
-                        
-                    <label :for="`${sectionName}_noallergiescheckbox`" class="checkbox  checkbox-primary mr-3">
-                        <input type="checkbox" name="allergy_status"
-                            :id="`${sectionName}_noallergiescheckbox`" class="noallergiescheckbox" formControlName="checkbox" :value="1"
-                            v-model="conditionRequirnment1" @change="checkConditionRequirnments()"  :checked="conditionRequirnment1">
-                        <span>No Known Food Allergies</span>
-                        <div id="msg" style="color:red; display:none">Please delete all data from below table to enable checkbox!</div>  
-                        <span class="checkmark"></span>
+                    
+                    <label class="checkbox noAllergiesLbl"  style="z-index: 1;">
+                        <!-- @click="hideShowNKDAMsg('foodcount','msg');" -->
+                    No Known Food Allergies
+                    <input type="checkbox" v-model="allergyStatus"  name="allergy_status" @change="noAllergiesCheck" style="position: absolute; z-index: -1;">
+                    <div id="msg" style="color:red; display:none">Please delete all data from below table to enable checkbox!</div>
+                    <span class="checkmark"></span>
                     </label>
 
-                    <input type = "hidden" id="foodcount" value =""> 
+                    <input type = "hidden" id="foodcount" :value="foodAllergiesRowCount">
+
                     <FoodForm :formErrors="formErrors" />
                     
                 </div>
@@ -87,6 +87,58 @@ export default {
     components: {
         FoodForm,
         AgGridTable,
+    },
+    data() {
+        return {
+        allergyStatus: false, 
+        foodAllergiesRowData: []
+        };
+    },
+    computed: {
+        foodAllergiesRowCount() {
+        return this.foodAllergiesRowData.length;
+        },
+    },
+    methods: {
+        hideShowNKDAMsg(countid, msgid) { 
+            var d = $("#" + countid).val();
+            if (d > 0) {
+                $("#" + msgid).show();
+                setTimeout(function () {
+                    $("#" + msgid).hide();
+                }, 5000);
+            }
+        },
+        noAllergiesCheck() {
+            if (this.allergyStatus) {
+                // alert("Checkbox is checked!");
+                var form = $('.noallergiescheck').closest('form');
+                var formname = "allergy_food_form";
+                this.hideShowNKDAMsg('foodcount', 'msg');
+                // alert(formname);
+                $("form[name='" + formname + "'] input[name='specify']").val("");
+                $("form[name='" + formname + "'] input[name='type_of_reactions']").val("");
+                $("form[name='" + formname + "'] input[name='severity']").val("");
+                $("form[name='" + formname + "'] input[name='course_of_treatment']").val("");
+                $("form[name='" + formname + "'] textarea[name='notes']").val("");
+
+                $("form[name='" + formname + "'] input[name='specify']").attr("disabled", 'disabled');
+                $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", true);
+                $("form[name='" + formname + "'] input[name='severity']").prop("disabled", true);
+                $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", true);
+                $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", true);
+            } else {
+                // alert("Checkbox is unchecked!");
+                var form = $('.noallergiescheck').closest('form');
+                var formname = "allergy_food_form";
+                $("form[name='" + formname + "']")[0].reset();
+                $("form[name='" + formname + "'] input[name='specify']").prop("disabled", false);
+                $("form[name='" + formname + "'] input[name='type_of_reactions']").prop("disabled", false);
+                $("form[name='" + formname + "'] input[name='severity']").prop("disabled", false);
+                $("form[name='" + formname + "'] input[name='course_of_treatment']").prop("disabled", false);
+                $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", false);
+            }
+        },
     },
     setup(props) {
         let showfoodAlert = ref(false);
@@ -170,7 +222,10 @@ export default {
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     // this.fetchPatientMedicationList();
                     await fetchPatientFoodList();
-                    document.getElementById("allergy_food_form").reset();
+                    // document.getElementById("allergy_food_form").reset();
+                    var form = $("#allergy_food_form")[0];
+                    form.reset();
+                    $(form).find(':input').prop('disabled', false);
                     setTimeout(() => {
                         showfoodAlert.value = false;
                         foodallergiesTime.value = document.getElementById('page_landing_times').value;
