@@ -187,8 +187,6 @@ export default {
 
 const changeStatusRenderer = (params) => {
     const row = params.data;
-	console.log("Row Data:", row);
-
     if (row && row.action) {
         // Create a checkbox input element
         const checkbox = document.createElement('input');
@@ -199,8 +197,6 @@ const changeStatusRenderer = (params) => {
         checkbox.dataset.componentId = row.component_id;
         checkbox.dataset.stageId = row.stage_id;
         checkbox.dataset.stepId = row.step_id;
-		console.log("Status Flag:", row.status_flag);
-
         checkbox.value = row.status_flag === 1 ? 1 : 0;
         checkbox.checked = row.status_flag === 1;
         // Bind click event handler
@@ -299,7 +295,6 @@ const columnDefs = ref([
 		};
 
 		const openEditModal = (id) => {
-			console.log("u clicked me");
 			FollowupModalRef.value.openModal(id, props.patientId);
 		};
 
@@ -332,7 +327,6 @@ const columnDefs = ref([
 					throw new Error('Invalid response data format');
 				}
 				followupStageId.value = responseData.stageID;
-				console.log(followupStageId);
 			} catch (error) {
 				console.error('Error fetching stageID:', error);
 				throw new Error('Failed to fetch stageID');
@@ -347,7 +341,6 @@ const columnDefs = ref([
 			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
 			try {
 				const response = await axios.post('/ccm/monthly-monitoring-followup-inertia', formData);
-				console.log('Form submitted successfully!', response);
 				if (response && response.status == 200) {
 					myForm.reset();
 					items.value.splice(1);

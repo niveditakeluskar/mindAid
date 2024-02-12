@@ -837,7 +837,6 @@ export default {
             additionaltasks();
             try {
                 reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", reviewCarePlanTimer);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
