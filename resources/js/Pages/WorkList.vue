@@ -244,6 +244,7 @@ export default {
         headerName: 'Patient Status',
         field: 'activedeactive'
         , cellRenderer: (params) => {
+
           const link = document.createElement('a');
           const icon = document.createElement('i');
          

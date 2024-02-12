@@ -20,7 +20,7 @@
         </div>
         <ag-grid-vue class="ag-theme-quartz-dark" :gridOptions="gridOptions" :defaultColDef="defaultColDef"
             :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady" :suppressExcelExport="true"
-            :paginationPageSizeSelector="paginationPageSizeSelector" :headerHeight="headerHeight"
+            :paginationPageSizeSelector="paginationPageSizeSelector" :paginationPageSize="paginationPageSize" :headerHeight="headerHeight"
             :popupParent="popupParent"></ag-grid-vue>
 
     </div>
@@ -46,6 +46,7 @@ export default {
     },
     setup(props) {
         const paginationPageSizeSelector = ref([10, 20, 30, 40, 50, 100]);
+        const paginationPageSize = ref(null);
         const filterText = ref('');
         const popupParent = ref(null);
         const gridApi = ref(null);
@@ -86,6 +87,7 @@ export default {
             gridApi.value = params.api; // Set the grid API when the grid is ready
             gridApi.value.showLoadingOverlay();
             gridColumnApi.value = params.columnApi;
+            paginationPageSize.value = 10;
             paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
             /*   params.api.sizeColumnsToFit();  */
 
@@ -195,11 +197,11 @@ export default {
                     if (colIndex === 0) {
                         // For the first column, return the rowIndex + 1
                         return rowIndex + 1;
-                    }else if (col && col.includes(' ')) {
-                // If the field contains spaces, assume it's a concatenated field
-                const fieldNames = col.split(' ');
-                return fieldNames.map(fieldName => row[fieldName]).join(' ');
-            }  else {
+                    } else if (col && col.includes(' ')) {
+                        // If the field contains spaces, assume it's a concatenated field
+                        const fieldNames = col.split(' ');
+                        return fieldNames.map(fieldName => row[fieldName]).join(' ');
+                    } else {
                         // For other columns, sanitize the data and return
                         return sanitizeDataForPDFExport(row[col]);
                     }
@@ -238,6 +240,7 @@ export default {
             copySelectedRows,
             exportAsPDF,
             paginationPageSizeSelector,
+            paginationPageSize,
             headerHeight
         };
     },
