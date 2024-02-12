@@ -557,14 +557,14 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const response = await axios.post('/ccm/care-plan-development-diagnosis-save', formData);
-                if (response && response.status == 200) {
+                if (response && response.status == 200) { debugger;
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
-                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
+                    document.getElementById("care_plan_form").reset();
 
                     setTimeout(() => {
                         showSuccessAlert.value = false;
@@ -615,6 +615,20 @@ export default {
                 diagnosisOptions.value = diagnosisArray;
             } catch (error) {
                 console.error('Error fetching diagnosis list:', error);
+            }
+        };
+
+        const getCodeData = async()=>{
+            try {
+                const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`); 
+                    if(!response.ok){ 
+                            throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+                    }
+                    const codeData = await response.json();
+                    codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
+
+            } catch (error) {
+                console.error('Error fetching Code:', error); // Log specific error message
             }
         };
 
@@ -773,6 +787,7 @@ export default {
             var id = selectedDiagnosis.value;
             var condition_name = $("form[name='" + formName + "'] #diagnosis_condition option:selected").text();
             var code = $("form[name='" + formName + "'] #diagnosis_code").val();
+            getCodeData();
             getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
             $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
             $("form[name='" + formName + "'] #diagnosis_code").val("");
@@ -845,6 +860,7 @@ export default {
         });
 
         return {
+            getCodeData,
             isSaveButtonDisabled,
             selectedDiagnosisId,
             comments,
@@ -937,5 +953,5 @@ export default {
 
 .modal-content {
     overflow-y: auto !important;
-    height: 800px !important;
+    /* height: 800px !important; */
 }</style>
