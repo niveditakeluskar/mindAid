@@ -296,8 +296,8 @@ class PrintCarePlanController extends Controller
             // "));
         $patient_healthdata     = PatientHealthData::where('patient_id', $uid)
                                 ->select(DB::raw("distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date"))//,max(updated_at) as updated_at
-                                ->where('created_at','>=',$dateS)
-                                ->where('created_at','<=',$dateE)
+                                ->where('health_date','>=',$dateS)
+                                ->where('health_date','<=',$dateE)
                                 //->whereMonth('updated_at','=', date('m'))
                                 //->whereYear('updated_at','=', date('Y'))
                                 ->groupBy('health_data','health_date')
@@ -306,8 +306,8 @@ class PrintCarePlanController extends Controller
 
         $patient_imaging        = PatientImaging::where('patient_id', $uid)
                                 ->select(DB::raw("distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date"))//,max(updated_at) as updated_at
-                                ->where('created_at','>=',$dateS)
-                                ->where('created_at','<=',$dateE)
+                                ->where('imaging_date','>=',$dateS)
+                                ->where('imaging_date','<=',$dateE)
                                 // ->whereMonth('created_at','=', date('m'))
                                 //->whereYear('created_at','=', date('Y'))
                                 ->groupBy('imaging_details','imaging_date')
@@ -327,8 +327,8 @@ class PrintCarePlanController extends Controller
                                                                 (case when lab_date is null then '0' else '1' end) as lab_date_exist, notes"))
                                                 ->where('patient_id', $uid)
                                                 ->with(['labTest','labsParameters'])
-                                                ->where('created_at','>=',$dateS)
-                                                ->where('created_at','<=',$dateE)
+                                                ->where('lab_date','>=',$dateS)
+                                                ->where('lab_date','<=',$dateE)
                                                 //->whereMonth('created_at','=', date('m'))
                                                 //->whereYear('created_at','=', date('Y'))
                                                 ->groupBy('lab_test_parameter_id')
