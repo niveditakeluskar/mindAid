@@ -169,7 +169,6 @@ export default {
                     editLink.dataset.originalTitle = 'Edit';
                     editLink.classList.add('editDevicesdata');
                     editLink.title = 'Edit';
-
                     const editIcon = document.createElement('i');
                     editIcon.classList.add('editform', 'i-Pen-4');
                     editLink.appendChild(editIcon);

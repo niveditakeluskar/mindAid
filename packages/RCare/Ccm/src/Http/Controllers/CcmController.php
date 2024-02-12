@@ -932,9 +932,9 @@ class CcmController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 if ($row->status_flag == '1') {
-                    $btn = '<input class="change_status_flag" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="1" checked>';
+                    $btn = '<input class="change_status_flag" @click="changeStatus" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="1" checked>';
                 } else {
-                    $btn = '<input class="change_status_flag" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="0">';
+                    $btn = '<input class="change_status_flag" @click="changeStatus" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="0">';
                 }
                 return $btn;
             })
