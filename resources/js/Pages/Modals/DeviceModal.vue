@@ -231,7 +231,6 @@ export default {
         const handlePartnerDevice = async () => {
             try {
         const partnerid = selectedPartnerId; // Replace with the actual partner ID
-        console.log(partnerid,"partner id");
         const response = await axios.get(`/patients/ajax/${partnerid}/practice/practiceId/moduleId/patient`);
         partnersDeviceOption.value = response.data;
 
@@ -420,7 +419,6 @@ export default {
             fetchDeviceList();
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
