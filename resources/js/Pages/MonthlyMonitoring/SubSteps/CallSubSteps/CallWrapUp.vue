@@ -45,13 +45,8 @@
                                 <div class=" forms-element">
                                     <label class="col-md-12">EMR Monthly Summary
                                         <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" @blur="saveEMRNotes"></textarea>
-                                        <!-- onfocusout="saveEMR()" -->
                                     </label>
-                                    <div class="invalid-feedback">
-                                        <!-- <div v-if="formErrors.value && formErrors.value.emr_monthly_summary">
-                                            {{ formErrors.value.emr_monthly_summary[0] }}
-                                        </div> -->
-                                    </div>
+                                    <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.0']" style="display: block;">{{ formErrors['emr_monthly_summary.0'][0] }}</div>
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-bottom: 40px;">
@@ -67,11 +62,11 @@
                                     <div class="additionalfeilds row" style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;" v-for="(notesRow, index) in notesRows" :key="index">
                                         <div class="col-md-4">
                                             <input type="date" v-model="notesRow.date" name="emr_monthly_summary_date[]" class="form-control emr_monthly_summary_date" :id="`emr_monthly_summary_date_${index}`" />
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
                                         </div>
                                         <div class="col-md-6">
                                             <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`"  @blur="saveEMRNotes"></textarea>
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.' + (index + 1)]" style="display: block;">{{ formErrors['emr_monthly_summary.' + (index + 1)][0] }}</div>
                                         </div>
                                         <div class="col-md-1" style="top: 15px;">
                                             <i @click="deleteNotesRow(index)" type="button" class="removenotes  i-Remove" style="color: #f44336; font-size: 22px;"></i>

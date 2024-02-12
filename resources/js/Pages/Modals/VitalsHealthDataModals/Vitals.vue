@@ -1,4 +1,3 @@
-<!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="vitals" role="tabpanel" aria-labelledby="vitals-icon-pill">
         <div class="card">  
@@ -22,19 +21,18 @@
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="vitalsTime" />
                     <div class="col-md-4 form-group mb-3">
                         <label for="height">Height (in)<!-- <span class="error">*</span> --> :</label>
-                        <input type="text" name="height" id="height" class="form-control" />
+                        <input type="text" name="height" id="height" class="form-control" v-model="height" @blur="calculateBMI" />
                         <div class="invalid-feedback" v-if="formErrors.height" style="display: block;">{{ formErrors.height[0] }}</div>
                     </div>
                     <div class="col-md-4 form-group mb-3">
                         <label for="weight">Weight (lbs)<!-- <span class="error">*</span> --> :</label> 
-                        <input type="text" name="weight" id="weight" class="form-control" />
+                        <input type="text" name="weight" id="weight" class="form-control" v-model="weight" @blur="calculateBMI" />
                         <div class="invalid-feedback" v-if="formErrors.weight" style="display: block;">{{ formErrors.weight[0] }}</div>
                     </div>
                     <div class="col-md-4 form-group mb-3">
                         <label for="bmi">BMI<!-- <span class="error">*</span> --> :</label>
-                        <input type="text" name="bmi" id="bmi" class="form-control" />
+                        <input type="text" name="bmi" id="bmi" class="form-control" v-model="bmi" readonly="readonly" />
                         <div class="invalid-feedback" v-if="formErrors.bmi" style="display: block;">{{ formErrors.bmi[0] }}</div>
-                        <!-- @text("bmi", ["id" => "bmi","readonly"=>"readonly"]) -->
                     </div>
                     <div class="col-md-4 form-group mb-3">
                         <label for="bp">Blood Pressure<!-- <span class="error">*</span> --> :</label>
@@ -42,13 +40,11 @@
                             <span class="col-md-5">
                             <input type="text" name="bp" id="bp" class="form-control" placeholder="Systolic" />
                             <div class="invalid-feedback" v-if="formErrors.bp" style="display: block;">{{ formErrors.bp[0] }}</div>
-                                <!-- @text("bp", ["id" => "bp","placeholder"=>"Systolic"]) -->
                             </span>
                             <span class="mt-1 pl-2 pr-2"> / </span>
                             <span class="col-md-6">
                                 <input type="text" name="diastolic" id="diastolic" class="form-control" placeholder="Diastolic" />
                                 <div class="invalid-feedback" v-if="formErrors.diastolic" style="display: block;">{{ formErrors.diastolic[0] }}</div>
-                                <!-- @text("diastolic", ["id" => "diastolic","placeholder"=>"Diastolic"]) -->
                             </span>
                         </div>
                     </div>
@@ -56,13 +52,11 @@
                         <label for="o2">O2 Saturation<!-- <span class="error">*</span> --> :</label>
                         <input type="text" name="o2" id="o2" class="form-control" />
                         <div class="invalid-feedback" v-if="formErrors.o2" style="display: block;">{{ formErrors.o2[0] }}</div>
-                        <!-- @text("o2", ["id" => "o2"]) -->
                     </div>
                     <div class="col-md-2 form-group mb-3">
                         <label for="pulse_rate">Pulse Rate<!-- <span class="error">*</span>  -->:</label>
                         <input type="text" name="pulse_rate" id="pulse_rate" class="form-control" />
                         <div class="invalid-feedback" v-if="formErrors.pulse_rate" style="display: block;">{{ formErrors.pulse_rate[0] }}</div>
-                        <!-- @text("pulse_rate", ["id" => "pulse_rate"]) -->
                     </div>
                     <div class="col-md-2 form-group mb-3">
                         <label for="pain_level">Pain Level<!-- <span class="error">*</span>  -->:</label>
@@ -157,6 +151,9 @@ export default {
         let vitalsStepId = ref(0);
         let vitalsTime = ref(null);
         let formErrors = ref([]);
+        const height = ref(null);
+        const weight = ref(null);
+        const bmi = ref(null);
         const loading = ref(false);
         const vitalsRowData = ref([]);
         let columnDefs = ref([
@@ -260,6 +257,17 @@ export default {
             }
         });
 
+        const calculateBMI = async () => {
+            if (height.value != "" && weight.value != "") {
+                const heightInInches = parseFloat(height.value);
+                const weightInLbs = parseFloat(weight.value);
+                const bmiValue = (weightInLbs / (heightInInches * heightInInches)) * 703;
+                bmi.value = bmiValue.toFixed(1);
+            } else {
+                bmi.value = null;
+            }
+        };
+
         return {
             loading,
             submiVitalsHealthDataForm,
@@ -272,6 +280,10 @@ export default {
             fetchPatientVitalsList,
             deleteServices,
             editService,
+            calculateBMI,
+            height,
+            weight,
+            bmi,
         };
     }
 };
