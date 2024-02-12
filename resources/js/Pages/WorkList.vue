@@ -196,17 +196,17 @@ export default {
       { headerName: 'EMR No.', field: 'pppracticeemr'},
       {
     headerName: 'Patient Name',
-    field: 'pfname',
+    field: 'full_name',
     cellRenderer: function (params) {
         const row = params.data;
-        const fullName = row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
+        const fullName = [row.pfname, row.pmname, row.plname].filter(Boolean).join(' '); // Concatenate non-empty parts
         const upperCaseFullName = fullName.toUpperCase();
-
         return `<div style="display: flex; align-items: center;">
                     <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
                     <span style="margin-left: 4px;">${upperCaseFullName}</span>
                 </div>`;
-    },    flex: 2
+    },
+    flex: 2
 },
       {
         headerName: 'DOB',
@@ -423,7 +423,12 @@ export default {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      passRowData.value = data.data || [];
+      const processedData = data.data.map(row => ({
+    ...row,
+    full_name: [row.pfname, row.pmname, row.plname].filter(Boolean).join(' ')
+}));
+
+      passRowData.value = processedData || [];
       isLoading.value = false;
   } catch (error) {
     console.error('Error fetching patient list:', error);
