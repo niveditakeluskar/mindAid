@@ -10,16 +10,16 @@
 
 					<form id="followup_form" ref="followupFormRef" name="followup_form"
 						@submit.prevent="submitFollowupForm">
-						<input type="hidden" name="uid" v-model="this.uid" :value="`${patientId}`" />
-						<input type="hidden" name="patient_id" v-model="this.patient_id" :value="`${patientId}`" />
-						<input type="hidden" name="start_time" v-model="this.start_time" value="00:00:00">
-						<input type="hidden" name="end_time" v-model="this.end_time" value="00:00:00">
-						<input type="hidden" name="module_id" v-model="this.module_id" :value="`${moduleId}`" />
-						<input type="hidden" name="component_id" v-model="this.component_id" :value="`${componentId}`" />
+						<input type="hidden" name="uid"  :value="`${patientId}`" />
+						<input type="hidden" name="patient_id"  :value="`${patientId}`" />
+						<input type="hidden" name="start_time"  value="00:00:00">
+						<input type="hidden" name="end_time"  value="00:00:00">
+						<input type="hidden" name="module_id" :value="`${moduleId}`" />
+						<input type="hidden" name="component_id" :value="`${componentId}`" />
 						<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
 						<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
-						<input type="hidden" name="step_id" v-model="this.step_id" value="0">
-						<input type="hidden" name="form_name" v-model="this.form_name" value="followup_form">
+						<input type="hidden" name="step_id" v-model="step_id" value="0">
+						<input type="hidden" name="form_name" id="form_name" value="followup_form">
 						<div id='error-msg'></div>
 						<div class="card-title">Follow-up</div>
 						<div>
@@ -161,18 +161,7 @@ export default {
 		AgGridTable,
 	},
 	data() {
-		return {
-			uid: '',
-			patient_id: '',
-			module_id: '',
-			component_id: '',
-			stepId: 0,
-			start_time: '',
-			end_time: '',
-			form_name: '',
-			billable: '',
-			emr_complete: ref(0),
-		};
+
 	},
 	setup(props) {
 		let time = ref(null);
@@ -184,6 +173,8 @@ export default {
 		const rowData = ref();
 		const loading = ref(false);
 
+		let	emr_complete = ref(0);
+
 		const items = ref([
 			{
 				task_name: '',
@@ -194,65 +185,86 @@ export default {
 			}
 		]);
 
-		const columnDefs = ref([
-			{
-				headerName: 'Sr. No.',
-				valueGetter: 'node.rowIndex + 1',
-			},
-			{ headerName: 'Task', field: 'task_notes', filter: true },
-			{ headerName: 'Category', field: 'task' },
-			{
-				headerName: 'Notes', field: 'notes',
-				cellRenderer: function (params) {
-					const row = params.data;
-					const link = document.createElement('a');
-					const icon = document.createElement('i');
-					icon.classList.add('editform', 'i-Pen-4');
+const changeStatusRenderer = (params) => {
+    const row = params.data;
+	console.log("Row Data:", row);
 
-					if (row && row.notes) {
-						link.appendChild(document.createTextNode(row.notes));
-					}
+    if (row && row.action) {
+        // Create a checkbox input element
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.classList.add('change_status_flag');
+        checkbox.dataset.id = row.id;
+        checkbox.dataset.moduleId = row.module_id;
+        checkbox.dataset.componentId = row.component_id;
+        checkbox.dataset.stageId = row.stage_id;
+        checkbox.dataset.stepId = row.step_id;
+		console.log("Status Flag:", row.status_flag);
 
-					link.appendChild(icon);
-					link.classList.add('editfollowupnotes');
-					link.href = 'javascript:void(0)';
-					link.setAttribute('data-id', row.id); // Add data-id attribute
-					link.setAttribute('data-original-title', 'Edit'); // Add data-original-title attribute
-					link.addEventListener('click', () => {
-						openEditModal(row.id); // 'this' refers to the Vue component instance
-					});
+        checkbox.value = row.status_flag === 1 ? 1 : 0;
+        checkbox.checked = row.status_flag === 1;
+        // Bind click event handler
+        checkbox.addEventListener('click', changeStatus);
+        return checkbox;
+    } else {
+        return ''; // Or handle the case where the 'action' value is not available
+    }
+};
 
-					return link;
-				},
-			},
-			{ headerName: 'Date Scheduled', field: 'tt' },
-			{ headerName: 'Task Time', field: 'task_time' },
-			{
-				headerName: 'Mark as Complete', field: 'action',
-				cellRenderer: function (params) {
-					const row = params.data;
-					if (row && row.action) {
-						return row.action; // Returning the HTML content as provided from the controller
-					} else {
-						return ''; // Or handle the case where the 'action' value is not available
-					}
-				},
-			},
-			{ headerName: 'Task Completed Date', field: 'task_completed_at' },
-			{
-				headerName: 'Created By', field: 'created_by',
-				cellRenderer: function (params) {
-					const row = params.data;
-					return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
-				},
-			},
-		]);
+// Define columnDefs after changeStatusRenderer is defined
+const columnDefs = ref([
+    {
+        headerName: 'Sr. No.',
+        valueGetter: 'node.rowIndex + 1',
+    },
+    { headerName: 'Task', field: 'task_notes', filter: true },
+    { headerName: 'Category', field: 'task' },
+    {
+        headerName: 'Notes', field: 'notes',
+        cellRenderer: function (params) {
+            const row = params.data;
+            const link = document.createElement('a');
+            const icon = document.createElement('i');
+            icon.classList.add('editform', 'i-Pen-4');
+            if (row && row.notes) {
+                link.appendChild(document.createTextNode(row.notes));
+            }
+            link.appendChild(icon);
+            link.classList.add('editfollowupnotes');
+            link.href = 'javascript:void(0)';
+            link.setAttribute('data-id', row.id); // Add data-id attribute
+            link.setAttribute('data-original-title', 'Edit'); // Add data-original-title attribute
+            link.addEventListener('click', () => {
+                openEditModal(row.id); // 'this' refers to the Vue component instance
+            });
+
+            return link;
+        },
+    },
+    { headerName: 'Date Scheduled', field: 'tt' },
+    { headerName: 'Task Time', field: 'task_time' },
+    {
+        headerName: 'Mark as Complete', field: 'action',
+        cellRenderer: changeStatusRenderer
+    },
+    { headerName: 'Task Completed Date', field: 'task_completed_at' },
+    {
+        headerName: 'Created By', field: 'created_by',
+        cellRenderer: function (params) {
+            const row = params.data;
+            return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
+        },
+    },
+]);
+
+
 
 		const handleScheduledSelected = (item, index)=> {
 			if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
 				item.task_date = ''; // Clear the task date
 			}
 		};
+
 	const setCurrentDateIfCompleted= (item, index)=> {
 			if (item.status_flag === '1') { // 'Completed' radio button is selected
 				item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
@@ -365,7 +377,6 @@ export default {
 					}, 3000);
 					console.log(error.response.data.errors);
 				} else {
-					$('#followUpPageAlert').html('<div class="alert alert-danger">Error: ' + error + '</div>');
 					// Handle other types of errors
 					console.error('Error submitting form:', error);
 					setTimeout(function () {
@@ -375,6 +386,59 @@ export default {
 			}
 			isLoading.value = false;
 		};
+
+		const changeStatus = () => {
+  const id = document.querySelector('.change_status_flag').getAttribute('data-id');
+  const component_id = document.querySelector("form[name='followup_form'] input[name='component_id']").value;
+  const module_id = document.querySelector("form[name='followup_form'] input[name='module_id']").value;
+  const stage_id = document.querySelector("form[name='followup_form'] input[name='stage_id']").value;
+  const step_id = document.querySelector("form[name='followup_form'] input[name='step_id']").value;
+  const timer_start = document.querySelector("form[name='followup_form'] input[name='start_time']").value;
+  const timer_paused = document.getElementById('time-container').textContent;
+  const startTime = document.querySelector("form[name='followup_form'] .form_start_time").value;
+  const form_name = document.getElementById('form_name').value;
+
+  if (confirm('Are you sure you want to change the Status')) {
+    fetch('/ccm/completeIncompleteTask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: new URLSearchParams({
+        id,
+        timer_start,
+        timer_paused,
+        module_id,
+        component_id,
+        stage_id,
+        step_id,
+        form_name,
+        startTime
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(responseData => {
+      document.getElementById('followUpPageAlert').innerHTML = '<div class="alert alert-success"> Data Saved Successfully </div>';
+      setTimeout(() => {
+        document.getElementById('followUpPageAlert').innerHTML = '';
+      }, 3000);
+      document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
+      updateTimer(props.patientId, '1', props.moduleId);
+      time.value = responseData.form_start_time;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  } else {
+    return false;
+  }
+};
 
 		const handleCheckboxChange = (event) => {
 			emr_complete.value = 1;
@@ -392,6 +456,7 @@ export default {
 		});
 
 		return {
+			changeStatus,
 			items,
 		handleScheduledSelected,
 		setCurrentDateIfCompleted,
@@ -417,41 +482,7 @@ export default {
 	}
 }
 
-$('body').on('click', '.change_status_flag', function () {
-	var id = $(this).data('id');
-	var component_id = $("form[name='followup_form'] input[name='component_id']").val();
-	var module_id = $("form[name='followup_form'] input[name='module_id']").val();
-	var patient_id = $("form[name='followup_form'] input[name='patient_id']").val();
-	var stage_id = $("form[name='followup_form'] input[name='stage_id']").val();
-	var step_id = $("form[name='followup_form'] input[name='step_id']").val();
-	var timer_start = $("#timer_start").val();
-	var timer_paused = $("#time-container").text();
-	var startTime = $("form[name='followup_form'] .form_start_time").val();
-	var form_name = $("#form_name").val();
-	if (confirm("Are you sure you want to change the Status")) {
-		$.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
-		});
-		$.ajax({
-			type: 'post',
-			url: '/ccm/completeIncompleteTask',
-			data: 'id=' + id + '&timer_start=' + timer_start + '&timer_paused=' + timer_paused + '&module_id=' + module_id + '&component_id=' + component_id + '&stage_id=' + stage_id + '&step_id=' + step_id + '&form_name=' + form_name + '&startTime=' + startTime,
-			success: function success(response) {
-				$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
-				$(".form_start_time").val(response.form_start_time);
-				updateTimer(patient_id, '1', module_id);
-				time.value = response.form_start_time;
-				setTimeout(function () {
-					$('#followUpPageAlert').html('');
-				}, 3000);
-			}
-		});
-	} else {
-		return false;
-	}
-}); 
+
 </script>
 
 <style>
