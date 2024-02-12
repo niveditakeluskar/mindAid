@@ -132,10 +132,15 @@ class CcmController extends Controller
 
     public function getActiveDiagnosiscode()
     {
-        $conditionCode =  DiagnosisCode::where("status", 1)->WhereNotNull('code')->get();
-        return $conditionCode;
+        $options = [];
 
-      /*   return response()->json($options); */
+        foreach (DiagnosisCode::activeDiagnosiscode() as $DiagnosisCode) {
+            $options[$DiagnosisCode->code] = $DiagnosisCode->code;
+        }
+
+        $options = array_unique($options);
+
+        return response()->json($options);
     }
 
 
@@ -772,7 +777,8 @@ class CcmController extends Controller
     }
 
     public function populateMonthlyMonitoringData($patientId)
-    {   $year  = date('Y');
+    {
+        $year  = date('Y');
         $month = date('m');
         $patientId   = sanitizeVariable($patientId);
         $module_id    = getPageModuleName();
@@ -781,66 +787,66 @@ class CcmController extends Controller
         $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
         $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
         // $callWrapUp = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");
-        
-        if(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists() ) {
+
+        if (CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists()) {
             // dd(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists());
             $EmrMonthlySummary = EmrMonthlySummary::where('patient_id', $patientId)
-                                    ->where('sequence',5)
-                                    ->whereMonth('created_at', date('m'))
-                                    ->whereYear('created_at', date('Y'))
-                                    ->where('status',1)
-                                    ->where('emr_type',1)
-                                    ->select(DB::raw("notes,topic,record_date"))
-                                    ->get();
-            
-            if(count($EmrMonthlySummary)==0){
+                ->where('sequence', 5)
+                ->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 1)
+                ->where('emr_type', 1)
+                ->select(DB::raw("notes,topic,record_date"))
+                ->get();
+
+            if (count($EmrMonthlySummary) == 0) {
 
                 $EmrMonthlySummary = CallWrap::where('patient_id', $patientId)
-                                    ->where('sequence',5)
-                                    ->whereMonth('created_at', date('m'))
-                                    ->whereYear('created_at', date('Y'))
-                                    ->where('status',1)
-                                    ->where('topic', 'like', 'EMR Monthly Summary%')
-                                    ->select(DB::raw("topic,notes,emr_entry_completed,record_date"))
-                                    ->get();
-            }                        
-
-            $Summary =          EmrMonthlySummary::where('patient_id', $patientId)
-                                ->where('sequence',5)
-                                ->whereMonth('created_at', date('m'))
-                                ->whereYear('created_at', date('Y'))
-                                ->where('status',1)
-                                ->where('emr_type',2)
-                                ->select(DB::raw("topic,notes,record_date"))
-                                ->get();
-
-            if(count($Summary)==0){
-                $Summary =       CallWrap::where('patient_id', $patientId)
-                                ->where('sequence',5)
-                                ->whereMonth('created_at', date('m'))
-                                ->whereYear('created_at', date('Y'))
-                                ->where('status',1)
-                                ->where('topic', 'like', 'Summary notes added on%')
-                                ->select(DB::raw("topic,notes,record_date,emr_entry_completed"))
-                                ->get();
+                    ->where('sequence', 5)
+                    ->whereMonth('created_at', date('m'))
+                    ->whereYear('created_at', date('Y'))
+                    ->where('status', 1)
+                    ->where('topic', 'like', 'EMR Monthly Summary%')
+                    ->select(DB::raw("topic,notes,emr_entry_completed,record_date"))
+                    ->get();
             }
 
-            if(isset($EmrMonthlySummary[0]->notes)){ 
+            $Summary =          EmrMonthlySummary::where('patient_id', $patientId)
+                ->where('sequence', 5)
+                ->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))
+                ->where('status', 1)
+                ->where('emr_type', 2)
+                ->select(DB::raw("topic,notes,record_date"))
+                ->get();
+
+            if (count($Summary) == 0) {
+                $Summary =       CallWrap::where('patient_id', $patientId)
+                    ->where('sequence', 5)
+                    ->whereMonth('created_at', date('m'))
+                    ->whereYear('created_at', date('Y'))
+                    ->where('status', 1)
+                    ->where('topic', 'like', 'Summary notes added on%')
+                    ->select(DB::raw("topic,notes,record_date,emr_entry_completed"))
+                    ->get();
+            }
+
+            if (isset($EmrMonthlySummary[0]->notes)) {
                 $result['callwrapup_form']['emr_monthly_summary'] = $EmrMonthlySummary;
-            }else{
+            } else {
                 $result['callwrapup_form']['emr_monthly_summary'] = ' ';
             }
 
-            if(isset($Summary[0]->notes)){ 
+            if (isset($Summary[0]->notes)) {
                 $result['callwrapup_form']['summary'] = $Summary;
-            }else{
-                $result['callwrapup_form']['summary'] = ' '; 
-            }            
+            } else {
+                $result['callwrapup_form']['summary'] = ' ';
+            }
 
-            if(isset($EmrMonthlySummary[0]->emr_entry_completed)){ 
+            if (isset($EmrMonthlySummary[0]->emr_entry_completed)) {
                 $result['callwrapup_form']['emr_entry_completed'] = $EmrMonthlySummary[0]->emr_entry_completed;
-            }else{
-                $result['callwrapup_form']['emr_entry_completed'] = ' '; 
+            } else {
+                $result['callwrapup_form']['emr_entry_completed'] = ' ';
             }
 
             $callwrapupchecklistdata = CallWrapupChecklist::where('patient_id', $patientId)->latest()->first();
@@ -851,17 +857,17 @@ class CcmController extends Controller
                                             from ccm.ccm_topics
                                             where id in (select max(id)
                                             FROM ccm.ccm_topics
-                                            WHERE patient_id='".$patientId."' And topic LIKE 'Additional Services%'
-                                            AND EXTRACT(Month from record_date) = '".$month."' AND EXTRACT(YEAR from record_date) = '".$year."' 
+                                            WHERE patient_id='" . $patientId . "' And topic LIKE 'Additional Services%'
+                                            AND EXTRACT(Month from record_date) = '" . $month . "' AND EXTRACT(YEAR from record_date) = '" . $year . "' 
                                             ) 
-                                            "); 
+                                            ");
             $result['callwrapup_form']['additional_services'] = $callwrapupadditionalservices;
         }
-		
+
         $result['populateCallPreparation'] = $callp;
         $result['populateHippa'] = $hippa;
         // $result['callwrapup_form'] = $callWrapUp;
-        
+
         return $result;
     }
 
@@ -1012,9 +1018,9 @@ class CcmController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 if ($row->status_flag == '1') {
-                    $btn = '<input class="change_status_flag" @click="changeStatus" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="1" checked>';
+                    $btn = '<input class="change_status_flag" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="1" checked>';
                 } else {
-                    $btn = '<input class="change_status_flag" @click="changeStatus" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="0">';
+                    $btn = '<input class="change_status_flag" name="change_status_flag" data-id="' . $row->id . '" data-module-id="' . $row->module_id . '" data-component-id="' . $row->component_id . '" data-stage-id="' . $row->stage_id . '" data-step-id="' . $row->step_id . '" type="checkbox" value="0">';
                 }
                 return $btn;
             })
@@ -3289,7 +3295,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $s4 = str_replace('_', ' ', $key);
                         $servicesdata4 = $servicesdata4 . $s4 . ", ";
                     }
-                    $additionalservices5 = "Verbal Education/Review with Patient:" . $servicesdata5 . ";";
                 }
                 $additionalservices4 = "Medication Support:" . $servicesdata4 . ";";
             }
@@ -3299,7 +3304,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $s5 = str_replace('_', ' ', $key);
                         $servicesdata5 = $servicesdata5 . $s5 . ", ";
                     }
-                    $additionalservices6 = "Mailed Documents:" . $servicesdata6 . ";";
                 }
                 $additionalservices5 = "Verbal Education/Review with Patient :" . $servicesdata5 . ";";
             }
@@ -3318,7 +3322,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $s7 = str_replace('_', ' ', $key);
                         $servicesdata7 = $servicesdata7 . $s7 . ", ";
                     }
-                    $additionalservices7 = "Resource Support:" . $servicesdata7 . ";";
                 }
                 $additionalservices7 = "Resource Support :" . $servicesdata7 . ";";
             }
@@ -3330,9 +3333,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $s8 = str_replace('_', ' ', $key);
                         $servicesdata8 = $servicesdata8 . $s8 . ", ";
                     }
-
-                    $additionalservices8 = "Veterans Services:" . $servicesdata8 . ";";
                 }
+                $additionalservices8 = "Veterans Services:" . $servicesdata8 . ";";
             }
             if ($authorized_cm_only == true) {
                 foreach ($authorizedcmonly as $key => $value) {

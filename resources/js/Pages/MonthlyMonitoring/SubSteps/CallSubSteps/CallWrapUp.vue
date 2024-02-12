@@ -101,7 +101,7 @@
                                             </label>
                                             <div v-if="group.checked" class="col-md-12" v-for="item in group.items" :key="item.id">
                                                 <label :for="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" class="checkbox checkbox-primary mr-3">
-                                                    <input type="checkbox" :name="`${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`" :id="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" :class="`${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />
+                                                    <input type="checkbox" v-model="item.itemChecked" :name="`${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`" :id="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" :class="`${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />
                                                     <span>{{ item.activity }}</span>
                                                     <span class="checkmark"></span>
                                                 </label>
@@ -238,11 +238,9 @@ export default {
                 const isValid = groupedData.value.every(group => {
                     if (group.checked) {
                         const hasSelectedActivities = group.items.some(item => {
-                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                            formDataObject[checkboxName] = formData.get(checkboxName);
-                            const isChecked = formDataObject[checkboxName] === 'true';
+                            const isChecked = item.itemChecked;
                             if (isChecked) {
-                                selectedValues.push(checkboxName);
+                                selectedValues.push(item.itemChecked);
                             }
                             return isChecked;
                         });
@@ -278,8 +276,7 @@ export default {
                     groupedData.value.forEach((group) => {
                         group.checked = false;
                         group.items.forEach((item) => {
-                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                            formDataObject[checkboxName] = false;
+                            item.itemChecked = false;
                         });
                     });
                     notesRows.value = [];
@@ -358,23 +355,29 @@ export default {
                 }
                 if (callwrapup_form.additional_services && callwrapup_form.additional_services.length > 0) {
                     const additionalServicesData = callwrapup_form.additional_services[0].notes.trim();
-                    console.log("data", additionalServicesData);
                     if (additionalServicesData == 'No Additional Services Provided') {
                         noAdditionalServicesProvided.value = true;
                     } else {
-                        const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim()); // Split by ';' and trim each item
-                        console.log("additionalServicesArray", additionalServicesArray);
+                        const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim());
                         additionalServicesArray.forEach(service => {
-                                const checkboxName = service.split(':')[0].toLowerCase().replace(/ /g, '_');
-                                console.log("checkboxName", checkboxName);
-                            if (checkboxName != '') {
-                                $(`form[name='callwrapup_form'] #${checkboxName}`).prop('checked', true);
-                                let data = service.split(':')[1].toLowerCase().trim().replace(/ /g, '_');
-                                let itemData = data.split(',').forEach((activity) => { 
-                                    console.log("activity", activity);
+                            const checkboxName = service.split(':')[0].toLowerCase().replace(/[\s/]/g, '_');
+                            const mainId = checkboxName.replace(/[\s/]/g, '');
+                            const groupIndex = groupedData.value.findIndex(group => group.name.replace(/[\s/]/g, '_').toLowerCase() === checkboxName);
+                            if (groupIndex !== -1) {
+                                groupedData.value[groupIndex].checked = true;
+                                let data = service.split(':')[1].toLowerCase().trim().replace(/[\s/]/g, '_');
+                                let itemData = data.split(',').map(activity => {
+                                    if (activity != '') {
+                                        const itemId = mainId + "_" + activity.trim().replace(/^_/, '');
+                                        const itemIndex = groupedData.value[groupIndex].items.findIndex(item => `${mainId + "_" + item.activity.replace(/[\s/]/g, '_').toLowerCase()}` === itemId);
+                                        if (itemIndex !== -1) {
+                                            groupedData.value[groupIndex].items[itemIndex].itemChecked = true;
+                                        }
+                                    }
                                 });
                             }
                         });
+
                     }
                 }
             } catch (error) {
@@ -391,14 +394,13 @@ export default {
             try {
                 const response = await axios.get('/ccm/monthly-monitoring-call-wrap-up-activities/activities');
                 activityData.value = response.data;
-                // activities.value = response.data;
                 activityData.value.forEach((activity) => {
                     if (!groups[activity.activity_type]) {
                         groups[activity.activity_type] = { name: activity.activity_type, items: [] };
                     }
+                    activity.itemChecked = false;
                     groups[activity.activity_type].items.push(activity);
                 });
-                // Convert the object into an array
                 groupedData.value = Object.values(groups).map((group) => ({ ...group, checked: false }));
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -411,8 +413,7 @@ export default {
                 groupedData.value.forEach((group) => {
                     group.checked = false;
                     group.items.forEach((item) => {
-                        const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                        formDataObject[checkboxName] = false;
+                        item.itemChecked = false;
                     });
                 });
                 additionalErrors.value = false;
