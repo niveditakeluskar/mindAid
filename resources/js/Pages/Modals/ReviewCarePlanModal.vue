@@ -1,4 +1,3 @@
-<!-- ReviewCarePlanModal.vue -->
 <template>
     <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
     <div class="modal fade" :class="{ 'open': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
@@ -29,14 +28,10 @@
                                                             <div class="tab-pane fade show active" id="diagnosis"
                                                                 role="tabpanel" aria-labelledby="diagnosis-icon-pill">
                                                                 <div class="card mb-4">
+                                                                    <div id="reviewCareAlert"></div>
                                                                     <form id="care_plan_form" name="care_plan_form"
                                                                         @submit.prevent="submitCarePlanForm">
-                                                                        <div class="alert alert-success"
-                                                                            v-if="showSuccessAlert">
-
-                                                                            <strong> Care Plan saved successfully!
-                                                                            </strong><span id="text"></span>
-                                                                        </div>
+                                                                      
                                                                         <div class="alert alert-danger"
                                                                             v-if="showSuccessAlert">
                                                                             <button type="button" class="close"
@@ -73,7 +68,6 @@
                                                                                 v-model="selectedEditDiagnosId">
                                                                             <input type="hidden" id="cpd_finalize"
                                                                                 value="1">
-                                                                            <!-- ('Patients::components.care-plan') not in use -->
                                                                             <input type="hidden" name="billable" value="1">
                                                                             <div class="row col-md-12">
                                                                                 <div class="col-md-6"><label>Condition
@@ -249,13 +243,6 @@
                                                                             </div>
                                                                         </div>
                                                                         <br>
-                                                                        <div class="alert alert-success"
-                                                                            style="display: none;">
-                                                                            <button type="button" class="close"
-                                                                                data-dismiss="alert">x</button>
-                                                                            <strong> Care Plan saved successfully!
-                                                                            </strong><span id="text"></span>
-                                                                        </div>
                                                                         <div class="alert alert-danger"
                                                                             style="display: none;">
                                                                             <button type="button" class="close"
@@ -281,6 +268,8 @@
                                                                             name="timearr['pause_end_time']"><input
                                                                             type="hidden" name="timearr['extra_time']">
                                                                     </form>
+                                                                    <div id="reviewCareAlert"></div>
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -464,7 +453,7 @@ export default {
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
             } catch (error) {
-                console.error('Error fetching followup task list:', error);
+                console.error('Error fetching CPD list:', error);
                 isLoading.value = false;
             }
         };
@@ -510,7 +499,7 @@ export default {
                     }
                     const responseData = await response.json();
                     clearGoals();
-                    alert("Deleted Successfully");
+                    $('#reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
@@ -550,29 +539,29 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const response = await axios.post('/ccm/care-plan-development-diagnosis-save', formData);
-                if (response && response.status == 200) { debugger;
-                    showSuccessAlert.value = true;
+                if (response && response.status == 200) {
                     clearGoals();
-                    alert("Saved Successfully");
+                    selectedCode.value = '';
+            selectedDiagnosis.value = '';
+            comments.value = '';
+                    $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    document.getElementById("care_plan_form").reset();
-                    
-
+                    reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
                     setTimeout(() => {
-                        showSuccessAlert.value = false;
-                        reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
+                        $('#reviewCareAlert').html('');
                     }, 3000);
                 }
                 isLoading.value = false;
             } catch (error) {
-
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     setTimeout(function () {
-                        formErrors.value = {};
-                    }, 3000);
+						formErrors.value = {};
+                }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -722,6 +711,7 @@ export default {
             goals.value.splice(index, 1);
         };
         const clearGoals = () => {
+
             goals.value = [];
             tasks.value = [];
             symptoms.value = [];
@@ -802,6 +792,7 @@ export default {
                 }).then(response => {
                     clearGoals();
                     const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
+                    selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
                         goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
                     }
@@ -816,10 +807,6 @@ export default {
                     console.error(error, error.response);
                 });
             }
-
-
-            //populateForm(currentPatientId, DiagnosisFormPopulateURL);
-
             if (id == null || id == '' || id == "") {
                 isSaveButtonDisabled.value = true;
 
@@ -843,7 +830,6 @@ export default {
             additionaltasks();
             try {
                 reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", reviewCarePlanTimer);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -944,4 +930,5 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     /* height: 800px !important; */
-}</style>
+}
+</style>

@@ -95,7 +95,7 @@
                                     <div  v-if="groupedData && groupedData.length > 0" v-for="(group, index) in groupedData" :key="index"  class="col-md-4">
                                         <div>
                                             <label :for="`${ group.name.replace(/[\s/]/g, '_').toLowerCase() }`" class="checkbox checkbox-primary mr-3">
-                                                <input type="checkbox"  v-model="group.checked" :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" class="RRclass" :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />  
+                                                <input type="checkbox" v-model="group.checked" :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" class="RRclass" :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />  
                                                 <span>{{ group.name }}</span>
                                                 <span class="checkmark"></span>
                                             </label>
@@ -149,6 +149,7 @@ import {
     computed,
 } from '../../../commonImports';
 import axios from 'axios';
+import moment from 'moment';
 
 export default {
     props: {
@@ -282,6 +283,7 @@ export default {
                         });
                     });
                     notesRows.value = [];
+                    populateFunction();
                 }
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
@@ -338,18 +340,45 @@ export default {
             try {
                 const response = await fetch(`/ccm/populate-monthly-monitoring-data/${props.patientId}`);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch Patient Preparation - ${response.status} ${response.statusText}`);
+                    throw new Error(`Failed to fetch Patient Call wrap-up - ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-                console.log(data.callwrapup_form.summary[0].notes,"CHECKED!!!!!!!"); 
-
-                if (data.ccm_emr_monthly_summary !== '') {
-                    emr_monthly_summary.value = data.callwrapup_form.emr_monthly_summary[0].notes;
-                    emr_monthly_summary_completed.value = data.callwrapup_form.checklist_data.emr_entry_completed;
-                    
+                const callwrapup_form = data.callwrapup_form;
+                console.log("Patient Call wrap-up data", callwrapup_form); 
+                if (callwrapup_form.emr_monthly_summary != '') {
+                    emr_monthly_summary.value = callwrapup_form.emr_monthly_summary[0].notes;
+                }
+                if (callwrapup_form.checklist_data && callwrapup_form.checklist_data['emr_entry_completed'] != null) {
+                    emr_monthly_summary_completed.value = callwrapup_form.checklist_data.emr_entry_completed;
+                }
+                if (callwrapup_form.summary && (callwrapup_form.summary.length != null || callwrapup_form.summary.length != 0)) {
+                    callwrapup_form.summary.forEach((summary) => {
+                        notesRows.value.push({ date: moment(summary.record_date, 'MM-DD-YYYY').format('YYYY-MM-DD'), text: summary.notes });
+                    });
+                }
+                if (callwrapup_form.additional_services && callwrapup_form.additional_services.length > 0) {
+                    const additionalServicesData = callwrapup_form.additional_services[0].notes.trim();
+                    console.log("data", additionalServicesData);
+                    if (additionalServicesData == 'No Additional Services Provided') {
+                        noAdditionalServicesProvided.value = true;
+                    } else {
+                        const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim()); // Split by ';' and trim each item
+                        console.log("additionalServicesArray", additionalServicesArray);
+                        additionalServicesArray.forEach(service => {
+                                const checkboxName = service.split(':')[0].toLowerCase().replace(/ /g, '_');
+                                console.log("checkboxName", checkboxName);
+                            if (checkboxName != '') {
+                                $(`form[name='callwrapup_form'] #${checkboxName}`).prop('checked', true);
+                                let data = service.split(':')[1].toLowerCase().trim().replace(/ /g, '_');
+                                let itemData = data.split(',').forEach((activity) => { 
+                                    console.log("activity", activity);
+                                });
+                            }
+                        });
+                    }
                 }
             } catch (error) {
-                console.error('Error fetching Patient Preparation:', error);
+                console.error('Error fetching Call wrap-up:', error);
             }
         };
 
@@ -362,7 +391,7 @@ export default {
             try {
                 const response = await axios.get('/ccm/monthly-monitoring-call-wrap-up-activities/activities');
                 activityData.value = response.data;
-                activities.value = response.data;
+                // activities.value = response.data;
                 activityData.value.forEach((activity) => {
                     if (!groups[activity.activity_type]) {
                         groups[activity.activity_type] = { name: activity.activity_type, items: [] };
