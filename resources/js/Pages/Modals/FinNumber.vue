@@ -17,6 +17,7 @@
                     <div class="form-group">
                         <form id="fin_number_form" name="fin_number_form" @submit.prevent="submitFinNumberForm">
                             <input type="hidden" name="patient_id" id="hidden_id" :value="patientId">
+                            <input type="hidden" name="uid" id="uid" :value="patientId">
                             <input type="hidden" name="module_id" id="page_module_id" :value="moduleId">
                             <input type="hidden" name="component_id" id="page_component_id" :value="componentId">
                             <input type="hidden" name="stage_id" :value="stageid" />
@@ -110,12 +111,14 @@ export default {
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
-                    // console.log(formErrors.value,"FROMERROR");
-                } else { 
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
+                } else {
                     console.error('Error submitting form:', error);
                 }
             }
-            //closeModal();
+            closeModal();
         }
 
         onMounted(() => {
