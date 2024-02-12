@@ -550,14 +550,15 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             try {
                 const response = await axios.post('/ccm/care-plan-development-diagnosis-save', formData);
-                if (response && response.status == 200) {
+                if (response && response.status == 200) { debugger;
                     showSuccessAlert.value = true;
                     clearGoals();
                     alert("Saved Successfully");
-                    document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
+                    document.getElementById("care_plan_form").reset();
+                    
 
                     setTimeout(() => {
                         showSuccessAlert.value = false;
@@ -942,6 +943,5 @@ export default {
 
 .modal-content {
     overflow-y: auto !important;
-    height: 800px !important;
-}
-</style>
+    /* height: 800px !important; */
+}</style>
