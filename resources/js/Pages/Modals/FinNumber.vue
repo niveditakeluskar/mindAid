@@ -106,7 +106,10 @@ export default {
                     setTimeout(() => {
                         showAlert.value = false;
                         finnumberTime.value = document.getElementById('page_landing_times').value;
-                    }, 3000);
+                        closeModal();
+                    }, 3000);// Close the modal after 3 seconds (3000 milliseconds)
+                    window.location.reload();
+                    formErrors.value = [];
                 }
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -118,7 +121,6 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            closeModal();
         }
 
         onMounted(() => {
