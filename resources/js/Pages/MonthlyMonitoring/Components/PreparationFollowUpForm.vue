@@ -130,7 +130,7 @@
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
 				<textarea class="form-control" name="med_added_or_discon_notes"
-					:id="`${sectionName}_med_added_or_discon_notes`" V-model="med_added_or_disconNotes"></textarea>
+					:id="`${sectionName}_med_added_or_discon_notes`">{{ med_added_or_disconNotes }}</textarea>
 				<div class="invalid-feedback" v-if="formErrors && formErrors.med_added_or_discon_notes" style="display: block;">{{ formErrors.med_added_or_discon_notes[0] }}</div>
 			</div>
 		</div>

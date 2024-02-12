@@ -144,8 +144,6 @@ export default {
         const landingTime = await fetchLandingTime();
           if (landingTime) {
               time.value = landingTime;
-          } else {
-              console.error('Server time not provided.');
           }
       }else{
         time.value = element.value;
@@ -174,22 +172,9 @@ export default {
 
 
 
-    onMounted(async () => {
-      const element = document.getElementById('page_landing_times');
-if (!element || element.value === null) {
-  const serverTime = window.serverTime;
-  /* const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`; */
-    if (serverTime) {
-        time.value = serverTime;
-    } else {
-        console.error('Server time not provided.');
-    }
-}else{
-  time.value = element.value;
-
-}
-    });
+   /*  onMounted(async () => {
+    
+    }); */
 
     const fetchActiveDeactiveReasons = async () => {
       try {
