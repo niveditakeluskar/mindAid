@@ -261,10 +261,10 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/patient-threshold', 'RCare\Patients\Http\Controllers\PatientController@savePatientThreshold')->name('patient.threshold');
         Route::post('/vateran-service', 'RCare\Patients\Http\Controllers\PatientController@saveVateranService')->name('vateran.service');
 		
-		
+		Route::get('/cm-assignpatient/{practice}/{patient}/cmassignpatient', 'RCare\Patients\Http\Controllers\PatientController@cmassignpatient')->name('cm_assign_patient_list');
         Route::get('/ajax/populatefinnumber/{id}','RCare\Patients\Http\Controllers\PatientController@populateFinNumberData')->name("ajax.populate.Fin.Number");
 		
-		 Route::post('/master-devices', 'RCare\Patients\Http\Controllers\PatientController@savepatientdevices')->name('master.devices');
+		Route::post('/master-devices', 'RCare\Patients\Http\Controllers\PatientController@savepatientdevices')->name('master.devices');
 		Route::get('/patient-module-status/{patient_id}/{module_id}/patient-module-status', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientModuleStatus')->name('patient_module_status');
 
 		Route::get('/patient-module/{patient_id}/patient-module', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientModule')->name('patient_module');
@@ -291,6 +291,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get("/ajax/practice/{practice}/{moduleId}/assign-patient", "RCare\Patients\Http\Controllers\PatientController@practicePatientsAssignDevice")->name("ajax.practice.patient.assign");
 
         Route::get("/ajax/patientlist/{practice}/patientlist", "RCare\Patients\Http\Controllers\PatientController@practicePatientsNew")->name("ajax.practice.patient.new");
+        Route::get("/ajax/assignpatientlist/{practice}/assignpatientlist", "RCare\Patients\Http\Controllers\PatientController@assignpatientlist")->name("ajax.assign.practice.patient.new");
         Route::get("/ajax/practicelist/{emr}/practicelist", "RCare\Patients\Http\Controllers\PatientController@practiceOnEmr")->name("ajax.emrpractice");
            Route::get("/ajax/emrlist/{practiceid}/{patientid}", "RCare\Patients\Http\Controllers\PatientController@EmrOnPractice")->name("ajax.practiceemr");
         Route::get("/ajax/patientlist/{emr}/{practiceId}/{module_id}/patientlist", "RCare\Patients\Http\Controllers\PatientController@patientOnEmr")->name("ajax.emrpatient");

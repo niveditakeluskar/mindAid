@@ -119,6 +119,7 @@
                     @include('Theme::layouts_2.previous-month-notes')
                 <?php }?>
 					@include('Theme::layouts_2.to-list-customizer') 
+                    @include('Theme::layouts_2.cm-patient-assign') 
 			
              
         <!-- </div> -->
@@ -1034,7 +1035,6 @@
                             data: {darkmode: ch}
                         });
                 });
-                
 				
 				$("[name='partner_id']").on("change", function () {
                         //alert("working");
@@ -1051,7 +1051,9 @@
                 
 				setTimeout(function () {
 					document.getElementById("customizer_id").style.display = "block";
+					// document.getElementById("customizer_id2").style.display = "block";
 				}, 3000);
+
 				
 				CKEDITOR.replace( 'email_title_area');
                 $('.select2').select2();

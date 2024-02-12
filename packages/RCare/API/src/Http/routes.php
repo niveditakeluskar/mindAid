@@ -1,5 +1,8 @@
 <?php
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use RCare\API\Http\Controllers\ApiUserController;
+use RCare\API\Http\Controllers\VoipWebHookController;
 /*
 |--------------------------------------------------------------------------
 | RCare / API

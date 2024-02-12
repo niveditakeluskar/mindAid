@@ -605,35 +605,37 @@ class CommonFunctionController extends Controller
     //Check if this month’s data exists for PatientVitalsData; If not, copy from last month
     public static function checkPatientVitalsDataExistForCurrentMonthOrCopyFromLastMonth($patient_id)
     {
+       
         $check_exist_patient_vital  = PatientVitalsData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if (isset($check_exist_patient_vital) && ($check_exist_patient_vital == false || $check_exist_patient_vital == null || $check_exist_patient_vital == "" )) {
-        // if($check_exist_patient_vital){
-            // $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
-            // $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
-            // $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
-            /*$user_id = session()->get('userid');
+         //if($check_exist_patient_vital){
+             $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
+             $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
+             $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
+            $user_id = session()->get('userid');
             $current_timestamp = Carbon::now();
             $lastMonthPatientVitalsDataQuery = 'INSERT INTO patients.patient_vitals ( "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", "created_by", "created_at", "updated_at" )
-            ( SELECT \''.$current_timestamp.'\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
-            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);*/
-            // $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->get()->last();
-            // if($lastMonthPatientVitalsData) {
-            //     $insert_vital   = array(
-            //         'patient_id'    => $patient_id,
-            //         'uid'           => $patient_id,
-            //         'rec_date'      => Carbon::now(),
-            //         'height'        => $lastMonthPatientVitalsData["height"],
-            //         'weight'        => $lastMonthPatientVitalsData["weight"],
-            //         'bmi'           => $lastMonthPatientVitalsData["bmi"],
-            //         'bp'            => $lastMonthPatientVitalsData["bp"],
-            //         'diastolic'     => $lastMonthPatientVitalsData["diastolic"],
-            //         'o2'            => $lastMonthPatientVitalsData["o2"],
-            //         'pulse_rate'    => $lastMonthPatientVitalsData["pulse_rate"],
-            //         'other_vitals'  => $lastMonthPatientVitalsData["other_vitals"],
-            //         'created_by'    => session()->get('userid')
-            //     );
-            //     PatientVitalsData::create($insert_vital);
-            // }
+            ( SELECT "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
+            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);
+            /* $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->latest()->first();
+             //dd($lastMonthPatientVitalsData);
+             if($lastMonthPatientVitalsData) {
+                 $insert_vital   = array(
+                     'patient_id'    => $patient_id,
+                     'uid'           => $patient_id,
+                     'rec_date'      => $lastMonthPatientVitalsData["rec_date"],//Carbon::now(),
+                     'height'        => $lastMonthPatientVitalsData["height"],
+                     'weight'        => $lastMonthPatientVitalsData["weight"],
+                     'bmi'           => $lastMonthPatientVitalsData["bmi"],
+                     'bp'            => $lastMonthPatientVitalsData["bp"],
+                     'diastolic'     => $lastMonthPatientVitalsData["diastolic"],
+                     'o2'            => $lastMonthPatientVitalsData["o2"],
+                     'pulse_rate'    => $lastMonthPatientVitalsData["pulse_rate"],
+                     'other_vitals'  => $lastMonthPatientVitalsData["other_vitals"],
+                     'created_by'    => session()->get('userid')
+                 );
+                 PatientVitalsData::create($insert_vital);
+             }*/
         }
     }
 

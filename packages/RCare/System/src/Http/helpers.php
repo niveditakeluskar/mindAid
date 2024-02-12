@@ -787,6 +787,7 @@ function ApiECGCredeintials()
   return  $data=RCare\API\Models\PartnerCredentials::where('status','1')->get();
 }
 
+
 function getNetTime($start_time, $end_time, $flag) {
     /*$start          = strtotime($start_time); 
     $end            = strtotime($end_time); 
@@ -818,7 +819,6 @@ function getNetTime($start_time, $end_time, $flag) {
         return $net_time;
     }
 }
-
 
 function assingSessionUser($patientid){ 
     $module_name = \Request::segment(1);

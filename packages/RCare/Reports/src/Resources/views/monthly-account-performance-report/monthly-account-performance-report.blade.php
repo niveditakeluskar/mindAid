@@ -203,6 +203,7 @@
             // util.getToDoListData(0, {{getPageModuleName()}});
             getPatientData(); 
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0, 0);
  
             function getMonth(date) {
             var month = date.getMonth() + 1;

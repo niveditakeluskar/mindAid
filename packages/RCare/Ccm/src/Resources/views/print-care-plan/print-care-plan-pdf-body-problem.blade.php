@@ -377,7 +377,7 @@
 			<?php $i=0;?>
 			@foreach ($patient_vitals as $key => $rec)
 			<?php $i++;?>
-				@if(!empty($rec->weight && $rec->bmi && $rec->bp && $rec->o2 && $rec->height && $rec->pulse_rate))
+				@if(!empty($rec->weight || $rec->bmi || $rec->bp || $rec->o2 || $rec->height || $rec->pulse_rate))
 					<?php 
 					( sizeof($patient_vitals) == $i) ? $style_border="" : $style_border="border-bottom:1px dashed #dee2e6; margin-bottom:20px;";
 					?>

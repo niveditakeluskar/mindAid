@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'rcare_users',
     ],
 
@@ -42,11 +42,13 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
-            'provider' => 'rcare_users',
+            'driver' => 'jwt',
+            'provider' => 'api_users',
             'hash' => false,
         ],
-
+		
+		
+		
         'rcare_user' => [
             'driver' => 'session',
             'provider' => 'rcare_users',
@@ -85,12 +87,16 @@ return [
             'driver' => 'eloquent', 
             'model' => RCare\Org\OrgPackages\Users\src\Models\Users::class,
         ],
+		'api_users' => [
+            'driver' => 'eloquent', 
+            'model' => RCare\API\Models\Partner::class,
+        ],
 
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+         'users' => [
+             'driver' => 'database',
+             'table' => 'ren_core.partners',
+         ],
     ],
 
     

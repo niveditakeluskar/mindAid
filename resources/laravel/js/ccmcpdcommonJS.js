@@ -334,6 +334,7 @@ $('#add_patient_devices').click(function () { //alert("add_patient_devices")
 });
 
 
+
 $('.noallergiescheck').click(function () {
   var form = $(this).closest('form');
   var formname = $(form).attr('name');

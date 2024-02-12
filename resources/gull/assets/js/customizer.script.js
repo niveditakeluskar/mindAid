@@ -4,6 +4,7 @@ $(document).ready(function () {
     // var $customizer = $(".customizer");
     var $customizer = $("#customizer_id")
     var $customizer1 = $("#customizer_id1")
+    var $customizer2 = $("#customizer_id2")
     var $patientCaretool = $("#patientCaretool")
     // var $current_month_id = $("#current_month_id")
     var $previous_month_id = $("#previous_month_id")
@@ -11,6 +12,9 @@ $(document).ready(function () {
     var $sidebarColor = $(".sidebar-colors a.color");
     setTimeout(function () {
         $("#customizer_id1").show();
+    }, 2000);
+    setTimeout(function () {
+        $("#customizer_id2").show();
     }, 2000);
     setTimeout(function () {
         $("#previous_month_id").show();
@@ -42,9 +46,19 @@ $(document).ready(function () {
     //     $customizer.toggleClass("open");
     // });
 
+    $("#customizer_id2 .handle").on('click', function (e) {
+        $customizer2.toggleClass('open');
+        $customizer1.removeClass("open");
+        $customizer.removeClass("open");
+        //$patientCaretool.removeClass("open");
+        $previous_month_id.removeClass("open");
+        $patientCareplan_id.removeClass("open");
+    });
+
     $("#customizer_id1 .handle").on('click', function (e) {
         $customizer1.toggleClass('open');
         $customizer.removeClass("open");
+        $customizer2.removeClass("open");
         //$patientCaretool.removeClass("open");
         $previous_month_id.removeClass("open");
         $patientCareplan_id.removeClass("open");
@@ -57,6 +71,7 @@ $(document).ready(function () {
         $previous_month_id.removeClass("open");
         $patientCareplan_id.removeClass("open");
         $customizer1.removeClass('open');
+        $customizer2.removeClass("open");
     });
     /* $("#patientCaretool").hover(function (e) {
          $patientCaretool.addClass("open");
@@ -75,6 +90,7 @@ $(document).ready(function () {
         $customizer.removeClass("open");
         $patientCareplan_id.removeClass("open");
         $customizer1.removeClass('open');
+        $customizer2.removeClass("open");
     });
 
     $("#patientCareplan_id .handle").on('click', function (e) {
@@ -83,6 +99,7 @@ $(document).ready(function () {
         //$patientCaretool.removeClass("open");
         $customizer.removeClass("open");
         $customizer1.removeClass('open');
+        $customizer2.removeClass("open");
 
     });
     /*
