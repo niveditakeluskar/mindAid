@@ -95,7 +95,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id
                       where plr.lab_date is not null and plr.lab_test_id is not null and plr.patient_id=".$patientId."
-                      and plr.created_at::timestamp between '".$dateS."' and '".$dateE."' 
+                      and plr.lab_date::timestamp between '".$dateS."' and '".$dateE."' 
                       group  by plr.lab_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes
                       union 
                       select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as  description,plr.rec_date ,(case when rlt.description='COVID-19' then STRING_AGG (
@@ -107,7 +107,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id and rltpr.status=1
                       where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =".$patientId."
-                      and plr.created_at::timestamp between '".$dateS."' and '".$dateE."' 
+                      and plr.lab_date::timestamp between '".$dateS."' and '".$dateE."' 
                       group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
         $data = DB::select( DB::raw($qry) );
         return Datatables::of($data)
@@ -132,7 +132,7 @@ class CarePlanDevelopmentController extends Controller
 		$qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date
             from patients.patient_imaging
             where  patient_id =".$patientId."
-            and created_at::timestamp between '".$dateS."' and '".$dateE."' 
+            and imaging_date::timestamp between '".$dateS."' and '".$dateE."' 
             group by imaging_details,imaging_date order by updated_at desc";
             $data = DB::select( DB::raw($qry) );
             return Datatables::of($data)
@@ -154,7 +154,7 @@ class CarePlanDevelopmentController extends Controller
 		$qry = "select distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
             from patients.patient_health_data
             where  patient_id =".$patientId."
-            and created_at::timestamp between '".$dateS."' and '".$dateE."' 
+            and health_date::timestamp between '".$dateS."' and '".$dateE."' 
             group by health_data,health_date order by updated_at desc";
             $data = DB::select( DB::raw($qry) );
             return Datatables::of($data)
