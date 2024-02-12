@@ -23,7 +23,7 @@ use RCare\API\Http\Controllers\VoipWebHookController;
                 return view('API::device-order');
         })->name('order.form');
 		
-		Route::post('voip_webhook', [VoipWebHookController::class, 'voipwebhookHandler']);
+		Route::post('voip_webhook', [VoipWebHookController::class, 'voipwebhookHandler']);        
         Route::get('/test', 'RCare\API\Http\Controllers\APIController@test')->name('test');
         Route::post('/data_from_device', 'RCare\API\Http\Controllers\MioDeviceController@test_mio_webhook_observation')->name('test_mio_webhook_data_from_device'); 
         Route::post('/data_from_device/{id}', 'RCare\API\Http\Controllers\MioDeviceController@mio_webhook_observation')->name('mio_webhook_data_from_device'); 

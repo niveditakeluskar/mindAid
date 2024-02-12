@@ -32,13 +32,15 @@ class RpmEnrolledReportController extends Controller
 
     public function RpmEnrolledReportSearch(Request $request)
     {     
-    //    dd($request->all());
+        $monthly = date('Y-m');
+        //date('2022-05'); 
+        // $year = date('Y', strtotime($monthly));
+        // $month = date('m', strtotime($monthly));
         $patient = sanitizeVariable($request->route('patient'));
         $practices = sanitizeVariable($request->route('practices'));
         $shipping_status = sanitizeVariable($request->route('shipping_status'));
         $fromdate=sanitizeVariable($request->route('fromdate'));
         $todate=sanitizeVariable($request->route('todate'));
-        
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
      
@@ -46,7 +48,7 @@ class RpmEnrolledReportController extends Controller
          $p;
          $pr;
 
-     
+        
     
         if( $practices!='null')
         {
@@ -118,9 +120,6 @@ class RpmEnrolledReportController extends Controller
            
            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
-
-        
-
         // dd($query);
         $data = DB::select( DB::raw($query) ); 
         return Datatables::of($data) 
@@ -134,15 +133,14 @@ class RpmEnrolledReportController extends Controller
                 return  $btn1;
 
             }) 
-            ->addColumn('action', function($row){ 
+            ->addColumn('action', function($row) use ($monthly){ 
                 $btn='';
                 $cm='';
-                $cm = "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail' onclick ='shippingdetail(".$row->pid.")'>Shipping Details";
-                $cm .="</button>";
+                $cm .= "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail'onclick ='shippingdetail(".$row->pid.")'>Shipping Details</button> <a href='/rpm/timeline-daily-activity/".$row->pid."/timelinedailyactivity' target='_blank' data-id='".$row->pid."' id='timeline' class='btn btn-primary mt-4' type='button'>RPM Timeline</a>";
                 $btn .= $cm;   
                 return  $btn;
-            }) 
-            ->rawColumns(['device','action'])   
+            })
+            ->rawColumns(['device','action'])    
             ->make(true);       
        
     }

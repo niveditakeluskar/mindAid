@@ -3243,8 +3243,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         ->whereYear('created_at', date('Y')) 
                         ->update(['status'=>0]);
                  CallWrap::create($additional_services_data);  
-                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, 
-                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                  if($additionalservices6!=''){ 
                     $form_name= $form_name.'_additional_services'; 
                     $check =  PatientTimeRecords::where('patient_id',$patient_id)
@@ -3254,11 +3253,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         // print_r($start_time .'====='. $end_time); die;
                         $start_time = "00:00:00";
                         $time2 = "00:04:00"; 
-                        $st = strtotime("00-00-0000 00:00:00");
-                        $et = strtotime("00-00-0000 00:04:00");
+                        $st = strtotime("01-01-2000 00:00:00");
+                        $et = strtotime("01-01-2000 00:04:00");
                         $form_start_time1 =  date("m-d-Y H:i:s", $st);
                         $form_save_time1 =  date("m-d-Y H:i:s", $et);
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
+						//echo "here";
                         $end_time = date("H:i:s",strtotime($start_time)+$secs); 
                         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
                         $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);

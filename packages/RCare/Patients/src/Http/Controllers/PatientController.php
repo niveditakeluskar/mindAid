@@ -586,6 +586,7 @@ class PatientController extends Controller
     //created by Priya for deactivation patient 
     public function savePatientActiveDeactive(ActiveDeactiveAddRequest $request) 
     {	
+    //     dd($request);
         $patient_id     = sanitizeVariable($request->patient_id);
         if($patient_id=='') {
             $patient_id = sanitizeVariable($request->patientid);
@@ -610,7 +611,8 @@ class PatientController extends Controller
         $deactivation_drpdwn = sanitizeVariable($request->deactivation_drpdwn); 
         // dd($select_module); 
         $start_time     = sanitizeVariable($request->start_time);//echo "<br>";
-        $end_time       = sanitizeVariable($request->end_time);    
+        $end_time       = sanitizeVariable($request->end_time); 
+
         $component_id   = sanitizeVariable($request->component_id);
         $stage_id       = 0;
         $step_id        = 0;
@@ -619,6 +621,10 @@ class PatientController extends Controller
         $patient_status = sanitizeVariable($request->status);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        if($form_start_time == null){
+            $form_start_time = sanitizeVariable($request->fromstarttime);
+        }
+        // dd($form_start_time);
         $activedataInsert   = array(            
             'patient_id'        => $patient_id,
             'from_date'         => $fromdate, 
@@ -629,7 +635,7 @@ class PatientController extends Controller
             'created_by'        => session()->get('userid'),
             'updated_by'        => session()->get('userid')                     
         );
-		
+		// dd($patient_status);
         if($patient_status == '3'){			
             $status_value ='Deceased';
             $service_data =array(
@@ -657,7 +663,9 @@ class PatientController extends Controller
         }else{ 
 			
             $check_patient_status_from_master = Patients::where('id',$patient_id)->where('status',3)->exists();
+            // dd($check_patient_status_from_master);
             $total_services = PatientServices::where('patient_id', $patient_id)->distinct()->pluck('module_id')->whereNotIn('status',[2,3])->count();
+            // dd($total_services);
                 if($patient_status!='' && $patient_status=='1'){
                     $status_value = 'Active';
                     $check_given_services = 0;
@@ -671,6 +679,7 @@ class PatientController extends Controller
                     // $status_value ='Deceased';
                 }    
             $service_count  = $total_services - $check_given_services; 
+            // dd($service_count);
             if($service_count == 0){ 
                 $depend_patient_status = 2;
                 $depend_status_value= 'Deactive'; 
@@ -728,12 +737,13 @@ class PatientController extends Controller
                 Patients::where('id',$patient_id)->update($patient_data); 
             }else{ 
                 // echo "string";die;
+                // dd($patient_data);
                 PatientServices::where('patient_id',$patient_id)->where('module_id',$select_module)->update($data); 
                 PatientActiveDeactiveHistory::create($activedataInsert); 
                 Patients::where('id',$patient_id)->update($patient_data); 
+                
             }
-        }//end else
-
+        }
         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         return response(['form_start_time' =>$form_save_time]);
     }

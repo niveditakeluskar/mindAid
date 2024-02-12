@@ -31,6 +31,7 @@ class VoipWebHookController extends Controller
 		$headers = $request->header('Authorization');
 		//dd($headers);
 		$jwttoken = substr($headers, 7);
+		//dd($jwttoken);
 
 		$checkTokenExist = Partner::tokenExists($jwttoken);
 		if ($checkTokenExist == true) {
