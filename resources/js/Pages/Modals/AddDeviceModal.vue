@@ -147,7 +147,7 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     alert("Saved Successfully");
-                /*     updateTimer(props.patientId, '1', props.moduleId); */
+                    updateTimer(props.patientId, '1', props.moduleId); 
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("patient_add_device_form").reset();
                    setTimeout(() => {
