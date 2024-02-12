@@ -34,30 +34,30 @@ import 'jspdf-autotable';
 
 export default {
     props: {
-    gridOptions: Object,
-    defaultColDef: Object,
-    columnDefs: Array,
-    rowData: Array,
-    popupParent: Object,
-    onGridReady: Function,
-  },
+        gridOptions: Object,
+        defaultColDef: Object,
+        columnDefs: Array,
+        rowData: Array,
+        popupParent: Object,
+        onGridReady: Function,
+    },
     components: {
         AgGridVue,
     },
     setup(props) {
         const paginationPageSizeSelector = ref([10, 20, 30, 40, 50, 100]);
         const filterText = ref('');
-         const popupParent = ref(null);
+        const popupParent = ref(null);
         const gridApi = ref(null);
         const gridColumnApi = ref(null);
         const headerHeight = ref(null);
-  
+
 
         onBeforeMount(() => {
             headerHeight.value = 70;
             if (!props.popupParent) {
-        props.popupParent = document.body;
-      }
+                props.popupParent = document.body;
+            }
         });
 
 
@@ -87,8 +87,8 @@ export default {
             gridApi.value.showLoadingOverlay();
             gridColumnApi.value = params.columnApi;
             paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-          /*   params.api.sizeColumnsToFit();  */
-            
+            /*   params.api.sizeColumnsToFit();  */
+
             // Pass gridApi to the parent component
             if (props.onGridReady) {
                 props.onGridReady(params);
@@ -97,11 +97,11 @@ export default {
 
         const defaultColDef = ref({
             sortable: true,
-			editable: false,
+            editable: false,
             resizable: false,
-       wrapText: true,
-      autoHeight: true,
-      flex:1
+            wrapText: true,
+            autoHeight: true,
+            flex: 1
         });
 
         const gridOptions = ref({
@@ -139,81 +139,83 @@ export default {
         };
 
         function sanitizeDataForPDFExport(data) {
-    if (typeof data === 'string') {
-        // Check if it's a date string and convert it to a Date object
-        const dateObject = new Date(data);
-        if (!isNaN(dateObject.getTime())) {
-            // If it's a valid date, format it as MM-DD-YYYY
-            return dateObject.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            });
-        }
+            if (typeof data === 'string') {
+                // Check if it's a date string and convert it to a Date object
+                const dateObject = new Date(data);
+                if (!isNaN(dateObject.getTime())) {
+                    // If it's a valid date, format it as MM-DD-YYYY
+                    return dateObject.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                    });
+                }
 
-        // Check for complex HTML string and handle it
-        const htmlElement = document.createElement('div');
-        htmlElement.innerHTML = data;
+                // Check for complex HTML string and handle it
+                const htmlElement = document.createElement('div');
+                htmlElement.innerHTML = data;
 
-        if (htmlElement.children.length > 0) {
-            // If it's an HTML element, convert to text
-            return htmlElement.textContent || htmlElement.innerText || '';
-        }
+                if (htmlElement.children.length > 0) {
+                    // If it's an HTML element, convert to text
+                    return htmlElement.textContent || htmlElement.innerText || '';
+                }
 
-        // If it's a regular string, remove HTML tags
-        return data.replace(/<[^>]*>?/gm, '');
-    } else if (data instanceof Date) {
-        // Format date as MM-DD-YYYY if it's a valid Date object
-        return data.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-        });
-    } else if (typeof data === 'object' && data !== null) {
-        if ('href' in data) {
-            // Handle case where data is an object with an 'href' property
-            return sanitizeDataForPDFExport(data.href);
-        }
-    }
+                // If it's a regular string, remove HTML tags
+                return data.replace(/<[^>]*>?/gm, '');
+            } else if (data instanceof Date) {
+                // Format date as MM-DD-YYYY if it's a valid Date object
+                return data.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                });
+            } else if (typeof data === 'object' && data !== null) {
+                if ('href' in data) {
+                    // Handle case where data is an object with an 'href' property
+                    return sanitizeDataForPDFExport(data.href);
+                }
+            }
 
-    // Handle other cases
-    return data ? data.toString() : '';
-};
+            // Handle other cases
+            return data ? data.toString() : '';
+        };
 
 
 
 
         function exportAsPDF() {
-    const doc = new jsPDF();
+            const doc = new jsPDF();
+            // Extracting column headers
+            const columns = props.columnDefs.map((columnDef) => columnDef.headerName);
+            // Extracting row data in a format compatible with autoTable
+            const rows = props.rowData.map((row, rowIndex) => {
+                // Generating an array containing values for each column in the row
+                const rowDataArray = props.columnDefs.map((columnDef, colIndex) => {
+                    const col = columnDef.field; // Assuming there's a 'field' property in each column definition
+                    if (colIndex === 0) {
+                        // For the first column, return the rowIndex + 1
+                        return rowIndex + 1;
+                    }else if (col && col.includes(' ')) {
+                // If the field contains spaces, assume it's a concatenated field
+                const fieldNames = col.split(' ');
+                return fieldNames.map(fieldName => row[fieldName]).join(' ');
+            }  else {
+                        // For other columns, sanitize the data and return
+                        return sanitizeDataForPDFExport(row[col]);
+                    }
+                });
 
-    // Extracting column headers
-    const columns = props.columnDefs.map((columnDef) => columnDef.headerName);
-    
-    // Extracting row data in a format compatible with autoTable
-    const rows = props.rowData.map((row) => {
-        // Generating an array containing values for each column in the row
-        const rowDataArray = props.columnDefs.map((columnDef) => {
-            const col = columnDef.field; // Assuming there's a 'field' property in each column definition
-            switch (col) {
-                case 'Sr. No.':
-                return index + 1;
-                // Add more cases for specific columns as needed
-                default:
-                    // For other columns, sanitize the data and return
-                    return sanitizeDataForPDFExport(row[col]);
-            }
-        });
+                return rowDataArray;
+            });
 
-        return rowDataArray;
-    });
+            doc.autoTable({
+                head: [columns],
+                body: rows,
+            });
 
-    doc.autoTable({
-        head: [columns],
-        body: rows,
-    });
+            doc.save('Renova_Healthcare.pdf');
+        }
 
-    doc.save('Renova_Healthcare.pdf');
-}
         const onFilterTextBoxChanged = () => {
             if (gridApi.value) {
                 gridApi.value.setGridOption(
@@ -267,7 +269,7 @@ export default {
     --ag-font-size: 0.813rem;
     --ag-font-family: Ubuntu, sans-serif;
     --ag-font-color: #3f829a;
-    
+
     --ag-grid-size: 10px;
     --ag-list-item-height: 20px;
 
@@ -275,10 +277,10 @@ export default {
 
 .ag-theme-quartz .ag-header-cell,
 .ag-theme-quartz-dark .ag-header-cell {
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  line-height: 1.6;
-  width: 120px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    line-height: 1.6;
+    width: 120px;
 }
 
 /* Borders for regular cells */
@@ -292,10 +294,13 @@ export default {
 }
 
 .ag-cell-value {
-  line-height: 20px !important;
-  word-break: normal; /* prevent words from breaking */
-  padding-top: 5px; /* space top */
-  padding-bottom: 5px; /* space bottom */
+    line-height: 20px !important;
+    word-break: normal;
+    /* prevent words from breaking */
+    padding-top: 5px;
+    /* space top */
+    padding-bottom: 5px;
+    /* space bottom */
 }
 
 /* Borders for rows */
@@ -342,51 +347,51 @@ export default {
 
 
 .search-container {
-	display: inline-block;
-	position: relative;
-	border-radius: 50px;
-	/* To create an oval shape, use a large value for border-radius */
-	overflow: hidden;
-	width: 200px;
-	/* Adjust width as needed */
+    display: inline-block;
+    position: relative;
+    border-radius: 50px;
+    /* To create an oval shape, use a large value for border-radius */
+    overflow: hidden;
+    width: 200px;
+    /* Adjust width as needed */
 }
 
 .oval-search-container {
-	position: relative;
-	display: inline-block;
-	/*  border: 1px solid #ccc; */
-	/* Adding a visible border */
-	/* border-radius: 20px; */
-	/* Adjust border-radius for a rounded shape */
-	/* width: 200px; */
-	/* Adjust width as needed */
-	margin-right: 10px;
-	/* Adjust margin between the search box and icons */
+    position: relative;
+    display: inline-block;
+    /*  border: 1px solid #ccc; */
+    /* Adding a visible border */
+    /* border-radius: 20px; */
+    /* Adjust border-radius for a rounded shape */
+    /* width: 200px; */
+    /* Adjust width as needed */
+    margin-right: 10px;
+    /* Adjust margin between the search box and icons */
 }
 
 .oval-search-container input[type="text"] {
-	width: calc(100% - 0px);
-	/* Adjust the input width considering the icon */
-	/*  border: none; */
-	outline: none;
-	border-radius: 10px;
+    width: calc(100% - 0px);
+    /* Adjust the input width considering the icon */
+    /*  border: none; */
+    outline: none;
+    border-radius: 10px;
     border-width: 1px;
 }
 
 .search-icon {
-	position: absolute;
-	top: 50%;
-	right: 1px;
-	transform: translateY(-50%);
-	width: 20px;
-	/* Adjust icon size as needed */
-	height: auto;
+    position: absolute;
+    top: 50%;
+    right: 1px;
+    transform: translateY(-50%);
+    width: 20px;
+    /* Adjust icon size as needed */
+    height: auto;
 }
 
 /* Align the export icons properly */
 .ml-auto img {
-	margin-right: 5px;
-	/* Adjust margin between the export icons */
+    margin-right: 5px;
+    /* Adjust margin between the export icons */
 }
 </style>
   
