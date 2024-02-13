@@ -4,8 +4,7 @@ namespace RCare\API\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+
 use RCare\API\Models\VoipWebhook;
 use RCare\API\Models\Partner;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,12 +17,7 @@ class VoipWebHookController extends Controller
 	 * @return json
 	 */
 
-	/*protected $user;
- 
-    public function __construct()
-    {
-        $this->user = JWTAuth::parseToken()->authenticate();
-    }*/
+	
 
 
 	public function voipwebhookHandler(Request $request)
