@@ -118,7 +118,7 @@
 				</div>
 
 				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId"
-					:stageId="followupStageId" />
+					:stageId="followupStageId" :patientId="patientId"/>
 
 				<hr>
 				<div class="col-md-12">

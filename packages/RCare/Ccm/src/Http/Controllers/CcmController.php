@@ -2448,6 +2448,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 }
             }
             foreach ($steps as $step) {
+               
                 $new_stage_id          = $step->stage_id;
                 $steps_id              = $step->id;
                 $step_name             = $step->description;
@@ -2460,6 +2461,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $template_id           = $request_step_data['template_id'];
                 $template_type         = $request_step_data['template_type_id'];
                 $current_monthly_notes = $request_step_data['current_monthly_notes'];
+                if (isset($request_step_data['question'])) {
                 $data = array(
                     'contact_via'   => 'questionnaire',
                     'template_type' => $template_type,
@@ -2519,6 +2521,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     CallWrap::create($notes1);
                 }
                 $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
+            }
                 //$record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
             }
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
@@ -2526,8 +2529,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             return response(['form_start_time' => $form_save_time]);
         } catch (\Exception $ex) {
             DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+            //return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+       }
     }
 
 

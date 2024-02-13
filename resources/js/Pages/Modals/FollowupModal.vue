@@ -11,8 +11,8 @@
                 <div id="followUpAlert"></div>
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
              
-                    <input type="hidden" name="patient_id" id="patientid" />
-                    <input type="hidden" name="uid" id="patientid">
+                    <input type="hidden" name="patient_id" id="patientid" :value=" patientId"/>
+                    <input type="hidden" name="uid" id="patientid" :value="patientId">
                     <input type="hidden" name="start_time" value="00:00:00">
                     <input type="hidden" name="end_time" value="00:00:00">
                     <input type="hidden" name="module_id" :value="moduleId" />
@@ -47,7 +47,8 @@ export default {
     props: {
         moduleId: Number,
         componentId: Number,
-        stageId:Number
+        stageId:Number,
+        patientId: Number
     },
     setup(props) {
         let followupTime = ref(null);
@@ -75,7 +76,7 @@ const formatDate = (dateString) => {
 
         const openModal = (param1, param2) => {
             isOpen.value = true;
-
+            followupTime.value = document.getElementById('page_landing_times').value;
             if ($.isNumeric(param1) == true) {
                 let patientId = param2;
                 axios({
