@@ -3071,15 +3071,13 @@ var getFollowupListData = function (patientId, moduleId) {
     });
 };
 
-var getToDoListData = function (patientId, moduleId) {
+var getToDoListData = function (patientId, moduleId) { 
     axios({
         method: "GET",
         url: `/task-management/patient-to-do/${patientId}/${moduleId}/list`,
-    }).then(function (response) {
-
+    }).then(function (response) { 
         // console.log(response.data);
         $("#toDoList").html(response.data);
-        //alert();
         $('.badge').html($('#count_todo').val());
     }).catch(function (error) {
         console.error(error, error.response);
@@ -3099,7 +3097,7 @@ var getAssignPatientListData = function (practice,patient) { //debugger;
         // console.log(response.data);
         $("#patientassignlist").html(response.data);
         //alert();
-        $('.badge').html($('#count_patient').val());
+        // $('.badge').html($('#count_patient').val());
     }).catch(function (error) {
         console.error(error, error.response);
     });

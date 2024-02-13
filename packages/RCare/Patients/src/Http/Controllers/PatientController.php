@@ -108,7 +108,7 @@ class PatientController extends Controller
              $update = Patients::where('id',$patient_id)->where('uid',$id)->update($data);
         }
 
-        $check_exist_for_month         = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+        $check_exist_for_month  = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
         if ($check_exist_for_month == true) {
             $patientfin['updated_at']= Carbon::now();
             $patientfin['updated_by']= session()->get('userid');
