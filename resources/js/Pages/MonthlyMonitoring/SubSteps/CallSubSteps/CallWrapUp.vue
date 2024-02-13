@@ -281,6 +281,7 @@ export default {
                     });
                     notesRows.value = [];
                     populateFunction();
+                    this.$emit('form-submitted');
                 }
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {

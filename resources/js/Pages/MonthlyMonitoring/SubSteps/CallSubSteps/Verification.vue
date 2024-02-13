@@ -127,6 +127,7 @@ export default {
 					setTimeout(() => {
 						this.showAlert = false;
 					}, 3000);
+					this.$emit('form-submitted');
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 422) {
