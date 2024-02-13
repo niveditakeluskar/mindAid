@@ -23,7 +23,6 @@
                     <!-- Your selectworklistpractices component -->
                     <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
-                      <option value="" selected>All Practices</option>
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                         {{ practice.name }}
                       </option>
@@ -197,17 +196,17 @@ export default {
       { headerName: 'EMR No.', field: 'pppracticeemr'},
       {
     headerName: 'Patient Name',
-    field: 'pfname',
+    field: 'full_name',
     cellRenderer: function (params) {
         const row = params.data;
-        const fullName = row && row.plname ? row.pfname + ' ' + row.plname : 'N/A';
+        const fullName = [row.pfname, row.pmname, row.plname].filter(Boolean).join(' '); // Concatenate non-empty parts
         const upperCaseFullName = fullName.toUpperCase();
-
         return `<div style="display: flex; align-items: center;">
                     <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
                     <span style="margin-left: 4px;">${upperCaseFullName}</span>
                 </div>`;
-    },    flex: 2
+    },
+    flex: 2
 },
       {
         headerName: 'DOB',
@@ -215,7 +214,6 @@ export default {
         cellRenderer: function (params) {
           const date = params.value; // Assuming pdob contains a date string
           if (!date) return null;
-
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
@@ -231,12 +229,13 @@ export default {
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
+        if (!date) return null;
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
             }).replace(/\//g, '-'); // Replace slashes with dashes
-            return formattedDate;
+          return formattedDate; // Returns the date in MM-DD-YYYY format
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -245,6 +244,7 @@ export default {
         headerName: 'Patient Status',
         field: 'activedeactive'
         , cellRenderer: (params) => {
+
           const link = document.createElement('a');
           const icon = document.createElement('i');
          
@@ -302,7 +302,7 @@ export default {
         }
 
         if(!practiceId){
-          practiceId.value = null;
+          practiceId = null;
         }
         
         const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
@@ -418,18 +418,18 @@ export default {
           // If patient_id is empty or null, assign null to it
           patient_id = null;
         }
-        if (!practice_id) {
-          // If patient_id is empty or null, assign null to it
-          practice_id = null;
-        }
       // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
       }
       const data = await response.json();
-      
-      passRowData.value = data.data || [];
+      const processedData = data.data.map(row => ({
+    ...row,
+    full_name: [row.pfname, row.pmname, row.plname].filter(Boolean).join(' ')
+}));
+
+      passRowData.value = processedData || [];
       isLoading.value = false;
   } catch (error) {
     console.error('Error fetching patient list:', error);

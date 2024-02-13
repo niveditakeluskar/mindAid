@@ -44,14 +44,10 @@
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
                                     <label class="col-md-12">EMR Monthly Summary
-                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" @blur="saveEMRNotes"></textarea>
-                                        <!-- onfocusout="saveEMR()" -->
+                                        <textarea  class="form-control" cols="90"  name="emr_monthly_summary[]" id="callwrap_up_emr_monthly_summary" 
+                                        @blur="saveEMRNotes"  v-model="emr_monthly_summary" ></textarea>
                                     </label>
-                                    <div class="invalid-feedback">
-                                        <!-- <div v-if="formErrors.value && formErrors.value.emr_monthly_summary">
-                                            {{ formErrors.value.emr_monthly_summary[0] }}
-                                        </div> -->
-                                    </div>
+                                    <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.0']" style="display: block;">{{ formErrors['emr_monthly_summary.0'][0] }}</div>
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-bottom: 40px;">
@@ -67,11 +63,11 @@
                                     <div class="additionalfeilds row" style="margin-left: 0.05rem !important; margin-bottom: 0.5rem;" v-for="(notesRow, index) in notesRows" :key="index">
                                         <div class="col-md-4">
                                             <input type="date" v-model="notesRow.date" name="emr_monthly_summary_date[]" class="form-control emr_monthly_summary_date" :id="`emr_monthly_summary_date_${index}`" />
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary_date.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary_date.' + index][0] }}</div>
                                         </div>
                                         <div class="col-md-6">
                                             <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90" name="emr_monthly_summary[]" :id="`emr_monthly_summary_${index}`"  @blur="saveEMRNotes"></textarea>
-                                            <div class="invalid-feedback" v-if="formErrors['emr_monthly_summary.' + index]" style="display: block;">{{ formErrors['emr_monthly_summary.' + index][0] }}</div>
+                                            <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.' + (index + 1)]" style="display: block;">{{ formErrors['emr_monthly_summary.' + (index + 1)][0] }}</div>
                                         </div>
                                         <div class="col-md-1" style="top: 15px;">
                                             <i @click="deleteNotesRow(index)" type="button" class="removenotes  i-Remove" style="color: #f44336; font-size: 22px;"></i>
@@ -83,7 +79,9 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label for="emr_entry_completed" class="checkbox checkbox-primary mr-3">
-                                            <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed" formControlName="checkbox" />
+                                            <input type="checkbox" name="emr_entry_completed" id="emr_entry_completed" value="1" class="RRclass emr_entry_completed"
+                                             v-model="emr_monthly_summary_completed" :checked="emr_monthly_summary_completed"
+                                            formControlName="checkbox" /> 
                                             <span>EMR system entry completed</span>
                                             <span class="checkmark"></span>
                                         </label>
@@ -97,13 +95,13 @@
                                     <div  v-if="groupedData && groupedData.length > 0" v-for="(group, index) in groupedData" :key="index"  class="col-md-4">
                                         <div>
                                             <label :for="`${ group.name.replace(/[\s/]/g, '_').toLowerCase() }`" class="checkbox checkbox-primary mr-3">
-                                                <input type="checkbox"  v-model="group.checked" :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" class="RRclass" :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />  
+                                                <input type="checkbox" v-model="group.checked" :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" class="RRclass" :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />  
                                                 <span>{{ group.name }}</span>
                                                 <span class="checkmark"></span>
                                             </label>
                                             <div v-if="group.checked" class="col-md-12" v-for="item in group.items" :key="item.id">
                                                 <label :for="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" class="checkbox checkbox-primary mr-3">
-                                                    <input type="checkbox" :name="`${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`" :id="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" :class="`${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />
+                                                    <input type="checkbox" v-model="item.itemChecked" :name="`${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`" :id="`${group.name.replace(/[\s/]/g, '').toLowerCase()}_${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" value="true" :class="`${item.activity.replace(/[\s/]/g, '_').toLowerCase()}`" formControlName="checkbox" />
                                                     <span>{{ item.activity }}</span>
                                                     <span class="checkmark"></span>
                                                 </label>
@@ -151,6 +149,7 @@ import {
     computed,
 } from '../../../commonImports';
 import axios from 'axios';
+import moment from 'moment';
 
 export default {
     props: {
@@ -175,6 +174,9 @@ export default {
         let showCallWrapUpAlert = ref(false);
         const noAdditionalServicesProvided = ref('');
         const notesRows = ref([]);
+        // let patient_Emr_monthly_summary = ref([]);
+        const emr_monthly_summary =ref([]);
+        const emr_monthly_summary_completed =ref([]);
         let selectedReport = ref('');
         const callWrapColumnDefs = ref([
             {
@@ -236,11 +238,9 @@ export default {
                 const isValid = groupedData.value.every(group => {
                     if (group.checked) {
                         const hasSelectedActivities = group.items.some(item => {
-                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                            formDataObject[checkboxName] = formData.get(checkboxName);
-                            const isChecked = formDataObject[checkboxName] === 'true';
+                            const isChecked = item.itemChecked;
                             if (isChecked) {
-                                selectedValues.push(checkboxName);
+                                selectedValues.push(item.itemChecked);
                             }
                             return isChecked;
                         });
@@ -276,11 +276,11 @@ export default {
                     groupedData.value.forEach((group) => {
                         group.checked = false;
                         group.items.forEach((item) => {
-                            const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                            formDataObject[checkboxName] = false;
+                            item.itemChecked = false;
                         });
                     });
                     notesRows.value = [];
+                    populateFunction();
                 }
             } catch (error) {
                 if (error.response.status && error.response.status === 422) {
@@ -331,6 +331,58 @@ export default {
                 console.error('Error fetching stageID:', error);
                 throw new Error('Failed to fetch stageID');
             }
+        };  
+
+        let populateFunction = async () => {
+            try {
+                const response = await fetch(`/ccm/populate-monthly-monitoring-data/${props.patientId}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Patient Call wrap-up - ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                const callwrapup_form = data.callwrapup_form;
+                console.log("Patient Call wrap-up data", callwrapup_form); 
+                if (callwrapup_form.emr_monthly_summary != '') {
+                    emr_monthly_summary.value = callwrapup_form.emr_monthly_summary[0].notes;
+                }
+                if (callwrapup_form.checklist_data && callwrapup_form.checklist_data['emr_entry_completed'] != null) {
+                    emr_monthly_summary_completed.value = callwrapup_form.checklist_data.emr_entry_completed;
+                }
+                if (callwrapup_form.summary && (callwrapup_form.summary.length != null || callwrapup_form.summary.length != 0)) {
+                    callwrapup_form.summary.forEach((summary) => {
+                        notesRows.value.push({ date: moment(summary.record_date, 'MM-DD-YYYY').format('YYYY-MM-DD'), text: summary.notes });
+                    });
+                }
+                if (callwrapup_form.additional_services && callwrapup_form.additional_services.length > 0) {
+                    const additionalServicesData = callwrapup_form.additional_services[0].notes.trim();
+                    if (additionalServicesData == 'No Additional Services Provided') {
+                        noAdditionalServicesProvided.value = true;
+                    } else {
+                        const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim());
+                        additionalServicesArray.forEach(service => {
+                            const checkboxName = service.split(':')[0].toLowerCase().replace(/[\s/]/g, '_');
+                            const mainId = checkboxName.replace(/[\s/]/g, '');
+                            const groupIndex = groupedData.value.findIndex(group => group.name.replace(/[\s/]/g, '_').toLowerCase() === checkboxName);
+                            if (groupIndex !== -1) {
+                                groupedData.value[groupIndex].checked = true;
+                                let data = service.split(':')[1].toLowerCase().trim().replace(/[\s/]/g, '_');
+                                let itemData = data.split(',').map(activity => {
+                                    if (activity != '') {
+                                        const itemId = mainId + "_" + activity.trim().replace(/^_/, '');
+                                        const itemIndex = groupedData.value[groupIndex].items.findIndex(item => `${mainId + "_" + item.activity.replace(/[\s/]/g, '_').toLowerCase()}` === itemId);
+                                        if (itemIndex !== -1) {
+                                            groupedData.value[groupIndex].items[itemIndex].itemChecked = true;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching Call wrap-up:', error);
+            }
         };
 
         const exposeDeleteCallWrapup = () => {
@@ -342,14 +394,13 @@ export default {
             try {
                 const response = await axios.get('/ccm/monthly-monitoring-call-wrap-up-activities/activities');
                 activityData.value = response.data;
-                activities.value = response.data;
                 activityData.value.forEach((activity) => {
                     if (!groups[activity.activity_type]) {
                         groups[activity.activity_type] = { name: activity.activity_type, items: [] };
                     }
+                    activity.itemChecked = false;
                     groups[activity.activity_type].items.push(activity);
                 });
-                // Convert the object into an array
                 groupedData.value = Object.values(groups).map((group) => ({ ...group, checked: false }));
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -362,8 +413,7 @@ export default {
                 groupedData.value.forEach((group) => {
                     group.checked = false;
                     group.items.forEach((item) => {
-                        const checkboxName = `${group.name.replace(/[\s/]/g, '').toLowerCase()}[${item.activity.replace(/[\s/]/g, '_').toLowerCase()}]`;
-                        formDataObject[checkboxName] = false;
+                        item.itemChecked = false;
                     });
                 });
                 additionalErrors.value = false;
@@ -433,6 +483,7 @@ export default {
                 fetchCallWrapUpList();
                 exposeDeleteCallWrapup();
                 getStageID();
+                populateFunction();
                 groupActivitiesByType();
                 callWrapUpTime.value = document.getElementById('page_landing_times').value;
             } catch (error) {
@@ -462,6 +513,8 @@ export default {
             onRPMReportChanged,
             selectedReport,
             saveEMRNotes,
+            emr_monthly_summary,
+            emr_monthly_summary_completed,
         };
     }
 }

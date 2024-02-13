@@ -136,22 +136,18 @@ export default {
     const isLoading = ref(false);
     const formErrors = ref({});
     const time = ref('');
-    const openModal = () => {
+    const openModal = async () => {
       isOpen.value = true;
       fetchActiveDeactiveReasons();
       const element = document.getElementById('page_landing_times');
-if (!element || element.value === null) {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    if (formattedDate) {
-        time.value = formattedDate;
-    } else {
-        console.error('Server time not provided.');
-    }
-}else{
-  time.value = element.value;
-
-}
+      if (!element || element.value === null) {
+        const landingTime = await fetchLandingTime();
+          if (landingTime) {
+              time.value = landingTime;
+          }
+      }else{
+        time.value = element.value;
+      }
     };
     let selectPatientId = ref('');
     const closeModal = () => {
@@ -159,21 +155,26 @@ if (!element || element.value === null) {
       $("#status").prop("checked", false);
     };
 
-    onMounted(async () => {
-      const element = document.getElementById('page_landing_times');
-if (!element || element.value === null) {
-  const currentDate = new Date();
-  const formattedDate = `${currentDate.getMonth() + 1}-${currentDate.getDate()}-${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}`;
-    if (formattedDate) {
-        time.value = formattedDate;
-    } else {
-        console.error('Server time not provided.');
+    const fetchLandingTime = async () => {
+  try {
+    const response = await fetch('/system/get-landing-time');
+    if (!response.ok) {
+      throw new Error('Failed to fetch landing time');
     }
-}else{
-  time.value = element.value;
+    const data = await response.json();
+    return data.landing_time;
+  } catch (error) {
+    console.error('Error fetching landing time:', error);
+    // Handle the error appropriately (show a message, retry, etc.)
+    return null;
+  }
+};
 
-}
-    });
+
+
+   /*  onMounted(async () => {
+    
+    }); */
 
     const fetchActiveDeactiveReasons = async () => {
       try {
@@ -330,6 +331,7 @@ const id = urlParts[urlParts.length - 1];
         };
 
     return {
+      fetchLandingTime,
       selectPatientId,
       time,
       submitPatientForm,

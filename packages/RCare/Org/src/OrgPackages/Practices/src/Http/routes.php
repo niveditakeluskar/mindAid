@@ -22,15 +22,15 @@ Route::prefix('org')->group(function () {
 
         Route::get('/practiceslist', function () {
              // Define a unique cache key for this data
-            $cacheKey = 'practices_list_WRKLIST';
+           /*  $cacheKey = 'practices_list_WRKLIST';
             // Check if the data exists in the cache
             if (Cache::has($cacheKey)) {
                 // Data exists in the cache, retrieve and return it
                 return response()->json(Cache::get($cacheKey));
-            }
+            } */
             $practices = Practices::worklistPractices(); // worklistPractices() fetches practices
             // Store the fetched data in the cache for future requests
-            Cache::put($cacheKey, $practices, $minutes = 60); // Cache for 60 minutes
+           /*  Cache::put($cacheKey, $practices, $minutes = 60); */ // Cache for 60 minutes
             return response()->json($practices);
         });
 

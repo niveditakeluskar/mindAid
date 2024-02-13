@@ -9,6 +9,7 @@
             </div>
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
+                <div id="deviceAlert"></div>
                 <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
                     <input type="hidden" name="patient_id" :value="patientId" />
                     <input type="hidden" name="uid" :value="patientId">
@@ -168,7 +169,6 @@ export default {
                     editLink.dataset.originalTitle = 'Edit';
                     editLink.classList.add('editDevicesdata');
                     editLink.title = 'Edit';
-
                     const editIcon = document.createElement('i');
                     editIcon.classList.add('editform', 'i-Pen-4');
                     editLink.appendChild(editIcon);
@@ -342,19 +342,25 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     fetchDeviceList();
+                    $('#deviceAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     //alert("Saved Successfully");
                     //updateTimer(props.patientId, '1', props.moduleId);
                     //$(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("devices_form").reset();
-                    showSuccessAlert.value = false;
                     setTimeout(() => {
+                        $('#deviceAlert').html('');
                        // medicationTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
                 isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
+                    console.log(error.response.data.errors);
+                    setTimeout(function () {
+						formErrors.value = {};
+                }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -413,7 +419,6 @@ export default {
             fetchDeviceList();
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
             } catch (error) {
                 console.error('Error on page load:', error);
             }
