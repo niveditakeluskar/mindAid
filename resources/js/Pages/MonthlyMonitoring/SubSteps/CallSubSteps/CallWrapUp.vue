@@ -345,46 +345,64 @@ export default {
                 if (callwrapup_form.emr_monthly_summary != '') {
                     emr_monthly_summary.value = callwrapup_form.emr_monthly_summary[0].notes;
                 }
+
                 if (callwrapup_form.checklist_data && callwrapup_form.checklist_data['emr_entry_completed'] != null) {
                     emr_monthly_summary_completed.value = callwrapup_form.checklist_data.emr_entry_completed;
                 }
-                if (callwrapup_form.summary && (callwrapup_form.summary.length != null || callwrapup_form.summary.length != 0)) {
+
+                if (callwrapup_form.summary && Array.isArray(callwrapup_form.summary)) {
                     callwrapup_form.summary.forEach((summary) => {
                         notesRows.value.push({ date: moment(summary.record_date, 'MM-DD-YYYY').format('YYYY-MM-DD'), text: summary.notes });
                     });
                 }
-                if (callwrapup_form.additional_services && callwrapup_form.additional_services.length > 0) {
-                    const additionalServicesData = callwrapup_form.additional_services[0].notes.trim();
-                    if (additionalServicesData == 'No Additional Services Provided') {
-                        noAdditionalServicesProvided.value = true;
-                    } else {
-                        const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim());
-                        additionalServicesArray.forEach(service => {
-                            const checkboxName = service.split(':')[0].toLowerCase().replace(/[\s/]/g, '_');
-                            const mainId = checkboxName.replace(/[\s/]/g, '');
-                            const groupIndex = groupedData.value.findIndex(group => group.name.replace(/[\s/]/g, '_').toLowerCase() === checkboxName);
-                            if (groupIndex !== -1) {
-                                groupedData.value[groupIndex].checked = true;
-                                let data = service.split(':')[1].toLowerCase().trim().replace(/[\s/]/g, '_');
-                                let itemData = data.split(',').map(activity => {
-                                    if (activity != '') {
-                                        const itemId = mainId + "_" + activity.trim().replace(/^_/, '');
-                                        const itemIndex = groupedData.value[groupIndex].items.findIndex(item => `${mainId + "_" + item.activity.replace(/[\s/]/g, '_').toLowerCase()}` === itemId);
-                                        if (itemIndex !== -1) {
-                                            groupedData.value[groupIndex].items[itemIndex].itemChecked = true;
-                                        }
-                                    }
-                                });
-                            }
-                        });
 
+                if (callwrapup_form.additional_services) {
+                    try {
+                        const additionalServicesData = callwrapup_form.additional_services[0].notes.trim();
+                        if (additionalServicesData == 'No Additional Services Provided') {
+                            noAdditionalServicesProvided.value = true;
+                        } else {
+                            await waitForGroupedData();
+                            const additionalServicesArray = additionalServicesData.split(';').map(e => e.trim());
+                            additionalServicesArray.forEach(service => {
+                                const checkboxName = service.split(':')[0].toLowerCase().replace(/[\s/]/g, '_');
+                                const mainId = checkboxName.replace(/[\s/]/g, '');
+                                const groupIndex = groupedData.value.findIndex(group => group.name.replace(/[\s/]/g, '_').toLowerCase() === checkboxName);
+
+                                if (groupIndex !== -1) {
+                                    console.log("groupIndex", groupIndex);
+                                    groupedData.value[groupIndex].checked = true;
+
+                                    let data = service.split(':')[1].toLowerCase().trim().replace(/[\s/]/g, '_');
+                                    let itemData = data.split(',').map(activity => {
+                                        if (activity != '') {
+                                            const itemId = mainId + "_" + activity.trim().replace(/^_/, '');
+                                            const itemIndex = groupedData.value[groupIndex].items.findIndex(item => `${mainId + "_" + item.activity.replace(/[\s/]/g, '_').toLowerCase()}` === itemId);
+
+                                            if (itemIndex !== -1) {
+                                                console.log("itemIndex", itemIndex);
+                                                groupedData.value[groupIndex].items[itemIndex].itemChecked = true;
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error in additional_services processing:', error);
                     }
                 }
+
             } catch (error) {
                 console.error('Error fetching Call wrap-up:', error);
             }
         };
 
+        const waitForGroupedData = async () => {
+            while (!groupedData.value || !groupedData.value.length) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        };
         const exposeDeleteCallWrapup = () => {
             window.deleteCallWrapup = deleteCallWrapup;
         };
