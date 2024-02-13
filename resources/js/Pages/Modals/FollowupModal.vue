@@ -136,8 +136,8 @@ const formatDate = (dateString) => {
                 const response = await axios.post('/ccm/saveFollowupListData-edit', formData);
                 if (response && response.status == 200) {
                     props.followupCallFunction();
-                    document.getElementById("followup_task_edit_notes").reset();
-                    $('#followUpAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+/*                     document.getElementById("followup_task_edit_notes").reset();
+ */                    $('#followUpAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
 					followupTime.value = response.data.form_start_time;
