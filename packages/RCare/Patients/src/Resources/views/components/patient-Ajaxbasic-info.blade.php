@@ -88,6 +88,9 @@
                                 <label data-toggle="tooltip" title="Device Code" data-original-title="Patient Device Code." for="Device Code">
                                     <i class="text-muted i-Hospital"></i> : <span id="device_code" class="patient_device_code"></span>
                                 </label>   
+                                <label data-toggle="tooltip" title="" data-original-title="Delivery status" for="Delivery status">
+                                    <span id="delivery_status" class="device_delivery_status"></span>
+                                </label>
                             </div>   
                             <div class="row col-md-3">
                                 <div class="col-md-11 careplan">
@@ -105,13 +108,13 @@
                                         @hidden("pause_time",["id"=>"pause_time", "value"=>"0"])
                                         @hidden("play_time",["id"=>"play_time", "value"=>"0"])
                                         @hidden("pauseplaydiff",["id"=>"pauseplaydiff", "value"=>"0"])
-                                        <div class="stopwatch" id="stopwatch">
+                                        <div class="stopwatch" id="stopwatch" style="display:none">
                                             <i class="text-muted i-Timer1"></i> :
                                             <div id="time-container" class="container" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time" style="display:none!important"></div>
                                             <label for="Current Running Time" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time">
                                             <span id="time-containers"></span></label>
                                             <button class="button" id="start" data-toggle="tooltip" data-placement="top" title="Start Timer" data-original-title="Start Timer" onclick="util.logPauseTime($('.form_start_time').val(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></button>
-                                            <button class="button" id="pause" data-toggle="tooltip" data-placement="top" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0,  $('input[name=billable]').val(), {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></button>
+                                            <button class="button" id="pause"  data-toggle="tooltip" data-placement="top" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0,  $('input[name=billable]').val(), {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></button>
 											
                                             <button class="button" id="stop" data-toggle="tooltip" data-placement="top" title="Stop Timer" data-original-title="Stop Timer"  onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" style=" display: <?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px; " /></button>
 											

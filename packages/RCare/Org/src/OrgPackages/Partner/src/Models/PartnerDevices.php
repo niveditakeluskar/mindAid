@@ -36,7 +36,8 @@ class PartnerDevices extends Model
         'status',
         'created_by',
         'updated_by',
-        'device_order_seq'
+        'device_order_seq',
+        'device_name'
     ];
 
   

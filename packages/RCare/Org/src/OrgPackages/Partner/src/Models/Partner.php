@@ -62,4 +62,9 @@ class Partner extends Model
         $prat= self::where("status", 1)->orderBy('name','asc')->get();
         return $prat;
     }
+
+    public static function activePartner1(){
+        $prat1= self::where("status", 1)->where("id", 3)->orderBy('name','asc')->get();
+        return $prat1;
+    }
 }

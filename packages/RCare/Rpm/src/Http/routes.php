@@ -15,7 +15,10 @@ Route::prefix('rpm')->group(function () {
         return view('Rpm::timeline_rpm.Timeline-Activities');
     })->name('timeline.activities');
 	
-	Route::get('preview', 'RCare\Rpm\Http\Controllers\PDFController@preview');
+
+    Route::get('/timeline-daily-activity/{patient_id}/timelinedailyactivity','RCare\Rpm\Http\Controllers\TimelineActivityController@patientMonthlyData');
+	Route::get('/timeline-daily-activity-search/{patient_id}/{month_val}/timelinedailyactivitysearch','RCare\Rpm\Http\Controllers\TimelineActivityController@patientMonthlyDataSearch');
+    Route::get('preview', 'RCare\Rpm\Http\Controllers\PDFController@preview');
     Route::get('download', 'RCare\Rpm\Http\Controllers\PDFController@download')->name('download');
 	Route::get('/rpm-device-report-pdf', 'RCare\Ccm\Http\Controllers\CPDController@rpmDeviceReport')->name('rpm.device.report'); 
 	

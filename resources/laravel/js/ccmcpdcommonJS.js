@@ -170,9 +170,9 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
-var onActiveDeactiveClick = function ($pid, $status) {
-  var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
+var onActiveDeactiveClick = function ($pid, $status,$fromstarttime) { console.log($fromstarttime);
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
     patientId = parts[parts.length - 1];
   if ($.isNumeric(patientId) == true) {
     //patient list
@@ -186,10 +186,12 @@ var onActiveDeactiveClick = function ($pid, $status) {
     //worklist 
     var patientId = $pid;
     var selmoduleId = $("#modules").val();
+    var fromstarttime1 = $fromstarttime; 
     util.getPatientEnrollModule(patientId, selmoduleId);
     var status = $status;
     $("form[name='active_deactive_form'] #worklistclick").val("1");
     $("form[name='active_deactive_form'] #patientid").val(patientId);
+    $("form[name='active_deactive_form'] #fromstarttime").val(fromstarttime1);
     $("form[name='active_deactive_form'] #date_value").hide();
     $("form[name='active_deactive_form'] #fromdate").hide();
     $("form[name='active_deactive_form'] #todate").hide();
@@ -332,6 +334,7 @@ var changeenrolldate = function () {
 $('#add_patient_devices').click(function () { //alert("add_patient_devices")
   renderDeviceTableData();
 });
+
 
 
 $('.noallergiescheck').click(function () {

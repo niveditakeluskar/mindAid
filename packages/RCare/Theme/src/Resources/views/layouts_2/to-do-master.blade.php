@@ -119,6 +119,7 @@
                     @include('Theme::layouts_2.previous-month-notes')
                 <?php }?>
 					@include('Theme::layouts_2.to-list-customizer') 
+                    @include('Theme::layouts_2.cm-patient-assign') 
 			
              
         <!-- </div> -->
@@ -746,6 +747,7 @@
                         <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
                         <input type="hidden" name="start_time" value="00:00:00">
                         <input type="hidden" name="end_time" value="00:00:00"> 
+                        <input type="hidden" name="fromstarttime" id="fromstarttime">
                         <input type="hidden" name="module_id" value="{{ $module_id }}" />
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
@@ -1034,7 +1036,6 @@
                             data: {darkmode: ch}
                         });
                 });
-                
 				
 				$("[name='partner_id']").on("change", function () {
                         //alert("working");
@@ -1051,7 +1052,9 @@
                 
 				setTimeout(function () {
 					document.getElementById("customizer_id").style.display = "block";
+					// document.getElementById("customizer_id2").style.display = "block";
 				}, 3000);
+
 				
 				CKEDITOR.replace( 'email_title_area');
                 $('.select2').select2();

@@ -46,7 +46,12 @@ class Kernel extends ConsoleKernel
         \App\Http\Middleware\SecureHeaders::class,
     ];
 	*/
-
+	
+	protected $routeMiddleware = [
+        'jwt.verify' => RCare\System\src\Http\Middleware\JwtMiddleware::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+    ];
 
      
     protected function schedule(Schedule $schedule)  
@@ -198,7 +203,7 @@ class Kernel extends ConsoleKernel
 		$schedule->command('patient:careplan')->everyMinute();
 		$schedule->command('tellihealth:telliHealthRpmObservation')->everyFiveMinutes();
 		$schedule->command('MFA:message')->everyMinute();
-		$schedule->command('RPMReadingReminder:noReadings')->dailyAt('07:35');
+		$schedule->command('RPMReadingReminder:noReadings')->dailyAt('19:00');
 		$schedule->command('miowebhook:miowebhookRpmObservation')->everyMinute();
 		//$schedule->command('patient:generatescore')->monthlyOn(1,'08:00'); --//3.00 am CST and utc ka 8 am
     }

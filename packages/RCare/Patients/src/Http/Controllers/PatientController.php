@@ -190,6 +190,53 @@ class PatientController extends Controller
         return $patientService;
     }
 
+    public function cmassignpatient(Request $request){
+        $login_user = Session::get('userid');
+        $configTZ   = config('app.timezone');
+        $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
+        $patient_id = sanitizeVariable($request->route('patient')); 
+        $practice_id = sanitizeVariable($request->route('practice'));
+
+        // $data = "select distinct p.id,p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name, m.id ,m.module  from patients.patient p
+        // inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
+        // inner join ren_core.users usr on usr.id=up.user_id 
+        // LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+        // LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+        // inner join patients.patient_services ps on ps.patient_id = p.id and  ps.status in (0,1)
+        // inner join ren_core.modules as m on m.id = ps.module_id  
+        // where usr.id = $login_user";
+
+        //for rpm enrolled patient link 
+        $data ="SELECT * FROM (SELECT p.id,p.fname,p.lname,p.dob,p2.name AS practice,usr.id AS user_id,
+                usr.f_name AS user_fname,usr.l_name AS user_lname,m.id AS module_id, m.module,ROW_NUMBER() OVER(PARTITION BY p.id ORDER BY m.id) AS row_num
+                FROM patients.patient p
+                LEFT JOIN task_management.user_patients up ON up.patient_id = p.id AND up.status = 1
+                LEFT JOIN ren_core.users usr ON usr.id = up.user_id 
+                LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+                LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+                LEFT JOIN patients.patient_services ps ON ps.patient_id = p.id AND ps.status IN (0, 1)
+                INNER JOIN ren_core.modules AS m ON m.id = ps.module_id  
+                WHERE usr.id = $login_user";
+        
+
+
+        if(($practice_id =="null" || $practice_id==0) && ($patient_id =="null" || $patient_id==0)){
+            $query = [];
+        }else if(($practice_id =="null" || $practice_id==0)){
+            $data .= "  and p.id = '".$patient_id."' ) AS subquery WHERE subquery.row_num = 1";
+            $query = DB::select( DB::raw($data) );
+        }else if(($patient_id =="null" || $patient_id==0)){
+            $data .= "  and pp.practice_id = '".$practice_id."' ) AS subquery WHERE subquery.row_num = 1 ";
+            $query = DB::select( DB::raw($data) );
+        } else{
+            $data .= "  and pp.practice_id = '".$practice_id."' and p.id = '".$patient_id."' ) AS subquery WHERE subquery.row_num = 1";
+            $query = DB::select( DB::raw($data) );
+        }
+
+        // dd($data);
+        return view('Patients::patient.cm-assigned-patient-right',compact('query'));
+    }
+
 
     public function fetchPatientModule(Request $request) {
         $patient_id = sanitizeVariable($request->route('patient_id'));
@@ -282,7 +329,10 @@ class PatientController extends Controller
         $PatientDevices = PatientDevices::where('patient_id',$uid)->orderby('id','desc')->first();
         
         $device_code = empty($PatientDevices->device_code)?'':$PatientDevices->device_code;
+        
+        $device_status = empty($PatientDevices->shipping_status)?'':$PatientDevices->shipping_status;
 
+ 
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
 
         if(isset($rpmDevices[0]->vital_devices)){
@@ -348,6 +398,7 @@ class PatientController extends Controller
            'caremanager_name'      => $caremanager_name,
            'patient_enroll_date'   => $patient_enroll_date,
            'device_code'           => $device_code,
+           'device_status'         => $device_status,
            'non_billabel_time'     => $non_billabel_time,
            'billable_time'         =>$billable_time,
            'personal_notes'        =>$personal_notes,
@@ -535,6 +586,7 @@ class PatientController extends Controller
     //created by Priya for deactivation patient 
     public function savePatientActiveDeactive(ActiveDeactiveAddRequest $request) 
     {	
+    //     dd($request);
         $patient_id     = sanitizeVariable($request->patient_id);
         if($patient_id=='') {
             $patient_id = sanitizeVariable($request->patientid);
@@ -559,7 +611,8 @@ class PatientController extends Controller
         $deactivation_drpdwn = sanitizeVariable($request->deactivation_drpdwn); 
         // dd($select_module); 
         $start_time     = sanitizeVariable($request->start_time);//echo "<br>";
-        $end_time       = sanitizeVariable($request->end_time);    
+        $end_time       = sanitizeVariable($request->end_time); 
+
         $component_id   = sanitizeVariable($request->component_id);
         $stage_id       = 0;
         $step_id        = 0;
@@ -568,6 +621,10 @@ class PatientController extends Controller
         $patient_status = sanitizeVariable($request->status);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        if($form_start_time == null){
+            $form_start_time = sanitizeVariable($request->fromstarttime);
+        }
+        // dd($form_start_time);
         $activedataInsert   = array(            
             'patient_id'        => $patient_id,
             'from_date'         => $fromdate, 
@@ -578,7 +635,7 @@ class PatientController extends Controller
             'created_by'        => session()->get('userid'),
             'updated_by'        => session()->get('userid')                     
         );
-		
+		// dd($patient_status);
         if($patient_status == '3'){			
             $status_value ='Deceased';
             $service_data =array(
@@ -606,7 +663,9 @@ class PatientController extends Controller
         }else{ 
 			
             $check_patient_status_from_master = Patients::where('id',$patient_id)->where('status',3)->exists();
+            // dd($check_patient_status_from_master);
             $total_services = PatientServices::where('patient_id', $patient_id)->distinct()->pluck('module_id')->whereNotIn('status',[2,3])->count();
+            // dd($total_services);
                 if($patient_status!='' && $patient_status=='1'){
                     $status_value = 'Active';
                     $check_given_services = 0;
@@ -620,6 +679,7 @@ class PatientController extends Controller
                     // $status_value ='Deceased';
                 }    
             $service_count  = $total_services - $check_given_services; 
+            // dd($service_count);
             if($service_count == 0){ 
                 $depend_patient_status = 2;
                 $depend_status_value= 'Deactive'; 
@@ -677,12 +737,13 @@ class PatientController extends Controller
                 Patients::where('id',$patient_id)->update($patient_data); 
             }else{ 
                 // echo "string";die;
+                // dd($patient_data);
                 PatientServices::where('patient_id',$patient_id)->where('module_id',$select_module)->update($data); 
                 PatientActiveDeactiveHistory::create($activedataInsert); 
                 Patients::where('id',$patient_id)->update($patient_data); 
+                
             }
-        }//end else
-
+        }
         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         return response(['form_start_time' =>$form_save_time]);
     }
@@ -2004,6 +2065,39 @@ public function practicePatientsAssignDevice($practice,$moduleId){
         return response()->json($patients);
         
 	}
+
+    public function assignpatientlist($practice){
+        $patients = []; 
+        $cid = session()->get('userid');
+        $usersdetails = Users::where('id',$cid)->get();
+        $roleid = $usersdetails[0]->role;
+         
+        if($practice =="null" || $practice==0 ){       
+                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                from patients.patient p 
+                INNER JOIN task_management.user_patients up
+                on p.id = up.patient_id and up.status = 1               
+                inner join ren_core.users u  on u.id = up.user_id
+                inner join patients.patient_providers pp                 
+               on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id = 1
+               inner join patients.patient_services ps 
+               on p.id = ps.patient_id                
+               where    up.user_id = '".$cid."' order by p.fname ") );
+        }
+        else{
+                $patients = DB::select( DB::raw("select distinct p.id, p.fname, p.lname,p.mname, p.dob, p.mob  
+                from patients.patient p
+                INNER JOIN task_management.user_patients up
+                on p.id = up.patient_id and up.status = 1               
+                inner join ren_core.users u  on u.id = up.user_id
+                inner join patients.patient_services ps
+                on   p.id = ps.patient_id 
+                inner join patients.patient_providers  pp                 
+                on p.id = pp.patient_id and pp.is_active = 1 and pp.provider_type_id=1
+                where  pp.practice_id = '".$practice."' and up.user_id = '".$cid."' order by p.fname ") );
+        }   
+        return response()->json($patients);
+    }
     
 	
     //created by ashvini 12 jan 2021  
