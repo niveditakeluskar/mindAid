@@ -34,7 +34,6 @@
         "phpoffice/phpword": "^0.18.1",
         "spatie/pdf-to-text": "^1.4",
         "twilio/sdk": "^6.15",
-        "tymon/jwt-auth": "^1.0",
         "yajra/laravel-datatables-oracle": "^9.7"
     },
     "require-dev": {

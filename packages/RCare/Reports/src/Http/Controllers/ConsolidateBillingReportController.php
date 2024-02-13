@@ -240,17 +240,22 @@ class ConsolidateBillingReportController extends Controller
                         if($data[$i]->call_conti_status == '000'){
                           $data[$i]->call_conti_status='';
                         }
-    
-                        if(is_null($data[$i]->finalize_cpd)){
+						
+						$finalize_cpd_query = PatientServices::where('patient_id',$pid)->where('status',1)->get();						
+						if(count($finalize_cpd_query)>0){
+                        if(is_null($finalize_cpd_query[0]->finalize_cpd)){
                           $finalize_cpd='';
                         }else{
-                          if($data[$i]->finalize_cpd=='1'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='1'){
                             $finalize_cpd ='Yes';
                           } 
-                          if($data[$i]->finalize_cpd=='0'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='0'){
                             $finalize_cpd ='No';
                           }
                         }
+						}else{
+							$finalize_cpd='';
+						}
                         if(is_null($data[$i]->total_reading_days)){
                           $total_reading_days ='';
                         }else{

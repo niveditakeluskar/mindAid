@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'web',
         'passwords' => 'rcare_users',
     ],
 
@@ -40,14 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'rcare_users',
         ],
-
-        'api' => [
-            'driver' => 'jwt',
-            'provider' => 'api_users',
+		'api' => [
+            'driver' => 'token',
+            'provider' => 'rcare_users',
             'hash' => false,
-        ],
-		
-		
+        ],		
 		
         'rcare_user' => [
             'driver' => 'session',
