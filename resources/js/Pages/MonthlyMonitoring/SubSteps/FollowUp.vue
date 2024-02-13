@@ -10,10 +10,10 @@
 
 					<form id="followup_form" ref="followupFormRef" name="followup_form"
 						@submit.prevent="submitFollowupForm">
-						<input type="hidden" name="uid"  :value="`${patientId}`" />
-						<input type="hidden" name="patient_id"  :value="`${patientId}`" />
-						<input type="hidden" name="start_time"  value="00:00:00">
-						<input type="hidden" name="end_time"  value="00:00:00">
+						<input type="hidden" name="uid" :value="`${patientId}`" />
+						<input type="hidden" name="patient_id" :value="`${patientId}`" />
+						<input type="hidden" name="start_time" value="00:00:00">
+						<input type="hidden" name="end_time" value="00:00:00">
 						<input type="hidden" name="module_id" :value="`${moduleId}`" />
 						<input type="hidden" name="component_id" :value="`${componentId}`" />
 						<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
@@ -97,8 +97,7 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete"
-											@click="handleCheckboxChange"><span>EMR system entry completed</span><span
+										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete" true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system entry completed</span><span
 											class="checkmark"></span>
 									</label>
 									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
@@ -118,7 +117,7 @@
 				</div>
 
 				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId"
-					:stageId="followupStageId" />
+					:stageId="followupStageId" :patientId="patientId" :followupCallFunction="FollowupMainFunction"/>
 
 				<hr>
 				<div class="col-md-12">
@@ -173,7 +172,7 @@ export default {
 		const rowData = ref();
 		const loading = ref(false);
 
-		let	emr_complete = ref(0);
+		const emr_complete = ref(0);
 
 		const items = ref([
 			{
@@ -185,83 +184,83 @@ export default {
 			}
 		]);
 
-const changeStatusRenderer = (params) => {
-    const row = params.data;
-    if (row && row.action) {
-        // Create a checkbox input element
-        const checkbox = document.createElement('input');
-        checkbox.setAttribute('type', 'checkbox');
-        checkbox.classList.add('change_status_flag');
-        checkbox.dataset.id = row.id;
-        checkbox.dataset.moduleId = row.module_id;
-        checkbox.dataset.componentId = row.component_id;
-        checkbox.dataset.stageId = row.stage_id;
-        checkbox.dataset.stepId = row.step_id;
-        checkbox.value = row.status_flag === 1 ? 1 : 0;
-        checkbox.checked = row.status_flag === 1;
-        // Bind click event handler
-        checkbox.addEventListener('click', changeStatus);
-        return checkbox;
-    } else {
-        return ''; // Or handle the case where the 'action' value is not available
-    }
-};
+		const changeStatusRenderer = (params) => {
+			const row = params.data;
+			if (row && row.action) {
+				// Create a checkbox input element
+				const checkbox = document.createElement('input');
+				checkbox.setAttribute('type', 'checkbox');
+				checkbox.classList.add('change_status_flag');
+				checkbox.dataset.id = row.id;
+				checkbox.dataset.moduleId = row.module_id;
+				checkbox.dataset.componentId = row.component_id;
+				checkbox.dataset.stageId = row.stage_id;
+				checkbox.dataset.stepId = row.step_id;
+				checkbox.value = row.status_flag === 1 ? 1 : 0;
+				checkbox.checked = row.status_flag === 1;
+				// Bind click event handler
+				checkbox.addEventListener('click', changeStatus);
+				return checkbox;
+			} else {
+				return ''; // Or handle the case where the 'action' value is not available
+			}
+		};
 
-// Define columnDefs after changeStatusRenderer is defined
-const columnDefs = ref([
-    {
-        headerName: 'Sr. No.',
-        valueGetter: 'node.rowIndex + 1',
-    },
-    { headerName: 'Task', field: 'task_notes', filter: true },
-    { headerName: 'Category', field: 'task' },
-    {
-        headerName: 'Notes', field: 'notes',
-        cellRenderer: function (params) {
-            const row = params.data;
-            const link = document.createElement('a');
-            const icon = document.createElement('i');
-            icon.classList.add('editform', 'i-Pen-4');
-            if (row && row.notes) {
-                link.appendChild(document.createTextNode(row.notes));
-            }
-            link.appendChild(icon);
-            link.classList.add('editfollowupnotes');
-            link.href = 'javascript:void(0)';
-            link.setAttribute('data-id', row.id); // Add data-id attribute
-            link.setAttribute('data-original-title', 'Edit'); // Add data-original-title attribute
-            link.addEventListener('click', () => {
-                openEditModal(row.id); // 'this' refers to the Vue component instance
-            });
+		// Define columnDefs after changeStatusRenderer is defined
+		const columnDefs = ref([
+			{
+				headerName: 'Sr. No.',
+				valueGetter: 'node.rowIndex + 1',
+			},
+			{ headerName: 'Task', field: 'task_notes', filter: true },
+			{ headerName: 'Category', field: 'task' },
+			{
+				headerName: 'Notes', field: 'notes',
+				cellRenderer: function (params) {
+					const row = params.data;
+					const link = document.createElement('a');
+					const icon = document.createElement('i');
+					icon.classList.add('editform', 'i-Pen-4');
+					if (row && row.notes) {
+						link.appendChild(document.createTextNode(row.notes));
+					}
+					link.appendChild(icon);
+					link.classList.add('editfollowupnotes');
+					link.href = 'javascript:void(0)';
+					link.setAttribute('data-id', row.id); // Add data-id attribute
+					link.setAttribute('data-original-title', 'Edit'); // Add data-original-title attribute
+					link.addEventListener('click', () => {
+						openEditModal(row.id); // 'this' refers to the Vue component instance
+					});
 
-            return link;
-        },
-    },
-    { headerName: 'Date Scheduled', field: 'tt' },
-    { headerName: 'Task Time', field: 'task_time' },
-    {
-        headerName: 'Mark as Complete', field: 'action',
-        cellRenderer: changeStatusRenderer
-    },
-    { headerName: 'Task Completed Date', field: 'task_completed_at' },
-    {
-        headerName: 'Created By', field: 'created_by',
-        cellRenderer: function (params) {
-            const row = params.data;
-            return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
-        },
-    },
-]);
+					return link;
+				},
+			},
+			{ headerName: 'Date Scheduled', field: 'tt' },
+			{ headerName: 'Task Time', field: 'task_time' },
+			{
+				headerName: 'Mark as Complete', field: 'action',
+				cellRenderer: changeStatusRenderer
+			},
+			{ headerName: 'Task Completed Date', field: 'task_completed_at' },
+			{
+				headerName: 'Created By', field: 'created_by',
+				cellRenderer: function (params) {
+					const row = params.data;
+					return row && row.f_name ? row.f_name + ' ' + row.l_name : 'N/A';
+				},
+			},
+		]);
 
 
 
-		const handleScheduledSelected = (item, index)=> {
+		const handleScheduledSelected = (item, index) => {
 			if (item.status_flag === '0') { // Check if 'To be Scheduled' radio button is selected
 				item.task_date = ''; // Clear the task date
 			}
 		};
 
-	const setCurrentDateIfCompleted= (item, index)=> {
+		const setCurrentDateIfCompleted = (item, index) => {
 			if (item.status_flag === '1') { // 'Completed' radio button is selected
 				item.task_date = new Date().toISOString().substr(0, 10); // Set current date in ISO format (YYYY-MM-DD)
 			} else if (item.status_flag === '0') { // 'To be Scheduled' radio button is selected
@@ -269,19 +268,19 @@ const columnDefs = ref([
 			}
 		};
 
-		const addNewItem= ()=> {
+		const addNewItem = () => {
 			const newItem = {
-        task_name: '',
-        selectedFollowupMasterTask: '',
-        status_flag: '',
-        notes: '',
-        task_date: ''
-    };
-    items.value.push(newItem);
+				task_name: '',
+				selectedFollowupMasterTask: '',
+				status_flag: '',
+				notes: '',
+				task_date: ''
+			};
+			items.value.push(newItem);
 		};
-		
-		const removeItem= (index)=> {
-		items.value.splice(index, 1);
+
+		const removeItem = (index) => {
+			items.value.splice(index, 1);
 		};
 
 		const fetchFollowupMasterTask = async () => {
@@ -298,10 +297,14 @@ const columnDefs = ref([
 			FollowupModalRef.value.openModal(id, props.patientId);
 		};
 
+		const FollowupMainFunction =  () => {
+			fetchFollowupMasterTaskList();
+		};
+
 		const fetchFollowupMasterTaskList = async () => {
 			try {
 				loading.value = true;
-				await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+				//await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
 				const response = await fetch(`/ccm/patient-followup-task/${props.patientId}/${props.moduleId}/followuplist`);
 				if (!response.ok) {
 					throw new Error('Failed to fetch followup task list');
@@ -336,6 +339,12 @@ const columnDefs = ref([
 		const followupFormRef = ref(null);
 		const submitFollowupForm = async () => {
 			isLoading.value = true;
+		/* 	let emrCheckbox = document.getElementById('emr_complete');
+			// Set its value based on its checked state
+			let emrValue = emrCheckbox.checked ? 1 : 0;
+			console.log(emrCheckbox,emrValue,"emrvlays");
+			    // Append the checkbox value to the FormData object
+				myForm.append('emr_complete', emrValue); */
 			let myForm = document.getElementById('followup_form');
 			let formData = new FormData(myForm);
 			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -345,12 +354,12 @@ const columnDefs = ref([
 					myForm.reset();
 					items.value.splice(1);
 					items.value[0] = {
-                task_name: '',
-                selectedFollowupMasterTask: '',
-                status_flag: '',
-                notes: '',
-                task_date: ''
-            };
+						task_name: '',
+						selectedFollowupMasterTask: '',
+						status_flag: '',
+						notes: '',
+						task_date: ''
+					};
 					emr_complete.value = 0;
 					fetchFollowupMasterTaskList();
 					$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
@@ -381,60 +390,60 @@ const columnDefs = ref([
 		};
 
 		const changeStatus = () => {
-  const id = document.querySelector('.change_status_flag').getAttribute('data-id');
-  const component_id = document.querySelector("form[name='followup_form'] input[name='component_id']").value;
-  const module_id = document.querySelector("form[name='followup_form'] input[name='module_id']").value;
-  const stage_id = document.querySelector("form[name='followup_form'] input[name='stage_id']").value;
-  const step_id = document.querySelector("form[name='followup_form'] input[name='step_id']").value;
-  const timer_start = document.querySelector("form[name='followup_form'] input[name='start_time']").value;
-  const timer_paused = document.getElementById('time-container').textContent;
-  const startTime = document.querySelector("form[name='followup_form'] .form_start_time").value;
-  const form_name = document.getElementById('form_name').value;
+			const id = document.querySelector('.change_status_flag').getAttribute('data-id');
+			const component_id = document.querySelector("form[name='followup_form'] input[name='component_id']").value;
+			const module_id = document.querySelector("form[name='followup_form'] input[name='module_id']").value;
+			const stage_id = document.querySelector("form[name='followup_form'] input[name='stage_id']").value;
+			const step_id = document.querySelector("form[name='followup_form'] input[name='step_id']").value;
+			const timer_start = document.querySelector("form[name='followup_form'] input[name='start_time']").value;
+			const timer_paused = document.getElementById('time-container').textContent;
+			const startTime = document.querySelector("form[name='followup_form'] .form_start_time").value;
+			const form_name = document.getElementById('form_name').value;
 
-  if (confirm('Are you sure you want to change the Status')) {
-    fetch('/ccm/completeIncompleteTask', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-      },
-      body: new URLSearchParams({
-        id,
-        timer_start,
-        timer_paused,
-        module_id,
-        component_id,
-        stage_id,
-        step_id,
-        form_name,
-        startTime
-      })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(responseData => {
-      document.getElementById('followUpPageAlert').innerHTML = '<div class="alert alert-success"> Data Saved Successfully </div>';
-      setTimeout(() => {
-        document.getElementById('followUpPageAlert').innerHTML = '';
-      }, 3000);
-      document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
-      updateTimer(props.patientId, '1', props.moduleId);
-      time.value = responseData.form_start_time;
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  } else {
-    return false;
-  }
-};
+			if (confirm('Are you sure you want to change the Status')) {
+				fetch('/ccm/completeIncompleteTask', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+					},
+					body: new URLSearchParams({
+						id,
+						timer_start,
+						timer_paused,
+						module_id,
+						component_id,
+						stage_id,
+						step_id,
+						form_name,
+						startTime
+					})
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP error! Status: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(responseData => {
+						document.getElementById('followUpPageAlert').innerHTML = '<div class="alert alert-success"> Data Saved Successfully </div>';
+						setTimeout(() => {
+							document.getElementById('followUpPageAlert').innerHTML = '';
+						}, 3000);
+						document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
+						updateTimer(props.patientId, '1', props.moduleId);
+						time.value = responseData.form_start_time;
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			} else {
+				return false;
+			}
+		};
 
 		const handleCheckboxChange = (event) => {
-			emr_complete.value = 1;
+			emr_complete.value = event.target.checked ? 1 : 0;
 		};
 
 		onMounted(async () => {
@@ -449,12 +458,13 @@ const columnDefs = ref([
 		});
 
 		return {
+			FollowupMainFunction,
 			changeStatus,
 			items,
-		handleScheduledSelected,
-		setCurrentDateIfCompleted,
-		addNewItem,
-		removeItem,
+			handleScheduledSelected,
+			setCurrentDateIfCompleted,
+			addNewItem,
+			removeItem,
 			FollowupModalRef,
 			time,
 			isLoading,
