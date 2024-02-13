@@ -262,7 +262,8 @@ export default {
 					setTimeout(() => {
                   this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;
-					}, 3000);
+               }, 3000);
+               this.$emit('form-submitted');
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 422) {
