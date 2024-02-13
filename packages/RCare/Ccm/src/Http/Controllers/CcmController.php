@@ -1032,13 +1032,13 @@ class CcmController extends Controller
     {
         $notes = sanitizeVariable($request->notes);
         $get_topic = sanitizeVariable($request->topic);
-        $status_flag = sanitizeVariable($request->status_flag);
+        $status_flag = $request->has('status_flag') ? '1' : '0';
         $task_date = !empty(sanitizeVariable($request->task_date)) ? sanitizeVariable($request->task_date . '  12:00:00') : null;
         $id = sanitizeVariable($request->id);
-        $fetch_topic = ToDoList::whereNotNull('id', $id)->get();
+        $fetch_topic = ToDoList::where('id', $id)->latest()->first();
         if (!empty($fetch_topic)) {
-            $task_date_cw = $fetch_topic[0]->task_date;
-            $task_time = $fetch_topic[0]->task_time;
+            $task_date_cw = $fetch_topic->task_date;
+            $task_time = $fetch_topic->task_time;
         } else {
             $task_date_cw = '';
             $task_time = '';
@@ -1050,15 +1050,15 @@ class CcmController extends Controller
         } else {
             $t_date = '';
         }
-        $assigned_on = $fetch_topic[0]->assigned_on;
+        $assigned_on = $fetch_topic->assigned_on;
         if (!empty($assigned_on)) {
             $date = explode(' ', $assigned_on);
             $a_date = date('m-d-Y', strtotime($date[0]));
-            $task = $fetch_topic[0]->task_notes;
-            $task_id = $fetch_topic[0]->id;
-            $patient_id = $fetch_topic[0]->patient_id;
-            $mid = $fetch_topic[0]->module_id;
-            $cid = $fetch_topic[0]->component_id;
+            $task = $fetch_topic->task_notes;
+            $task_id = $fetch_topic->id;
+            $patient_id = $fetch_topic->patient_id;
+            $mid = $fetch_topic->module_id;
+            $cid = $fetch_topic->component_id;
         } else {
             $date = '';
             $a_date = '';
@@ -1086,12 +1086,10 @@ class CcmController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
-
+      
         if ($status_flag == 1) {
-            $check = CallWrap::where('task_id', $task_id)->exists();
-            if ($check == true) {
-                CallWrap::where('task_id', $task_id)->delete();
-            }
+            $check = CallWrap::where('task_id', $task_id)->delete();
+
             $status = 'Completed';
             $task_completed_at = Carbon::now();
             $callWrapUp = array(
@@ -3633,7 +3631,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         //dd($request->all());
         $patient_id            = sanitizeVariable($request->input('patient_id'));
-        $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete); //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
+        $emr_complete = $request->has('emr_complete') ? '1' : '0';
+ //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
         $task_name             = sanitizeVariable($request->task_name);
         $followupmaster_task   = sanitizeVariable($request->followupmaster_task);
         $selected_task_name    = sanitizeVariable($request->selected_task_name);
