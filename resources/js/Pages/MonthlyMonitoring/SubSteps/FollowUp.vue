@@ -117,12 +117,7 @@
 				</div>
 
 				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId"
-<<<<<<< HEAD
-					:stageId="followupStageId" :patientId="patientId"/>
-=======
 					:stageId="followupStageId" :patientId="patientId" :followupCallFunction="FollowupMainFunction"/>
->>>>>>> 505658e9fb38aa9761c18e74e3a69375d1cfa951
-
 				<hr>
 				<div class="col-md-12">
 					<AgGridTable :rowData="rowData" :columnDefs="columnDefs" />
