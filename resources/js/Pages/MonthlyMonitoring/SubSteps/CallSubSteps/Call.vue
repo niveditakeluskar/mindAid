@@ -179,7 +179,6 @@ export default {
    mounted() {
       //this.fetchCallAnswerContentScript();
       //this.fetchCallNotAnswerContentScript();
-      $("#preloader").show();
       this.time = document.getElementById('page_landing_times').value;
       this.getStageID();
    },
@@ -189,14 +188,14 @@ export default {
 				let stageName = 'Call';
 				let response = await axios.get(`/get_stage_id/${this.moduleId}/${this.componentId}/${stageName}`);
 				this.stageId = response.data.stageID;
-            $("#preloader").hide();
 			} catch (error) {
 				throw new Error('Failed to fetch stageID');
 			}
 		},
       async fetchCallAnswerContentScript() {
+         setTimeout(() => {
          let stepname1 = 'Call_Answered';
-         await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname1}`)
+          axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname1}`)
             .then(response => {
             this.callAnsStepId = response.data.stepID;
             this.fetchCallAnswerContentScripts();
@@ -204,6 +203,7 @@ export default {
             .catch(error => {
                   console.error('Error fetching data:', error);
             })
+         }, 500)
       },
 
       async fetchCallAnswerContentScripts(){
@@ -219,8 +219,9 @@ export default {
       },
 
       async fetchCallNotAnswerContentScript() {
+         setTimeout(() => {
          let stepname2 = 'Call_Not_Answered';
-         await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname2}`)
+          axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname2}`)
          .then(response => {
             this.callNotAnsStepId = response.data.stepID;
             this.fetchCallNotAnswerContentScripts();
@@ -228,6 +229,7 @@ export default {
             .catch(error => {
                   console.error('Error fetching data:', error);
             })
+         }, 500)
       },
 
       async fetchCallNotAnswerContentScripts(){
