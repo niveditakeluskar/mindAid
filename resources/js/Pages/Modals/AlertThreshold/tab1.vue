@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="alert">x</button>
         <strong>data saved successfully! </strong><span id="text"></span>
     </div>
-    <div class="small-modal"> 
+    <div class=""> <!-- small-modal -->
       <!-- Content of the tab goes here -->
         <form class="patient_threshold_form" id="patient_threshold_form"  @submit.prevent="submit_patient_threshold_form" :formErrors="formErrors">
             <div class="row">
@@ -113,10 +113,10 @@
                     <input type="text" class="form-control" name="spirometerpeflow" id="spirometerpeflow" :value="patient_spirometerpeflow">
                 </div>
             </div>
-            <div class="modal-footer">
+            <!-- <div class="modal-footer"> -->
                 <!-- if ($role == 3 || $role == 2 || $role == 5)  -->
-                    <button type="button" class="btn btn-primary float-right" @click="submit_patient_threshold_form()">Submit</button>
-            </div>
+                    <button type="button" class="btn btn-primary float-right mb-4" @click="submit_patient_threshold_form()">Submit</button>
+            <!-- </div> -->
         </form>
     </div>
 </template>

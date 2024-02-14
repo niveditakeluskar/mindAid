@@ -1,62 +1,58 @@
 <!-- AlertThresholds.vue -->
 <template>
-  <div v-if="isOpen" class="overlay open" @click="closeModal"></div>
-  <div v-if="isOpen" class="modal fade open">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h4 class="modal-title">Personal Notes</h4> 
-              <button type="button" class="close" @click="closeModal">×</button>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-                <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
-                    <button type="button" class="close" data-dismiss="alert">x</button>
-                    <strong>data saved successfully! </strong><span id="text"></span>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <form id="personal_notes_form" name="personal_notes_form" @submit.prevent="submitPersonalNotesForm" :formErrors="formErrors">
-                            <input type="hidden" name="patient_id" id="patient_id" :value="patientId">
-                            <input type="hidden" name="module_id" id="page_module_id" :value="moduleId">
-                            <input type="hidden" name="component_id" id="page_component_id" :value="componentId">
-                            <input type="hidden" name="stage_id" :value="stageid" />
-                            <input type="hidden" name="id">
-                            <input type="hidden" name="form_name" value="personal_notes_form">
-                            <input type="hidden" id="timer_runing_status" value="0"> 
-                            <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="personalnotesTime">              
-                            <label>Personal Notes<span class='error'>*</span></label>
-                            <textarea name="personal_notes" class="form-control forms-element" v-model="personal_notes_data"></textarea>
-                            <div class="invalid-feedback" v-if="formErrors.personal_notes" style="display: block;">
-                                <span :textContent="formErrors.personal_notes[0]"></span>
-                            </div>
-                        </form>
+    <div v-if="isOpen" class="overlay open" @click="closeModal"></div>
+    <div v-if="isOpen" class="modal fade open" style="width: 500px; height: 242px; left: 33%; top: 20%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Personal Notes</h4> 
+                <button type="button" class="close" @click="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
+                        <button type="button" class="close" data-dismiss="alert">x</button>
+                        <strong>data saved successfully! </strong><span id="text"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <form id="personal_notes_form" name="personal_notes_form" @submit.prevent="submitPersonalNotesForm" :formErrors="formErrors">
+                                <input type="hidden" name="patient_id" id="patient_id" :value="patientId">
+                                <input type="hidden" name="module_id" id="page_module_id" :value="moduleId">
+                                <input type="hidden" name="component_id" id="page_component_id" :value="componentId">
+                                <input type="hidden" name="stage_id" :value="stageid" />
+                                <input type="hidden" name="id">
+                                <input type="hidden" name="form_name" value="personal_notes_form">
+                                <input type="hidden" id="timer_runing_status" value="0"> 
+                                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="personalnotesTime">              
+                                <label>Personal Notes<span class='error'>*</span></label>
+                                <textarea name="personal_notes" class="form-control forms-element" v-model="personal_notes_data"></textarea>
+                                <div class="invalid-feedback" v-if="formErrors.personal_notes" style="display: block;">
+                                    <span :textContent="formErrors.personal_notes[0]"></span>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-          </div>
-          <div class="card-footer">
+            <div class="card-footer">
                 <div class="mc-footer">
                     <div class="row">
-                    <div class="col-lg-12 text-right">
-                        <button type="submit" class="btn btn-primary float-right" id="submit-personal-notes" @click="submitPersonalNotesForm">Save</button>
-                    </div>
+                        <div class="col-lg-12 text-right">
+                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitPersonalNotesForm">Save</button>
+                            <button type="button" class="btn btn-default" @click="closeModal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default" @click="closeModal">Close</button>
-          </div>
-      </div>
-  </div>
+        </div>
+    </div>
 </template>
 
 <script>
 import {
     ref,
-    onBeforeMount,
     onMounted,
     watch,
-    // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';
 export default {
@@ -67,10 +63,6 @@ export default {
         stageid: Number,
         personal_notes_data : String,
     },
-
-    components: {
-
-    },
     
     setup(props) {
         let personalnotesTime = ref(null);
@@ -79,7 +71,6 @@ export default {
         const showAlert = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
-        //   const personal_notes = ref(null);
         const openModal = () => {
             console.log('Open personal modal called');
             isOpen.value = true;
@@ -90,7 +81,6 @@ export default {
             isOpen.value = false;
         };
         
-
         let submitPersonalNotesForm = async () => {
             let myForm = document.getElementById('personal_notes_form');
             let formData = new FormData(myForm);
@@ -119,25 +109,17 @@ export default {
         }
 
         onMounted(async () => {
-            
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
                 personal_notes_data.value = props.personal_notes_data;
-                // console.log(props.personal_notes_data,'personal_notes_data=======');
             } catch (error) {
                 console.error('Error on page load:', error);
             }
-            // fetchPersonalNotesForm();
-        });
-
-        onBeforeMount(() => {
-
         });
 
         watch(() => showAlert, (newShowAlert, oldShowAlert) => {
-                showAlert.value = newShowAlert;
-            }
-        );
+            showAlert.value = newShowAlert;
+        });
 
         return {
             loading,
@@ -155,42 +137,38 @@ export default {
 </script>
 
 <style>
-/* Modal styles */
 .modal {
-display: none;
-position: fixed;
-background-color: white;
-z-index: 1000;
-margin: 2%;
-opacity: 0;
-transition: opacity 0.3s ease;
+    display: none;
+    position: fixed;
+    background-color: white;
+    z-index: 1000;
+    margin: 2%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Style the overlay */
 .overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.5);
-z-index: 999;
-display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
 }
 
-/* Show the overlay and modal when modal is open */
 .modal.open {
-display: block;
-opacity: 1;
+    display: block;
+    opacity: 1;
 }
 
 .overlay.open {
-display: block;
+    display: block;
 }
 
 .modal-content {
-  overflow-y: auto !important;
-  height: auto !important;
-  /* height: 800px !important; */
+    overflow-y: auto !important;
+    height: auto !important;
 }
 </style>
