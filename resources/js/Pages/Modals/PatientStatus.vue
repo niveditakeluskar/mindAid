@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 490px; left: 32%; height: 400px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 490px;left: 32%;min-height: 400px;max-height: 485px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -363,5 +363,8 @@
     .modal-content {
         overflow-y: auto !important;
         /* height: 500px !important; */
+    }
+    .modal-body {
+        flex: 0;
     }
 </style>
