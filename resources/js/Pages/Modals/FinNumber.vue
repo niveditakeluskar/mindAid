@@ -69,7 +69,6 @@ export default {
       stageid: Number,
       finNumber : Number,
   },
-
     components: {
  
     },
@@ -91,6 +90,22 @@ export default {
             isOpen.value = false;
         };
         
+        const patComDetails = async () => {
+            try {
+                const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                debugger;
+                finNumber.value = data.patient[0].fin_number;
+                
+            } catch (error) {
+                console.error('Error fetching Patient details:', error.message); // Log specific error message
+                // Handle the error appropriately
+            }
+        }
+
         let submitFinNumberForm = async () => {
             let myForm = document.getElementById('fin_number_form');
             let formData = new FormData(myForm);
@@ -99,6 +114,8 @@ export default {
                 formErrors.value == {};
                 const response = await axios.post('/patients/save-patient-fin-number', formData);
                 if (response && response.status == 200) {
+                    console.log(response+"RESPONSE");
+                    finNumber.value = response.patient[0].fin_number;
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
@@ -108,8 +125,10 @@ export default {
                         finnumberTime.value = document.getElementById('page_landing_times').value;
                         closeModal();
                     }, 3000);// Close the modal after 3 seconds (3000 milliseconds)
-                    window.location.reload();
+                    // window.location.reload();
                     formErrors.value = [];
+                    // patComDetails();
+
                 }
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -146,10 +165,12 @@ export default {
             openModal,
             closeModal,
             showAlert,
-          finnumberTime,
-          formErrors,
-          finNumber,
-          submitFinNumberForm,
+            finnumberTime,
+            formErrors,
+            finNumber,
+            submitFinNumberForm,
+            patComDetails,
+            
       };
   },
 };

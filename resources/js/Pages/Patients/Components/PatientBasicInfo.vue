@@ -395,33 +395,6 @@ export default {
             DeviceModalRef.value.openModal();
         };
 
-
-        const patientVeteranServiceModalDetails = async () => {
-            try {
-                const response = await fetch(`/patients/patient-VeteranServiceData/${props.patientId}/patient-VeteranServiceData`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch Patient VeteranService details - ${response.status} ${response.statusText}`);
-                }
-                console.log('Fetched Patient VeteranService details:', response.data);
-            } catch (error) {
-                console.error('Error fetching Patient VeteranService details:', error.message); // Log specific error message
-                // Handle the error appropriately
-            }
-        }
-
-        const patientAlertThresholdsModalDetails = async () => {
-            try {
-                const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch Patient alertThreshold details - ${response.status} ${response.statusText}`);
-                }
-                console.log('Fetched Patient alertThreshold details:', response.data);
-            } catch (error) {
-                console.error('Error fetching Patient alertThreshold details:', error.message); // Log specific error message
-                // Handle the error appropriately
-            }
-        }
-
         const veteranServicefunction = async () => {
             console.log("openMModelV called");
             veteranRef.value.openModal();
