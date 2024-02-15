@@ -29,8 +29,8 @@
                   <div class="mc-footer">
                      <div class="row"> 
                         <div class="col-lg-12 text-right">
-                           <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft">Draft Save</button>
-                           <button type="submit" class="btn btn-primary m-1 save_preparation">Save</button>
+                           <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft" :disabled="(timeStatus == 1) === true ">Draft Save</button>
+                           <button type="submit" class="btn btn-primary m-1 save_preparation" :disabled="(timeStatus == 1) === true ">Save</button>
                         </div>
                      </div>
                   </div>
@@ -66,6 +66,7 @@ export default {
     setup(props) {
       const isLoading = ref(false);
       let preparationTime = ref();
+      let timeStatus = ref();
       let formErrors = ref();
       
       onMounted(async () => {
@@ -164,6 +165,7 @@ export default {
          callPreparationDraft,
           submitPrepareForm,
           isLoading,
+          timeStatus,
         };
     }
 };

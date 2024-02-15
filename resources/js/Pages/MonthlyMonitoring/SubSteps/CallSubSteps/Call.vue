@@ -128,7 +128,7 @@
                   <div class="card-footer">
                      <div class="mc-footer">
                         <div class="row">
-                           <div class="col-lg-12 text-right" id="call-save-button" ><button type="submit" class="btn  btn-primary m-1" id="save-callstatus">Next</button></div>
+                           <div class="col-lg-12 text-right" id="call-save-button" ><button type="submit" class="btn  btn-primary m-1" id="save-callstatus" :disabled="(timerStatus == 1) === true ">Next</button></div>
                         </div>
                      </div>
                   </div>
@@ -169,6 +169,7 @@ export default {
          callNotAnsStepId:null,
          showAlert: false,
          renderComponent : true,
+         timerStatus : null,
       };
    },
    components: {
@@ -180,6 +181,8 @@ export default {
       //this.fetchCallAnswerContentScript();
       //this.fetchCallNotAnswerContentScript();
       this.time = document.getElementById('page_landing_times').value;
+      this.timerStatus = document.getElementById('timer_runing_status').value;
+      console.log("timer Status = ",this.timerStatus);
       this.getStageID();
    },
    methods: {
