@@ -224,6 +224,6 @@ const formatDate = (dateString) => {
 
   .followup-modal-content {
       overflow-y: auto !important;
-      height: 500px !important;
+      /* height: 500px !important; */
   }
 </style>

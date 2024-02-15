@@ -943,7 +943,7 @@ class CommonFunctionController extends Controller
             $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
         from task_management.user_patients up where user_id = $caremanager and up.status = 1  and read_status = 1) or 
         patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
-            $data  = DB::select(DB::raw($query));
+            $data  = DB::select($query);
             $count = $data[0]->count;
         } elseif ($roles[0]->role_name == 'Team Lead') {
             $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
@@ -951,7 +951,7 @@ class CommonFunctionController extends Controller
         patient_id in (select distinct  b.patient_id from ren_core.user_practices a join patients.patient_providers b
         on a.practice_id = b.practice_id join ccm.message_log c on b.patient_id = c.patient_id  where a.user_id = $caremanager and b.is_active = 1 and read_status = 1) or
         patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
-            $data  = DB::select(DB::raw($query));
+            $data  = DB::select($query);
             $count = $data[0]->count;
         } else {
             $count = MessageLog::where('read_status', 1)->distinct('patient_id')->count('patient_id');
