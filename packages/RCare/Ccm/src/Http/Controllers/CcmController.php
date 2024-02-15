@@ -1032,13 +1032,13 @@ class CcmController extends Controller
     {
         $notes = sanitizeVariable($request->notes);
         $get_topic = sanitizeVariable($request->topic);
-        $status_flag = sanitizeVariable($request->status_flag);
+        $status_flag = $request->has('status_flag') ? '1' : '0';
         $task_date = !empty(sanitizeVariable($request->task_date)) ? sanitizeVariable($request->task_date . '  12:00:00') : null;
         $id = sanitizeVariable($request->id);
-        $fetch_topic = ToDoList::whereNotNull('id', $id)->get();
+        $fetch_topic = ToDoList::where('id', $id)->latest()->first();
         if (!empty($fetch_topic)) {
-            $task_date_cw = $fetch_topic[0]->task_date;
-            $task_time = $fetch_topic[0]->task_time;
+            $task_date_cw = $fetch_topic->task_date;
+            $task_time = $fetch_topic->task_time;
         } else {
             $task_date_cw = '';
             $task_time = '';
@@ -1050,15 +1050,15 @@ class CcmController extends Controller
         } else {
             $t_date = '';
         }
-        $assigned_on = $fetch_topic[0]->assigned_on;
+        $assigned_on = $fetch_topic->assigned_on;
         if (!empty($assigned_on)) {
             $date = explode(' ', $assigned_on);
             $a_date = date('m-d-Y', strtotime($date[0]));
-            $task = $fetch_topic[0]->task_notes;
-            $task_id = $fetch_topic[0]->id;
-            $patient_id = $fetch_topic[0]->patient_id;
-            $mid = $fetch_topic[0]->module_id;
-            $cid = $fetch_topic[0]->component_id;
+            $task = $fetch_topic->task_notes;
+            $task_id = $fetch_topic->id;
+            $patient_id = $fetch_topic->patient_id;
+            $mid = $fetch_topic->module_id;
+            $cid = $fetch_topic->component_id;
         } else {
             $date = '';
             $a_date = '';
@@ -1086,12 +1086,10 @@ class CcmController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
-
+      
         if ($status_flag == 1) {
-            $check = CallWrap::where('task_id', $task_id)->exists();
-            if ($check == true) {
-                CallWrap::where('task_id', $task_id)->delete();
-            }
+            $check = CallWrap::where('task_id', $task_id)->delete();
+
             $status = 'Completed';
             $task_completed_at = Carbon::now();
             $callWrapUp = array(
@@ -2448,6 +2446,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 }
             }
             foreach ($steps as $step) {
+               
                 $new_stage_id          = $step->stage_id;
                 $steps_id              = $step->id;
                 $step_name             = $step->description;
@@ -2460,6 +2459,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $template_id           = $request_step_data['template_id'];
                 $template_type         = $request_step_data['template_type_id'];
                 $current_monthly_notes = $request_step_data['current_monthly_notes'];
+                if (isset($request_step_data['question'])) {
                 $data = array(
                     'contact_via'   => 'questionnaire',
                     'template_type' => $template_type,
@@ -2519,6 +2519,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     CallWrap::create($notes1);
                 }
                 $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
+            }
                 //$record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
             }
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
@@ -2526,8 +2527,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             return response(['form_start_time' => $form_save_time]);
         } catch (\Exception $ex) {
             DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+            //return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+       }
     }
 
 
@@ -3630,7 +3631,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
     {
         //dd($request->all());
         $patient_id            = sanitizeVariable($request->input('patient_id'));
-        $emr_complete          = empty(sanitizeVariable($request->emr_complete)) ? '0' : sanitizeVariable($request->emr_complete); //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
+        $emr_complete = $request->has('emr_complete') ? '1' : '0';
+ //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
         $task_name             = sanitizeVariable($request->task_name);
         $followupmaster_task   = sanitizeVariable($request->followupmaster_task);
         $selected_task_name    = sanitizeVariable($request->selected_task_name);
@@ -3939,18 +3941,19 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $patientId = sanitizeVariable($request->patient_id);
         $module_id = sanitizeVariable($request->module_id);
         $component_id = sanitizeVariable($request->component_id);
-        $from_email = sanitizeVariable($request->email_from);
-        $subject = sanitizeVariable($request->email_sub);
+        $from_email = "renova@d-insights.global";
+        //$subject = sanitizeVariable($request->email_sub);
         $email_content = sanitizeVariable($request->mail_content);
         $stage_id = sanitizeVariable($request->stage_id);
         $start_time   = sanitizeVariable($request->start_time);
         $end_time     = sanitizeVariable($request->end_time);
         $device_ids = sanitizeVariable($request->device_ids);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         $step_id = 0;
         $form_name = 'patient_add_device_form';
         $billable = 1;
         $to_email = Partner::where('category', '0')->orderBy('created_at', 'desc')->first();
-
         $to = isset($to_email) ? $to_email->email : '';
         $patient_device = PatientDevices::where('patient_id', $patientId)->where('status', 1)->latest()->first();
         $pdevices = array();
@@ -4002,13 +4005,22 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             );
             PatientDevices::where('id', $patient_device->id)->update($patientdevicedata);
         }
-        $msg = $email_content;
-        Mail::send(array(), array(), function ($message) use ($msg, $to, $subject) {
+
+        $datas = array(
+            'email'=>'renova@d-insights.global', 
+            'name'=> 'Renova System', 
+            'subject' => $subject,
+        );
+
+        $meg = $email_content;
+        Mail::send([], [], function ($message) use ($meg, $to, $subject) {
+        //Mail::send(array(), array(), function ($message) use ($meg, $to, $subject) {
             $message->from('renova@d-insights.global', 'Renova System');
             $message->to($to);
             $message->subject($subject);
-            $message->setBody($msg, 'text/html');
+            $message->html($meg);
         });
+       
         if (count(Mail::failures()) == 0) {
             echo 'Mail Send ' . Carbon::now();
         }
@@ -4026,7 +4038,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
             'updated_by' => session()->get('userid')
         );
         EmailLog::create($data);
-        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' => $form_save_time]);
     }
 
     public function listMessageHistory($id)

@@ -17,7 +17,8 @@
                         <input type="hidden" name="module_id" id="module_id" :value="moduleId" />
                         <input type="hidden" name="component_id" :value="componentId" />
                         <input type="hidden" name="id">
-                        <input type="hidden" name="mail_content" id="mail_content">
+                        <input type="hidden" name="mail_content" id="mail_content" :value="mail_content">
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="adddevicetime">
                      
                         <input type="hidden" name="stage_id" v-model="emailStageId" />
                         <div class="alert alert-success" id="device-alert" v-if="showSuccessAlert">
@@ -45,7 +46,8 @@
                             <div class="col-md-6 form-group mb-3 ">
                                 <label for="sel1">Email Template:</label>
                                 <select id="email_title"  class="custom-select show-tick" name="call_not_answer_template_id"
-                                  v-model="selectedEmail" required>
+                                  v-model="selectedEmail" @change="textScript(selectedEmail)" required>
+                                  <option value="0">Select Template</option>
                                 <option  v-for="item in emailOptions"  :key="item.id" :value="item.id">
                                  {{ item.content_title }} </option>
                                 </select>
@@ -97,6 +99,7 @@ export default {
     data() {
         return {
             isOpen: false,
+            adddevicetime: null
         };
     },
     components: {
@@ -105,6 +108,7 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
+            this.adddevicetime = document.getElementById('page_landing_times').value;
         },
         closeModal() {
             this.isOpen = false;
@@ -112,7 +116,7 @@ export default {
     },
     setup(props) {
         const emailStageId = ref('');
-        const startTimeInput = ref(null);
+        const adddevicetime = ref(null);
         const isSaveButtonDisabled = ref(true);
         const addReplaceDevice = ref('');
         const formErrors = ref({});
@@ -121,6 +125,8 @@ export default {
         const token = ref('');
         const editorData = ref(null);
         const selectedEmail = ref('');
+        const textScripts = ref('');
+        const mail_content =ref('');
         const selectedCode = ref('');
         const showAlert = ref(false);
         const loading = ref(false);
@@ -141,13 +147,13 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     alert("Saved Successfully");
-                /*     updateTimer(props.patientId, '1', props.moduleId); */
+                    updateTimer(props.patientId, '1', props.moduleId); 
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("patient_add_device_form").reset();
-                   /*  setTimeout(() => {
+                   setTimeout(() => {
                         showSuccessAlert.value = false;
-                        medicationTime.value = document.getElementById('page_landing_times').value;
-                    }, 3000); */
+                        adddevicetime.value = document.getElementById('page_landing_times').value;
+                    }, 3000); 
                 }
                 isLoading.value = false;
             } catch (error) {
@@ -176,9 +182,26 @@ export default {
                 const emailData = await response.json();
                 const emailArray = Object.entries(emailData).map(([id, content_title]) => ({ id, content_title }));
                 emailOptions.value = emailArray;
+                selectedEmail.value = emailArray[(emailArray).length-1].id;
+                textScript(selectedEmail.value);
             } catch (error) {
                 console.error('Error fetching email list:', error);
             }
+        };
+
+        let textScript = async(id) => {
+            await axios.get(`/ccm/get-call-scripts-by-id/${id}/${props.patientId}/call-script`)
+            .then(response => {
+               textScripts.value = response.data.finaldata;
+               const data = `${editorData.value.getData()}${textScripts.value}`;
+               editorData.value.setData(data);
+            //    textScripts = this.textScripts.replace(/(<([^>]+)>)/ig, '');
+            //    textScripts = this.textScripts.replace(/&nbsp;/g, ' ');
+            //    textScripts = this.textScripts.replace(/&amp;/g, '&');
+            })
+            .catch(error => {
+               console.error('Error fetching data:', error);
+            });
         };
 
         const handleDeviceChange = async () => {
@@ -247,6 +270,7 @@ export default {
             const text = editorData.value.getData().replace(`<li>${checkbox.id}</li>`, '').trim();
             editorData.value.setData(text);
         }
+        mail_content.value =`${editorData.value.getData()}`;
     };
 
     let getStageID = async () => {
@@ -262,12 +286,11 @@ export default {
         onMounted(async () => {
             fetchEmail();
             getStageID();
-          /*   try {
-                medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
+            try {
+                adddevicetime.value = document.getElementById('page_landing_times').value;
             } catch (error) {
                 console.error('Error on page load:', error);
-            } */
+            } 
             // Wait for CKEditor to be ready
         await new Promise((resolve) => {
             CKEDITOR.on('instanceReady', function (event) {
@@ -290,10 +313,15 @@ export default {
             showSuccessAlert,
             addReplaceDevice,
             handleDeviceChange,
+            selectedEmail,
+            adddevicetime,
             token,
             editorData,
+            mail_content,
       getDevice,
-      submitadddeviceForm
+      submitadddeviceForm,
+      textScript,
+      textScripts
           };
     }
 

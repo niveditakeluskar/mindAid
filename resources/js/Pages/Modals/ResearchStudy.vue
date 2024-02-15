@@ -1,7 +1,7 @@
 <!-- ResearchStudy.vue -->
 <template>
     <div v-if="isOpen" class="overlay open" @click="closeModal"></div>
-    <div v-if="isOpen" class="modal fade open">
+    <div v-if="isOpen" class="modal fade open" style="width: 500px; height: 242px; left: 33%; top: 20%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Research Study</h4> 
@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                      <form id="part_of_research_study_form" name="part_of_research_study_form" @submit.prevent="submitResearchStudyForm" :formErrors="formErrors">
+                        <form id="part_of_research_study_form" name="part_of_research_study_form" @submit.prevent="submitResearchStudyForm" :formErrors="formErrors">
                             <input type="hidden" name="patient_id" id="patient_id" :value="patientId">
                             <input type="hidden" name="module_id" id="page_module_id" :value="moduleId">
                             <input type="hidden" name="component_id" id="page_component_id" :value="componentId">
@@ -24,39 +24,34 @@
                             <input type="hidden" name="form_name" value="part_of_research_study_form">
                             <input type="hidden" id="timer_runing_status" value="0"> 
                             <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="researchstudyTime">
-                        <label>Part of Research Study<span class='error'>*</span></label>
-                        <textarea name="part_of_research_study" class="form-control forms-element" v-model="research_study_data"></textarea>
-                        <div class="invalid-feedback" v-if="formErrors.part_of_research_study" style="display: block;">
+                            <label>Part of Research Study<span class='error'>*</span></label>
+                            <textarea name="part_of_research_study" class="form-control forms-element" v-model="research_study_data"></textarea>
+                            <div class="invalid-feedback" v-if="formErrors.part_of_research_study" style="display: block;">
                                 <span :textContent="formErrors. part_of_research_study[0]"></span>
-                        </div>
+                            </div>
                         </form>
                     </div>
                 </div>
               </div>
             </div>
-
             <div class="card-footer">
                 <div class="mc-footer">
                     <div class="row">
-                    <div class="col-lg-12 text-right">
-                        <button type="submit" class="btn btn-primary float-right" id="submit-personal-notes" @click="submitResearchStudyForm">Save</button>
-                    </div>
+                        <div class="col-lg-12 text-right">
+                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitResearchStudyForm">Save</button>
+                            <button type="button" class="btn btn-default" @click="closeModal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" @click="closeModal">Close</button>
-          </div>
         </div>
     </div>  
   </template>
 <script>
 import {
     ref,
-    onBeforeMount,
     onMounted,
     watch,
-    // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';
 export default {
@@ -67,13 +62,9 @@ export default {
         stageid: Number,
         research_study_data : String,
     },
-    components:{
-
-    },
-    
     setup(props) {
-      let researchstudyTime = ref(null);
-      let research_study_data = ref(null);
+        let researchstudyTime = ref(null);
+        let research_study_data = ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
         let formErrors = ref([]);
@@ -127,18 +118,11 @@ export default {
             } catch (error) {
                 console.error('Error on page load:', error);
             }
-            // fetchPersonalNotesForm();
         });
- 
-        onBeforeMount(() => {
-
-        });
-
 
         watch(() => showAlert, (newShowAlert, oldShowAlert) => {
-                showAlert.value = newShowAlert;
-            }
-        );
+            showAlert.value = newShowAlert;
+        });
         
         return {
             loading,
@@ -154,44 +138,39 @@ export default {
     },
 };
 </script>
-  <style>
-  /* Modal styles */
-  .modal {
-  display: none;
-  position: fixed;
-  background-color: white;
-  z-index: 1000;
-  margin: 2%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  }
-  
-  /* Style the overlay */
-  .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: none;
-  }
-  
-  /* Show the overlay and modal when modal is open */
-  .modal.open {
-  display: block;
-  opacity: 1;
-  }
-  
-  .overlay.open {
-  display: block;
-  }
-  
-  .modal-content {
-    overflow-y: auto !important;
-    height: auto !important;
-    /* height: 800px !important; */
-  }
-  </style>
-  
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        background-color: white;
+        z-index: 1000;
+        margin: 2%;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .modal.open {
+        display: block;
+        opacity: 1;
+    }
+
+    .overlay.open {
+        display: block;
+    }
+
+    .modal-content {
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+</style>

@@ -11,7 +11,7 @@
                </div>
                <div style="width: 90%; float: right;">
                   <component :is="selectedComponent" v-bind="componentProps" :patientId="patientId" :moduleId="moduleId"
-                     :componentId="componentId" :stageid="stageid"></component>
+                     :componentId="componentId" :stageid="stageid" @form-submitted="handleFormSubmission"></component>
                </div>
             </div>
          </div>
@@ -71,7 +71,7 @@ export default {
       };
 
       const selectedComponent = computed(() => {
-      if (props.ccmRpm === 1) {
+         if (props.ccmRpm === 1) {
             switch (activeTab.value) {
                case 0:
                   return Preparation;
@@ -100,7 +100,13 @@ export default {
                   return null;
             }
          }
-    });
+      });
+
+      const handleFormSubmission = () => {
+         const nextTabIndex = activeCallTabs.value + 1;
+         changeTab(nextTabIndex);
+      };
+
       return {
          activeTab,
          tabs,
@@ -108,6 +114,7 @@ export default {
          changeTab,
          selectedComponent,
          updatePropsForComponent,
+         handleFormSubmission,
       };
    },
 };

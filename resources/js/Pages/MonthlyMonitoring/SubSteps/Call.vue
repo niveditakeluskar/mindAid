@@ -5,6 +5,152 @@
                 <div class="card-body">
                     <div class="horizontal-tabs">
                         <ul class="nav nav-tabs">
+                            <li v-for="(callTab, index) in callTabs" :key="index" @click="changeCallTab(index)"
+                                :class="{ active: activeCallTabs === index, disabled: isTabDisabled(index) }">
+                                <a href="#"
+                                    :class="{ 'disabled-verification': isVerificationTabDisabled(index), 'clickable': !isTabDisabled(index) }">{{
+                                        callTab }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <component :is="selectedCallComponent" v-bind="componentCallProps" :patientId="patientId"
+                            :moduleId="moduleId" :componentId="componentId" @form-submitted="handleFormSubmission">
+                        </component>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import { ref, onMounted, computed } from 'vue';
+
+import SubStepCall from './CallSubSteps/Call.vue';
+import SubStepVerification from './CallSubSteps/Verification.vue';
+import SubStepRelationship from './CallSubSteps/Relationship.vue';
+import SubStepConditionReview from './CallSubSteps/ConditionReview.vue';
+import SubStepGeneralQuestions from './CallSubSteps/GeneralQuestions.vue';
+import SubStepCallClose from './CallSubSteps/CallClose.vue';
+import SubStepCallWrapUp from './CallSubSteps/CallWrapUp.vue';
+
+export default {
+    props: {
+        patientId: Number,
+        moduleId: Number,
+        componentId: Number,
+    },
+    components: {
+        SubStepCall,
+        SubStepVerification,
+        SubStepRelationship,
+        SubStepConditionReview,
+        SubStepGeneralQuestions,
+        SubStepCallClose,
+        SubStepCallWrapUp,
+    },
+    setup(props) {
+        const callTabs = ref(['Call', 'Verification', 'Relationship', 'Condition Review', 'Monthly Questions', 'Call Close', 'Call Wrap up']);
+        const activeCallTabs = ref(0);
+        const componentCallProps = ref({});
+        const verification = ref('');
+
+        const selectedCallComponent = computed(() => {
+            switch (activeCallTabs.value) {
+                case 0:
+                    return 'SubStepCall';
+                case 1:
+                    return 'SubStepVerification';
+                case 2:
+                    return 'SubStepRelationship';
+                case 3:
+                    return 'SubStepConditionReview';
+                case 4:
+                    return 'SubStepGeneralQuestions';
+                case 5:
+                    return 'SubStepCallClose';
+                case 6:
+                    return 'SubStepCallWrapUp';
+                default:
+                    return 'SubStepCall';
+            }
+        });
+
+        onMounted(() => {
+            populateFunction();
+        });
+
+        const populateFunction = async () => {
+            try {
+                const response = await fetch(`/ccm/populate-monthly-monitoring-data/${props.patientId}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Patient Preparation - ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                // Assuming populateHippa is defined in your data
+                verification.value = data.populateHippa?.static?.verification || '';
+            } catch (error) {
+                console.error('Error fetching Patient Preparation:', error.message);
+            }
+        };
+
+        const enabledTab = () => {
+            verification.value = 1;
+        };
+
+        const isTabDisabled = (index) => {
+            return verification.value !== 1 && (index === 2 || index === 3 || index === 4 || index === 5);
+        };
+
+        const isVerificationTabDisabled = (index) => {
+            return verification.value !== 1 && (index === 2 || index === 3 || index === 4 || index === 5);
+        };
+
+        const changeCallTab = (index) => {
+            if (verification.value !== 1 && (index === 2 || index === 3 || index === 4 || index === 5)) {
+                // Do nothing or handle as needed
+            } else {
+                activeCallTabs.value = index;
+            }
+            updatePropsForCallComponent();
+        };
+
+        const updatePropsForCallComponent = () => {
+            componentCallProps.value = {
+                patientId: props.patientId,
+                moduleId: props.moduleId,
+                componentId: props.componentId
+            };
+        };
+
+        const handleFormSubmission = () => {
+            const nextTabIndex = activeCallTabs.value + 1;
+            changeCallTab(nextTabIndex);
+        };
+
+        return {
+            callTabs,
+            activeCallTabs,
+            componentCallProps,
+            verification,
+            selectedCallComponent,
+            enabledTab,
+            isTabDisabled,
+            isVerificationTabDisabled,
+            changeCallTab,
+            handleFormSubmission
+        };
+    }
+};
+</script>
+<!-- <template>
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="horizontal-tabs">
+                        <ul class="nav nav-tabs">
                             <li v-for="(callTab, index) in callTabs" :key="index"
                                 @click="changeCallTab(index)"
                                 :class="{ active: activeCallTabs === index, disabled: isTabDisabled(index) }">
@@ -136,7 +282,7 @@ export default {
 
     },
 };
-</script>
+</script>-->
 <style scoped>
 /* Your tab styles here */
 .horizontal-tabs {

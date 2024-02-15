@@ -179,7 +179,6 @@ export default {
    mounted() {
       //this.fetchCallAnswerContentScript();
       //this.fetchCallNotAnswerContentScript();
-      $("#preloader").show();
       this.time = document.getElementById('page_landing_times').value;
       this.getStageID();
    },
@@ -189,29 +188,51 @@ export default {
 				let stageName = 'Call';
 				let response = await axios.get(`/get_stage_id/${this.moduleId}/${this.componentId}/${stageName}`);
 				this.stageId = response.data.stageID;
-            let stepname1 = 'Call_Answered';
-            let stepname2 = 'Call_Not_Answered';
-				let response1 = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname1}`);
-            let response2 = await axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname2}`);
-				this.callAnsStepId = response1.data.stepID;
-            this.callNotAnsStepId = response2.data.stepID;
-            $("#preloader").hide();
 			} catch (error) {
 				throw new Error('Failed to fetch stageID');
 			}
 		},
       async fetchCallAnswerContentScript() {
-         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/${this.stageId}/${this.callAnsStepId}/content_template`)
+         setTimeout(() => {
+         let stepname1 = 'Call_Answered';
+          axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname1}`)
             .then(response => {
-               this.callAnswerContentScript = response.data;
-               this.callAnsSelectes = this.callAnswerContentScript[(this.callAnswerContentScript).length-1].id;
-               this.callAnsScript(this.callAnsSelectes);
+            this.callAnsStepId = response.data.stepID;
+            this.fetchCallAnswerContentScripts();
             })
             .catch(error => {
-               console.error('Error fetching data:', error);
-            });
+                  console.error('Error fetching data:', error);
+            })
+         }, 500)
       },
+
+      async fetchCallAnswerContentScripts(){
+         await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/${this.stageId}/${this.callAnsStepId}/content_template`)
+               .then(response => {
+                  this.callAnswerContentScript = response.data;
+                  this.callAnsSelectes = this.callAnswerContentScript[(this.callAnswerContentScript).length-1].id;
+                  this.callAnsScript(this.callAnsSelectes);
+               })
+               .catch(error => {
+                  console.error('Error fetching data:', error);
+               });
+      },
+
       async fetchCallNotAnswerContentScript() {
+         setTimeout(() => {
+         let stepname2 = 'Call_Not_Answered';
+          axios.get(`/get_step_id/${this.moduleId}/${this.componentId}/${this.stageId}/${stepname2}`)
+         .then(response => {
+            this.callNotAnsStepId = response.data.stepID;
+            this.fetchCallNotAnswerContentScripts();
+            })
+            .catch(error => {
+                  console.error('Error fetching data:', error);
+            })
+         }, 500)
+      },
+
+      async fetchCallNotAnswerContentScripts(){
          await axios.get(`/org/get_content_scripts/${this.moduleId}/${this.componentId}/${this.stageId}/${this.callNotAnsStepId}/content_template`)
             .then(response => {
                this.callNotAnswerContentScript = response.data;
@@ -222,6 +243,7 @@ export default {
                console.error('Error fetching data:', error);
             });
       },
+
       async callAnsScript(id){
          await axios.get(`/ccm/get-call-scripts-by-id/${id}/${this.patientId}/call-script`)
             .then(response => {
@@ -262,7 +284,8 @@ export default {
 					setTimeout(() => {
                   this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;
-					}, 3000);
+               }, 3000);
+               this.$emit('form-submitted');
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 422) {

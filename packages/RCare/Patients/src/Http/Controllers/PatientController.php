@@ -126,7 +126,7 @@ class PatientController extends Controller
             $insert_query = PatientFinNumber::create($patientfin);
         }
         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
-        return response(['form_start_time' => $form_save_time]);
+        return response(['form_start_time' => $form_save_time,'fin_number'  => $fin_number ]);
     }
 
     public function fetchVeteranServiceData($patientId)
