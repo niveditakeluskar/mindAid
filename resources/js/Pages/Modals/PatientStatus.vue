@@ -97,7 +97,8 @@
                                     <textarea class="form-control" name="deactivation_reason" id="comments"></textarea>
                                     <div id="comments" class="invalid-feedback"></div>
                                 </div>
-                                <div class="form-row invalid-feedback"  v-if="formErrors.deactivation_reason" style="display: block;">{{ formErrors.deactivation_reason[0] }}</div>
+                                <div class="form-row invalid-feedback"  v-if="formErrors.deactivation_reason" style="display: block;">{{ formErrors.deactivation_reason[0] }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -120,6 +121,14 @@
         props: {
             moduleId: Number,
             componentId: Number,
+            PatientWorkList:{
+        type: Function,
+        required: true,
+        },
+        PatientBasicInfoTab:{
+        type: Function,
+        required: true,
+        },
         }, 
         setup(props) {
             const Deactivations = ref([]);
@@ -266,13 +275,18 @@
                 try {
                     const response = await axios.post('/patients/patient-active-deactive', formData);
                     if (response && response.status == 200) {
-                        console.log(response);
+                        if (typeof props.PatientWorkList=== 'function') {
+                            props.PatientWorkList();
+                            }       
                         const currentUrl = window.location.href;
                         const urlParts = currentUrl.split("/");
                         const id = urlParts[urlParts.length - 1];
                         if(!isNaN(id)){
                             updateTimer(id, '1', props.moduleId);
                         }
+                        if(typeof props.PatientBasicInfoTab === 'function'){
+                                props.PatientBasicInfoTab();
+                            }
                         $(".form_start_time").val(response.data.form_start_time);
                         time.value = response.data.form_start_time;
                         $('#patientalertdiv').html('<div class="alert alert-success"> Data Saved Successfully </div>');
@@ -285,7 +299,6 @@
                         closeModal();
                     }, 3000); // Close the modal after 3 seconds (3000 milliseconds)
                     isLoading.value = false;
-                    window.location.reload();
                 } catch (error) {
                     isLoading.value = false;
                     if (error.response && error.response.status === 422) {

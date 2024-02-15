@@ -32,15 +32,16 @@
                                             <i class="text-muted i-ID-Card"></i> :
                                             <a class="btn btn-info btn-sm patient_finnumber"
                                                 @click="patient_finnumber_function"
-                                                style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="patient_finnumber">
+                                                style="background-color:#27a7de;border:none;" href="javascript:void(0)"
+                                                id="patient_finnumber">
                                                 <span id="fin_number" class="patient_fin_number"
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
                                                 :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
-                                            id="show-modal" @click="veteranServicefunction">
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            href="javascript:void(0)" id="show-modal" @click="veteranServicefunction">
                                             Veteran Service -
                                             <span v-if="military_status == 0">Yes</span>
                                             <span v-else-if="military_status == 1">No</span>
@@ -52,8 +53,8 @@
 
                                     </div>
                                     <div class="col-md-3 right-divider">
-                                        <div data-toggle="tooltip" data-placement="right" title="Contact Number" class="mb-1"><i
-                                                class="text-muted i-Old-Telephone"></i> : <b><span
+                                        <div data-toggle="tooltip" data-placement="right" title="Contact Number"
+                                            class="mb-1"><i class="text-muted i-Old-Telephone"></i> : <b><span
                                                     :textContent="patientMob"></span></b></div>
                                         <div data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text"
                                             data-original-title="Consent Text" class="mb-1 pr-4"><i
@@ -63,12 +64,13 @@
                                                 <span v-else-if="consent_to_text == '1'">Yes </span>
                                                 <span v-else>''</span>
                                             </span></div>
-                                        <div data-toggle="tooltip" data-placement="right" title="Address"
-                                            class="mb-1 pr-4"><i class="text-muted i-Post-Sign"></i>:
+                                        <div data-toggle="tooltip" data-placement="right" title="Address" class="mb-1 pr-4">
+                                            <i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
                                         </div>
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
-                                            id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            href="javascript:void(0)" id="show-modal1" @click="alertThresholdfunction">Alert
+                                            Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
                                             :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                             :patient_systolichigh="patient_systolichigh"
@@ -112,8 +114,7 @@
                                             :textContent="patient_module" data-original-title="Patient Enrollment Status"
                                             id="PatientStatus" class="mb-1">
                                         </span>
-                                        <PatientStatus ref="PatientStatusRef" :moduleId="moduleId"
-                                            :componentId="componentId" />
+                                        <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId" :PatientBasicInfoTab="PatientBasicInfoReload"/>
                                         <span patient_enroll_date v-if="patient_module_status == '1'">
                                             <a @click="() => patientServiceStatus('1')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="active">
@@ -160,8 +161,9 @@
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
-                                            id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            href="javascript:void(0)" id="add-patient-devices"
+                                            @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
 
@@ -189,10 +191,10 @@
                                                     class="non_billabel_last_time_spend" :textContent="non_billabel_time">
                                                 </span></span>
                                             <button class="button"
-                                                style="border: 0px none;background: #f7f7f7;outline: none;"><a :href="EditPatientUrl"
-                                                    title="Edit Patient Info" data-toggle="tooltip" data-placement="top"
-                                                    data-original-title="Edit Patient Info"><i class=" editform i-Pen-4"
-                                                        style="color: #2cb8ea;"></i></a></button>
+                                                style="border: 0px none;background: #f7f7f7;outline: none;"><a
+                                                    :href="EditPatientUrl" title="Edit Patient Info" data-toggle="tooltip"
+                                                    data-placement="top" data-original-title="Edit Patient Info"><i
+                                                        class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
                                             <div class="demo-div">
                                                 <div class="stopwatch" id="stopwatch">
                                                     <i class="text-muted i-Timer1"></i> :
@@ -233,13 +235,15 @@
                                                         style="display:none;">resetTickingTime</button>
                                                 </div>
                                             </div>
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
-                                                id="personal_notes" @click="personalnotesfunction">Personal Notes</a>
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                                href="javascript:void(0)" id="personal_notes"
+                                                @click="personalnotesfunction">Personal Notes</a>
                                             <PersonalNotes ref="personalnotesRef" :patientId="patientId"
                                                 :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                                 :personal_notes_data="personal_notes_data" />|
-                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)"
-                                                id="part_of_research_study" @click="researchstudyfunction">Research
+                                            <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                                href="javascript:void(0)" id="part_of_research_study"
+                                                @click="researchstudyfunction">Research
                                                 Study</a>
                                             <ResearchStudy ref="researchstudyRef" :patientId="patientId"
                                                 :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
@@ -486,7 +490,7 @@ export default {
                 date_enrolled.value = data.date_enrolled;
                 patient_module.value = data.patient_services[0].module.module;
                 patient_module_status.value = data.patient_services[0].status;
-              
+
                 suspended_from_date.value = data.patient_services[0].suspended_from;
                 suspended_to_date.value = data.patient_services[0].suspended_to;
                 patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status
@@ -662,13 +666,18 @@ export default {
 
         }
 
+        const PatientBasicInfoReload = async () => {
+            patComDetails();
+            countDownFunc();
+        };
+
         onMounted(async () => {
             patComDetails();
-            // alert(props.componentId+"componentId");
             countDownFunc();
         });
 
         return {
+            PatientBasicInfoReload,
             patientServiceStatus,
             EditPatientUrl,
             AddDeviceModalRef,
