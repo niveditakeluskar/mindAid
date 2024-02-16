@@ -29,8 +29,8 @@
                   <div class="mc-footer">
                      <div class="row"> 
                         <div class="col-lg-12 text-right">
-                           <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft" :disabled="(timeStatus == 1) === true ">Draft Save</button>
-                           <button type="submit" class="btn btn-primary m-1 save_preparation" :disabled="(timeStatus == 1) === true ">Save</button>
+                           <button type="button" class="btn btn-primary m-1 draft_preparation" @click="callPreparationDraft" :disabled="{'disabled' : timerStatus == 1 }">Draft Save</button>
+                           <button type="submit" class="btn btn-primary m-1 save_preparation" :disabled="{'disabled' : timerStatus == 1 }">Save</button>
                         </div>
                      </div>
                   </div>
@@ -73,6 +73,10 @@ export default {
          // this.$emit('checkConditionRequirnments');
             try {
                 preparationTime.value = document.getElementById('page_landing_times').value;
+               const timerStatusElement = document.getElementById('timer_runing_status');
+               if (timerStatusElement !== null) {
+                  timerStatus.value = timerStatusElement.value;
+               }
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -165,7 +169,7 @@ export default {
          callPreparationDraft,
           submitPrepareForm,
           isLoading,
-          timeStatus,
+          timerStatus,
         };
     }
 };

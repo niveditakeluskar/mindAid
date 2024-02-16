@@ -333,6 +333,7 @@ $("#care_id").on("change", function () {
 
 // $("[name='modules']").val(0).attr("selected", "selected").change();           
 util.getToDoListData(0, {{getPageModuleName()}});
+util.getAssignPatientListData(0, 0);
 //  $(".patient-div").hide(); // to hide patient search select
 
 $('#daily-prod-search').click(function(){

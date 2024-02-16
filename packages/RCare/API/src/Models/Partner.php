@@ -14,35 +14,40 @@ use Illuminate\Notifications\Notifiable;
 
 class Partner extends Authenticatable 
 {
-use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
+    use DashboardFetchable, ModelMapper, DatesTimezoneConversion, HasFactory, Notifiable;
 
-    protected $table ='rcare_api.partner';
+    protected $table = 'ren_core.partners';
 
-        /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
- protected $population_include = [
+    protected $population_include = [
         "user_id"
     ];
 
-  protected $dates = [
+    protected $dates = [
         'created_at',
-        'updated_at'
+        'updated_at',
+        'email_verified_at'
     ];
 
-protected $primaryKey = 'user_id';
-  protected $keyType = 'string';
-public $incrementing = false;
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
-	'partner_name',
-    'location ',
-    'email',
-    'phone',
-    'user_id',
-    'User_key'
+        'name',
+        'add1 ',
+        'email',
+        'password',
+        'phone',
+        'status'
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
     ];
 	
 	

@@ -40,13 +40,12 @@ return [
             'driver' => 'session',
             'provider' => 'rcare_users',
         ],
-
-        'api' => [
+		'api' => [
             'driver' => 'token',
             'provider' => 'rcare_users',
             'hash' => false,
-        ],
-
+        ],		
+		
         'rcare_user' => [
             'driver' => 'session',
             'provider' => 'rcare_users',
@@ -85,12 +84,16 @@ return [
             'driver' => 'eloquent', 
             'model' => RCare\Org\OrgPackages\Users\src\Models\Users::class,
         ],
+		'api_users' => [
+            'driver' => 'eloquent', 
+            'model' => RCare\API\Models\Partner::class,
+        ],
 
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+         'users' => [
+             'driver' => 'database',
+             'table' => 'ren_core.partners',
+         ],
     ],
 
     

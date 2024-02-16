@@ -46,7 +46,8 @@ class Kernel extends ConsoleKernel
         \App\Http\Middleware\SecureHeaders::class,
     ];
 	*/
-
+	
+	
 
      
     protected function schedule(Schedule $schedule)  
