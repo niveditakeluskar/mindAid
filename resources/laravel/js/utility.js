@@ -3053,6 +3053,26 @@ var getToDoListData = function (patientId, moduleId) {
     });
 };
 
+var getAssignPatientListData = function (practice,patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        // $('.badge').html($('#count_patient').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
 var getToDoListCalendarData = function (patient_id, module_id) {
     if (patient_id == '') {
         patient_id = 0;
@@ -4520,6 +4540,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
+    getAssignPatientListData: getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,

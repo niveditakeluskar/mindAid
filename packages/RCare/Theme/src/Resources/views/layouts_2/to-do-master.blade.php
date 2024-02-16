@@ -120,6 +120,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         @include('Theme::layouts_2.previous-month-notes')
     <?php } ?>
     @include('Theme::layouts_2.to-list-customizer')
+    @include('Theme::layouts_2.cm-patient-assign') 
 
 
     <!-- </div> -->
