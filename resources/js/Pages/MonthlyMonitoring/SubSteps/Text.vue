@@ -26,7 +26,7 @@
                         <div class="mc-footer">
                             <div class="row">
                                 <div class="col-lg-12 text-right">
-                                    <button type="submit" id="save-text" class="btn  btn-primary m-1" :disabled="(timeStatus == 1) === true ">Submit</button>
+                                    <button type="submit" id="save-text" class="btn  btn-primary m-1" :disabled="(timerStatus == 1) === true ">Submit</button>
                                 </div>
                             </div>
                         </div>

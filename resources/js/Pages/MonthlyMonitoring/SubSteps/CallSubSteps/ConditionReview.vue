@@ -47,7 +47,7 @@
                <div class="mc-footer">
                   <div class="row"> 
                      <div class="col-lg-12 text-right">
-                        <button type="submit" class="btn btn-primary m-1 save_preparation" id="_save" :disabled="(timeStatus == 1) === true ">Next</button>
+                        <button type="submit" class="btn btn-primary m-1 save_preparation" id="_save" :disabled="(timerStatus == 1) === true ">Next</button>
                      </div>
                   </div>
                </div>
