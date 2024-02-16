@@ -585,6 +585,7 @@ export default {
                 $("form").find(":submit").attr("disabled", false);
                 $("form").find(":button").attr("disabled", false);
                 $(".change_status_flag").attr("disabled", false);
+                
                 $("#pause").show();
                 $("#stop").show();
                 $("#start").hide();
@@ -636,6 +637,7 @@ export default {
                     $("form").find(":submit").attr("disabled", true);
                     $("form").find(":button").attr("disabled", true);
                     $(".change_status_flag").attr("disabled", true);
+                    
                     //$(".last_time_spend").html(response.data.end_time);
                     $('.form_start_time').val(response.data.form_start_time);
                     alert("Timer paused and Time Logged successfully.");
