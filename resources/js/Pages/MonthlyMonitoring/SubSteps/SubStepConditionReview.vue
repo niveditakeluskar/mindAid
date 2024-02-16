@@ -176,7 +176,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button type="submit" class="btn  btn-primary">Save</button>
+                                <button type="submit" class="btn  btn-primary" :disabled="(timerStatus == 1) === true ">Save</button>
                             </div>
                         </form>
                     </div>
@@ -229,7 +229,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-12 text-right">
                                                         <button type="submit" dataid="rpm_cm_form"
-                                                            class="btn btn-primary m-1" :disabled="(timeStatus == 1) === true ">Submit</button>
+                                                            class="btn btn-primary m-1" :disabled="(timerStatus == 1) === true ">Submit</button>
                                                         <button type="button"
                                                             class="btn btn-outline-secondary m-1 modalcancel"
                                                             data-dismiss="modal">Cancel</button>

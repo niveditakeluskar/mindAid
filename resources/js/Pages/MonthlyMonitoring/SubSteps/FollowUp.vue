@@ -108,7 +108,7 @@
 							</div>
 							<div class="row">
 								<div class="col-lg-12 text-right">
-									<button type="submit" class="btn  btn-primary m-1 office-visit-save" :disabled="(timeStatus == 1) === true ">Save</button>
+									<button type="submit" class="btn  btn-primary m-1 office-visit-save" :disabled="(timerStatus == 1) === true ">Save</button>
 								</div>
 
 							</div>
@@ -163,7 +163,7 @@ export default {
 	},
 	setup(props) {
 		let time = ref(null);
-		let timeStatus = ref();
+		let timerStatus = ref();
 		const FollowupModalRef = ref();
 		const isLoading = ref(false);
 		const followupMasterTaskList = ref();
@@ -198,6 +198,10 @@ export default {
 				checkbox.dataset.stepId = row.step_id;
 				checkbox.value = row.status_flag === 1 ? 1 : 0;
 				checkbox.checked = row.status_flag === 1;
+				if(timerStatus.value == 1){
+					//document.getElementsByClassName("change_status_flag").disabled= true;
+					checkbox.setAttribute('disabled', true);
+				}
 				// Bind click event handler
 				checkbox.addEventListener('click', changeStatus);
 				return checkbox;
@@ -452,7 +456,7 @@ export default {
 				fetchFollowupMasterTaskList();
 				getStageID();
 				time.value = document.getElementById('page_landing_times').value;
-				timeStatus.value = document.getElementById('timer_runing_status').value;
+				timerStatus.value = document.getElementById('timer_runing_status').value;
 			} catch (error) {
 				console.error('Error on page load:', error);
 			}
@@ -482,7 +486,7 @@ export default {
 			followupMasterTaskList,
 			getStageID,
 			handleCheckboxChange,
-			timeStatus,
+			timerStatus,
 		};
 	}
 }
