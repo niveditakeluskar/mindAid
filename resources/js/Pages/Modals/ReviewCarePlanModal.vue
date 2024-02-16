@@ -318,22 +318,10 @@ export default {
         moduleId: Number,
         componentId: Number,
     },
-    data() {
-        return {
-            isOpen: false,
-        };
-    },
     components: {
         AgGridTable,
     },
-    methods: {
-        openModal() {
-            this.isOpen = true;
-        },
-        closeModal() {
-            this.isOpen = false;
-        },
-    },
+ 
     setup(props) {
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
@@ -358,7 +346,26 @@ export default {
         let selectedMedication = ref('');
         const selectedEditDiagnosId = ref('');
         const selectedcondition = ref('');
+        const isOpen = ref(false);
 
+        const openModal = () => {
+            isOpen.value = true;
+            fetchCarePlanFormList();
+            fetchDiagnosis();
+            fetchCode();
+            getStageID();
+            additionalgoals();
+            additionalsymptoms();
+            additionaltasks();
+           const reviewCaretimerElement = document.getElementById('page_landing_times').value;
+                if (reviewCaretimerElement !== null) {
+                    reviewCarePlanTimer.value = reviewCaretimerElement.value;
+                    }
+        };
+
+        const closeModal = () => {
+            isOpen.value = false;
+        };
 
         let columnDefs = ref([
             {
@@ -608,7 +615,7 @@ export default {
 						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
 				}
                 const codeData = await response.json();
-                codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
+                codeOptions.value = codeData.map(item => item.code);
 
         } catch (error) {
             console.error('Error fetching Code:', error); // Log specific error message
@@ -623,8 +630,11 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
-                codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
 
+               // Check if codeData is an array
+            if (Array.isArray(codeData)) {
+            codeOptions.value = codeData.map(item => item.code); 
+                 }
             } catch (error) {
                 console.error('Error fetching code list:', error);
             }
@@ -820,22 +830,14 @@ export default {
 
 
 
-        onMounted(async () => {
-            fetchCarePlanFormList();
-            fetchDiagnosis();
-            fetchCode();
-            getStageID();
-            additionalgoals();
-            additionalsymptoms();
-            additionaltasks();
-            try {
-                reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
-            } catch (error) {
-                console.error('Error on page load:', error);
-            }
-        });
+     /*    onMounted(async () => {
+
+        }); */
 
         return {
+            openModal,
+            closeModal,
+            isOpen,
             getCodeData,
             isSaveButtonDisabled,
             selectedDiagnosisId,

@@ -126,7 +126,7 @@
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
 					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
-	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+	 				<MedicationModalForm ref="MedicationModalFormRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
 				<textarea class="form-control" name="med_added_or_discon_notes"
@@ -256,7 +256,7 @@
 				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none">Create Care
 				Plan</button>&nbsp;&nbsp;
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal">Review Care Plan</button>
-			<ReviewCarePlanModal ref="ReviewCarePlanModal" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
 				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
 
@@ -275,7 +275,10 @@
 </template>
 
 <script>
-import ModalForm from '../../Modals/Medication.vue';
+import {
+	ref,
+} from '../../commonImports';
+import MedicationModalForm from '../../Modals/Medication.vue';
 import AllergiesModalForm from '../../Modals/Allergies.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
 import ServicesModalForm from '../../Modals/Services.vue';
@@ -289,18 +292,13 @@ export default {
 		formErrors:Array, 
     },
 	components: {
-		ModalForm ,
-		ReviewCarePlanModal,
-	},
-	components: {
-		ModalForm, // Register the modal component
+		MedicationModalForm,
 		AllergiesModalForm,
 		ServicesModalForm,
 		vitalsHealthDataModalForm,
 		ReviewCarePlanModal
 	},
 	data() {
-		
 		return {
 			// time:null,
 			conditionRequirnment1:'',
@@ -353,8 +351,6 @@ export default {
 		},
 	},
 	methods: {
-	
-
 		noneConditionRequireement() {
 			this.conditionRequirnment1 = 0;
 			this.conditionRequirnment2 = 0;
@@ -387,8 +383,8 @@ export default {
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				console.log(data,this.patientPrepSaveDetails.populateCallPreparation,"populate ka value", this.patientPrepSaveDetails.populateCallPreparation.static);
 				const staticData = this.patientPrepSaveDetails.populateCallPreparation.static;
+				if (staticData !== undefined && staticData !== null) {
 					const keys = Object.keys(staticData);
 					if (keys.length > 0) {
 					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation.static.submited_to_emr;
@@ -424,7 +420,8 @@ export default {
 					}
 				}else{
 					console.error('populateCallPreparation is empty or undefined');
-				}				
+				}			
+			}	
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
@@ -432,12 +429,7 @@ export default {
 		openModal() {
 			// Access the modal component through a ref
 			// console.log("openMModel called");
-			this.$refs.modalForm.openModal();
-		},
-		openReviewCarePlanModalModal() {
-			// Access the modal component through a ref
-			// console.log("ReviewCarePlanModal called"); 
-			this.$refs.ReviewCarePlanModal.openModal();
+			this.$refs.MedicationModalFormRef.openModal();
 		},
 		openAllergiesModal() {
 			// console.log("openAllergiesModal called");
@@ -446,19 +438,27 @@ export default {
 		openServicesModal() {
 			this.$refs.servicesModalForm.openModal();
 		},
-
 		openVitalsHealthDataModalForm() {
 			this.$refs.vitalsHealthDataModalForm.openModal();
 		},
 	},
 	setup(props){
-		const generatePdfUrl = () => {
+	const ReviewCarePlanModalRef = ref();
+
+	const generatePdfUrl = () => {
       return `/ccm/monthly-monitoring/patient-care-plan/${props.patientId}`;
     };
+	
 	const generateWordUrl = () => {
       return `/ccm/monthly-monitoring/generate-docx/${props.patientId}`;
     };
+
+	const openReviewCarePlanModalModal = () => {
+			ReviewCarePlanModalRef.value.openModal();
+		};
 		return{
+			openReviewCarePlanModalModal,
+			ReviewCarePlanModalRef,
 			generatePdfUrl,
 			generateWordUrl,
 		};
