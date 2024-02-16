@@ -23,7 +23,7 @@
 		<input type="hidden" name="step_id" value="{{$step_id}}">
 		<input type="hidden" name="form_name" value="allergy_drug_form">
 		<input type="hidden"  name="allergy_type" value="drug">
-    <input type="hidden" name="id" id="id"> 
+        <input type="hidden" name="id" id="id"> 
     <input type="hidden" name="billable" value ="<?php if(isset($patient_enroll_date[0]->finalize_cpd) && $patient_enroll_date[0]->finalize_cpd == 0 && $billable == 0 && $enroll_in_rpm == 0){echo 0;}else{echo 1;} ?>">
      <br>
      <div class="col-md-12 form-group mt-3">

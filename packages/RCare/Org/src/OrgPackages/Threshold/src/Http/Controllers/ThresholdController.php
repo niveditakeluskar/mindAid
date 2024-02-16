@@ -22,7 +22,7 @@ class ThresholdController extends Controller {
 
 	} 
 
-    public function addgroupthreshold(thresholdAddRequest $request) {
+    public function addgroupthreshold(thresholdAddRequest $request) { //dd($request->all());
        
         $bpmHigh = sanitizeVariable($request->bpmhigh);
         $bpmLow = sanitizeVariable($request->bpmlow);
@@ -46,12 +46,12 @@ class ThresholdController extends Controller {
         $eff_date = Carbon::now();
         $created_by = session()->get('userid');
 
-          $ecgcredetials=ApiECGCredeintials();
+        $ecgcredetials=ApiECGCredeintials();
         $GroupName=$ecgcredetials[0]->group_name;
-         $group_code = $GroupName;
-
+        $group_code = $GroupName;
+        // dd($group_code);
         $threshold_data = array(
-            'group_code' => $GroupName,
+            'group_id' => $GroupName,
             'bpmhigh' => $bpmHigh,
             'bpmlow' => $bpmLow,
             'diastolichigh' => $diastolicHigh,
@@ -118,11 +118,11 @@ class ThresholdController extends Controller {
                curl_close($ch);
 
 
-        $GroupThreshold = GroupThreshold::where('group_code',$group_code)->exists();
+        $GroupThreshold = GroupThreshold::where('group_id',$group_code)->exists();
     if($GroupThreshold==true)
     {
         $threshold_data['updated_by']=$created_by; 
-        $update_practice = GroupThreshold::where('group_code',$group_code)->update($threshold_data);
+        $update_practice = GroupThreshold::where('group_id',$group_code)->update($threshold_data);
         //return "edit";
     }else{  
         $threshold_data['created_by']=$created_by;

@@ -153,12 +153,12 @@
                             </div>
                             <!-- <div class="col-md-6 form-group mb-3" >
                                 <label for="Organization">Organization</label>
-                                @selectrcareorg("org_id", ["id" => "org_id"])
+                                selectrcareorg("org_id", ["id" => "org_id"])
                             </div> -->
 
                            <!--  <div class="col-md-6 form-group mb-3">
                                <label for="Level"><span class="error">*</span> Level</label>
-                               @selectlevel("category_id", ["id" => "category_id"])
+                               selectlevel("category_id", ["id" => "category_id"])
                            </div> --> 
                         </div>
                         <div class="row"> 

@@ -79,7 +79,7 @@ class ProviderPerformanceController extends Controller
         //     $query.=" and pp.provider_id =$providerid"; 
         //    }
  
-            $data = DB::select( DB::raw($query));     
+            $data = DB::select($query);     
              return Datatables::of($data)
             ->addIndexColumn()   
             ->addColumn('editPatient', function($row){
@@ -114,7 +114,7 @@ class ProviderPerformanceController extends Controller
         //     $query.=" and pp.provider_id =$providerid";
         //    }
 
-            $data = DB::select( DB::raw($query));       
+            $data = DB::select($query);       
              return Datatables::of($data)
             ->addIndexColumn()   
             ->addColumn('editPatient', function($row){
@@ -141,7 +141,7 @@ class ProviderPerformanceController extends Controller
     
        $query = "select * from patients.SP_Provider_Performance_Report($practiceid,$providerid,$practicesgrp)"; 
      //  dd($query);  
-       $data = DB::select( DB::raw($query));
+       $data = DB::select($query);
              return Datatables::of($data)
             ->addIndexColumn() 
             ->addColumn('ccmcount', function($row){
@@ -166,7 +166,7 @@ class ProviderPerformanceController extends Controller
                $query = "select * from patients.sp_providerperformance_ccmcount($row->practice_id,$row->provider_id)";
               //  dd($query);
       
-                  $ccm_count = DB::select( DB::raw($query));  
+                  $ccm_count = DB::select($query);  
                   if(isset($ccm_count[0]->patinetcount)){
                     return $ccm_count[0]->patinetcount;
                   }else{
@@ -194,7 +194,7 @@ class ProviderPerformanceController extends Controller
 
                  $query = "select * from patients.sp_providerperformance_rpmcount($row->practice_id,$row->provider_id)";
       
-                  $rpm_count = DB::select( DB::raw($query));  
+                  $rpm_count = DB::select($query);  
                   //dd($ccm_count[0]->count);
                   if(isset($rpm_count[0]->patinetcount)){
                     return $rpm_count[0]->patinetcount;

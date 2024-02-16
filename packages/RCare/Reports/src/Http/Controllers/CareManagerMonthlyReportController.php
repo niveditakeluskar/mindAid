@@ -90,7 +90,7 @@ class CareManagerMonthlyReportController extends Controller
             //   $query ="select pid, pfname, plname, pmname, pdob , pprofileimg, pppracticeemr, pracpracticename , prprovidername,  to_char(ccsrecdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as ccsrecdate, ptrtotaltime , f_name, l_name, pstatus from patients.caremanager_monthly_billing_report($practices,$caremanager,$module_id,'".$fromdate."','".$todate." 23:59:59',$practicesgrp,'".$configTZ ."','".$userTZ."',$activedeactivestatus)";
           //  dd($query);//here $tomonth is fromdate and $month is todate
           $query ="select pid, pfname, plname, pmname, pdob , pprofileimg, pppracticeemr, pracpracticename , prprovidername,  to_char(ccsrecdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as ccsrecdate, ptrtotaltime , f_name, l_name, pstatus from patients.caremanager_monthly_billing_report($practices,$caremanager,$module_id,timestamp '".$dt1."',timestamp '".$dt2."',$practicesgrp,'".$configTZ ."','".$userTZ."',$activedeactivestatus)";
-              $data = DB::select( DB::raw($query) );  
+              $data = DB::select($query);  
               //dd($data);
                  return Datatables::of($data) 
                  ->addIndexColumn()           

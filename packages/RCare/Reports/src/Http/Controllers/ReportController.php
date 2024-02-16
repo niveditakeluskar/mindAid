@@ -70,7 +70,7 @@ class ReportController extends Controller
           }
 
 
-            $data = DB::select( DB::raw($query));     
+            $data = DB::select($query);     
              return Datatables::of($data)
             ->addIndexColumn()   
             ->make(true);
@@ -95,7 +95,7 @@ class ReportController extends Controller
           }
 
 
-            $data = DB::select( DB::raw($query));       
+            $data = DB::select($query);       
              return Datatables::of($data)
             ->addIndexColumn()   
             ->make(true);
@@ -108,7 +108,7 @@ class ReportController extends Controller
         $providerid = $request->route('provider');
 
        $query = "select * from patients.SP_Provider_Performance_Report($practiceid,$providerid)";  
-       $data = DB::select( DB::raw($query));
+       $data = DB::select($query);
        //$this->assignedPatients();
              return Datatables::of($data)
             ->addIndexColumn()
@@ -268,7 +268,7 @@ class ReportController extends Controller
              }
             
 
-             $data = DB::select( DB::raw($query) );
+             $data = DB::select($query);
           
             return Datatables::of($data)
             ->addIndexColumn()            
@@ -291,7 +291,7 @@ class ReportController extends Controller
     }
     $query = "select * from patients.sp_nonenrolled_patients_details($p)"; 
     // dd($query);
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
           return Datatables::of($data) 
           ->addIndexColumn()            
           ->make(true);
@@ -314,7 +314,7 @@ class ReportController extends Controller
     }
     $query = "select * from patients.sp_enrolled_patients_details($p)"; 
     // dd($query);
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
           return Datatables::of($data)  
           ->addIndexColumn()            
           ->make(true);
@@ -337,7 +337,7 @@ class ReportController extends Controller
     }
     $query = "select * from patients.sp_enrolled_in_ccm_details($p)"; 
     // dd($query);
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
             return Datatables::of($data) 
             ->addIndexColumn()            
             ->make(true);
@@ -360,7 +360,7 @@ class ReportController extends Controller
       }
       $query = "select * from patients.sp_enrolled_in_rpm_details($p)"; 
       // dd($query);
-      $data = DB::select( DB::raw($query) );
+      $data = DB::select($query);
               return Datatables::of($data) 
               ->addIndexColumn()            
               ->make(true);
@@ -384,7 +384,7 @@ class ReportController extends Controller
       }
       $query = "select * from patients.sp_enrollment_totalpatients($p)"; 
       // dd($query);
-      $data = DB::select( DB::raw($query) );
+      $data = DB::select($query);
               return Datatables::of($data) 
               ->addIndexColumn()            
               ->make(true);
@@ -420,22 +420,22 @@ class ReportController extends Controller
   public function getPatientEnrolledData(Request $request)    
   {
       $query="select count(*) from patients.patient where status=1";
-      $totalPatient=DB::select( DB::raw($query) );
+      $totalPatient=DB::select($query);
 
        $queryenrolledcount="select count( ps.patient_id) from patients.patient_services ps where ps.status=1 and ps.patient_id in (select id from patients.patient where status=1) and ps.patient_id is not null";
-      $totalEnreolledPatient=DB::select( DB::raw($queryenrolledcount) );
+      $totalEnreolledPatient=DB::select($queryenrolledcount);
 
        $querynewenroll="select count( ps.patient_id) from patients.patient_services ps where ps.status=1 and ps.patient_id in (select id from patients.patient where status=1) and ps.patient_id is not null and (ps.created_at between '2021-02-01 00:00:00' and '2021-02-12 23:59:59')";
-       $totalnewenroll=DB::select( DB::raw($querynewenroll) );
+       $totalnewenroll=DB::select($querynewenroll);
        
        $query2="select count( ps.patient_id) from patients.patient_services ps where ps.status=1 and ps.module_id=3 and ps.patient_id in (select id from patients.patient where status=1) ";
-      $totalCCMPatient=DB::select( DB::raw($query2) );
+      $totalCCMPatient=DB::select($query2);
 
       $query3="select count( ps.patient_id) from patients.patient_services ps where ps.status=1 and ps.module_id=2 and ps.patient_id in (select id from patients.patient where status=1) ";
-      $totalRPMPatient=DB::select( DB::raw($query3) );
+      $totalRPMPatient=DB::select($query3);
 
       $query4="select count(p.id) from patients.patient p where p.id not in (select patient_id from patients.patient_services where status=1) and p.status=1";
-      $totalUnEnrolledPatient=DB::select( DB::raw($query4) );
+      $totalUnEnrolledPatient=DB::select($query4);
 
       // $query5 = "select count(*) from task_management.user_patients where status=1";
       //Updated by -pranali on 22Oct2020
@@ -445,19 +445,19 @@ class ReportController extends Controller
          inner join patients.patient_providers pp on pp.patient_id =p.id
          inner join ren_core.practices p2 on p2.id=pp.practice_id 
          where up.status=1  and pp.provider_type_id =1 and pp.is_active=1 and p2.is_active =1 and p.status=1";
-        $totalAssignedPatient=DB::select( DB::raw($query5) );
+        $totalAssignedPatient=DB::select($query5);
        
        //added by radha 18nov20
           $query6="select count(distinct p.id) from patients.patient p
            inner join patients.patient_providers pp on pp.patient_id =p.id
            inner join ren_core.practices p2 on p2.id=pp.practice_id 
           where pp.provider_type_id =1 and pp.is_active=1 and p2.is_active =1 and p.status=1";
-        $totalPatientActive=DB::select( DB::raw($query6) );
+        $totalPatientActive=DB::select($query6);
 
       // $query6 = "select count(*) from ren_core.users where role=5 ";
       //Updated by -pranali on 22Oct2020
       $query6 = "select count(*) from ren_core.users where role=5 and status = 1";
-      $totalCareManeger=DB::select( DB::raw($query6) );
+      $totalCareManeger=DB::select($query6);
        $data=array('Totalpatient'=>$totalPatient,'TotalEnreolledPatient'=>$totalEnreolledPatient,'TotalEnrolledInCCM'=>$totalCCMPatient,
          'TotalEnrolledInRPM'=>$totalRPMPatient,'TotalUnEnrolledPatient'=>$totalUnEnrolledPatient,'TotalCareManeger'=>$totalCareManeger,
          'ToltalAssignedPatient'=>$totalAssignedPatient,'totalPatientActive'=>$totalPatientActive, 'totalnewenroll'=>$totalnewenroll);
@@ -603,7 +603,7 @@ class ReportController extends Controller
             //$query .= " group by p.id";
 
             // dd($query);
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
@@ -743,7 +743,7 @@ class ReportController extends Controller
           // dd($query);
 
        
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
           //  dd($data);
             return Datatables::of($data)
             ->addIndexColumn()            
@@ -847,7 +847,7 @@ class ReportController extends Controller
      
       $query = "select * from patients.daily_billing_report($p,$pr,$module_id, timestamp '".$fromdate."', timestamp '".$todate."',$timeoption,'".$totime."')";      
       // dd($query);   
-      $data = DB::select( DB::raw($query) );  
+      $data = DB::select($query);  
      
           return Datatables::of($data) 
           ->addIndexColumn()            
@@ -894,7 +894,7 @@ class ReportController extends Controller
               $toyear = date('Y', strtotime($monthlyto));
               $tomonth = date('m', strtotime($monthlyto)); 
               $query = "select * from patients.CAREMANAGER_MONTHLY_BILLING_REPORT($practices,$caremanager,$module_id,$month,$tomonth,$year,$toyear)"; 
-                $data = DB::select( DB::raw($query) );
+                $data = DB::select($query);
               //  dd($data);
                  return Datatables::of($data)
                  ->addIndexColumn()           
@@ -1015,7 +1015,7 @@ class ReportController extends Controller
             //$query .= " group by p.id";
 
             // dd($query);
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
             return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
@@ -1038,7 +1038,7 @@ class ReportController extends Controller
           $month = date('m', strtotime($monthly));
           
           $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
-          $diagnosis = DB::select( DB::raw($diagnosis) );
+          $diagnosis = DB::select($diagnosis);
           //dd($diagnosis);
          
           return view('Reports::patients-monthly-billing-report');
@@ -1158,7 +1158,7 @@ class ReportController extends Controller
         //  dd($query);   
 
       
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
          //  dd($data);
            return Datatables::of($data)
            ->addIndexColumn()            
@@ -1167,7 +1167,7 @@ class ReportController extends Controller
             $year = date('Y', strtotime($monthly));
             $month = date('m', strtotime($monthly));
              $diagnosis = "select code from patients.patient_diagnosis_codes where  EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year and uid=$row->id";
-             $diagnosis = DB::select( DB::raw($diagnosis) );
+             $diagnosis = DB::select($diagnosis);
              $output='';
              
              foreach($diagnosis as $key => $val){
@@ -1224,7 +1224,7 @@ class ReportController extends Controller
      
                  $query = "select * from patients.SP_MONTHLY_BILLING_REPORT($practices,$provider,$module_id,$month,$tomonth,$year,$toyear)"; 
 
-                $data = DB::select( DB::raw($query) );
+                $data = DB::select($query);
 
               $diagnosis = "select max(count) from (select patient_id,count(*) as count from patients.patient_diagnosis_codes where (EXTRACT(Month from created_at) <= '$tomonth' and EXTRACT(Month from created_at) >= '$month') 
                AND (EXTRACT(YEAR from created_at) <= '$toyear' and EXTRACT(YEAR from created_at) >= '$year') group by patient_id) x ";
@@ -1238,7 +1238,7 @@ class ReportController extends Controller
                $diagnosis.="inner join patients.patient_providers as pp on x.patient_id =pp.patient_id where pp.practice_id = '".$practices."'";
               }
             }
-              $diagnosis = DB::select( DB::raw($diagnosis) );    
+              $diagnosis = DB::select($diagnosis);    
               //  dd($diagnosis[0]->max);
                 $arrydata=array();
                 $ddata=array();
@@ -1470,7 +1470,7 @@ class ReportController extends Controller
               
             
               
-           $data = DB::select( DB::raw($query) );
+           $data = DB::select($query);
            return Datatables::of($data)
           ->addIndexColumn() 
           
@@ -1603,7 +1603,7 @@ class ReportController extends Controller
 
 
        //dd($query);
-              $data = DB::select( DB::raw($query) );
+              $data = DB::select($query);
               return Datatables::of($data)
              ->addIndexColumn() 
              

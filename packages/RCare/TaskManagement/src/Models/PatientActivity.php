@@ -44,13 +44,13 @@ class PatientActivity extends Model
 
     public static function groupedPatientActivies() {
       $query = 
-      \DB::select(\DB::raw("select id,activity as name,
+      \DB::select("select id,activity as name,
         case
             when activity_type is not null then activity_type
         else ''
         end AS group_by
         from ren_core.activities where status='1' and timer_type!='3'  
-        order by group_by,activity_type"));
+        order by group_by,activity_type");
         return $query;
     }  
 } 

@@ -4,13 +4,15 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 require('./bootstrap');
-window.Vue = require('vue');
 require("./form");
 require("./utility");
+
+
 require("./vue");
-// require("./notification");
+ require("./notification");
 // require("./test");
 // require("./stageCode");
+
 require("./stage");
 require("./roles");
 require("./modules");
@@ -20,6 +22,7 @@ require("./enrollPatient"); //to be deleted
 require("./report");
 require("./configurations");
 require("./deviceTraning");
+require("./holiday");
 require("./diagnosisCode");
 require("./enrolledShippingReport");
 require("./carePlanTemplate");
@@ -28,7 +31,7 @@ require("./labs");
 require("./practices");
 require("./providers");
 require("./medication");
-require("./worklist");
+//require("./worklist");
 require("./activity");
 require("./followuptask");
 require("./office");

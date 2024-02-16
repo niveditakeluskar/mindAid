@@ -247,8 +247,7 @@ Route::get('/time-logs-report', function(){
         Route::post('/manually-adjust-time', 'RCare\System\Http\Controllers\CommonFunctionController@manuallyAdjustTime')->name('manually.adjust.time');
         Route::get('/care-manager-monthly-report/search/{practicegrpid}/{practice}/{caremanager}/{modules}/{monthly}/{monthlyto}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CareManagerMonthlyReportController@listCareManagerMonthlyReportPatientsSearch')->name('care.manager.monthly.report.search');
          //todolist report
-        Route::get('/task-management/search/{practice}/{patient}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\ToDoListReportController@ToDoListReportSearch')->name('to.do.list.search.report'); 
-
+        Route::get('/task-management/search/{practice}/{patient}/{caremanagerid}/{taskstatus}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\ToDoListReportController@ToDoListReportSearch')->name('to.do.list.search.report'); 
         Route::get('/daily-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{fromdate}/{todate}/{time}/{timeoption}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\DailyBillableReportController@DailyReportPatientsSearch')->name('daily.report.search'); 
 
         Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');

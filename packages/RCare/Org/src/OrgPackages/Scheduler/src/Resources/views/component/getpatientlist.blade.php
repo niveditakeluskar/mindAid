@@ -92,15 +92,15 @@
                         }
                         if(data!='' && data!='NULL' && data!=undefined){
                             if(full['profile_img']=='' || full['profile_img']==null) {
-                                return ["<img src={{asset('assets/images/faces/avatar.png')}} width='50px' class='user-image' />"]+' '+full['fname']+' '+m_Name+' '+full['lname'];
+                                return ["<img src={{asset('assets/images/faces/avatar.png')}} width='50px' class='user-image' />"]+' '+full['pfname']+' '+m_Name+' '+full['plname'];
                             } else {
-                                return ["<img src='"+full['profile_img']+"' width='40px' height='25px' class='user-image' />"]+' '+full['fname']+' '+m_Name+' '+full['lname'];
+                                return ["<img src='"+full['profile_img']+"' width='40px' height='25px' class='user-image' />"]+' '+full['pfname']+' '+m_Name+' '+full['plname'];
                             }
                         }
                     },
                     orderable: true
                 },
-                { data: 'dob', type: 'date-dd-mmm-yyyy', name: 'dob', 
+                { data: 'pdob', type: 'date-dd-mmm-yyyy', name: 'pdob', 
                     "render":function (value) {
                         if (value === null) return "";
                         return util.viewsDateFormat(value);

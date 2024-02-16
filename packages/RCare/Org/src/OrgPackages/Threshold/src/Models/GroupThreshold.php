@@ -37,7 +37,7 @@ class GroupThreshold extends Model
 	 
     protected $fillable = [
         'id',
-        'group_code',
+        'group_id',
         'bpmhigh',
         'bpmlow',
         'diastolichigh',

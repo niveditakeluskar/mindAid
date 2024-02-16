@@ -38,7 +38,7 @@ union
 SELECT distinct count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='".$patient_id."' and  date(gl.effdatetime) > current_date - interval '".$day."' day
 )rw";
 //dd($queryreading);
-$countreading = DB::select( DB::raw($queryreading) );  
+$countreading = DB::select($queryreading);  
 
 $queryAlert = "select sum(cnt) as alertcnt from (
 SELECT count(*) as cnt FROM rpm.observations_weight we WHERE we.patient_id='".$patient_id."' and alert_status=1 and date(we.effdatetime) > current_date - interval '".$day."' day
@@ -56,7 +56,7 @@ union
 SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='".$patient_id."' and alert_status=1 and  date(gl.effdatetime) > current_date - interval '".$day."' day
 )rw";
 
-$countalert = DB::select( DB::raw($queryAlert) ); 
+$countalert = DB::select($queryAlert); 
 
 
 return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>$countalert[0]->alertcnt]);

@@ -118,15 +118,15 @@ return [
     'uuid' => 'The :attribute must be a valid UUID.',
     'f_name' => 'The :attribute must be a valid UUID.',
     'within_year' => 'The :attribute must be less than 18 months ago.',
-    'medication_unique_name' => 'Medication name is already taken.',// added by pranali 29Oct2020
-    'provider_unique_name' => 'Provider name is already taken.',// added by pranali 29Oct2020
-    'time_textbox' => 'Please enter time in HH:MM:SS formate.',// added by pranali 30Oct2020
+    'medication_unique_name' => 'Medication name is already taken.', // added by pranali 29Oct2020
+    'provider_unique_name' => 'Provider name is already taken.', // added by pranali 29Oct2020
+    'time_textbox' => 'Please enter time in HH:MM:SS formate.', // added by pranali 30Oct2020
     'alpha_spaces' => 'The :attribute may only contain letters and spaces.', //added by pranali 11Feb2021
-    'phone' =>'The :attribute may only contain 10 digit number.', // added by priya 12Feb2021
-    'address' =>'The :attribute may only contain letters, number, comma and dashesh',//added by priya 12Feb2021
-    'module_unique_name' => 'Module name is already taken.',// added by pranali 16June2022
-	'text_comments_slash' =>'The :attribute may only contain letters, numbers, forward slashes, commas, dashes, full stops, round-bracket, and apostrophes',//added by ashviniarumugan
-	
+    'phone' => 'The :attribute may only contain 10 digit number.', // added by priya 12Feb2021
+    'address' => 'The :attribute may only contain letters, number, comma and dashesh', //added by priya 12Feb2021
+    'module_unique_name' => 'Module name is already taken.', // added by pranali 16June2022
+    'text_comments_slash' => 'The :attribute may only contain letters, numbers, forward slashes, commas, dashes, full stops, round-bracket, and apostrophes', //added by ashviniarumugan
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -162,31 +162,42 @@ return [
         'pass' => [
             'required_if' => '* The password field is required.'
         ],
-         'from_name' => [
+        'from_name' => [
             'required_if' => '* The from name field is required.'
         ],
-         'from_email' => [
+        'from_email' => [
             'required_if' => '* The from email field is required.'
         ],
-          'host' => [
+        'host' => [
             'required_if' => '* The host field is required.'
         ],
-         'port' => [
+        'port' => [
             'required_if' => '* The port field is required.'
         ],
-         'cc_email' => [
+        'cc_email' => [
             'required_if' => '* The cc email field is required.'
         ],
 
         //ccm validation
 
-        //preparation
-        'condition_requirnment' => [
-            'required' => 'Please select atleast option.'
+        //preparation 
+        'condition_requirnment1' => [
+            'required' => 'Please select at least one option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'condition_requirnment_notes' => [
-            'required_if' => 'The condition requirnment notes field is required.'
+        'condition_requirnment2' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
+        'condition_requirnment3' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+        'condition_requirnment4' => [
+            'required' => 'Please select atleast  option.',
+            'required_without_all' => 'Please select at least one option.',
+        ],
+
         'newofficevisit' => [
             'required' => 'The new office Visit field is required.'
         ],
@@ -194,61 +205,75 @@ return [
             'required_if' => 'The new office visit notes field is required.'
         ],
         'newdiagnosis' => [
-            'required' => 'The new diagnosis field is required.'
+            'required' => 'The new condition field is required.'
         ],
-        'nd_notes' =>[
-            'required_if' => 'The new diagnosis notes field is required.'
+        'nd_notes' => [
+            'required_if' => 'The new condition notes field is required.'
         ],
-        'med_added_or_discon' =>[
+        'med_added_or_discon' => [
             'required' => 'The medications added or discontinued field is required.'
         ],
-        'med_added_or_discon_notes' =>[
+        'med_added_or_discon_notes' => [
             'required_if' => 'The new medications added or discontinued notes field is required.'
         ],
-        'report_requirnment' =>[
-            'required' =>'Please select any option.'
+        'report_requirnment1' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'report_requirnment_notes' =>[
-            'required_if' =>'The report requirnment notes field is required.'
+        'report_requirnment2' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'newdme' =>[
-            'required' =>'The new dme field is required.'
+        'report_requirnment3' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'dme_notes'=>[
-            'required_if'=>'The new dme notes field is required.'
+        'report_requirnment4' => [
+            'required' => 'Please select any option.',
+            'required_without_all' => 'Please select at least one option.',
         ],
-        'changetodme' =>[
-            'required' =>'The change to dme field is required.'
+        'report_requirnment5' => [
+            'required' => 'Please select any option.'
         ],
-        'ctd_notes' =>[
-            'required_if' =>'The change to dme notes field is required.'
+
+        'newdme' => [
+            'required' => 'The new dme field is required.'
         ],
-        'uid' =>[
+        'dme_notes' => [
+            'required_if' => 'The new dme notes field is required.'
+        ],
+        'changetodme' => [
+            'required' => 'The change to dme field is required.'
+        ],
+        'ctd_notes' => [
+            'required_if' => 'The change to dme notes field is required.'
+        ],
+        'uid' => [
             'required' => 'Patient with this First Name, Last Name and DOB already exist.'
         ],
         'email' => [
-            'required_if' =>'The email field is required when `no email` is not selected.'
+            'required_if' => 'The email field is required when `no email` is not selected.'
         ],
         'call_answer_template_id' => [
-            'required_if' =>'The call answer template field is required when call status is answered.'
+            'required_if' => 'The call answer template field is required when call status is answered.'
         ],
         'call_continue_status' => [
-            'required_if' =>'The call continue status field is required when call status is answered.'
+            'required_if' => 'The call continue status field is required when call status is answered.'
         ],
         'call_continue_followup_date' => [
-            'required_if' =>'The call continue followup date field is required when call continue status is no.'
+            'required_if' => 'The call continue followup date field is required when call continue status is no.'
         ],
         'voice_mail' => [
-            'required_if' =>'The voice mail field is required when call status is not answered.'
+            'required_if' => 'The voice mail field is required when call status is not answered.'
         ],
         'phone_no' => [
-            'required_if' =>'The phone no field is required when call status is not answered.'
+            'required_if' => 'The phone no field is required when call status is not answered.'
         ],
         'call_not_answer_template_id' => [
-            'required_if' =>'The call not answer template field is required when call status is not answered.'
+            'required_if' => 'The call not answer template field is required when call status is not answered.'
         ],
         'call_followup_date' => [
-            'required_if' =>'The call followup date field is required when call status is not answered.'
+            'required_if' => 'The call followup date field is required when call status is not answered.'
         ],
         'reason_for_visit' => [
             'required_if' => 'Therapist come home care is answered yes'
@@ -271,16 +296,16 @@ return [
         'tasks.*' => [
             'required' => 'The task field is required.'
         ],
-        'allergies.*' =>[
+        'allergies.*' => [
             'required' => 'The allergies field is required.'
         ],
-        'medications.*' =>[
+        'medications.*' => [
             'required' => 'The medications field is required.'
         ],
         'addparameters.*' => [
             'required' => 'The parameter field is required.'
         ],
-        'parameters.*' =>[
+        'parameters.*' => [
             'required' => 'The parameter field is required.'
         ],
         'lab.*' => [
@@ -308,11 +333,11 @@ return [
             'required' => 'The notes field is required.'
         ],
 
-        
+
 
         // CPD Review
         'relational_status' => [
-            'required_if' =>'Please choose your answer.'
+            'required_if' => 'Please choose your answer.'
         ],
 
         'fname.*' => [
@@ -324,7 +349,7 @@ return [
         ],
         'age.*' => [
             'required_if' => 'The age field is required.'
-        ], 
+        ],
         'address.*' => [
             'required_if' => 'The address field is required.'
         ],
@@ -335,12 +360,12 @@ return [
             'required_if' => 'The relationship field is required.'
         ],
 
-        'pet_status' =>[
-            'required' =>'Please choose your answer.'
+        'pet_status' => [
+            'required' => 'Please choose your answer.'
         ],
         'pet_name.*' => [
             'required_if' => 'The name field is required.'
-        ],  
+        ],
         'pet_type.*' => [
             'required_if' => 'The type field is required.'
         ],
@@ -348,8 +373,8 @@ return [
             'required_if' => 'The drug field is required.'
         ],
 
-        'travel_status' =>[ 
-            'required' =>'Please choose your answer.'
+        'travel_status' => [
+            'required' => 'Please choose your answer.'
         ],
         'frequency.*' => [
             'required_if' => 'The frequency field is required.'
@@ -364,13 +389,13 @@ return [
             'required_if' => 'The upcoming tips field is required.'
         ],
 
-        'hobbies_status' =>[
-        'required' =>'Please choose your answer.'
+        'hobbies_status' => [
+            'required' => 'Please choose your answer.'
         ],
 
         'hobbies_name.*' => [
             'required_if' => 'The name field is required.'
-        ], 
+        ],
 
         'drop_condition' => [
             'required' => 'The Codition field is required.'
@@ -381,7 +406,7 @@ return [
         'newmedications.*' => [
             'required' => 'The New Medication field is required.'
         ],
-         'code.*' => [
+        'code.*' => [
             'required' => 'The Code field is required.'
         ],
         'imaging.*' => [
@@ -407,7 +432,7 @@ return [
         ],
         'q2_datetime' => [
             'required_if'    =>  'Call Close time field is required',
-            'after' => 'The date must be a date from next month.'   
+            'after' => 'The date must be a date from next month.'
         ],
 
         'health_data.*' => [
@@ -417,16 +442,16 @@ return [
         'health_date.*' => [
             'required' =>  'The Health Date is required.'
         ],
-         'specify'=> [
+        'specify' => [
             'required' =>  'The Company Name is required.'
         ],
-        'brand'=> [
+        'brand' => [
             'required' =>  'The Prescribing Provider is required.'
         ],
-         'module_id'=> [ 
+        'module_id' => [
             'required' =>  'The Module Name is required.'
         ],
-        'components'=> [
+        'components' => [
             'required' =>  'The Sub Module Name is required.'
         ],
         'med_description' => [ // added by pranali 13Oct2020
@@ -457,73 +482,73 @@ return [
             'required_if' => 'Required if the time is manual.'
         ],
         'net_time' => [
-            'required'=>'The time is required.'
+            'required' => 'The time is required.'
         ],
         'name' => [
-            'required' =>'This field is required.'
+            'required' => 'This field is required.'
         ],
         'activity.*.*' => [
-            'required' =>'This activity field is required.'
+            'required' => 'This activity field is required.'
         ],
-        'activity.*.defaulttime'=> [
-            'required' =>'This default time field is required.' 
+        'activity.*.defaulttime' => [
+            'required' => 'This default time field is required.'
         ],
-        'activity.*.newactivitypracticebasedtime.*'=> [
-            'required_unless' =>'This practice time field is required.' 
+        'activity.*.newactivitypracticebasedtime.*' => [
+            'required_unless' => 'This practice time field is required.'
         ],
-        'activity.*.newactivitypracticebasedtime.*'=> [
-            'date_format' =>'Please enter time in HH:MM:SS format.' 
+        'activity.*.newactivitypracticebasedtime.*' => [
+            'date_format' => 'Please enter time in HH:MM:SS format.'
         ],
         // 'activity.*.defaulttime.*' => [
         //     'date_format' => 'Please enter time in HH:MM:SS format.'
         // ],
-        'time_required.*' =>[
-            'required_unless' =>'This practice time field is required.' 
+        'time_required.*' => [
+            'required_unless' => 'This practice time field is required.'
         ],
-        'time_required.*' =>[
-            'date_format' =>'Please enter time in HH:MM:SS format.' 
-        ],      
-        'service_id'=> [
-            'required' =>'This module field is required.'
+        'time_required.*' => [
+            'date_format' => 'Please enter time in HH:MM:SS format.'
         ],
-          'description'=> [
-            'required' =>'This step name is required.'
+        'service_id' => [
+            'required' => 'This module field is required.'
         ],
-        'practice_name'=> [   
-            'required' =>'This '.config("global.practice_group").' field is required.'     
+        'description' => [
+            'required' => 'This step name is required.'
         ],
-        'activedeactivefromdate'=> [  
-            'required_if' =>'The from date field is required.'     
+        'practice_name' => [
+            'required' => 'This ' . config("global.practice_group") . ' field is required.'
         ],
-        'activedeactivetodate'=> [   
-            'required_if' =>'The To date field is required.'     
+        'activedeactivefromdate' => [
+            'required_if' => 'The from date field is required.'
         ],
-        'deceasedfromdate'=> [  
-            'required_if' =>'The Date of Deceased field is required.'     
+        'activedeactivetodate' => [
+            'required_if' => 'The To date field is required.'
         ],
-        'specify' => [   
-            'required_if' =>'The specify field is required when above checkbox is not checked.'     
+        'deceasedfromdate' => [
+            'required_if' => 'The Date of Deceased field is required.'
         ],
-        'type_of_reactions'=>[
-         'required_if' =>'The type of reactions field is required when above checkbox is not checked.'
+        'specify' => [
+            'required_if' => 'The specify field is required when above checkbox is not checked.'
         ],
-        'severity'=>[
-         'required_if' =>'The severity field is required when above checkbox is not checked.'
+        'type_of_reactions' => [
+            'required_if' => 'The type of reactions field is required when above checkbox is not checked.'
         ],
-        'course_of_treatment'=>[
-         'required_if' =>'The course of treatment field is required when above checkbox is not checked.'
+        'severity' => [
+            'required_if' => 'The severity field is required when above checkbox is not checked.'
         ],
-        'call_back_date' =>[
-         'required_if' =>' Please enter the date and time for call back.'
+        'course_of_treatment' => [
+            'required_if' => 'The course of treatment field is required when above checkbox is not checked.'
         ],
-        'enrl_refuse_reason'=>[ 
-         'required_if' =>'Please enter the reason for not enrolling in the program.'
+        'call_back_date' => [
+            'required_if' => ' Please enter the date and time for call back.'
         ],
-        'answer_followup_date' =>[
-          'required_if' =>'The call followup date field is required when call answered is No.'
+        'enrl_refuse_reason' => [
+            'required_if' => 'Please enter the reason for not enrolling in the program.'
         ],
-        'answer_followup_time' =>[
-          'required_if' =>'The call followup time field is required when call answered is No.'
+        'answer_followup_date' => [
+            'required_if' => 'The call followup date field is required when call answered is No.'
+        ],
+        'answer_followup_time' => [
+            'required_if' => 'The call followup time field is required when call answered is No.'
         ],
 
         // Device-order
@@ -572,7 +597,7 @@ return [
             'required' => 'Last Name is required.'
         ],
 
-        'family_mob' => [   
+        'family_mob' => [
             'required' => 'Phone is required .'
         ],
 
@@ -610,11 +635,11 @@ return [
         'device_code' => [
             'required_if' => 'Device Code is required.'
         ],
-           'add1' => [
+        'add1' => [
             'required' => 'The Address field is required.'
         ],
-         
-          'headquaters_fname' => [
+
+        'headquaters_fname' => [
             'required_if' => 'The First Name is required.'
         ],
         'headquaters_phone' => [
@@ -638,20 +663,21 @@ return [
         'headquaters_zip' => [
             'required_if' => 'The Zip Code is required.'
         ],
-        'high_val.*.*'=> [ 
+        'high_val.*.*' => [
             'required_if' => 'The value field is required.'
         ],
-       
-        'emr_monthly_summary_date.*' => [  
+
+        'emr_monthly_summary_date.*' => [
             'required'    =>  'The date field is required',
-            'before_or_equal' =>  'Please choose a date on or before today.'  
+            'before_or_equal' =>  'Please choose a date on or before today.'
         ],
         'date_of_execution' => [
             'required'    =>  'The date field is required',
-            'after_or_equal' =>  'Please choose a date on or after today.'  
+            'after_or_equal' =>  'Please choose a date on or after today.'
         ],
         'emr_monthly_summary.*' => [
-            'required_with'    =>  'The additional notes field is required' 
+            'required_with'    => 'The additional notes field is required.',
+            'min'              => 'The additional notes must be at least 3 characters.',
         ],
 
         // 'module' => [
@@ -692,17 +718,17 @@ return [
         'api_url.required_if'        => "The API url field is required.",
         'med_id'                     => "medication ",
         'provider_type_id'           => "provider type",
-        'provider_name'              => "provider", 
+        'provider_name'              => "provider",
         // 'name'                       => "practice",
         'q2_datetime'                => "date",
-        'sub_provider_type'          => "Credential", 
+        'sub_provider_type'          => "Credential",
         'health_date.*'              => "Health Date",
         'imaging_date.*'             => "Imaging Date",
         'activity.*'                 => "Activity",
         'task_date.*'                => "task date",
         'task_name.*'                => "task name",
         'followupmaster_task.*'      => "task category",
-        'notes.*'                    => "notes", 
+        'notes.*'                    => "notes",
         'activity.*.defaulttime.*'   => "activity defaulttime",
         'diagnosis'                  => "condition",
         'symptoms.*'                 => "symptoms",
@@ -722,6 +748,6 @@ return [
         // 'validation.phone'           => "Please Enter 10 digit Number"
         "emr_monthly_summary_date.*" => "date",
         "date_of_execution"          => "date"
-       
+
     ]
 ];
