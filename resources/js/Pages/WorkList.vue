@@ -73,7 +73,7 @@
                     </select>
                   </div>
                   <div class="col-md-3 form-group mb-3">
-                    <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
+                    <button type="submit" class="btn btn-primary mt-4 mr-2" @click="handleSearch">Search</button>
                     <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
                   </div>
                   <div class="col-md-8 form-group">
@@ -199,11 +199,10 @@ export default {
     field: 'full_name',
     cellRenderer: function (params) {
         const row = params.data;
-        const fullName = [row.pfname, row.pmname, row.plname].filter(Boolean).join(' '); // Concatenate non-empty parts
-        const upperCaseFullName = fullName.toUpperCase();
+        const camelCaseFullName = row.full_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         return `<div style="display: flex; align-items: center;">
                     <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
-                    <span style="margin-left: 4px;">${upperCaseFullName}</span>
+                    <span style="margin-left: 4px;">${camelCaseFullName}</span>
                 </div>`;
     },
     flex: 2
@@ -371,12 +370,12 @@ export default {
 
     const patientReloadFn = async ()=> {
       getPatientList(
-          selectedPractice.value === '' ? null : selectedPractice.value,
-          selectedPatients.value === '' ? null : selectedPatients.value,
-          patientsmodules.value === '' ? null : patientsmodules.value,
-          selectedOption.value === '' ? null : selectedOption.value,
-          timeValue.value === '' ? null : timeValue.value,
-          activedeactivestatus.value === '' ? null : activedeactivestatus.value
+          selectedPractice.value,
+          selectedPatients.value,
+          patientsmodules.value,
+          selectedOption.value,
+          timeValue.value,
+          activedeactivestatus.value
         );
     };
 
