@@ -1045,10 +1045,11 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
     // }
     public function getreadCalender($patient_id,$deviceid){
      // dd($deviceid);
+     $data =array();
             if($deviceid =='1'){
                 $readingWeight = Observation_Weight::where('patient_id',$patient_id)->get(); 
                 // dd($readingWeight);
-                $data =array();
+                
                 foreach ($readingWeight as $row) {
                     $data[] = array(
                           'id'   => $row["id"],
@@ -1063,7 +1064,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
             }
             if($deviceid =='2'){
                 $readingOxy = Observation_Oxymeter::where('patient_id',$patient_id)->get();//->pluck('oxy_qty'); 
-                $data =array();
+               
                 foreach ($readingOxy as $row) {
                     // print_r($value);
                     $data[] = array(
@@ -1080,7 +1081,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
             if($deviceid =='3'){
                 $readingBp = Observation_BP::where('patient_id',$patient_id)->get();
                  // dd($readingBp);
-                $data =array(); 
+               
                     foreach ($readingBp as $row) {
                          // print_r($row);
                         $data[] = array(
@@ -1096,7 +1097,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 }
                 if($deviceid =='4'){
                 $readingTemp = Observation_Temp::where('patient_id',$patient_id)->get();
-                $data =array();
+                
                     foreach ($readingTemp as $row) {
                         // print_r($value);
                         $data[] = array(
@@ -1112,7 +1113,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 }
                 if($deviceid =='5'){
                 $readingSpiro = Observation_Spirometer::where('patient_id',$patient_id)->get();
-                    $data =array();
+                    
                     foreach ($readingSpiro as $row) {
                         // print_r($value);
                         $data[] = array(
@@ -1129,7 +1130,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
 
                 if($deviceid =='6'){
                 $readingGluec = Observation_Glucose::where('patient_id',$patient_id)->get();
-                $data =array();
+                
                 foreach ($readingGluec as $row) {
                     // print_r($value);
                     $data[] = array(
