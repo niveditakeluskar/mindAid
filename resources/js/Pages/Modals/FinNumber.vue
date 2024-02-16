@@ -26,7 +26,7 @@
                                 <input type="hidden" id="timer_runing_status" value="0"> 
                                 <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="finnumberTime">
                                 <label>FIN Number<span class='error'>*</span></label>
-                                <textarea name="fin_number" class="form-control forms-element" v-model="finNumber"></textarea>
+                                <textarea name="fin_number" class="form-control forms-element" v-model="finNumber" ></textarea>
                                 <div class="invalid-feedback" v-if="formErrors" style="display: block;"> 
                                     <span :textContent="formErrors.fin_number"></span>
                                 </div>
@@ -59,12 +59,19 @@ import {
 } from '../commonImports';
 import axios from 'axios';
 export default {
-    props: {
-        patientId: Number,
-        moduleId: Number,
-        componentId: Number,
-        stageid: Number,
-        finNumber : Number,
+  props: { 
+      patientId: Number,
+      moduleId: Number,
+      componentId: Number,
+      stageid: Number,
+      finNumber : Number,
+      patientFinNumberTab:{
+        type: Function,
+        required: true,
+        },
+  },
+    components: {
+ 
     },
   setup(props) {
         const finnumberTime = ref(null);
@@ -83,6 +90,22 @@ export default {
             isOpen.value = false;
         };
         
+        // const patComDetails = async () => {
+        //     try {
+        //         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
+        //         if (!response.ok) {
+        //             throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
+        //         }
+        //         const data = await response.json();
+        //         debugger;
+        //         finNumber.value = data.patient[0].fin_number;
+                
+        //     } catch (error) {
+        //         console.error('Error fetching Patient details:', error.message); // Log specific error message
+        //         // Handle the error appropriately
+        //     }
+        // }
+
         let submitFinNumberForm = async () => {
             let myForm = document.getElementById('fin_number_form');
             let formData = new FormData(myForm);
@@ -93,15 +116,20 @@ export default {
                 if (response && response.status == 200) {
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(response.data.form_start_time);
+                    if(typeof props.patientFinNumberTab === 'function'){
+                        props.patientFinNumberTab();
+                    } 
+                    $(".form_start_time").val(response.data.form_start_time); 
                     document.getElementById("fin_number_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
                         finnumberTime.value = document.getElementById('page_landing_times').value;
                         closeModal();
                     }, 3000);// Close the modal after 3 seconds (3000 milliseconds)
-                    window.location.reload();
+                    // window.location.reload();
                     formErrors.value = [];
+                    // patComDetails();
+
                 }
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -142,8 +170,10 @@ export default {
             formErrors,
             finNumber,
             submitFinNumberForm,
-        };
-    },
+            // patComDetails,
+            
+      };
+  },
 };
 </script>
 
