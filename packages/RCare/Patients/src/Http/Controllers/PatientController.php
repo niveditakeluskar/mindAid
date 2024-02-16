@@ -112,14 +112,17 @@ class PatientController extends Controller
 
         if ($check_fn == true) {
             $data['updated_by'] = session()->get('userid');
-            $update = Patients::where('id', $patient_id)->where('uid', $id)->update($data);
+            $update = Patients::where('id', $patient_id)->update($data);
+            // ->where('uid', $id)
         }
 
-        $check_exist_for_month         = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)->whereYear('updated_at', $currentYear)->exists();
+        $check_exist_for_month = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)
+        ->whereYear('updated_at', $currentYear)->exists();
         if ($check_exist_for_month == true) {
             $patientfin['updated_at'] = Carbon::now();
             $patientfin['updated_by'] = session()->get('userid');
-            $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($patientfin);
+            $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))
+            ->orderBy('id', 'desc')->first()->update($patientfin);
         } else {
             $patientfin['created_at'] = Carbon::now();
             $patientfin['created_by'] = session()->get('userid');

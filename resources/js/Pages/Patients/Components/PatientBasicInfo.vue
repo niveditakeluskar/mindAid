@@ -38,7 +38,7 @@
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
-                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber" :PatientFinTab="PatientBasicInfoReload"/>
+                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber" :patientFinNumberTab="PatientBasicInfoReload"/>
                                         </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="show-modal" @click="veteranServicefunction">
@@ -435,7 +435,7 @@ export default {
                     throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-
+                // alert(data.patient[0].fin_number);
                 const dobParts = data.patient[0].dob.split('-');
                 const formattedDob = `${dobParts[1]}-${dobParts[2]}-${dobParts[0]}`;
                 patientDetails.value = data;
@@ -557,7 +557,6 @@ export default {
                 $('.form_start_time').val(response.data.form_start_time);
                 $("form").find(":submit").attr("disabled", false);
                 $("form").find(":button").attr("disabled", false);
-                $(".change_status_flag").attr("disabled", false);
                 $("#pause").show();
                 $("#stop").show();
                 $("#start").hide();
@@ -608,7 +607,6 @@ export default {
                     updateTimer(patientId, billable, moduleId);
                     $("form").find(":submit").attr("disabled", true);
                     $("form").find(":button").attr("disabled", true);
-                    $(".change_status_flag").attr("disabled", true);
                     //$(".last_time_spend").html(response.data.end_time);
                     $('.form_start_time').val(response.data.form_start_time);
                     alert("Timer paused and Time Logged successfully.");
@@ -642,6 +640,7 @@ export default {
         }
 
         const PatientBasicInfoReload = async () => {
+            // alert("fdase");
             patComDetails();
             countDownFunc();
         };

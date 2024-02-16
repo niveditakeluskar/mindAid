@@ -65,7 +65,7 @@ export default {
       componentId: Number,
       stageid: Number,
       finNumber : Number,
-      PatientFinTab:{
+      patientFinNumberTab:{
         type: Function,
         required: true,
         },
@@ -114,11 +114,10 @@ export default {
                 formErrors.value == {};
                 const response = await axios.post('/patients/save-patient-fin-number', formData);
                 if (response && response.status == 200) {
-                    debugger;
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    if(typeof props.PatientFinTab === 'function'){
-                        props.PatientFinTab();
+                    if(typeof props.patientFinNumberTab === 'function'){
+                        props.patientFinNumberTab();
                     } 
                     $(".form_start_time").val(response.data.form_start_time); 
                     document.getElementById("fin_number_form").reset();
