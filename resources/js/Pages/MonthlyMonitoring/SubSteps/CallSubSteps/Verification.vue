@@ -30,7 +30,7 @@
 						<div class="row">
 							<div class="col-lg-12 text-right">
 							<!-- onclick="window.location.assign('#step-4')" -->
-								<button type="submit" class="btn  btn-primary m-1" id="save-hippa" :disabled="(timeStatus == 1) === true ">Next</button>
+								<button type="submit" class="btn  btn-primary m-1" id="save-hippa" :disabled="(timerStatus == 1) === true ">Next</button>
 							</div>
 						</div>
 					</div>
