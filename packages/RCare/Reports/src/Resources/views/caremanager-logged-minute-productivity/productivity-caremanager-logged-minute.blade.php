@@ -108,6 +108,7 @@ Care ManagerCare Manager Logged Minute Report
     $(document).ready(function() { 
         $.fn.dataTable.ext.errMode = 'throw';
         util.getToDoListData(0, {{getPageModuleName()}});
+        util.getAssignPatientListData(0, 0);
         $('#fromdate').val(currentdate); //.val(current_MonthYear);
     });
     var getAdditionalActivitiesList = function(practiceid = null, fromdate1 = null) {

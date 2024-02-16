@@ -387,8 +387,9 @@ export default {
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				console.log(data,this.patientPrepSaveDetails.populateCallPreparation,"populate ka value", this.patientPrepSaveDetails.populateCallPreparation.static);
 				const staticData = this.patientPrepSaveDetails.populateCallPreparation.static;
+				if (staticData !== undefined && staticData !== null) {
+
 					const keys = Object.keys(staticData);
 					if (keys.length > 0) {
 					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation.static.submited_to_emr;
@@ -422,9 +423,8 @@ export default {
 					} else {
 						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
 					}
-				}else{
-					console.error('populateCallPreparation is empty or undefined');
-				}				
+				}
+			} 		
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}

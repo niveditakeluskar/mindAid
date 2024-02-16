@@ -920,6 +920,160 @@ color: #000 !important;
   box-shadow: -3px 0px 4px rgba(0, 0, 0, 0.06);
 }
 
+.assingpatient {
+  position: fixed;
+  z-index: 88888;
+  top:124px;
+  right: -980px;
+  transition: .3s all ease-in-out;
+  width: 980px;
+}
+
+.assingpatient.open {
+  right: 0;
+}
+
+.assingpatient .handle {
+  position: absolute;
+  display: flex;
+  top: 130px;
+  left: -50px;
+  background: #2cb8ea;
+  cursor: pointer;
+  padding: 8px 10px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  box-shadow: -3px 0px 4px rgba(0, 0, 0, 0.06);
+  color: #fff;
+  font-size: 30px;
+  transition: .3s all ease-in-out;
+}
+
+.assingpatient .handle:hover {
+  background: #2cb8ea;
+  color: #fff;
+}
+
+.assingpatient .assignpatient-body {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - 140px);
+  height: 350px;
+  overflow-y: scroll;
+  overflow-x: visible;
+}
+
+.assingpatient .assignpatient-body .layouts {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+
+.assingpatient .assignpatient-body .layouts .layout-box {
+  position: relative;
+  margin: 0 8px;
+  box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  width: calc(50% - 16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.assingpatient .assignpatient-body .layouts .layout-box img {
+  width: 180px;
+}
+
+.assingpatient .assignpatient-body .layouts .layout-box i {
+  display: none;
+  position: absolute;
+  top: 0;
+  text-align: center;
+  right: 0;
+  height: 24px;
+  font-size: 18px;
+  line-height: 24px;
+  width: 32px;
+  color: #ffffff;
+  background: #663399;
+  border-radius: 0 0 0 6px;
+}
+
+.assingpatient .assignpatient-body .layouts .layout-box.active {
+  border: 1px solid #2cb8ea;
+}
+
+.assingpatient .assignpatient-body .layouts .layout-box.active i {
+  display: inline-block;
+}
+
+.assingpatient .assignpatient-body .colors {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.assingpatient .assignpatient-body .colors .color {
+  width: 36px;
+  height: 36px;
+  display: inline-block;
+  border-radius: 50%;
+  margin: 8px;
+  text-align: center;
+  box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+}
+
+.assingpatient .assignpatient-body .colors .color.purple {
+  background: #663399;
+}
+
+.assingpatient .assignpatient-body .colors .color.blue {
+  background: #2f47c2;
+}
+
+.assingpatient .assignpatient-body .colors .color i {
+  display: none;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 36px;
+}
+
+.assingpatient .assignpatient-body .colors .color.active i {
+  display: unset;
+}
+
+@media (max-width: 767px) {
+  .assingpatient {
+    width: 280px;
+    right: -280px;
+  }
+}
+
+[dir="rtl"] .assingpatient {
+  right: auto;
+  left: -380px;
+}
+
+[dir="rtl"] .assingpatient.open {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .assingpatient .handle {
+  top: 8px;
+  left: auto;
+  right: -36px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 4px;
+  box-shadow: -3px 0px 4px rgba(0, 0, 0, 0.06);
+}
+
+
+
 .patientCaretool {
   position: fixed;
   z-index: 99999;

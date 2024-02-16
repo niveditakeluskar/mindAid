@@ -32,13 +32,15 @@ class RpmEnrolledReportController extends Controller
 
     public function RpmEnrolledReportSearch(Request $request)
     {     
-    //    dd($request->all());
+        $monthly = date('Y-m');
+        //date('2022-05'); 
+        // $year = date('Y', strtotime($monthly));
+        // $month = date('m', strtotime($monthly));
         $patient = sanitizeVariable($request->route('patient'));
         $practices = sanitizeVariable($request->route('practices'));
         $shipping_status = sanitizeVariable($request->route('shipping_status'));
         $fromdate=sanitizeVariable($request->route('fromdate'));
         $todate=sanitizeVariable($request->route('todate'));
-        
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
      
@@ -46,7 +48,7 @@ class RpmEnrolledReportController extends Controller
          $p;
          $pr;
 
-     
+        
     
         if( $practices!='null')
         {
@@ -118,9 +120,6 @@ class RpmEnrolledReportController extends Controller
            
            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
-
-        
-
         // dd($query);
         $data = DB::select( DB::raw($query) ); 
         return Datatables::of($data) 
@@ -134,15 +133,14 @@ class RpmEnrolledReportController extends Controller
                 return  $btn1;
 
             }) 
-            ->addColumn('action', function($row){ 
+            ->addColumn('action', function($row) use ($monthly){ 
                 $btn='';
                 $cm='';
-                $cm = "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail' onclick ='shippingdetail(".$row->pid.")'>Shipping Details";
-                $cm .="</button>";
+                $cm .= "<button type='button' data-id='".$row->pid."'   id='shippingdetail' class='btn btn-primary mt-4 shippingdetail'onclick ='shippingdetail(".$row->pid.")'>Shipping Details</button> <a href='/rpm/timeline-daily-activity/".$row->pid."/timelinedailyactivity' target='_blank' data-id='".$row->pid."' id='timeline' class='btn btn-primary mt-4' type='button'>RPM Timeline</a>";
                 $btn .= $cm;   
                 return  $btn;
-            }) 
-            ->rawColumns(['device','action'])   
+            })
+            ->rawColumns(['device','action'])    
             ->make(true);       
        
     }
@@ -346,8 +344,8 @@ class RpmEnrolledReportController extends Controller
             left join ren_core.users as u on pd.updated_by=u.id
             inner join ren_core.partners as p on p.id = pd.partner_id   
             left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
-            where pd.patient_id  = '".$id."' and pd.partner_id = 3";  
-        // dd($query);
+            where pd.patient_id  = '".$id."'";  
+        // dd($query); and pd.partner_id = 3
         $data = DB::select( DB::raw($query) );
         return Datatables::of($data)
         ->addIndexColumn()
@@ -376,11 +374,11 @@ class RpmEnrolledReportController extends Controller
         to_char(pd.updated_at  at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at 
         from patients.patient_services ps
         left join patients.patient  p on ps.patient_id = p.id  and p.status = 1
-        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1 and pd.partner_id = 3
+        left join patients.patient_devices pd on pd.patient_id = ps.patient_id and pd.status = 1 
         left join ren_core.users as u on pd.updated_by=u.id
-        inner join patients.patient_providers pp on pp.patient_id = p.id  and pp.provider_type_id = 1 and pp.is_active = 1
-        inner join ren_core.practices prac on pp.practice_id = prac.id and prac.is_active = 1 
-        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."' ";
+        left join patients.patient_providers pp on pp.patient_id = p.id  and pp.provider_type_id = 1 and pp.is_active = 1
+        left join ren_core.practices prac on pp.practice_id = prac.id and prac.is_active = 1 
+        where ps.module_id = 2 and ps.status = 1 and ps.patient_id = '".$id."' and pd.device_code is not null";
 
 
         if($shipping_status!=='null' && $shipping_status != '0'){
@@ -399,7 +397,7 @@ class RpmEnrolledReportController extends Controller
         $patientid = sanitizeVariable($patientid);
         $device = PatientDevices::where('patient_id', $patientid)
             ->where("status", 1)
-            ->where("partner_id", 3)
+            // ->where("partner_id", 3)
             ->orderBy('created_at', 'desc')
             ->get();
     
@@ -408,9 +406,10 @@ class RpmEnrolledReportController extends Controller
             $pro = \DB::select(\DB::raw("select pd.device_code, pd.patient_id, pd.id, pd.status
                 from patients.patient_devices pd 
                 left join ren_core.users as u on pd.updated_by = u.id
-                left join ren_core.partners as p on p.id = pd.partner_id and p.id = 3
+                left join ren_core.partners as p on p.id = pd.partner_id 
                 left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
-                where pd.patient_id  = '".$id."' and pd.partner_id = 3 "));
+                where pd.patient_id  = '".$id."' "));
+                // and pd.partner_id = 3  and p.id = 3
     
             if (!empty($pro)) {
                 $practicecount = $pro[0]->count; 

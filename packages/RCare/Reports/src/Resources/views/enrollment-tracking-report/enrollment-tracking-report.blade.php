@@ -737,7 +737,7 @@ return {
           
       
             util.getToDoListData(0, {{getPageModuleName()}});
-           
+            util.getAssignPatientListData(0, 0);
 
                
         }); 

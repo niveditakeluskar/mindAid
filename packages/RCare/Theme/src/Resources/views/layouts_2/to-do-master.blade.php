@@ -94,21 +94,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
     $component_name = \Request::segment(2);
     $module_name = \Request::segment(1);
     $patient_list = \Request::segment(3);
-    // $current_url = url()->current();
-    // $previous_url = url()->previous();
-    // Session::set('_current.url', $current_url);
-    // Session::set('_previous.url', $previous_url);
-    // $data = \Request::Session()->all();
-    // dd($data);
-    // print_r($component_name);
-    // print_r($patient_list);
-    // if($component_name != "monthly-monitoring-patients" && $component_name != "monthly-monitoring-patient-list")
-    // if($module_name!= '' && $module_name!='patients' && $patient_list!='patients' && ($module_name=='ccm' || $module_name=='rpm'))
-    //  dd("hiiii".$module_name);
-
     if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
-        // echo $component_name . $module_name; 
-
     ?>
         @include('Theme::layouts_2.patient_caretool_data')
         @include('Theme::layouts_2.patient_status')
@@ -120,7 +106,11 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         @include('Theme::layouts_2.previous-month-notes')
     <?php } ?>
     @include('Theme::layouts_2.to-list-customizer')
+<<<<<<< HEAD
     @include('Theme::layouts_2.cm-patient-assign') 
+=======
+    @include('Theme::layouts_2.cm-patient-assign')
+>>>>>>> 1992ac8d4a62653864ce20ccf8bac290e2a55dca
 
 
     <!-- </div> -->
@@ -144,6 +134,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- LAModel Ended here -->
 
@@ -854,6 +845,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                 } ?>">
                         <input type="hidden" name="start_time" value="00:00:00">
                         <input type="hidden" name="end_time" value="00:00:00">
+                        <input type="hidden" name="fromstarttime" id="fromstarttime">
                         <input type="hidden" name="module_id" value="{{ $module_id }}" />
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
@@ -1121,358 +1113,364 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         }
 
         $(document).ready(function() {
-            localStorage.setItem("idleTime", 0);
-            util.getSessionLogoutTimeWithPopupTime();
-            var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
-            $(this).mousemove(function(e) {
-                // idleTime = 0;
-                localStorage.setItem("idleTime", 0);
-            });
+                    localStorage.setItem("idleTime", 0);
+                    util.getSessionLogoutTimeWithPopupTime();
+                    var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
+                    $(this).mousemove(function(e) {
+                        // idleTime = 0;
+                        localStorage.setItem("idleTime", 0);
+                    });
 
-            $(this).keypress(function(e) {
-                // idleTime = 0;
-                localStorage.setItem("idleTime", 0);
-            });
-
-
-
-            var $body = $("body");
+                    $(this).keypress(function(e) {
+                        // idleTime = 0;
+                        localStorage.setItem("idleTime", 0);
+                    });
 
 
-            // //Dark version
-            $('#dark-checkbox').change(function() {
-                if ($(this).prop('checked')) {
-                    $body.addClass("dark-theme");
-                    var ch = 1;
-                } else {
-                    $body.removeClass("dark-theme");
-                    var ch = 0;
-                }
-                $.ajax({
-                    method: "get",
-                    url: "/org/ajax/theme-dark",
-                    data: {
-                        darkmode: ch
+
+                    var $body = $("body");
+
+
+                    // //Dark version
+                    $('#dark-checkbox').change(function() {
+                        if ($(this).prop('checked')) {
+                            $body.addClass("dark-theme");
+                            var ch = 1;
+                        } else {
+                            $body.removeClass("dark-theme");
+                            var ch = 0;
+                        }
+                        $.ajax({
+                            method: "get",
+                            url: "/org/ajax/theme-dark",
+                            data: {
+                                darkmode: ch
+                            }
+                            $.ajax({
+                                method: "get",
+                                url: "/org/ajax/theme-dark",
+                                data: {
+                                    darkmode: ch
+                                }
+                            });
+                        });
+
+                        $("[name='partner_id']").on("change", function() {
+                            //alert("working");
+                            //alert($(this).val());
+                            if ($(this).val() == '') {
+                                var partner_id = null;
+                                util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
+                            } else {
+                                util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
+                            }
+                        });
+                        // setIntervalMCFunction(); //removed in incomming code
+                        setTimeout(function() {
+                            document.getElementById("customizer_id").style.display = "block";
+                            // document.getElementById("customizer_id2").style.display = "block";
+                        }, 3000);
+
+
+                        CKEDITOR.replace('email_title_area');
+                        $('.select2').select2();
+                        $('.select2-container--default .select2-selection--single').attr('style', 'border-radius: 0.25rem !important');
+
+                        $("#ThresholdTab #P-tab_2").on("click", function() {
+                            var patient_id = $("#patient_id").val();
+                            var module_id = $("#module_id").val();
+                            $.ajax({
+                                url: '/patients/systemThresholdTab/' + patient_id + '/' + module_id,
+                                type: 'get',
+                                success: function(data) {
+                                    //    alert(JSON.stringify(data));
+
+                                    $("#heading_thr").html(data[1]);
+                                    $("#p_systolichigh").html(data[0].systolichigh);
+                                    $("#p_systoliclow").html(data[0].systoliclow);
+                                    $("#p_diastolichigh").html(data[0].diastolichigh);
+                                    $("#p_diastoliclow").html(data[0].diastoliclow);
+                                    $("#p_heartratehigh").html(data[0].bpmhigh);
+                                    $("#p_heartratelow").html(data[0].bpmlow);
+                                    $("#p_oxygensaturationhigh").html(data[0].oxsathigh);
+                                    $("#p_Oxygensaturationlow").html(data[0].oxsatlow);
+                                    $("#p_glucosehigh").html(data[0].glucosehigh);
+                                    $("#p_glucoselow").html(data[0].glucoselow);
+                                    $("#p_temperaturehigh").html(data[0].temperaturehigh);
+                                    $("#p_temperaturelow").html(data[0].temperaturelow);
+
+                                }
+                            })
+                        });
+
+                        util.totalTimeSpentByCM();
+
+                        // $(function() {
+                        //     $('textarea').each(function() {
+                        //         $(this).height($(this).prop('scrollHeight'));
+                        //     });
+                        // });
+
+
+                    });
+
+
+                    /*********************************************************************************************************************************************** */
+
+
+                    var checkTimeInterval = function timerIncrement() {
+                        // idleTime = idleTime + 1; //Calls every 1 seconds
+                        sessionIdleTime = localStorage.getItem("idleTime");
+
+                        // var showPopupTime = sessionStorage.getItem("showPopupTime");
+                        // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
+
+
+                        var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
+                        var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
+
+                        var systemDate = localStorage.getItem("systemDate");
+                        var currentDate = new Date();
+                        var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
+                        var idleTime = parseInt(sessionIdleTime) + (res % 60);
+
+
+                        console.log("idleTime-" + idleTime);
+                        // console.log("showPopupTime-"+showPopupTime);
+                        // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
+
+
+                        if (idleTime >= showPopupTime) {
+
+                            console.log('idleTime in if loop idleTime >= showPopupTime');
+
+                            // $('#logout_modal').modal('show');   
+                            var visiblemodal = $('#logout_modal').is(':visible');
+                            if (visiblemodal) {
+                                console.log('visiblemodal');
+                            } else {
+                                $('#logout_modal').modal('show');
+                            }
+
+                            if (idleTime >= sessionTimeoutInSeconds) {
+
+                                console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
+                                var visiblemodal = $('#logout_modal').is(':visible');
+
+                                if (visiblemodal) {
+                                    console.log('visiblemodal in sessiontimeout');
+                                    // $('#logout_modal').modal('hide');   
+                                    $("#sign-out-btn")[0].click();
+                                    var base_url = window.location.origin;
+                                    // alert(base_url);  
+                                    window.location.href = base_url + '/rcare-login';
+                                    window.location.reload();
+
+                                }
+
+                            }
+
+
+
+                        }
+
+                        localStorage.setItem("idleTime", idleTime);
+                        // localStorage.setItem("idleTime", 0);
+                        localStorage.setItem("systemDate", currentDate);
                     }
-                });
-            });
 
-
-            $("[name='partner_id']").on("change", function() {
-                //alert("working");
-                //alert($(this).val());
-                if ($(this).val() == '') {
-                    var partner_id = null;
-                    util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
-                } else {
-                    util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
-                }
-            });
-
-            setIntervalMCFunction();
-            setTimeout(function() {
-                document.getElementById("customizer_id").style.display = "block";
-            }, 3000);
-
-            CKEDITOR.replace('email_title_area');
-            $('.select2').select2();
-            $('.select2-container--default .select2-selection--single').attr('style', 'border-radius: 0.25rem !important');
-
-            $("#ThresholdTab #P-tab_2").on("click", function() {
-                var patient_id = $("#patient_id").val();
-                var module_id = $("#module_id").val();
-                $.ajax({
-                    url: '/patients/systemThresholdTab/' + patient_id + '/' + module_id,
-                    type: 'get',
-                    success: function(data) {
-                        //    alert(JSON.stringify(data));
-
-                        $("#heading_thr").html(data[1]);
-                        $("#p_systolichigh").html(data[0].systolichigh);
-                        $("#p_systoliclow").html(data[0].systoliclow);
-                        $("#p_diastolichigh").html(data[0].diastolichigh);
-                        $("#p_diastoliclow").html(data[0].diastoliclow);
-                        $("#p_heartratehigh").html(data[0].bpmhigh);
-                        $("#p_heartratelow").html(data[0].bpmlow);
-                        $("#p_oxygensaturationhigh").html(data[0].oxsathigh);
-                        $("#p_Oxygensaturationlow").html(data[0].oxsatlow);
-                        $("#p_glucosehigh").html(data[0].glucosehigh);
-                        $("#p_glucoselow").html(data[0].glucoselow);
-                        $("#p_temperaturehigh").html(data[0].temperaturehigh);
-                        $("#p_temperaturelow").html(data[0].temperaturelow);
-
-                    }
-                })
-            });
-
-            util.totalTimeSpentByCM();
-
-            // $(function() {
-            //     $('textarea').each(function() {
-            //         $(this).height($(this).prop('scrollHeight'));
-            //     });
-            // });
-
-
-        });
-
-
-        /*********************************************************************************************************************************************** */
-
-
-        var checkTimeInterval = function timerIncrement() {
-            // idleTime = idleTime + 1; //Calls every 1 seconds
-            sessionIdleTime = localStorage.getItem("idleTime");
-
-            // var showPopupTime = sessionStorage.getItem("showPopupTime");
-            // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
-
-
-            var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
-            var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-
-            var systemDate = localStorage.getItem("systemDate");
-            var currentDate = new Date();
-            var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
-            var idleTime = parseInt(sessionIdleTime) + (res % 60);
-
-
-            console.log("idleTime-" + idleTime);
-            // console.log("showPopupTime-"+showPopupTime);
-            // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
-
-
-            if (idleTime >= showPopupTime) {
-
-                console.log('idleTime in if loop idleTime >= showPopupTime');
-
-                // $('#logout_modal').modal('show');   
-                var visiblemodal = $('#logout_modal').is(':visible');
-                if (visiblemodal) {
-                    console.log('visiblemodal');
-                } else {
-                    $('#logout_modal').modal('show');
-                }
-
-                if (idleTime >= sessionTimeoutInSeconds) {
-
-                    console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
-                    var visiblemodal = $('#logout_modal').is(':visible');
-
-                    if (visiblemodal) {
-                        console.log('visiblemodal in sessiontimeout');
-                        // $('#logout_modal').modal('hide');   
+                    $("#logout_yes").click(function(e) {
                         $("#sign-out-btn")[0].click();
-                        var base_url = window.location.origin;
-                        // alert(base_url);  
-                        window.location.href = base_url + '/rcare-login';
-                        window.location.reload();
+                    });
 
-                    }
+                    $("#logout_no").click(function(e) {
+                        $('#logout_modal').modal('hide');
+                    });
 
-                }
 
 
+                    var patient_id = $("#patient_id").val();
+                    var module_id = $("input[name='module_id']").val();
+                    util.getPatientPreviousMonthCalender(patient_id, module_id);
+                    var regis = $("#regi_mnth").val();
+                    var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
-            }
+                    var d = new Date();
+                    var currentMonth = moment().format("MM");
+                    var currentYear = moment().format("YYYY");
+                    $("#display_month_year").html(moment().format("MMMM YYYY"));
 
-            localStorage.setItem("idleTime", idleTime);
-            // localStorage.setItem("idleTime", 0);
-            localStorage.setItem("systemDate", currentDate);
-        }
+                    $("#prev-sidebar-month").click(function() {
 
-        $("#logout_yes").click(function(e) {
-            $("#sign-out-btn")[0].click();
-        });
 
-        $("#logout_no").click(function(e) {
-            $('#logout_modal').modal('hide');
-        });
+                        var patient_id = $("#patient_id").val();
+                        var module_id = $("input[name='module_id']").val();
+                        util.getPatientPreviousMonthCalender(patient_id, module_id);
+                        var registeredcalender = $("#regi_mnth").val();
+                        var dateObj1 = new Date(registeredcalender);
+                        var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
+                        var registeredday = dateObj1.getDate();
+                        var registeredyear = dateObj1.getFullYear();
 
 
+                        // ==================================================== //
 
-        var patient_id = $("#patient_id").val();
-        var module_id = $("input[name='module_id']").val();
-        util.getPatientPreviousMonthCalender(patient_id, module_id);
-        var regis = $("#regi_mnth").val();
-        var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
-        var d = new Date();
-        var currentMonth = moment().format("MM");
-        var currentYear = moment().format("YYYY");
-        $("#display_month_year").html(moment().format("MMMM YYYY"));
+                        var patient_id = $("#hidden_id").val();
+                        var module_id = $("input[name='module_id']").val();
 
-        $("#prev-sidebar-month").click(function() {
+                        var display_month_year_data = $("#display_month_year").text();
+                        var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
+                        var display_month_year_datamonth = display_month_year_dataarray[0];
+                        var display_month_year_datayear = display_month_year_dataarray[1];
+                        var prev_year = display_month_year_datayear;
 
+                        for (var i = 0; i < months.length; i++) {
+                            if (months[i] == display_month_year_datamonth) {
+                                var prev_month = i - 1;
 
-            var patient_id = $("#patient_id").val();
-            var module_id = $("input[name='module_id']").val();
-            util.getPatientPreviousMonthCalender(patient_id, module_id);
-            var registeredcalender = $("#regi_mnth").val();
-            var dateObj1 = new Date(registeredcalender);
-            var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
-            var registeredday = dateObj1.getDate();
-            var registeredyear = dateObj1.getFullYear();
+                            }
 
+                        }
 
-            // ==================================================== //
+                        if (display_month_year_datamonth == 'January') {
+                            var prev_month = 11;
+                            // console.log("Januray  year within loop",prev_year );
+                            var prev_year = prev_year - 1;
+                        }
 
 
-            var patient_id = $("#hidden_id").val();
-            var module_id = $("input[name='module_id']").val();
+                        if (registeredcalender.length > 0) {
 
-            var display_month_year_data = $("#display_month_year").text();
-            var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
-            var display_month_year_datamonth = display_month_year_dataarray[0];
-            var display_month_year_datayear = display_month_year_dataarray[1];
-            var prev_year = display_month_year_datayear;
+                            $("#display_month_year").html(months[prev_month] + ' ' + prev_year);
 
-            for (var i = 0; i < months.length; i++) {
-                if (months[i] == display_month_year_datamonth) {
-                    var prev_month = i - 1;
+                            year = prev_year;
+                            month = prev_month + 1;
 
-                }
+                            if (new Date(year, month) < new Date(currentYear, currentMonth)) {
+                                $("#next-sidebar-month").show();
+                            } else {
+                                $("#next-sidebar-month").hide();
+                            }
 
-            }
+                            if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
+                                $("#prev-sidebar-month").show();
+                            } else {
+                                var displaydata = "Patient CareTools"
+                                $("#display_month_year").html(displaydata);
+                                $("#prev-sidebar-month").hide();
+                                $(".previous_month-body").hide();
+                                $("#temp").show();
+                                $("#temp").html('');
+                                $('#temp').append($(".patientCaretool-body").html());
+                            }
 
-            if (display_month_year_datamonth == 'January') {
-                var prev_month = 11;
-                // console.log("Januray  year within loop",prev_year );
-                var prev_year = prev_year - 1;
-            }
 
+                        } else {
 
-            if (registeredcalender.length > 0) {
+                            var displaymonth = months[currentMonth - 2];
+                            var displaydata = "Patient CareTools"
+                            $("#display_month_year").html(displaydata);
+                            $("#next-sidebar-month").show();
+                            $("#prev-sidebar-month").hide();
+                            $(".previous_month-body").hide();
+                            $("#temp").show();
+                            $('#temp').html('');
+                            $('#temp').append($(".patientCaretool-body").html());
+                        }
+                        util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 
-                $("#display_month_year").html(months[prev_month] + ' ' + prev_year);
+                    });
 
-                year = prev_year;
-                month = prev_month + 1;
 
-                if (new Date(year, month) < new Date(currentYear, currentMonth)) {
-                    $("#next-sidebar-month").show();
-                } else {
-                    $("#next-sidebar-month").hide();
-                }
 
-                if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
-                    $("#prev-sidebar-month").show();
-                } else {
-                    var displaydata = "Patient CareTools"
-                    $("#display_month_year").html(displaydata);
-                    $("#prev-sidebar-month").hide();
-                    $(".previous_month-body").hide();
-                    $("#temp").show();
-                    $("#temp").html('');
-                    $('#temp').append($(".patientCaretool-body").html());
-                }
 
+                    // function curr_month_Fun(){
+                    $("#next-sidebar-month").click(function() {
 
-            } else {
+                        var registeredcalender = $("#regi_mnth").val();
+                        var dateObj1 = new Date(registeredcalender);
+                        var month_name = dateObj1.getMonth();
+                        var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
+                        var registeredday = dateObj1.getDate();
+                        var registeredyear = dateObj1.getFullYear();
 
-                var displaymonth = months[currentMonth - 2];
-                var displaydata = "Patient CareTools"
-                $("#display_month_year").html(displaydata);
-                $("#next-sidebar-month").show();
-                $("#prev-sidebar-month").hide();
-                $(".previous_month-body").hide();
-                $("#temp").show();
-                $('#temp').html('');
-                $('#temp').append($(".patientCaretool-body").html());
-            }
-            util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 
-        });
+                        var display_month_year_data = $("#display_month_year").text();
+                        var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
+                        var display_month_year_datamonth = display_month_year_dataarray[0];
+                        var display_month_year_datayear = display_month_year_dataarray[1];
+                        var nxt_year = display_month_year_datayear;
+                        // console.log("display_month_year_datamonth", display_month_year_datamonth);
 
+                        for (var i = 0; i < months.length; i++) {
+                            if (months[i] == display_month_year_datamonth) {
+                                var nxt_month = i + 1;
 
+                            }
 
+                        }
 
-        // function curr_month_Fun(){
-        $("#next-sidebar-month").click(function() {
 
-            var registeredcalender = $("#regi_mnth").val();
-            var dateObj1 = new Date(registeredcalender);
-            var month_name = dateObj1.getMonth();
-            var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
-            var registeredday = dateObj1.getDate();
-            var registeredyear = dateObj1.getFullYear();
+                        if (display_month_year_datamonth == 'December') {
+                            var nxt_month = 0;
+                            nxt_year = parseInt(nxt_year) + 1;
 
+                        } else if (display_month_year_datamonth == 'Patient' ||
+                            display_month_year_datamonth == 'Patient CareTools' || display_month_year_datamonth == 'undefined') {
 
-            var display_month_year_data = $("#display_month_year").text();
-            var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
-            var display_month_year_datamonth = display_month_year_dataarray[0];
-            var display_month_year_datayear = display_month_year_dataarray[1];
-            var nxt_year = display_month_year_datayear;
-            // console.log("display_month_year_datamonth", display_month_year_datamonth);
+                            var nxt_month = parseInt(registeredmonth) - 1;
+                            nxt_year = registeredyear;
 
-            for (var i = 0; i < months.length; i++) {
-                if (months[i] == display_month_year_datamonth) {
-                    var nxt_month = i + 1;
+                        }
 
-                }
 
-            }
+                        year = nxt_year;
+                        month = nxt_month;
 
 
-            if (display_month_year_datamonth == 'December') {
-                var nxt_month = 0;
-                nxt_year = parseInt(nxt_year) + 1;
+                        $("#temp").hide();
+                        $(".previous_month-body").show();
 
-            } else if (display_month_year_datamonth == 'Patient' ||
-                display_month_year_datamonth == 'Patient CareTools' || display_month_year_datamonth == 'undefined') {
 
-                var nxt_month = parseInt(registeredmonth) - 1;
-                nxt_year = registeredyear;
+                        if (registeredcalender.length > 0) {
 
-            }
+                            $("#display_month_year").html(months[month] + ' ' + year);
+                            month = month + 1; //bcz array starts from 0 so miunused 1 from above
 
+                            if (new Date(year, month) < new Date(currentYear, currentMonth)) {
+                                $("#next-sidebar-month").show();
+                            } else {
+                                $("#next-sidebar-month").hide();
+                            }
 
-            year = nxt_year;
-            month = nxt_month;
 
 
-            $("#temp").hide();
-            $(".previous_month-body").show();
+                            if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
+                                $("#prev-sidebar-month").show();
+                            } else {
+                                $("#prev-sidebar-month").hide();
+                                $(".previous_month-body").hide();
+                                $("#temp").show();
+                                $('#temp').html('');
+                                $('#temp').append($(".patientCaretool-body").html());
+                            }
 
 
-            if (registeredcalender.length > 0) {
 
-                $("#display_month_year").html(months[month] + ' ' + year);
-                month = month + 1; //bcz array starts from 0 so miunused 1 from above
+                        } else {
 
-                if (new Date(year, month) < new Date(currentYear, currentMonth)) {
-                    $("#next-sidebar-month").show();
-                } else {
-                    $("#next-sidebar-month").hide();
-                }
+                            var displaymonth = months[currentMonth - 1];
+                            $("#display_month_year").html(displaymonth + ' ' + year);
+                            $("#next-sidebar-month").hide();
+                            $("#prev-sidebar-month").show();
+                        }
+                        util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 
+                    });
 
 
-                if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
-                    $("#prev-sidebar-month").show();
-                } else {
-                    $("#prev-sidebar-month").hide();
-                    $(".previous_month-body").hide();
-                    $("#temp").show();
-                    $('#temp').html('');
-                    $('#temp').append($(".patientCaretool-body").html());
-                }
-
-
-
-            } else {
-
-                var displaymonth = months[currentMonth - 1];
-                $("#display_month_year").html(displaymonth + ' ' + year);
-                $("#next-sidebar-month").hide();
-                $("#prev-sidebar-month").show();
-            }
-            util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-
-        });
-
-
-        //******************************************************************************************************************************************************** */                
+                    //******************************************************************************************************************************************************** */                
     </script>
 
     @yield('page-js')

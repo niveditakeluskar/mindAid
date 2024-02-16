@@ -239,7 +239,7 @@
              rpmlist.init();
              rpmworklist.init();
             util.getToDoListData(0, {{getPageModuleName()}});    
-            
+            util.getAssignPatientListData(0, 0);
     
         });
     </script>  

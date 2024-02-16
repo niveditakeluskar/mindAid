@@ -58,6 +58,10 @@ export default {
         const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleId}/list`);
         $("#toDoList").html(taskMangeResp.data);
         $('.badge').html($('#count_todo').val());
+
+        const cmAssignpatientstatus = await axios.get(`/patients/cm-assignpatient/0/${patientId}/cmassignpatient`);
+        $("#patientassignlist").html(cmAssignpatientstatus.data);
+
         const patientStatus = await axios.get(`/patients/patient-status/${patientId}/${moduleId}/status`);
         $("#status_blockcontent").html(patientStatus.data);
         const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleId}/careplanstatus`);
