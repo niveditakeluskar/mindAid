@@ -135,7 +135,7 @@
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
-				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal">Edit Allergies</button>
+				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal" :disabled="(timerStatus == 1) === true ">Edit Allergies</button>
 				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
@@ -217,7 +217,7 @@
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
 						class="mr-3 mb-4"><!-- <b>Vitals and Health Data added or edit:</b> -->
-						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary" @click="openVitalsHealthDataModalForm">Modify Vitals & Health Data</button>
+						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary" @click="openVitalsHealthDataModalForm" :disabled="(timerStatus == 1) === true ">Modify Vitals & Health Data</button>
 		 				<vitalsHealthDataModalForm ref="vitalsHealthDataModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
@@ -225,7 +225,7 @@
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
 					<label :for="`${sectionName}_services-modal`" class="mr-3 mb-4"><b>Services added or edit: </b>
-						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal">Edit Services</button>
+						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal" :disabled="(timerStatus == 1) === true ">Edit Services</button>
 		 				<ServicesModalForm ref="servicesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
@@ -253,7 +253,7 @@
 			</div>
 			<!--  -->
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary createcareplanbutton"
-				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none">Create Care
+				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none" :disabled="(timerStatus == 1) === true ">Create Care
 				Plan</button>&nbsp;&nbsp;
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal">Review Care Plan</button>
 			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
@@ -322,6 +322,7 @@ export default {
 			data_present_in_emrYesNO: '',
 			currentMonth: new Date().getMonth(),
 			this_month: 0,
+			timerStatus:null,
 		};
 	},
 	mounted() {
@@ -340,6 +341,10 @@ export default {
 		};
 		document.body.appendChild(script); 
 		this.populateFuntion(this.patientId); 
+		const timerStatusElement = document.getElementById('timer_runing_status');
+               if (timerStatusElement !== null) {
+                  this.timerStatus = timerStatusElement.value;
+               }
 	},
 	computed: {
 		isDecemberOrJanuary() {
@@ -418,10 +423,8 @@ export default {
 					} else {
 						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
 					}
-				}else{
-					console.error('populateCallPreparation is empty or undefined');
-				}			
-			}	
+				}
+			} 		
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}

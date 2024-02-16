@@ -87,6 +87,8 @@ class CarePlanDevelopmentController extends Controller
         $patientId = sanitizeVariable($request->route('patientid'));
         $month     = date('m');
         $year      = date("Y");
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth();
         $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
                       plr.reading,
                       ',' ) else STRING_AGG (
@@ -96,7 +98,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id
                       where plr.lab_date is not null and plr.lab_test_id is not null and plr.patient_id=" . $patientId . "
-                      and EXTRACT(Month from plr.created_at) = '" . $month . "' AND EXTRACT(YEAR from plr.created_at) = '" . $year . "' 
+                      and plr.lab_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
                       group  by plr.lab_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes
                       union 
                       select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as  description,plr.rec_date ,(case when rlt.description='COVID-19' then STRING_AGG (
@@ -108,7 +110,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_tests rlt on rlt.id=plr.lab_test_id 
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id and rltpr.status=1
                       where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =" . $patientId . "
-                      and EXTRACT(Month from plr.created_at) = '" . $month . "' AND EXTRACT(YEAR from plr.created_at) = '" . $year . "' 
+                      and plr.lab_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
                       group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
         $data = DB::select($qry);
         return Datatables::of($data)
@@ -122,6 +124,29 @@ class CarePlanDevelopmentController extends Controller
             ->make(true);
     }
 
+    public function getImagingData(Request $request)
+    {
+        $patientId = sanitizeVariable($request->route('patientid'));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth();
+        $configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
+                            ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
+        $qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date
+            from patients.patient_imaging
+            where  patient_id =" . $patientId . "
+            and imaging_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
+            group by imaging_details,imaging_date order by updated_at desc";
+        $data = DB::select(DB::raw($qry));
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function getVitalData(Request $request)
     {
         $patientId = sanitizeVariable($request->route('patientid'));
@@ -131,13 +156,13 @@ class CarePlanDevelopmentController extends Controller
         $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
-        $qry = "select rec_date,height,weight,bmi,bp,o2,pulse_rate,
+        $qry = "select distinct rec_date ,height,weight,bmi,bp,o2,pulse_rate,
             diastolic,other_vitals,oxygen,notes,pain_level
             from patients.patient_vitals
             where rec_date is not null and patient_id =" . $patientId . "
             and rec_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
-            order by id desc";
-        $data = DB::select($qry);
+            order by rec_date desc";
+        $data = DB::select(DB::raw($qry));
         return Datatables::of($data)
             ->addIndexColumn()
             ->make(true);
@@ -444,27 +469,27 @@ class CarePlanDevelopmentController extends Controller
         return $result;
     }
 
-    public function getImagingData(Request $Request)
-    {
-        $patientId               = sanitizeVariable($Request->route('patientid'));
-        $lastMonthImaging = "";
-        $dataexist        = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-        if ($dataexist == true) {
-            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
-                ->orderBy('created_at', 'desc')->get();
-        } else {
-            $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->where('created_at', '>=', Carbon::now()->subMonth())->get();
-        }
-        return Datatables::of($lastMonthImaging)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editImaging("' . $row->id . '") data-original-title="Edit" class="editimaging" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-    }
+    // public function getImagingData(Request $Request)
+    // {
+    //     $patientId               = sanitizeVariable($Request->route('patientid'));
+    //     $lastMonthImaging = "";
+    //     $dataexist        = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+    //     if ($dataexist == true) {
+    //         $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+    //             ->orderBy('created_at', 'desc')->get();
+    //     } else {
+    //         $lastMonthImaging = PatientImaging::where('patient_id', $patientId)->where('created_at', '>=', Carbon::now()->subMonth())->get();
+    //     }
+    //     return Datatables::of($lastMonthImaging)
+    //         ->addIndexColumn()
+    //         ->addColumn('action', function ($row) {
+    //             $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editImaging("' . $row->id . '") data-original-title="Edit" class="editimaging" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+    //             $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+    //             return $btn;
+    //         })
+    //         ->rawColumns(['action'])
+    //         ->make(true);
+    // }
 
     public function Services_list(Request $Request)
     {
@@ -1489,8 +1514,8 @@ class CarePlanDevelopmentController extends Controller
         $stage_id            = sanitizeVariable($request->stage_id);
         $step_id             = sanitizeVariable($request->step_id);
         $form_name           = sanitizeVariable($request->form_name);
-        $billable            = sanitizeVariable($request->billable); 
-        $allergy_status      = sanitizeVariable($request->allergy_status); 
+        $billable            = sanitizeVariable($request->billable);
+        $allergy_status      = sanitizeVariable($request->allergy_status);
         $noallergymsg        = sanitizeVariable($request->noallergymsg);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);

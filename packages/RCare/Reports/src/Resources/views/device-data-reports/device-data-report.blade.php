@@ -996,6 +996,7 @@ let start=0;
 
         $(document).ready(function() {                
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0, 0);
             $(".patient-div").hide();
                    
 

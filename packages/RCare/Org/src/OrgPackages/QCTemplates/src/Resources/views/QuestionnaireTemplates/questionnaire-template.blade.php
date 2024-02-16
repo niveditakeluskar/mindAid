@@ -100,6 +100,7 @@
         } 
         $(document).ready(function() {
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0, 0);
         });
          
           $('table').on('draw.dt', function()

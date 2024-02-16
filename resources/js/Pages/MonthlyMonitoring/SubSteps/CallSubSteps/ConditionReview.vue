@@ -47,7 +47,7 @@
                <div class="mc-footer">
                   <div class="row"> 
                      <div class="col-lg-12 text-right">
-                        <button type="submit" class="btn btn-primary m-1 save_preparation" id="_save">Next</button>
+                        <button type="submit" class="btn btn-primary m-1 save_preparation" id="_save" :disabled="(timerStatus == 1) === true ">Next</button>
                      </div>
                   </div>
                </div>
@@ -81,6 +81,7 @@ export default {
    setup(props) {
       const sectionName = 'research_follow_up';
       let preparationTime = ref();
+      let timerStatus = ref();
       const isLoading = ref(false);
       let formErrors = ref();
       let conditionReviewStageID  = ref(0);
@@ -138,6 +139,7 @@ export default {
       onMounted(async () => {
          try {
             preparationTime.value = document.getElementById('page_landing_times').value;
+            timerStatus.value = document.getElementById('timer_runing_status').value;
          } catch (error) {
             console.error('Error on page load:', error);
          }
@@ -150,6 +152,7 @@ export default {
          isLoading,
          formErrors,
          conditionReviewStageID,
+         timerStatus,
       };
    }
 };

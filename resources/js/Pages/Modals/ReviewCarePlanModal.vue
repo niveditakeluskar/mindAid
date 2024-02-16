@@ -630,8 +630,7 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
-
-               // Check if codeData is an array
+                   // Check if codeData is an array
             if (Array.isArray(codeData)) {
             codeOptions.value = codeData.map(item => item.code); 
                  }

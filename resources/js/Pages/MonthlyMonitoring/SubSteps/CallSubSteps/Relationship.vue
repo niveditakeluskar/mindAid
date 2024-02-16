@@ -25,7 +25,7 @@
                     <div class="mc-footer">
                         <div class="row">
                             <div class="col-lg-12 text-right">
-                                <button type="submit" id="save-question" class="btn btn-primary m-1">Next</button>
+                                <button type="submit" id="save-question" class="btn btn-primary m-1" :disabled="(timerStatus == 1) === true ">Next</button>
                             </div>
                         </div>
                     </div>
@@ -49,11 +49,13 @@ export default {
             formErrors: {},
 			showAlert: false,
             time:null,
+            timerStatus:null,
         };
     },
     mounted() {
         this.fetchData();
         this.time = document.getElementById('page_landing_times').value;
+        this.timerStatus = document.getElementById('timer_runing_status').value;
     },
     methods: {
         fetchData() {

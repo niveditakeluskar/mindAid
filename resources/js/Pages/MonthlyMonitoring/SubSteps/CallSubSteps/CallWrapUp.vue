@@ -128,7 +128,7 @@
                         <div class="mc-footer">
                             <div class="row"> 
                                 <div class="col-lg-12 text-right">
-                                    <button type="submit" class="btn btn-primary m-1" id="submit">Submit</button>
+                                    <button type="submit" class="btn btn-primary m-1" id="submit" :disabled="(timerStatus == 1) === true ">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -165,6 +165,7 @@ export default {
         const loading = ref(false);
         const callWrapUpStageId = ref(0);
         let callWrapUpTime = ref(null);
+        let timerStatus = ref();
         const activityData = ref([]);
         const groupedData = ref([]);
         let formErrors = ref([]);
@@ -505,6 +506,7 @@ export default {
                 populateFunction();
                 groupActivitiesByType();
                 callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                timerStatus.value = document.getElementById('timer_runing_status').value;
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -534,6 +536,7 @@ export default {
             saveEMRNotes,
             emr_monthly_summary,
             emr_monthly_summary_completed,
+            timerStatus,
         };
     }
 }
