@@ -38,7 +38,7 @@
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
-                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber" />
+                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber" :PatientFinTab="PatientBasicInfoReload"/>
                                         </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="show-modal" @click="veteranServicefunction">

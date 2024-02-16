@@ -26,7 +26,7 @@
                                 <input type="hidden" id="timer_runing_status" value="0"> 
                                 <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="finnumberTime">
                                 <label>FIN Number<span class='error'>*</span></label>
-                                <textarea name="fin_number" class="form-control forms-element" v-bind="finNumber" ></textarea>
+                                <textarea name="fin_number" class="form-control forms-element" v-model="finNumber" ></textarea>
                                 <div class="invalid-feedback" v-if="formErrors" style="display: block;"> 
                                     <span :textContent="formErrors.fin_number"></span>
                                 </div>
@@ -65,6 +65,10 @@ export default {
       componentId: Number,
       stageid: Number,
       finNumber : Number,
+      PatientFinTab:{
+        type: Function,
+        required: true,
+        },
   },
     components: {
  
@@ -110,11 +114,13 @@ export default {
                 formErrors.value == {};
                 const response = await axios.post('/patients/save-patient-fin-number', formData);
                 if (response && response.status == 200) {
+                    debugger;
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    debugger;
-                    $(".form_start_time").val(response.data.form_start_time);
-                    finNumber.value = response.data.fin_number;
+                    if(typeof props.PatientFinTab === 'function'){
+                        props.PatientFinTab();
+                    } 
+                    $(".form_start_time").val(response.data.form_start_time); 
                     document.getElementById("fin_number_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
