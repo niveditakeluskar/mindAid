@@ -112,6 +112,10 @@ const formatDate = (dateString) => {
             
         };
 
+        const closeModal = () => {
+            isOpen.value = false;
+        };
+        
         onMounted(async () => {
 			try {
 				followupTime.value = document.getElementById('page_landing_times').value;
@@ -121,9 +125,7 @@ const formatDate = (dateString) => {
 			}
 		});
 
-        const closeModal = () => {
-            isOpen.value = false;
-        };
+       
 
 
 
