@@ -125,7 +125,7 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
-					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal" :disabled="(timerStatus == 1) === true">Edit Medication</button>
 	 				<MedicationModalForm ref="MedicationModalFormRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
@@ -135,7 +135,7 @@
 			</div>
 		</div>
 			<label :for="`${sectionName}_allergies-model`" class="mr-3 mb-4"><b>Allergies add or edit: </b>
-				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal">Edit Allergies</button>
+				<button type="button" name="allergies_id" :id="`${sectionName}_allergies-model`" class="btn btn-primary click_id allergiesclick" @click="openAllergiesModal" :disabled="(timerStatus == 1) === true ">Edit Allergies</button>
 				<AllergiesModalForm ref="allergiesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</label>	
 			<div :id="`${sectionName}_nd_notes-model`" class="invalid-feedback"></div>
@@ -217,7 +217,7 @@
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
 						class="mr-3 mb-4"><!-- <b>Vitals and Health Data added or edit:</b> -->
-						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary" @click="openVitalsHealthDataModalForm">Modify Vitals & Health Data</button>
+						<button type="button" :id="`${sectionName}_vitalsHealth-modal`" class="btn btn-primary" @click="openVitalsHealthDataModalForm" :disabled="(timerStatus == 1) === true ">Modify Vitals & Health Data</button>
 		 				<vitalsHealthDataModalForm ref="vitalsHealthDataModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
@@ -225,7 +225,7 @@
 			<div class="form-row mb-4">
 				<div class="col-md-12 forms-element">
 					<label :for="`${sectionName}_services-modal`" class="mr-3 mb-4"><b>Services added or edit: </b>
-						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal">Edit Services</button>
+						<button type="button" :id="`${sectionName}_services-modal`" class="btn btn-primary" @click="openServicesModal" :disabled="(timerStatus == 1) === true ">Edit Services</button>
 		 				<ServicesModalForm ref="servicesModalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 					</label>
 				</div>
@@ -253,10 +253,15 @@
 			</div>
 			<!--  -->
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary createcareplanbutton"
-				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none">Create Care
+				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none" :disabled="(timerStatus == 1) === true ">Create Care
 				Plan</button>&nbsp;&nbsp;
+<<<<<<< HEAD
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal">Review Care Plan</button>
 			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+=======
+			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal" :disabled="(timerStatus == 1) === true ">Review Care Plan</button>
+			<ReviewCarePlanModal ref="ReviewCarePlanModal" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+>>>>>>> 782bd6738d0fb23dbd588657fbd1a1dd7046d10d
 			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
 				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
 
@@ -322,6 +327,7 @@ export default {
 			data_present_in_emrYesNO: '',
 			currentMonth: new Date().getMonth(),
 			this_month: 0,
+			timerStatus:null,
 		};
 	},
 	mounted() {
@@ -340,6 +346,10 @@ export default {
 		};
 		document.body.appendChild(script); 
 		this.populateFuntion(this.patientId); 
+		const timerStatusElement = document.getElementById('timer_runing_status');
+               if (timerStatusElement !== null) {
+                  this.timerStatus = timerStatusElement.value;
+               }
 	},
 	computed: {
 		isDecemberOrJanuary() {
