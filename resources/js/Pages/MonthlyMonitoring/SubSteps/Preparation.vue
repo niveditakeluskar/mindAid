@@ -73,7 +73,10 @@ export default {
          // this.$emit('checkConditionRequirnments');
             try {
                 preparationTime.value = document.getElementById('page_landing_times').value;
-                timerStatus.value = document.getElementById('timer_runing_status').value;
+               const timerStatusElement = document.getElementById('timer_runing_status');
+               if (timerStatusElement !== null) {
+                  timerStatus.value = timerStatusElement.value;
+               }
             } catch (error) {
                 console.error('Error on page load:', error);
             }

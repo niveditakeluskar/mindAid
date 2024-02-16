@@ -266,7 +266,10 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get('/care-plan-development-imaging-imaginglist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getImagingData')->name('care.plan.development.imaging.imaginglist');
 
+        Route::get('/care-plan-development-health-healthlist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getHealthData')->name('care.plan.development.health.healthlist');
+        
         Route::get('/care-plan-development-vital-vitallist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getVitalData')->name('care.plan.development.vital.vitallist');
+
 
         // Route::get('/care-plan-development-populateLabs/{patientid}/{labdate}/{labid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@PopulateLabsData')->name('care.plan.development.populateLabs');
         Route::get('/care-plan-development-populateLabs/{patientid}/{labdate}/{labid}/{labdateexist}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@PopulateLabsData')->name('care.plan.development.populateLabs');

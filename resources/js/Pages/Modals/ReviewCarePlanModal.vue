@@ -623,8 +623,10 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
-                codeOptions.value = codeData.map(item => item.code); // Assuming the 'code' property contains the code strings
-
+                   // Check if codeData is an array
+            if (Array.isArray(codeData)) {
+            codeOptions.value = codeData.map(item => item.code); 
+                 }
             } catch (error) {
                 console.error('Error fetching code list:', error);
             }

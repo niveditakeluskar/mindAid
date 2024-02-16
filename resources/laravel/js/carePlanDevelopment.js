@@ -173,6 +173,64 @@ var labColumns = [
 	{ data: 'action', name: 'action' }
 ];
 
+var healthColumns = [
+	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				if (data['health_date'] == null || data['health_date'] == 'null' || data['health_date'] == '') {
+					var health_date = '';
+				} else {
+					var health_date = data['health_date'];
+				}
+				return moment(health_date).format('MM-DD-YYYY');
+			}
+		},	
+		orderable: true
+	},
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				var imaging = data['health_data'];
+				if (data['health_data'] == null) {
+					imaging = '';
+				}
+				return imaging;
+			}
+		},
+		orderable: true
+	}
+];
+
+var imagingColumns = [
+	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				if (data['imaging_date'] == null || data['imaging_date'] == 'null' || data['imaging_date'] == '') {
+					var imaging_date = '';
+				} else {
+					var imaging_date = data['imaging_date'];
+				}
+				return moment(imaging_date).format('MM-DD-YYYY');
+			}
+		},	
+		orderable: true
+	},
+	{
+		data: null, mRender: function (data, type, full, meta) {
+			if (data != '' && data != 'NULL' && data != undefined) {
+				var imaging = data['imaging_details'];
+				if (data['imaging_details'] == null) {
+					imaging = '';
+				}
+				return imaging;
+			}
+		},
+		orderable: true
+	}
+];
+
 var vitalColumns = [
 	{ data: 'DT_RowIndex', name: 'DT_RowIndex' },
 	{
@@ -185,7 +243,7 @@ var vitalColumns = [
 				}
 				return moment(rec_date).format('MM-DD-YYYY');
 			}
-		},
+		},	
 		orderable: true
 	},
 	{
@@ -1007,40 +1065,40 @@ var populateForm = function (id, url) {
 					$("form[name='review_travel_form'] #travel_status_no").prop("disabled", false);
 				}
 				if (key == 'number_tracking_imaging_form') {
-					if (result[key].static['imaging'] != null) {
-						var imagingDetails = JSON.parse(result[key].static['imaging']);
-						var imagingDate = JSON.parse(result[key].static['imaging_date']);
-						var comment = JSON.parse(result[key].static['comment']);
-						for (var imaging in imagingDetails) {
-							inc_imaging = imagingcount;
-							if (imagingcount == 0) {
-								$('#imaging_0').val(imagingDetails[imaging]);
-								$('#imaging_date').val(imagingDate[imaging]);
-							} else {
-								$('#append_imaging').append('<div class="row btn_remove" id="btn_removeimaging_' + inc_imaging + '"><div class="col-md-4"><input type="text" class="form-control" name="imaging[]" id="imaging_' + imagingcount + '" placeholder ="Enter Imaging" value="' + imagingDetails[imaging] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type="date" class="form-control" name="imaging_date[]" id="imaging_date' + imagingcount + '"placeholder ="Enter Imaging Date" value="' + imagingDate[imaging] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_imaging_' + imagingcount + '" title="Remove Imaging"></i></div>');
-							}
-							$('#imaging_comment').val(comment[imaging]);
-							imagingcount++;
-						}
-					}
+					// if (result[key].static['imaging'] != null) {
+					// 	var imagingDetails = JSON.parse(result[key].static['imaging']);
+					// 	var imagingDate = JSON.parse(result[key].static['imaging_date']);
+					// 	var comment = JSON.parse(result[key].static['comment']);
+					// 	for (var imaging in imagingDetails) {
+					// 		inc_imaging = imagingcount;
+					// 		if (imagingcount == 0) {
+					// 			$('#imaging_0').val(imagingDetails[imaging]);
+					// 			$('#imaging_date').val(imagingDate[imaging]);
+					// 		} else {
+					// 			$('#append_imaging').append('<div class="row btn_remove" id="btn_removeimaging_' + inc_imaging + '"><div class="col-md-4"><input type="text" class="form-control" name="imaging[]" id="imaging_' + imagingcount + '" placeholder ="Enter Imaging" value="' + imagingDetails[imaging] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type="date" class="form-control" name="imaging_date[]" id="imaging_date' + imagingcount + '"placeholder ="Enter Imaging Date" value="' + imagingDate[imaging] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_imaging_' + imagingcount + '" title="Remove Imaging"></i></div>');
+					// 		}
+					// 		$('#imaging_comment').val(comment[imaging]);
+					// 		imagingcount++;
+					// 	}
+					// }
 				}
 				if (key == 'number_tracking_healthdata_form') {
-					if (result[key].static['healthdata'] != null) {
-						var healthDetails = JSON.parse(result[key].static['healthdata']);
-						var healthDates = JSON.parse(result[key].static['health_date']);
-						var comment = JSON.parse(result[key].static['comment']);
-						for (var healthdata in healthDetails) {
-							inc_healthdata = healthdatacount;
-							if (healthdatacount == 0) {
-								$('#healthdata_0').val(healthDetails[healthdata]);
-								$('#health_date').val(healthDates[healthdata]);
-							} else {
-								$('#append_healthdata').append('<div class="row btn_remove" id="btn_removehealthdata_' + inc_healthdata + '"><div class="col-md-4"><input type="text" class="form-control"  name="health_data[]" id ="healthdata_' + inc_healthdata + '" placeholder ="Enter Health Data" value="' + healthDetails[healthdata] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type ="date" class="form-control" name="health_date[]" id="healthdate' + inc_healthdata + '" placeholder ="Enter Health Data Date" value="' + healthDates[healthdata] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_healthdata_' + inc_healthdata + '" title="Remove health data"></i></div>');
-							}
-							$('#healthdata_comment').val(comment[healthdata]);
-							healthdatacount++;
-						}
-					}
+					// if (result[key].static['healthdata'] != null) {
+					// 	var healthDetails = JSON.parse(result[key].static['healthdata']);
+					// 	var healthDates = JSON.parse(result[key].static['health_date']);
+					// 	var comment = JSON.parse(result[key].static['comment']);
+					// 	for (var healthdata in healthDetails) {
+					// 		inc_healthdata = healthdatacount;
+					// 		if (healthdatacount == 0) {
+					// 			$('#healthdata_0').val(healthDetails[healthdata]);
+					// 			$('#health_date').val(healthDates[healthdata]);
+					// 		} else {
+					// 			$('#append_healthdata').append('<div class="row btn_remove" id="btn_removehealthdata_' + inc_healthdata + '"><div class="col-md-4"><input type="text" class="form-control"  name="health_data[]" id ="healthdata_' + inc_healthdata + '" placeholder ="Enter Health Data" value="' + healthDetails[healthdata] + '"><div class="invalid-feedback"></div></div><div class="col-md-4"><input type ="date" class="form-control" name="health_date[]" id="healthdate' + inc_healthdata + '" placeholder ="Enter Health Data Date" value="' + healthDates[healthdata] + '"><div class="invalid-feedback"></div></div><i class="col-md-1 remove-icons i-Remove float-right mb-3" id="remove_healthdata_' + inc_healthdata + '" title="Remove health data"></i></div>');
+					// 		}
+					// 		$('#healthdata_comment').val(comment[healthdata]);
+					// 		healthdatacount++;
+					// 	}
+					// }
 				}
 				if (key == 'call_close_form') {
 					if (result[key] != '') {
@@ -1331,6 +1389,7 @@ var onNumberTrackingVital = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_vitals_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_vitals_form']")[0].reset();
 		
 	} else if (response.status == 200 && ($.trim(response.data) == 'false')) {
 		$("form[name='number_tracking_vitals_form'] .alert-success").hide();
@@ -1395,6 +1454,7 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 		if (module == 'care-plan-development') {
 			util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
 			CompletedCheck();
+			renderImagingTable();
 		} else {
 			util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
 			var module_id = $("input[name='module_id']").val();
@@ -1402,6 +1462,7 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 			var month = (new Date).getMonth() + 1; //add +1 for current mnth
 			util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 			var table = $('#callwrap-list');
+			carePlanDevelopment.renderImagingTable();
 			table.DataTable().ajax.reload();
 		}
 		var scrollPos = $(".main-content").offset().top;
@@ -1412,6 +1473,8 @@ var onNumberTrackingImaging = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_imaging_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_imaging_form']")[0].reset();
+		$("#append_imaging").html("");
 		
 	} else {
 		$("form[name='number_tracking_imaging_form'] .alert-success").hide();
@@ -1429,6 +1492,7 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 		if (module == 'care-plan-development') {
 			util.updateTimer($("input[name='patient_id']").val(), $("input[name='billable']").val(), $("input[name='module_id']").val());
 			CompletedCheck();
+			renderHealthTable();
 		} else {
 			util.updateTimer($("input[name='patient_id']").val(), 1, $("input[name='module_id']").val());
 			var module_id = $("input[name='module_id']").val();
@@ -1438,6 +1502,7 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 			util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 			var table = $('#callwrap-list');
 			table.DataTable().ajax.reload();
+			carePlanDevelopment.renderHealthTable();
 		}
 		var scrollPos = $(".main-content").offset().top;
 		$(window).scrollTop(scrollPos);
@@ -1447,6 +1512,8 @@ var onNumberTrackingHealthdata = function (formObj, fields, response) {
 		var timer_paused = $("form[name='number_tracking_healthdata_form'] input[name='end_time']").val();
 		$("#timer_start").val(timer_paused);
 		$(".form_start_time").val(response.data.form_start_time);
+		$("form[name='number_tracking_healthdata_form']")[0].reset();
+		$("#append_healthdata").html("");
 		
 	} else {
 		$("form[name='number_tracking_healthdata_form'] .alert-success").hide();
@@ -2767,6 +2834,14 @@ var renderVitalTable = function () {
 	util.renderDataTable('vital-list', baseURL + "ccm/care-plan-development-vital-vitallist/" + patient_id, vitalColumns, baseURL);
 }
 
+var renderImagingTable = function(){
+	util.renderDataTable('imaging-list', baseURL + "ccm/care-plan-development-imaging-imaginglist/" + patient_id, imagingColumns, baseURL);
+} 
+
+var renderHealthTable = function(){
+	util.renderDataTable('health-list', baseURL + "ccm/care-plan-development-health-healthlist/" + patient_id, healthColumns, baseURL);
+} 
+
 var renderMedicationsTableData = function () {
 	var url = baseURL + "ccm/care-plan-development-medications-medicationslist/" + patient_id;
 	var table1 = util.renderDataTable('Medication-list', url, medicationColumns, baseURL);
@@ -3546,6 +3621,9 @@ $(document).on('click', '#click_services_id', function () {
 $(document).on('click', '.vitals_and_health_data#click_id', function () {
 	renderLabsTable();
 	renderVitalTable();
+	renderImagingTable();
+	renderHealthTable();
+	$("form[name='number_tracking_vitals_form']")[0].reset();
 });
 
 var init = function () {
@@ -3569,6 +3647,7 @@ var init = function () {
 	var id = $("#patient_id").val();
 
 	util.getPatientDetails(patient_id, module_id);
+	util.getAssignPatientListData(0, patient_id);
 	util.getToDoListData($("#hidden_id").val(), $("#page_module_id").val());
 	util.refreshAllergyCountCheckbox(id, allergy_type, 'allergy_drug_form');
 	util.getPatientCurrentMonthNotes(patient_id, module_id);
@@ -4057,6 +4136,10 @@ var init = function () {
 			$("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn  btn-primary m-1" id="save-callstatus">Next</button>');
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='call_action_script'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #call_scripts_select option:selected").val(), '.call_answer_template', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+			
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		} else if (checked_call_option == 2 || checked_call_option == "2") {
 			$('.invalid-feedback').html('');
 			$("form[name='callstatus_form'] #callAnswer").hide();
@@ -4068,6 +4151,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn btn-primary m-1 call_status_submit" id="save_schedule_call">Schedule Call</button>');
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='content_title'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #ccm_content_title option:selected").val(), '#ccm_content_area', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		}
 	});
 
@@ -4092,6 +4178,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='call_action_script'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #call_scripts_select").val(), '.call_answer_template');
 			$("form[name='callstatus_form'] input[name='content_title']").val($("form[name='callstatus_form'] #call_scripts_select option:selected").text());
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		} else if (checked_call_option == '2') {
 			$('.invalid-feedback').html('');
 			$("form[name='callstatus_form'] #notAnswer").show();
@@ -4101,6 +4190,9 @@ var init = function () {
 			$("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='content_title'] option:selected").text());
 			util.getCallScriptsById($("form[name='callstatus_form'] #ccm_content_title").val(), '#ccm_content_area');
 			$("form[name='callstatus_form'] input[name='content_title']").val($("form[name='callstatus_form'] #ccm_content_title option:selected").text());
+			if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
 		}
 	});
 
@@ -4562,6 +4654,8 @@ window.carePlanDevelopment = {
 	renderMedicationsTableData: renderMedicationsTableData,
 	renderLabsTable: renderLabsTable,
 	renderVitalTable: renderVitalTable,
+	renderImagingTable: renderImagingTable,
+	renderHealthTable:renderHealthTable,
 	renderDiagnosisTableData: renderDiagnosisTableData,
 	renderDiagnosisTable: renderDiagnosisTable,
 	getLabParamsOnLabChange: getLabParamsOnLabChange,

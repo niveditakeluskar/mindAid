@@ -265,22 +265,29 @@ class PrintCarePlanController extends Controller
         //     AND  created_at >= date_trunc('year', current_date)  AND patient_id = '".$uid."'
         //     group by height ,weight ,bmi,bp,o2,pulse_rate,diastolic,oxygen,notes order by date desc
         //     "));
+        $dateS = Carbon::now()->startOfMonth()->subMonth(6);
+        $dateE = Carbon::now()->endOfMonth(); 
+        $patient_vitals =  DB::select(DB::raw("select distinct rec_date as date, height,weight,bmi,bp,o2,pulse_rate,diastolic,oxygen,notes,pain_level
+        from patients.patient_vitals
+        where rec_date is not null and patient_id =".$uid."
+        and rec_date::timestamp between '".$dateS."' and '".$dateE."' 
+        order by rec_date desc"));
 
-        $patient_vitals         = PatientVitalsData::where('patient_id',$uid)
-                                ->whereMonth('updated_at', '>=', date('m'))
-                                ->whereYear('updated_at', '>=', date('Y'))
-                                ->groupBy('height')
-                                ->groupBy('weight')
-                                ->groupBy('bmi')
-                                ->groupBy('bp')
-                                ->groupBy('o2')
-                                ->groupBy('pulse_rate')
-                                ->groupBy('diastolic')
-                                ->groupBy('oxygen')
-                                ->groupBy('notes')
-                                ->groupBy('pain_level')
-                                ->groupBy('updated_at')
-                                ->get(['height', 'weight', 'bmi', 'bp', 'o2', 'pulse_rate', 'diastolic', 'oxygen', 'notes', 'updated_at as date','pain_level']);
+        // $patient_vitals         = PatientVitalsData::where('patient_id',$uid)
+        //                         ->whereMonth('updated_at', '>=', date('m'))
+        //                         ->whereYear('updated_at', '>=', date('Y'))
+        //                         ->groupBy('height')
+        //                         ->groupBy('weight')
+        //                         ->groupBy('bmi')
+        //                         ->groupBy('bp')
+        //                         ->groupBy('o2')
+        //                         ->groupBy('pulse_rate')
+        //                         ->groupBy('diastolic')
+        //                         ->groupBy('oxygen')
+        //                         ->groupBy('notes')
+        //                         ->groupBy('pain_level')
+        //                         ->groupBy('updated_at')
+        //                         ->get(['height', 'weight', 'bmi', 'bp', 'o2', 'pulse_rate', 'diastolic', 'oxygen', 'notes', 'updated_at as date','pain_level']);
         //   dd($patient_vitals);
             //  distinct  from patients.patient_vitals pv 
             // WHERE  created_at >= date_trunc('month', current_date)
@@ -289,16 +296,20 @@ class PrintCarePlanController extends Controller
             // "));
         $patient_healthdata     = PatientHealthData::where('patient_id', $uid)
                                 ->select(DB::raw("distinct health_data, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date"))//,max(updated_at) as updated_at
-                                ->whereMonth('updated_at','=', date('m'))
-                                ->whereYear('updated_at','=', date('Y'))
+                                ->where('health_date','>=',$dateS)
+                                ->where('health_date','<=',$dateE)
+                                //->whereMonth('updated_at','=', date('m'))
+                                //->whereYear('updated_at','=', date('Y'))
                                 ->groupBy('health_data','health_date')
                                 ->orderBy('health_date','desc')->get();
                                 
 
         $patient_imaging        = PatientImaging::where('patient_id', $uid)
                                 ->select(DB::raw("distinct imaging_details, to_char( max(updated_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date"))//,max(updated_at) as updated_at
-                                ->whereMonth('created_at','=', date('m'))
-                                ->whereYear('created_at','=', date('Y'))
+                                ->where('imaging_date','>=',$dateS)
+                                ->where('imaging_date','<=',$dateE)
+                                // ->whereMonth('created_at','=', date('m'))
+                                //->whereYear('created_at','=', date('Y'))
                                 ->groupBy('imaging_details','imaging_date')
                                 ->orderBy('imaging_date','desc')->get();
 
@@ -309,13 +320,17 @@ class PrintCarePlanController extends Controller
         //                         where plr.lab_test_id is not null and EXTRACT(Month from plr.created_at) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR from plr.created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
         //                          and plr.patient_id='".$uid."' group  by plr.lab_test_id,plr.lab_test_parameter_id,plr.lab_date,plr.rec_date,rlt.description order by lab_date desc"));
 
+        
+
         $patient_lab1        = PatientLabRecs::select(DB::raw("distinct to_char( max(created_at) at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as date,
                                                                 lab_test_id, (case when lab_date is null then rec_date else lab_date end) as lab_date, lab_test_parameter_id, reading, high_val,
                                                                 (case when lab_date is null then '0' else '1' end) as lab_date_exist, notes"))
                                                 ->where('patient_id', $uid)
                                                 ->with(['labTest','labsParameters'])
-                                                ->whereMonth('created_at','=', date('m'))
-                                                ->whereYear('created_at','=', date('Y'))
+                                                ->where('lab_date','>=',$dateS)
+                                                ->where('lab_date','<=',$dateE)
+                                                //->whereMonth('created_at','=', date('m'))
+                                                //->whereYear('created_at','=', date('Y'))
                                                 ->groupBy('lab_test_parameter_id')
                                                 ->groupBy('reading')
                                                 ->groupBy('high_val')

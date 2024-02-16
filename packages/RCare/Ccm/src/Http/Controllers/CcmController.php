@@ -3595,26 +3595,68 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $data['created_by'] = session()->get('userid');
                         $insert_query = FollowUp::create($data);
                     }
-                    //record time
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-                } else {
-                    $data = array(
-                        'uid'                 => $patient_id,
-                        'rec_date'            => Carbon::now(),
-                        'emr_complete'        => $emr_complete,
-                        'patient_id'          => $patient_id,
-                        'update_status'       => 1,
-                    );
-                    $check_id = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->exists();
-                    if ($check_id == true) {
-                        $data['updated_by'] = session()->get('userid');
-                        $update_query = FollowUp::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->orderBy('id', 'desc')->first()->update($data);
-                    } else {
-                        $data['created_by'] = session()->get('userid');
-                        $insert_query = FollowUp::create($data);
-                    }
-                    //record time
-                    $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                     
+                    $additionalservices8 = "Veterans Services:".$servicesdata8.";";  
+                   
+                } 
+
+                
+            if($authorized_cm_only == true){
+                foreach($authorizedcmonly as $key=>$value){
+                    if($value == 1){ 
+                        $s9 = str_replace('_',' ', $key);
+                        $servicesdata9 = $servicesdata9.$s9.", ";  
+                    } 
+                }
+                $additionalservices9 = "Authorized CM Only:".$servicesdata9.";";  
+            } 
+
+
+                if($no_additional_services_provided == true){  
+                    $additionalservices10 = "No Additional Services Provided";
+                    $servicedata =   $additionalservices10;
+                }else{
+                    $servicedata = $additionalservices1." ".$additionalservices2." ".$additionalservices3." ".$additionalservices4." ".$additionalservices5." ".$additionalservices6." ".$additionalservices7." ".$additionalservices8." ".$additionalservices9;      
+    
+                }
+    
+                
+                $additional_services_data = array(  
+                    'uid'                       => $uid,
+                    'record_date'               => Carbon::now(),
+                    'topic'                     => 'Additional Services:',  
+                    'notes'                     => $servicedata ,
+                    'created_by'                => session()->get('userid') , 
+                    'patient_id'                => $patient_id,
+                    'status'                    => 1
+                ); 
+
+                $cd=  CallWrap::where('patient_id', $patient_id)
+                        ->where('topic', 'like', 'Additional Services :%')            
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at', date('Y')) 
+                        ->update(['status'=>0]);
+                 CallWrap::create($additional_services_data);  
+                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                 if($additionalservices6!=''){ 
+                    $form_name= $form_name.'_additional_services'; 
+                    $check =  PatientTimeRecords::where('patient_id',$patient_id)
+                    ->whereMonth('record_date',$currentmonth)->whereYear('record_date',$currentyear)
+                    ->where('form_name',$form_name)->exists(); 
+                    if($check!=true){
+                        // print_r($start_time .'====='. $end_time); die;
+                        $start_time = "00:00:00";
+                        $time2 = "00:04:00"; 
+                        $st = strtotime("01-01-2000 00:00:00");
+                        $et = strtotime("01-01-2000 00:04:00");
+                        $form_start_time1 =  date("m-d-Y H:i:s", $st);
+                        $form_save_time1 =  date("m-d-Y H:i:s", $et);
+                        $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
+						//echo "here";
+                        $end_time = date("H:i:s",strtotime($start_time)+$secs); 
+                        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
+                        $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);
+                    } 
                 }
             } else {
                 return 'blank form';
@@ -4264,7 +4306,11 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $patient = Patients::where('id', $uid)->get();
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
-        if (isset($PatientDevices->vital_devices)) {
+
+        $assigncm = UserPatients::where('patient_id', $uid)->where('status',1)->get();
+        $usnumber = Users::where('id',$assigncm[0]->user_id)->get();
+
+        if(isset($PatientDevices->vital_devices)){
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
             foreach ($js as $val) {
@@ -4294,7 +4340,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $replace_secondary = str_replace("[secondary_contact_number]", $patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]", $device, $replace_secondary);
         $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $scripts['finaldata'] = $replace_final;
+        $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_final);
+        $scripts['finaldata']= $replace_usnumber;
         return $scripts;
     }
 

@@ -24,7 +24,7 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
         //###################################################################----Patient Enrollment New Screens----############################################################################//
 
         Route::get('/patient-enroll', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@fetchPatientsEnroll')->name('patients-enroll');
-       
+
         //--------------------------------------Patient Registration--------------------------------------------------///////////
         // Route::view('/patient-registration', 'Patients::patient.patient-registration');
         Route::get('/patient-registration', 'RCare\Patients\Http\Controllers\PatientController@getPatientRegistrationForm')->name("patient.registration.form");
@@ -191,17 +191,17 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
 
 Route::middleware(["auth", "web"])->group(function () {
     Route::prefix('patients')->group(function () {
-        
+
         Route::get('/patientslist', function () {
             $patients = Patients::Allpatients(); // worklistPractices() fetches practices
             return response()->json($patients);
         });
-        
+
         Route::get("/get-deactivationreasons", "RCare\Patients\Http\Controllers\PatientWorklistController@deactivationReasonsList");
 
 
         Route::get("/get-activePartner", "RCare\Patients\Http\Controllers\PatientWorklistController@activePartnerList");
-        
+
         Route::get('/getcontent-template', 'RCare\Patients\Http\Controllers\PatientWorklistController@getContentTemplate');
 
         Route::get("/get-partner_devices", "RCare\Patients\Http\Controllers\PatientWorklistController@partnerDevicesList");
@@ -210,7 +210,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/gettime', function () {
             $inputTimeData = Form::input('text', 'hh:mm:ss'); // worklistPractices() fetches practices
             return response()->json($inputTimeData);
-        }); 
+        });
 
         Route::get("/worklist", "RCare\Patients\Http\Controllers\PatientWorklistController@getUserListData")->name("work.list");
 
@@ -286,7 +286,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/patient-threshold', 'RCare\Patients\Http\Controllers\PatientController@savePatientThreshold')->name('patient.threshold');
         Route::post('/vateran-service', 'RCare\Patients\Http\Controllers\PatientController@saveVateranService')->name('vateran.service');
 
-
+        Route::get('/cm-assignpatient/{practice}/{patient}/cmassignpatient', 'RCare\Patients\Http\Controllers\PatientController@cmassignpatient')->name('cm_assign_patient_list');
         Route::get('/ajax/populatefinnumber/{id}', 'RCare\Patients\Http\Controllers\PatientController@populateFinNumberData')->name("ajax.populate.Fin.Number");
 
         Route::post('/master-devices', 'RCare\Patients\Http\Controllers\PatientController@savepatientdevices')->name('master.devices');
@@ -302,8 +302,8 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/view-more-part-of-research-study/{id}', 'RCare\Patients\Http\Controllers\PatientController@viewMorePartOfResearchStudy')->name('view.more.part.of.research.study');
         Route::get('/patient-status/{patient_id}/{module_id}/status', 'RCare\Patients\Http\Controllers\PatientController@patientStatus')->name('patient_status');
         Route::get('/patient-details/{patient_id}/{module_id}/patient-details', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientDetails')->name('patient_details');
-        
-        Route::get('/patient-VeteranServiceData/{patientId}/patient-VeteranServiceData','RCare\Patients\Http\Controllers\PatientController@fetchVeteranServiceData')->name("patient_veteran_service_data"); 
+
+        Route::get('/patient-VeteranServiceData/{patientId}/patient-VeteranServiceData', 'RCare\Patients\Http\Controllers\PatientController@fetchVeteranServiceData')->name("patient_veteran_service_data");
         Route::get('/device-deviceslist/{id}', 'RCare\Patients\Http\Controllers\PatientController@getdeviceslist')->name('devices_list');
 
         // Route::get('/patient_details_model/{patient_id}/{module_id}/patient_details_model', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientDetailsinModel')->name('patient_details_model');
@@ -317,6 +317,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get("/ajax/practice/{practice}/{moduleId}/assign-patient", "RCare\Patients\Http\Controllers\PatientController@practicePatientsAssignDevice")->name("ajax.practice.patient.assign");
 
         Route::get("/ajax/patientlist/{practice}/patientlist", "RCare\Patients\Http\Controllers\PatientController@practicePatientsNew")->name("ajax.practice.patient.new");
+        Route::get("/ajax/assignpatientlist/{practice}/assignpatientlist", "RCare\Patients\Http\Controllers\PatientController@assignpatientlist")->name("ajax.assign.practice.patient.new");
         Route::get("/ajax/practicelist/{emr}/practicelist", "RCare\Patients\Http\Controllers\PatientController@practiceOnEmr")->name("ajax.emrpractice");
         Route::get("/ajax/emrlist/{practiceid}/{patientid}", "RCare\Patients\Http\Controllers\PatientController@EmrOnPractice")->name("ajax.practiceemr");
         Route::get("/ajax/patientlist/{emr}/{practiceId}/{module_id}/patientlist", "RCare\Patients\Http\Controllers\PatientController@patientOnEmr")->name("ajax.emrpatient");

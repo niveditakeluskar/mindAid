@@ -146,6 +146,21 @@ use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
         return $patients;
     }
 
+    public static function assignpatients($loginid)
+    {
+        $login_user =sanitizeVariable($loginid);
+        // dd($login_user);
+        $patients = \DB::table('patients.patient as p')
+        ->join('task_management.user_patients as up','p.id','=','up.patient_id')
+        ->join('ren_core.users as usr','usr.id','=','up.user_id')
+        ->where('up.status',1)
+        ->where('usr.id',$login_user)
+        ->select('p.id', 'p.fname', 'p.lname','p.mname')
+        ->distinct('p.id')->get();
+
+        return $patients;
+    }
+
     // public static function Allpatientswithnewdob()
     // {
     //     // $patients = Patients::all(); 

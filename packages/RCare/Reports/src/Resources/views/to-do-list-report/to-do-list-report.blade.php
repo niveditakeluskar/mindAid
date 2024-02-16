@@ -294,6 +294,7 @@
 
         //util.getToDoListCalendarData(0, {{ getPageModuleName() }});
         util.getToDoListData(0, {{ getPageModuleName() }});
+        util.getAssignPatientListData(0, 0);
 
         $("[name='practices']").on("change", function () {
             //console.log($(this).val()+"test"+{{ getPageModuleName() }});
