@@ -404,6 +404,7 @@ $(document).ready(function() {
   $('#todate').val(currentdate);     
   $("[name='modules']").val(3).attr("selected", "selected").change();          
   util.getToDoListData(0, {{getPageModuleName()}});
+  util.getAssignPatientListData(0, 0);
   $(".module").on("change", function () {
       util.updateSubModuleList(parseInt($(this).val()), $(".sub_module"));
   });

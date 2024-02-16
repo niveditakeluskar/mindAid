@@ -142,6 +142,7 @@
         //getPatientList();//hide listing
         $(".patient-div").hide();
         util.getToDoListData(0, {{ getPageModuleName() }});
+        util.getAssignPatientListData(0, 0);
         $("[name='practices']").on("change", function () {
             $(".patient-div").show();
             if($(this).val()=='')

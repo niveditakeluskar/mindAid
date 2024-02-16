@@ -87,7 +87,7 @@
                   </div>
                 </div>
               </form>
-            <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId"/>
+            <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId" :PatientWorkList="patientReloadFn"/>
             </div>
           </div>
         </div>
@@ -369,6 +369,17 @@ export default {
       }
     };
 
+    const patientReloadFn = async ()=> {
+      getPatientList(
+          selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
+          timeValue.value === '' ? null : timeValue.value,
+          activedeactivestatus.value === '' ? null : activedeactivestatus.value
+        );
+    };
+
     const saveFilters = async () => {
       try {
         pratices = selectedPractice.value || null;
@@ -439,6 +450,7 @@ export default {
 
 
     return {
+      patientReloadFn,
       PatientStatusRef,
       columnDefs,
       isLoading,

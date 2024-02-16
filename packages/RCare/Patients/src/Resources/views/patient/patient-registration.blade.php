@@ -648,6 +648,7 @@
 			patientRegistration.init();
 			$("#file").removeClass("form-control");
 			util.getToDoListData(0, {{getPageModuleName()}});
+			util.getAssignPatientListData(0, 0);
 			$("#start").hide();
             $("#pause").show();
 			$("#time-container").val(AppStopwatch.startClock);

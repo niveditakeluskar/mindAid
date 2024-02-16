@@ -321,6 +321,7 @@ $(document).ready(function(){
 
     $("[name='modules']").val(3).attr("selected", "selected").change();
     util.getToDoListData(0, {{getPageModuleName()}});
+    util.getAssignPatientListData(0, 0);
 
    
 

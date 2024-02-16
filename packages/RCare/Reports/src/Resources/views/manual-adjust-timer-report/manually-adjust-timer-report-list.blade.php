@@ -401,6 +401,7 @@
           
             getMonthlyPatientList();
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0, 0);
              //alert(current_MonthYear+"test1");
              $("#monthly").val(current_MonthYear);
            

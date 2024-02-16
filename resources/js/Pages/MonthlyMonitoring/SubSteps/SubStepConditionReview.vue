@@ -229,7 +229,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-12 text-right">
                                                         <button type="submit" dataid="rpm_cm_form"
-                                                            class="btn btn-primary m-1">Submit</button>
+                                                            class="btn btn-primary m-1" :disabled="(timeStatus == 1) === true ">Submit</button>
                                                         <button type="button"
                                                             class="btn btn-outline-secondary m-1 modalcancel"
                                                             data-dismiss="modal">Cancel</button>
@@ -287,6 +287,7 @@ export default {
             fromDate: null,
             toDate: null,
             notes: null,
+            timerStatus:null,
         };
     },
     mounted() {
@@ -297,6 +298,7 @@ export default {
 
         document.body.appendChild(script);
         this.time = document.getElementById('page_landing_times').value;
+        this.timerStatus = document.getElementById('timer_runing_status').value;
         this.setdata(30);
         this.getStageID();
         this.getDevice();

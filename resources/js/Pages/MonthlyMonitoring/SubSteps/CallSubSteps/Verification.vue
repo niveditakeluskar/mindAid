@@ -30,7 +30,7 @@
 						<div class="row">
 							<div class="col-lg-12 text-right">
 							<!-- onclick="window.location.assign('#step-4')" -->
-								<button type="submit" class="btn  btn-primary m-1" id="save-hippa">Next</button>
+								<button type="submit" class="btn  btn-primary m-1" id="save-hippa" :disabled="(timeStatus == 1) === true ">Next</button>
 							</div>
 						</div>
 					</div>
@@ -63,11 +63,13 @@ export default {
 			verification:'',
 			formErrors: {},
 			showAlert: false,
+			timerStatus: null,
 		};
 	},
 	mounted() {
 		this.getStageID();
 		this.populateFuntion();
+		this.timerStatus = document.getElementById('timer_runing_status').value;
 	},
 	methods: {
 		async getStageID() {
