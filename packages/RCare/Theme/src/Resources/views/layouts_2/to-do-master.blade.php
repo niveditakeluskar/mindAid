@@ -58,6 +58,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
 } ?>
 
 <body class="layout_2 text-left {{$themeMode}}">
+    @vite(['resources/js/appInertia.js','resources/laravel/js/bootstrap.js','resources/laravel/js/form.js', 'resources/laravel/js/utility.js','resources/laravel/js/carePlanDevelopment.js', 'resources/laravel/js/ccmcpdcommonJS.js'])
 
     <!-- <div id="app">        -->
     @php
