@@ -1,0 +1,58 @@
+{
+    "elements": [{
+        "name": "Elements",
+        "items": [{
+            "name": "input text",
+            "icon": "fa fa-text-width",
+            "content": "elements/input-text.html"
+        },{
+            "name": "input date",
+            "icon": "fa fa-calendar",
+            "content": "elements/input-date.html"
+        },{
+            "name": "textarea",
+            "icon": "fa fa-pencil-square-o",
+            "content": "elements/input-textarea.html"
+        },{
+            "name": "input number",
+            "icon": "fa fa-sort-numeric-asc",
+            "content": "elements/input-number.html"
+        },{
+            "name": " input email",
+            "icon": "fa fa-envelope ",
+            "content": "elements/input-email.html"
+        },{
+            "name": "file",
+            "icon": "fa fa-cloud-upload",
+            "content": "elements/input-file.html"
+        },{
+            "name": "checkbox",
+            "icon": "fa fa-check ",
+            "content": "elements/input-checkbox.html"
+        }
+        ,{
+            "name": "select",
+            "icon": "fa fa-chevron-circle-down ",
+            "content": "elements/input-select.html"
+        },{
+            "name": "radio",
+            "icon": "fa fa-check-circle ",
+            "content": "elements/input-radio.html"
+        },{
+            "name": "Heading",
+            "icon": "fa fa-header ",
+            "content": "elements/heading.html"
+        }
+        ,{
+            "name": "paragraph",
+            "icon": "fa fa-paragraph",
+            "content": "elements/paragraph.html"
+        },{
+            "name": "Divider",
+            "icon": "fa fa-minus ",
+            "content": "elements/divider.html"
+        }
+      ]
+    }]
+
+}

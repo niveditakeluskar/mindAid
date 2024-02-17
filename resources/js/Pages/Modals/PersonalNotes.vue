@@ -38,7 +38,7 @@
                 <div class="mc-footer">
                     <div class="row">
                         <div class="col-lg-12 text-right">
-                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitPersonalNotesForm">Save</button>
+                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitPersonalNotesForm" :disabled="(timerStatus == 1) === true ">Save</button>
                             <button type="button" class="btn btn-default" @click="closeModal">Close</button>
                         </div>
                     </div>
@@ -66,6 +66,7 @@ export default {
     
     setup(props) {
         let personalnotesTime = ref(null);
+        let timerStatus = ref();
         let personal_notes_data = ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
@@ -75,6 +76,7 @@ export default {
             console.log('Open personal modal called');
             isOpen.value = true;
             personalnotesTime.value = document.getElementById('page_landing_times').value;
+            timerStatus.value = document.getElementById('timer_runing_status').value;
         };
 
         const closeModal = () => {
@@ -131,6 +133,7 @@ export default {
             personalnotesTime,
             submitPersonalNotesForm,
             personal_notes_data,
+            timerStatus,
         };
     },
 };

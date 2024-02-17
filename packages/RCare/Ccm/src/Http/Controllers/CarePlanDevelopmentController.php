@@ -138,7 +138,7 @@ class CarePlanDevelopmentController extends Controller
             where  patient_id =" . $patientId . "
             and imaging_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
             group by imaging_details,imaging_date order by updated_at desc";
-        $data = DB::select(DB::raw($qry));
+        $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
             ->make(true);
@@ -162,7 +162,7 @@ class CarePlanDevelopmentController extends Controller
             where rec_date is not null and patient_id =" . $patientId . "
             and rec_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
             order by rec_date desc";
-        $data = DB::select(DB::raw($qry));
+        $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
             ->make(true);

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Form Builder - Timon Step Form</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="css/parsley.min.css" rel="stylesheet" />
+    <link href="css/tsf-wizard.bundle.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="tsf-wizard tsf-wizard-1 top" data-step-effect="default-effect" data-step-index="0"><!-- BEGIN NAV STEP--><div class="tsf-nav-step"><!-- BEGIN STEP INDICATOR--><ul class="gsi-step-indicator triangle gsi-style-1"><li class="current" data-target="step-1"><a href="#0" data-mce-href="#0"> <span class="number">1</span> <span class="desc"> <label>Account setup</label> <span class="">Account details</span> </span> </a></li><li data-target="step-2"><a href="#0" data-mce-href="#0"> <span class="number">2</span> <span class="desc"> <label>Billing </label> <span class="">Infor</span> </span> </a></li></ul><!-- END STEP INDICATOR---></div><!-- END NAV STEP--> <!-- BEGIN STEP CONTAINER --><div class="tsf-container"><!-- BEGIN CONTENT--><form class="tsf-content" style="height: auto; overflow-y: auto;"><!--<form class="tsf-form">--> <!-- BEGIN STEP 1--><div class="tsf-step step-1 active default-effect"><div class="tsf-step-content email-editor-elements-sortable ui-sortable"><div class="element-content"><!-- Text --><div class="form-group row"><label class="col-xs-2 col-form-label" data-type="label">Text Field</label><div class="col-xs-10"><input class="form-control" type="text" data-type="input"> <span class="help-block" data-type="help">Help text</span></div></div></div></div></div><!-- END STEP 1--> <!-- BEGIN STEP 2--><div class="tsf-step step-2"><!-- BEGIN STEP CONTENT--><div class="tsf-step-content email-editor-elements-sortable ui-sortable"><div class="element-content"><!-- Text --><div class="form-group row"><label class="col-xs-2 col-form-label" data-type="label">Text Field</label><div class="col-xs-10"><input class="form-control" type="text" data-type="input"> <span class="help-block" data-type="help">Help text</span></div></div></div></div><!-- END STEP CONTENT--></div><!-- END STEP 2--> <!--</form>--></form><!-- END CONTENT--> <!-- BEGIN CONTROLS--><div class="tsf-controls " style="display: block;"><!-- BEGIN PREV BUTTTON--> <button type="button" data-type="prev" class="btn btn-left tsf-wizard-btn" style="display: none;"><i class="fa fa-chevron-left"></i> PREV</button> <!-- END PREV BUTTTON--> <!-- BEGIN NEXT BUTTTON--> <button type="button" data-type="next" class="btn btn-right tsf-wizard-btn">NEXT <i class="fa fa-chevron-right"></i></button> <!-- END NEXT BUTTTON--> <!-- BEGIN FINISH BUTTTON--> <button type="submit" data-type="finish" class="btn btn-right tsf-wizard-btn" style="display: none;">FINISH</button> <!-- END FINISH BUTTTON--></div><!-- END CONTROLS--></div><!-- END STEP CONTAINER --></div><div class="clearfix">&nbsp;<br></div><div></div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="js/parsley.min.js"></script>
+    <script src="js/tsf-wizard.bundle.min.js"></script>
+    <script type="text/javascript">
+        $('.tsf-wizard-1').tsfWizard({
+stepEffect:'basic',
+stepStyle:'style1',
+navPosition:'top',
+validation:false,
+stepTransition:false,
+showButtons:true,
+showStepNum:true,
+height:'auto',
+prevBtn:'<i class="fa fa-chevron-left"></i> PREV',
+nextBtn:'NEXT <i class="fa fa-chevron-right"></i>',
+finishBtn:'FINISH',
+disableSteps:'none',
+onBeforeNextButtonClick:function (e, validation) {
+   console.log('onBeforeNextButtonClick');
+   console.log(validation);
+   //for return please write below code
+   //  e.preventDefault();
+},
+onAfterNextButtonClick:function (e, from, to, validation) {
+   console.log('onAfterNextButtonClick');
+},
+onBeforePrevButtonClick:function (e, from, to) {
+   console.log('onBeforePrevButtonClick');
+   console.log('from '+from+' to '+to);
+//  e.preventDefault();
+},
+onAfterPrevButtonClick:function (e, from, to) {
+   console.log('onAfterPrevButtonClick');
+   console.log('validation '+from+' to '+to);
+},
+onBeforeFinishButtonClick:function (e, validation) {
+   console.log('onBeforeFinishButtonClick');
+   console.log('validation '+validation);
+   //e.preventDefault();
+},
+onAfterFinishButtonClick:function (e, validation) {
+   console.log('onAfterFinishButtonClick');
+   console.log('validation '+validation);
+}
+});
+    </script>
+</body>
+
+</html>

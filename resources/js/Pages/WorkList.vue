@@ -73,7 +73,7 @@
                     </select>
                   </div>
                   <div class="col-md-3 form-group mb-3">
-                    <button type="submit" class="btn btn-primary mt-4" @click="handleSearch">Search</button>
+                    <button type="submit" class="btn btn-primary mt-4 mr-2" @click="handleSearch">Search</button>
                     <button type="button" class="btn btn-primary mt-4" @click="handleReset">Reset</button>
                   </div>
                   <div class="col-md-8 form-group">
