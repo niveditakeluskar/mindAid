@@ -77,6 +77,7 @@
     }
     ?>
     @include('Theme::layouts_2.to-list-customizer')
+    @include('Theme::layouts_2.cm-patient-assign')
     <!-- ============ Horizontal Layout End ============= -->
 
     <!-- Model Started here -->

@@ -278,6 +278,56 @@ class PatientController extends Controller
         return $patientService;
     }
 
+    public function cmassignpatient(Request $request)
+    { //dd("working");
+        $login_user = Session::get('userid');
+        $configTZ   = config('app.timezone');
+        $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $patient_id = sanitizeVariable($request->route('patient'));
+        $practice_id = sanitizeVariable($request->route('practice'));
+
+        // $data = "select distinct p.id,p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name, m.id ,m.module  from patients.patient p
+        // inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
+        // inner join ren_core.users usr on usr.id=up.user_id 
+        // LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+        // LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+        // inner join patients.patient_services ps on ps.patient_id = p.id and  ps.status in (0,1)
+        // inner join ren_core.modules as m on m.id = ps.module_id  
+        // where usr.id = $login_user";
+
+        //for rpm enrolled patient link 
+        $query = DB::table('patients.patient as p')
+        ->select('p.id', 'p.fname', 'p.lname', 'p.dob', 'p2.name as practice', 'usr.id as user_id',
+            'usr.f_name as user_fname', 'usr.l_name as user_lname', 'm.id as module_id', 'm.module')
+        ->leftJoin('task_management.user_patients as up', function ($join) {
+            $join->on('up.patient_id', '=', 'p.id')->where('up.status', '=', 1);
+        })
+        ->leftJoin('ren_core.users as usr', 'usr.id', '=', 'up.user_id')
+        ->leftJoin('patients.patient_providers as pp', function ($join) {
+            $join->on('pp.patient_id', '=', 'p.id')
+                ->where('pp.is_active', '=', 1)
+                ->where('pp.provider_type_id', '=', 1);
+        })
+        ->leftJoin('ren_core.practices as p2', 'p2.id', '=', 'pp.practice_id')
+        ->leftJoin('patients.patient_services as ps', function ($join) {
+            $join->on('ps.patient_id', '=', 'p.id')->whereIn('ps.status', [0, 1]);
+        })
+        ->join('ren_core.modules as m', 'm.id', '=', 'ps.module_id')
+        ->where('usr.id', '=', $login_user);
+
+        if ($practice_id && $practice_id != 'null' && $practice_id != 0) {
+            $query->where('pp.practice_id', '=', $practice_id);
+        }
+
+        if ($patient_id && $patient_id != 'null' && $patient_id != 0) {
+            $query->where('p.id', '=', $patient_id);
+        }
+
+        $query = $query->get();
+
+        return view('Patients::patient.cm-assigned-patient-right', compact('query'));
+    }
+
 
     public function fetchPatientModule(Request $request)
     {
@@ -2136,6 +2186,53 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
+    public function assignpatientlist($practice)
+    {
+        $cid = session()->get('userid');
+        $usersdetails = Users::where('id', $cid)->get();
+        $roleid = $usersdetails[0]->role;
+        
+        if ($practice == "null" || $practice == 0) {       
+            $patients = DB::table('patients.patient as p')
+                ->select('p.id', 'p.fname', 'p.lname', 'p.mname', 'p.dob', 'p.mob')
+                ->distinct()
+                ->join('task_management.user_patients as up', function ($join) {
+                    $join->on('p.id', '=', 'up.patient_id')
+                        ->where('up.status', '=', 1);
+                })
+                ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                ->join('patients.patient_providers as pp', function ($join) {
+                    $join->on('p.id', '=', 'pp.patient_id')
+                        ->where('pp.is_active', '=', 1)
+                        ->where('pp.provider_type_id', '=', 1);
+                })
+                ->join('patients.patient_services as ps', 'p.id', '=', 'ps.patient_id')
+                ->where('up.user_id', $cid)
+                ->orderBy('p.fname')
+                ->get();
+        } else {
+            $patients = DB::table('patients.patient as p')
+                ->select('p.id', 'p.fname', 'p.lname', 'p.mname', 'p.dob', 'p.mob')
+                ->distinct()
+                ->join('task_management.user_patients as up', function ($join) {
+                    $join->on('p.id', '=', 'up.patient_id')
+                        ->where('up.status', '=', 1);
+                })
+                ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                ->join('patients.patient_services as ps', 'p.id', '=', 'ps.patient_id')
+                ->join('patients.patient_providers as pp', function ($join) use ($practice) {
+                    $join->on('p.id', '=', 'pp.patient_id')
+                        ->where('pp.is_active', '=', 1)
+                        ->where('pp.provider_type_id', '=', 1)
+                        ->where('pp.practice_id', '=', $practice);
+                })
+                ->where('up.user_id', $cid)
+                ->orderBy('p.fname')
+                ->get();
+        }   
+        
+        return response()->json($patients);
+    }
 
     //created by ashvini 12 jan 2021  
     public function practiceRPMPatients($practice)
