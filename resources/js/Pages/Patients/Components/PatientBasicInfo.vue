@@ -12,7 +12,7 @@
                             <input type="hidden" name="service_status" id="service_status">
                             <input type="hidden" id="timer_runing_status" value="0">
                             <div class="col-md-1">
-                                <img src="/../assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
+                                <img src="@@/assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
                             <div class="col-md-11">
                                 <div class="form-row">
@@ -211,19 +211,19 @@
                                                         data-original-title="Start Timer"
                                                         @click="logTimeStart(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
                                                         style="display: none;cursor: pointer;"><img
-                                                            src="/../assets/images/play.png"
+                                                            src="@@/assets/images/play.png"
                                                             style=" width: 28px;" /></button>
                                                     <button class="button" id="pause" data-toggle="tooltip"
                                                         data-placement="top" title="Pause Timer"
                                                         data-original-title="Pause Timer"
                                                         @click="logTime(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
-                                                        style="cursor: pointer;"><img src="/../assets/images/pause.png"
+                                                        style="cursor: pointer;"><img src="@@/assets/images/pause.png"
                                                             style=" width: 28px;" /></button>
                                                     <button class="button" id="stop" data-toggle="tooltip"
                                                         data-placement="top" title="Stop Timer"
                                                         data-original-title="Stop Timer"
                                                         @click="logTime(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
-                                                        style="cursor: pointer;"><img src="/../assets/images/stop.png"
+                                                        style="cursor: pointer;"><img src="@@/assets/images/stop.png"
                                                             style=" width: 28px; " /></button>
                                                     <button class="button" id="reset" data-toggle="tooltip"
                                                         data-placement="top" title="Reset Timer"

@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,13 +23,14 @@ class PatientsPetAddRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True, 
-            [   'pet_status'   =>  'required|integer',
-                'pet_name.*'   => 'nullable|required_if:pet_status,1|min:2|alpha_spaces', 
+        return validationRules(
+            True,
+            [
+                'pet_status'   =>  'required|integer',
+                'pet_name.*'   => 'nullable|required_if:pet_status,1|min:2|alpha_spaces',
                 // 'pet_type.*'   => 'required', 
                 // 'notes.*'      => 'required', 
             ]
         );
-
     }
 }
