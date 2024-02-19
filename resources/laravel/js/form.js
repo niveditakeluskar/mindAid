@@ -12,8 +12,12 @@
  * just after the input with the class of `invalid-feedback`.
  */
 
-const createHash = require("hash-generator");
+// const createHash = require("hash-generator");
+import hashGenerator from 'hash-generator';
 
+// Use hashGenerator in your code
+const createHash = hashGenerator(10); // Example: generate a 16-character hash
+// console.log(hash);
 const HASH_LENGTH = 10;
 var counter = 0;
 /**

@@ -125,8 +125,8 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
-					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal" :disabled="(timerStatus == 1) === true ">Edit Medication</button>
-	 				<ModalForm ref="modalForm" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal" :disabled="(timerStatus == 1) === true">Edit Medication</button>
+	 				<MedicationModalForm ref="MedicationModalFormRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
 				<textarea class="form-control" name="med_added_or_discon_notes"
@@ -275,7 +275,10 @@
 </template>
 
 <script>
-import ModalForm from '../../Modals/Medication.vue';
+import {
+	ref,
+} from '../../commonImports';
+import MedicationModalForm from '../../Modals/Medication.vue';
 import AllergiesModalForm from '../../Modals/Allergies.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
 import ServicesModalForm from '../../Modals/Services.vue';
@@ -289,18 +292,13 @@ export default {
 		formErrors:Array, 
     },
 	components: {
-		ModalForm ,
-		ReviewCarePlanModal,
-	},
-	components: {
-		ModalForm, // Register the modal component
+		MedicationModalForm,
 		AllergiesModalForm,
 		ServicesModalForm,
 		vitalsHealthDataModalForm,
 		ReviewCarePlanModal
 	},
 	data() {
-		
 		return {
 			// time:null,
 			conditionRequirnment1:'',
@@ -358,8 +356,6 @@ export default {
 		},
 	},
 	methods: {
-	
-
 		noneConditionRequireement() {
 			this.conditionRequirnment1 = 0;
 			this.conditionRequirnment2 = 0;
@@ -394,7 +390,6 @@ export default {
 				this.patientPrepSaveDetails = data;
 				const staticData = this.patientPrepSaveDetails.populateCallPreparation.static;
 				if (staticData !== undefined && staticData !== null) {
-
 					const keys = Object.keys(staticData);
 					if (keys.length > 0) {
 					this.data_present_in_emrYesNO = this.patientPrepSaveDetails.populateCallPreparation.static.submited_to_emr;
@@ -428,8 +423,10 @@ export default {
 					} else {
 						$("form[name='research_follow_up_preparation_followup_form'] #research_follow_up_data_present_in_emr_no").prop("checked", true);
 					}
-				}
-			} 		
+				}else{
+					console.error('populateCallPreparation is empty or undefined');
+				}			
+			}	
 			}catch(error){
 				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
 			}
@@ -437,12 +434,7 @@ export default {
 		openModal() {
 			// Access the modal component through a ref
 			// console.log("openMModel called");
-			this.$refs.modalForm.openModal();
-		},
-		openReviewCarePlanModalModal() {
-			// Access the modal component through a ref
-			// console.log("ReviewCarePlanModal called"); 
-			this.$refs.ReviewCarePlanModal.openModal();
+			this.$refs.MedicationModalFormRef.openModal();
 		},
 		openAllergiesModal() {
 			// console.log("openAllergiesModal called");
@@ -451,19 +443,27 @@ export default {
 		openServicesModal() {
 			this.$refs.servicesModalForm.openModal();
 		},
-
 		openVitalsHealthDataModalForm() {
 			this.$refs.vitalsHealthDataModalForm.openModal();
 		},
 	},
 	setup(props){
-		const generatePdfUrl = () => {
+	const ReviewCarePlanModalRef = ref();
+
+	const generatePdfUrl = () => {
       return `/ccm/monthly-monitoring/patient-care-plan/${props.patientId}`;
     };
+	
 	const generateWordUrl = () => {
       return `/ccm/monthly-monitoring/generate-docx/${props.patientId}`;
     };
+
+	const openReviewCarePlanModalModal = () => {
+			ReviewCarePlanModalRef.value.openModal();
+		};
 		return{
+			openReviewCarePlanModalModal,
+			ReviewCarePlanModalRef,
 			generatePdfUrl,
 			generateWordUrl,
 		};
