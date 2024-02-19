@@ -1142,13 +1142,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                             data: {
                                 darkmode: ch
                             }
-                            $.ajax({
-                                method: "get",
-                                url: "/org/ajax/theme-dark",
-                                data: {
-                                    darkmode: ch
-                                }
-                            });
                         });
 
                         $("[name='partner_id']").on("change", function() {
@@ -1464,7 +1457,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                         util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 
                     });
-
+                });
 
                     //******************************************************************************************************************************************************** */                
     </script>

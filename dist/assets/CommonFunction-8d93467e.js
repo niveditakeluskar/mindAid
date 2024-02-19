@@ -1,1 +1,0 @@
-import{_ as o}from"./appInertia-949a05bd.js";const t={setup(I){return{callExternalFunction:()=>{console.log("hi","HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")}}}};function c(I,n,r,e,s,a){return null}const p=o(t,[["render",c]]);export{p as default};

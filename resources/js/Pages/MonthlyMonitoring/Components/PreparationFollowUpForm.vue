@@ -125,11 +125,7 @@
 			</div>
 			<div v-if="med_added_or_disconYesNo == '1'">
 			<div :id="`${sectionName}_new-medication-model`" class="med_add_dis_note mb-4">
-<<<<<<< HEAD
-					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal">Edit Medication</button>
-=======
 					<button type="button" :id="`${sectionName}-medication-model`" class="btn btn-primary edit_medication" @click="openModal" :disabled="(timerStatus == 1) === true">Edit Medication</button>
->>>>>>> c78bba5d8bfbd43f100955f3dd14b1506193dbae
 	 				<MedicationModalForm ref="MedicationModalFormRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			</div>
 			<div :id="`${sectionName}_medication-added-or-discontinued`" class="med_add_dis_note mb-4">
@@ -259,13 +255,8 @@
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary createcareplanbutton"
 				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none" :disabled="(timerStatus == 1) === true ">Create Care
 				Plan</button>&nbsp;&nbsp;
-<<<<<<< HEAD
-			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal">Review Care Plan</button>
-			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
-=======
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal" :disabled="(timerStatus == 1) === true ">Review Care Plan</button>
-			<ReviewCarePlanModal ref="ReviewCarePlanModal" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
->>>>>>> c78bba5d8bfbd43f100955f3dd14b1506193dbae
+			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
 				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
 
