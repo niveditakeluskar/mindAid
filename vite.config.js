@@ -9,6 +9,7 @@ export default defineConfig({
       input: [
         'resources/js/appInertia.js',
 <<<<<<< HEAD
+<<<<<<< HEAD
         'resources/laravel/js/app.js',
         // 'resources/laravel/js/bootstrap.js',
         // 'resources/laravel/js/form.js',
@@ -17,6 +18,8 @@ export default defineConfig({
         // 'resources/laravel/js/ccmcpdcommonJS.js',
 =======
 >>>>>>> 02fdba72ec8d2bd596a2fc970f046bca1bc0ac33
+=======
+>>>>>>> cc4edd8f3bc1387ed7ba7db5bba30b16398fd24d
       ],
       refresh: true,
     }),
