@@ -1046,44 +1046,26 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             $('#partner_devices_id').val('');
             $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
             $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
-
         }
 
         function getDevice(id) {
-            //alert(id.value);
             if (id.checked) {
                 var y = id.id;
-                //var myTextArea = $('#email_title_area');
                 var editor = CKEDITOR.instances['email_title_area'].getData();
                 var data = editor + '<li>' + y + '</li>';
                 CKEDITOR.instances['email_title_area'].setData(data);
-                // myTextArea.val(myTextArea.val() + '\n' + y);
             } else {
                 var myTextArea = CKEDITOR.instances['email_title_area'].getData();
                 var text = $.trim(myTextArea.replace('<li>' + id.id + '</li>', ""));
                 CKEDITOR.instances['email_title_area'].setData(text);
-
             }
         }
-
-        $("[name='partner_id']").on("change", function() {
-            //alert("working");
-            //alert($(this).val());
-            if ($(this).val() == '') {
-                var partner_id = null;
-                util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
-            } else {
-                util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
-            }
-        });
-
 
         function setIntervalMCFunctionAgain() {
             var id = $("input[name='patient_id']").val();
             $.ajax({
                 url: "/messaging/get-message-count",
                 type: 'GET',
-                // dataType: 'json', // added data type
                 success: function(res) {
                     $(".message-notification").html('');
                     $(".message-notification").append(res.trim());
@@ -1122,12 +1104,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 // idleTime = 0;
                 localStorage.setItem("idleTime", 0);
             });
-
-
-
             var $body = $("body");
-
-
             // //Dark version
             $('#dark-checkbox').change(function() {
                 if ($(this).prop('checked')) {
@@ -1147,8 +1124,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             });
 
             $("[name='partner_id']").on("change", function() {
-                //alert("working");
-                //alert($(this).val());
                 if ($(this).val() == '') {
                     var partner_id = null;
                     util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
@@ -1156,12 +1131,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
                 }
             });
-            // setIntervalMCFunction(); //removed in incomming code
-            setTimeout(function() {
-                document.getElementById("customizer_id").style.display = "block";
-                // document.getElementById("customizer_id2").style.display = "block";
-            }, 3000);
-
 
             CKEDITOR.replace('email_title_area');
             $('.select2').select2();
@@ -1195,27 +1164,15 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             });
 
             util.totalTimeSpentByCM();
-
-            // $(function() {
-            //     $('textarea').each(function() {
-            //         $(this).height($(this).prop('scrollHeight'));
-            //     });
-            // });
-
+            // setIntervalMCFunction(); //removed in incomming code
+            setTimeout(function() {
+                document.getElementById("customizer_id").style.display = "block";
+            }, 3000);
 
         });
 
-
-        /*********************************************************************************************************************************************** */
-
-
         var checkTimeInterval = function timerIncrement() {
-            // idleTime = idleTime + 1; //Calls every 1 seconds
             sessionIdleTime = localStorage.getItem("idleTime");
-
-            // var showPopupTime = sessionStorage.getItem("showPopupTime");
-            // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
-
 
             var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
             var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
@@ -1224,45 +1181,22 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             var currentDate = new Date();
             var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
             var idleTime = parseInt(sessionIdleTime) + (res % 60);
-
-
-            console.log("idleTime-" + idleTime);
-            // console.log("showPopupTime-"+showPopupTime);
-            // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
-
-
             if (idleTime >= showPopupTime) {
 
-                console.log('idleTime in if loop idleTime >= showPopupTime');
-
-                // $('#logout_modal').modal('show');   
                 var visiblemodal = $('#logout_modal').is(':visible');
-                if (visiblemodal) {
-                    console.log('visiblemodal');
-                } else {
+                if (visiblemodal) {} else {
                     $('#logout_modal').modal('show');
                 }
 
                 if (idleTime >= sessionTimeoutInSeconds) {
-
-                    console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
                     var visiblemodal = $('#logout_modal').is(':visible');
-
                     if (visiblemodal) {
-                        console.log('visiblemodal in sessiontimeout');
-                        // $('#logout_modal').modal('hide');   
                         $("#sign-out-btn")[0].click();
                         var base_url = window.location.origin;
-                        // alert(base_url);  
                         window.location.href = base_url + '/rcare-login';
                         window.location.reload();
-
                     }
-
                 }
-
-
-
             }
 
             localStorage.setItem("idleTime", idleTime);
@@ -1277,8 +1211,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
-
-
 
         var patient_id = $("#patient_id").val();
         var module_id = $("input[name='module_id']").val();
@@ -1373,9 +1305,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
 
         });
 
-
-
-
         // function curr_month_Fun(){
         $("#next-sidebar-month").click(function() {
 
@@ -1459,15 +1388,11 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
 
         });
-
-
-        //******************************************************************************************************************************************************** */                
     </script>
 
     @yield('page-js')
     <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
     @yield('bottom-js')
-
 </body>
 
 </html>
