@@ -39,7 +39,7 @@
                 <div class="mc-footer">
                     <div class="row">
                         <div class="col-lg-12 text-right">
-                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-fin-number" @click="submitFinNumberForm">Save</button>
+                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-fin-number" @click="submitFinNumberForm" :disabled="(timerStatus == 1) === true ">Save</button>
                             <button type="button" class="btn btn-default" @click="closeModal">Close</button>
                         </div>
                     </div>
@@ -75,6 +75,7 @@ export default {
     },
   setup(props) {
         const finnumberTime = ref(null);
+        let timerStatus = ref();
         const finNumber= ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
@@ -84,6 +85,7 @@ export default {
         const openModal = () => {
             isOpen.value = true;
             finnumberTime.value = document.getElementById('page_landing_times').value;
+            timerStatus.value = document.getElementById('timer_runing_status').value;
         };
 
         const closeModal = () => {
@@ -170,10 +172,9 @@ export default {
             formErrors,
             finNumber,
             submitFinNumberForm,
-            // patComDetails,
-            
-      };
-  },
+            timerStatus,
+        };
+    },
 };
 </script>
 

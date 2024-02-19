@@ -19,7 +19,7 @@
 			<button type="button" class="close" data-dismiss="alert">x</button>
 			<strong> General question data saved successfully! </strong><span id="text"></span>
 		</div>
-		<select name="bottom_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire">
+		<select name="bottom_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire" v-on:change="fetchMonthlyQuestion">
 			<option value="">Select General Question</option>
 			<option v-for="questionaire in questionnaire" :key="questionaire.id" :value="questionaire.id" >
 			{{ questionaire.description }}
@@ -47,6 +47,7 @@ export default {
 			module_id: null,
 			stage_id: null,
 			step :null,
+			timerStatus: null,
 		};
 	},
 	mounted() {
@@ -82,11 +83,11 @@ export default {
 		},
 
 		async fetchMonthlyQuestion(){
-			$("#preloader").show();
 			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/${this.componentId}/question_list`)
 				.then(response => {
 					this.decisionTree = response.data;
 					this.start_time = document.getElementById('page_landing_times').value;
+					this.timerStatus = document.getElementById('timer_runing_status').value;
 					this.savedGeneralQuestion();
 				})
 				.catch(error => {
@@ -96,6 +97,9 @@ export default {
 		async savedGeneralQuestion(){
 			await axios.get(`/ccm/get-savedQuestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/saved_question`)
 				.then(response => {
+					if(this.timerStatus == 1){
+						document.getElementById("generalQue"+this.selectedQuestionnaire).disabled= true;
+					}
 					let genQuestion = response.data;
 					var off = 1;
 					for(var i = 0; i < genQuestion.length; i++){
@@ -104,7 +108,6 @@ export default {
 						this.checkQuestion(editGq,off);
 						off++;
 					}
-					$("#preloader").hide();
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);

@@ -38,7 +38,7 @@
                 <div class="mc-footer">
                     <div class="row">
                         <div class="col-lg-12 text-right">
-                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitResearchStudyForm">Save</button>
+                            <button type="submit" class="btn btn-primary float-right ml-2" id="submit-personal-notes" @click="submitResearchStudyForm" :disabled="(timerStatus == 1) === true ">Save</button>
                             <button type="button" class="btn btn-default" @click="closeModal">Close</button>
                         </div>
                     </div>
@@ -64,6 +64,7 @@ export default {
     },
     setup(props) {
         let researchstudyTime = ref(null);
+        let timerStatus = ref();
         let research_study_data = ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
@@ -73,6 +74,7 @@ export default {
         const openModal = () => {
             isOpen.value = true;
             researchstudyTime.value = document.getElementById('page_landing_times').value;
+            timerStatus.value = document.getElementById('timer_runing_status').value;
         };
 
         const closeModal = () => {
@@ -134,6 +136,7 @@ export default {
             research_study_data,
             researchstudyTime,
             submitResearchStudyForm,
+            timerStatus,
         };
     },
 };

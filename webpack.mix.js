@@ -16,7 +16,7 @@ mix
 
      
 
-    .js('resources/laravel/js/iapp.js', 'public/assets/js/laravel/iapp.js')
+    .js('resources/laravel/js/app.js', 'public/assets/js/laravel/app.js')
     .js('resources/gull/assets/js/vendor/jquery-migrate-3.0.0.min.js', 'public/assets/js/vendor/jquery-migrate-3.0.0.min.js')
    /* .js('resources/laravel/js/select2.min.js', 'public/assets/js/laravel/select2.min.js')*/
    
