@@ -8,7 +8,7 @@ require("./form");
 require("./utility");
 
 
-require("./vue");
+// require("./vue");
  require("./notification");
 // require("./test");
 // require("./stageCode");

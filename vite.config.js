@@ -8,11 +8,6 @@ export default defineConfig({
     laravel({
       input: [
         'resources/js/appInertia.js',
-        'resources/laravel/js/bootstrap.js',
-        'resources/laravel/js/form.js',
-        'resources/laravel/js/utility.js',
-        'resources/laravel/js/carePlanDevelopment.js',
-        'resources/laravel/js/ccmcpdcommonJS.js',
       ],
       refresh: true,
     }),
