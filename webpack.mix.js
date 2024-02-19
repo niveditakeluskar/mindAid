@@ -12,9 +12,7 @@ let mix = require('laravel-mix');
  */
 
 mix
-    /* CSS */
-
-     
+    /* CSS */     
 
     .js('resources/laravel/js/iapp.js', 'public/assets/js/laravel/iapp.js')
     .js('resources/gull/assets/js/vendor/jquery-migrate-3.0.0.min.js', 'public/assets/js/vendor/jquery-migrate-3.0.0.min.js')
