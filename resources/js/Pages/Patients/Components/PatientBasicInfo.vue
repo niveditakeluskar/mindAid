@@ -263,7 +263,7 @@
 </template>
 <script>
 import { ref, onMounted, defineProps } from 'vue';
-import { usePage } from '@inertiajs/inertia-vue3';
+import { usePage } from '@inertiajs/vue3';
 import moment from 'moment';
 import axios from 'axios';
 import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
