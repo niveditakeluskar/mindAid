@@ -46,7 +46,7 @@ if (isset($patient_enroll_date) && $patient_enroll_date != null && count($patien
             util.stepWizard('tsf-wizard-2');
             $("#start").hide();
             $("#pause").show();
-            // $("#time-container").val(AppStopwatch.startClock);
+            $("#time-container").val(AppStopwatch.startClock);
             if (($("input[name='query2']:checked").val() != null) || ($("input[name='query2']:checked").val() != "")) {
                 if ($("input[name='query2']:checked").val() != undefined) {
                     $("#ignore").show();
@@ -97,7 +97,7 @@ if (isset($patient_enroll_date) && $patient_enroll_date != null && count($patien
             });
         });
     </script>
-    <!-- <script src="{{-- asset('assets/js/timer.js') --}}"></script> -->
+    <script src="{{ asset('assets/js/timer.js') }}"></script>
     @endsection
 <?php } else { ?>
     @section('main-content')
