@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,9 +23,11 @@ class PatientsTravelAddRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
-            [   'travel_status' =>'required|integer', 
-                'location.*'   => 'nullable|required_if:travel_status,1|min:2|alpha_spaces', 
+        return validationRules(
+            True,
+            [
+                'travel_status' => 'required|integer',
+                'location.*'   => 'nullable|required_if:travel_status,1|min:2|alpha_spaces',
                 // 'travel_type.*'   => 'required',
                 // 'frequency.*'   => 'required',
                 // 'with_whom.*'   => 'required',
@@ -32,6 +35,5 @@ class PatientsTravelAddRequest extends FormRequest
                 // 'notes'      => 'required', 
             ]
         );
-
     }
 }
