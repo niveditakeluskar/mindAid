@@ -4169,7 +4169,8 @@ class CarePlanDevelopmentController extends Controller
                             );
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
                             if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
+                                $new_high_vallue = $high_val[$labvalue][$i] ?? null;
+                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $new_high_vallue . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
