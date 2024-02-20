@@ -1205,19 +1205,6 @@ class PatientController extends Controller
         } else {
             $component_id = "0";
         }
-
-
-        // $Condition = DB::select( DB::raw("select distinct id,code,condition,diagnosis,
-        //                                   max(updated_at) as date
-        //                                   FROM patients.patient_diagnosis_codes 
-        //                                   where updated_at >= date_trunc('month', current_date)  
-        //                                   AND  updated_at >= date_trunc('year', current_date)
-        //                                   AND patient_id = '".$patient_id."'
-        //                                   AND status = 1 
-        //                                   group  by id,code,condition,diagnosis 
-        //                                   order by condition asc
-        //                                   "));
-
         $Condition = DB::select("select distinct diagnosis, 
                         max(updated_at) as date
                         FROM patients.patient_diagnosis_codes 
@@ -1230,12 +1217,8 @@ class PatientController extends Controller
                         ");
 
         $chronicCondition = empty($Condition) ? '' : $Condition;
-        // dd( $chronicCondition);
-
         $patientdiagnosis = PatientDiagnosis::where('status', 1)->where('patient_id', $patient_id)->latest()->first();
         $patientdiagnosislastmodified = PatientDiagnosis::with('users_created_by')->where('status', 1)->where('patient_id', $patient_id)->latest()->first();
-
-        // dd( $chronicCondition);  
 
         if ($chronicCondition == "" || $chronicCondition == null) {
         } else {
@@ -1265,12 +1248,8 @@ class PatientController extends Controller
                     $chronic->review_date = $reviewdate;
                 }
             }
-            // dd( $chronicCondition);
         }
-        // dd($chronicCondition);
-
-
-
+        
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1) ? PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
 
         //dd($rpmDevices[0]->vital_devices);
@@ -1304,26 +1283,6 @@ class PatientController extends Controller
                     }
                 }
             }
-
-            /*   for ($j = 0; $j < count($data); $j++) {
-
-                if (array_key_exists("vid", $data[$j])) {
-                    $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
-                    if (!empty($filename)) {
-                        $filenames = $filename->file_name;
-
-                        $dev =  Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
-                        if (!empty($dev)) {
-                            $parts = explode(" ", $dev->device_name);
-                            $devices = implode('-', $parts);
-
-                            $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
-
-                            $show_device .= $dev->device_name . " (" . $btn . "), ";
-                        }
-                    }
-                }
-            } */
 
             $patient_assign_device = rtrim($show_device, ', ');
         } else {
@@ -1371,12 +1330,13 @@ class PatientController extends Controller
         $careplan_finalization_date = PatientServices::latest_module($patient_id, $module_id);
         $patient = (Patients::where('id', $patient_id) ? Patients::where('id', $patient_id)->get() : "");
         $personal_notes = (PatientPersonalNotes::latest($patient_id, 'patient_id') ? PatientPersonalNotes::latest($patient_id, 'patient_id')->population() : "");
+        $all_personal_notes = (PatientPersonalNotes::with('users')->where ('patient_id', $patient_id)->get() ? PatientPersonalNotes::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
         $research_study = (PatientPartResearchStudy::latest($patient_id, 'patient_id') ? PatientPartResearchStudy::latest($patient_id, 'patient_id')->population() : "");
-        // dd($patientdiagnosislastmodified['']);
+        $all_research_study = (PatientPartResearchStudy::with('users')->where ('patient_id', $patient_id)->get() ? PatientPartResearchStudy::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
         if ($module_id == '3') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
         } else if ($module_id == '2') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
             //return view('Ccm::monthly-monitoring.patient-details',['patient'=>$patient], compact('chronicCondition','rpmDevices','medication','lastContactDate','ellapsedTime','currentEllapsedTime','previousEllapsedTime','personal_notes','research_study'));
         } else {
             return view('Patients::patient.traning-checklist', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'patient_assign_device', 'device_education_training'));
