@@ -15749,6 +15749,34 @@
         }
       }
     },
+<<<<<<< HEAD
+=======
+    "@inertiajs/inertia": {
+      "version": "0.11.1",
+      "resolved": "https://registry.npmjs.org/@inertiajs/inertia/-/inertia-0.11.1.tgz",
+      "integrity": "sha512-btmV53c54oW4Z9XF0YyTdIUnM7ue0ONy3/KJOz6J1C5CYIwimiKfDMpz8ZbGJuxS+SPdOlNsqj2ZhlHslpJRZg==",
+      "requires": {
+        "axios": "^0.21.1",
+        "deepmerge": "^4.0.0",
+        "qs": "^6.9.0"
+      }
+    },
+    "@inertiajs/inertia-vue3": {
+      "version": "https://registry.npmjs.org/@inertiajs/inertia-vue3/-/inertia-vue3-0.6.0.tgz",
+      "integrity": "sha512-qhPBtd/G0VS7vVVbYw1rrqKB6JqRusxqt+5ec2GLmK6t7fTlBBnZ3KsakmGZLSM1m1OGkNcfn4ifmCk3zfA8RQ==",
+      "requires": {
+        "lodash.clonedeep": "^4.5.0",
+        "lodash.isequal": "^4.5.0"
+      }
+    },
+    "@inertiajs/progress": {
+      "version": "https://registry.npmjs.org/@inertiajs/progress/-/progress-0.2.7.tgz",
+      "integrity": "sha512-zxadfLlBPIUvTE9g5k71V/Ayzo8P9kEp4hV4UKywCC2kURufxV7bycbZqU1GeMCFGDT+VRrjXNl676Pwwa1HoQ==",
+      "requires": {
+        "nprogress": "^0.2.0"
+      }
+    },
+>>>>>>> ed9951bb8cf732bd2d2aadf60046d73cbd6a5973
     "@inertiajs/vue3": {
       "version": "1.0.14",
       "resolved": "https://registry.npmjs.org/@inertiajs/vue3/-/vue3-1.0.14.tgz",

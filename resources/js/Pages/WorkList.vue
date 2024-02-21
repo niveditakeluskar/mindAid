@@ -117,9 +117,8 @@ import {
   AgGridTable,
   onBeforeMount
 } from './commonImports';
-import LayoutComponent from './LayoutComponent.vue'; // Import your layout component
-import PatientStatus from './Modals/PatientStatus.vue'; // Import your layout component
-import axios from 'axios';
+import LayoutComponent from './LayoutComponent.vue'; 
+import PatientStatus from './Modals/PatientStatus.vue';
 
 export default {
   props: {
@@ -136,7 +135,7 @@ export default {
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
     const isLoading = ref(false);
-    const tableInstance = ref(null); // Define tableInstance using ref()
+    const tableInstance = ref(null); 
     const showModal = ref(false);
     const selectedPractice = ref(null);
     const selectedPatients = ref(null);
@@ -147,7 +146,7 @@ export default {
     const activedeactivestatus = ref(null);
     const patientsmodules = ref('3');
   
-    // Compute the values with checks
+
     const practice_id = computed(() => selectedPractice.value);
     const patient_id = computed(() => selectedPatients.value);
     const module_id = computed(() => patientsmodules.value);
@@ -160,6 +159,7 @@ export default {
     const PatientStatusRef = ref();
     
     onBeforeMount(() => {
+      document.title = 'Worklist | Renova Healthcare';
        fetchPractices();
         fetchPatients();
     });
@@ -168,23 +168,23 @@ export default {
       fetchUserFilters();
     });
 
-    // Define a custom cell renderer function
+
     const customCellRenderer = (params) => {
       const row = params.data;
       if (row && row.action) {
-        return row.action; // Returning the HTML content as provided from the controller
+        return row.action; 
       } else {
-        return ''; // Or handle the case where the 'action' value is not available
+        return ''; 
       }
     };
 
-    // Define a custom cell renderer function
+
     const customCellRendererstatus = (params) => {
       const row = params.data;
       if (row && row.activedeactive) {
-        return row.activedeactive; // Returning the HTML content as provided from the controller
+        return row.activedeactive; 
       } else {
-        return ''; // Or handle the case where the 'action' value is not available
+        return ''; 
       }
     };
 
@@ -211,15 +211,15 @@ export default {
         headerName: 'DOB',
         field: 'pdob',
         cellRenderer: function (params) {
-          const date = params.value; // Assuming pdob contains a date string
+          const date = params.value; 
           if (!date) return null;
           const formattedDate = new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
-            }).replace(/\//g, '-'); // Replace slashes with dashes
+            }).replace(/\//g, '-'); 
 
-          return formattedDate; // Returns the date in MM-DD-YYYY format
+          return formattedDate; 
         },
       },
       { headerName: 'Practice', field: 'pracpracticename', flex: 2 },
@@ -233,8 +233,8 @@ export default {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
-            }).replace(/\//g, '-'); // Replace slashes with dashes
-          return formattedDate; // Returns the date in MM-DD-YYYY format
+            }).replace(/\//g, '-'); 
+          return formattedDate; 
     },
 },
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
@@ -261,14 +261,14 @@ export default {
           link.classList.add('ActiveDeactiveClass');
           link.href = 'javascript:void(0)';
           link.addEventListener('click', () => {
-            callExternalFunctionClick(data.pid, data.pstatus); // 'this' refers to the Vue component instance
+            callExternalFunctionClick(data.pid, data.pstatus); 
           });
           return link;
         },
       },
       { headerName: 'Call Score', field: 'pssscore' },
     ]);
-    // Watch for changes in selectedPractice
+
     watch(selectedPractice, (newPracticeId) => {
       fetchPatients(newPracticeId);
     });
@@ -277,7 +277,6 @@ export default {
       PatientStatusRef.value.openModal();
       callExternalFunctionWithParams(pid, pstatus);
     };
-    // Similarly, define other methods like fetchPractices, fetchPatients, etc.
 
     const fetchPractices = async () => {
       try {
@@ -286,18 +285,16 @@ export default {
           throw new Error('Failed to fetch practices');
         }
         const data = await response.json();
-        practices.value = data; // Assuming the API response returns an array of practices
+        practices.value = data; 
       } catch (error) {
         console.error('Error fetching practices:', error);
-        // Handle the error appropriately (show a message, retry, etc.)
       }
     };
 
     const fetchPatients = async (practiceId) => {
       try {
         if (practiceId === undefined) {
-          //console.error('Practice ID is empty or invalid.');
-          return; // Don't proceed with the fetch if practiceId is empty or invalid
+          return;
         }
 
         if(!practiceId){
@@ -309,11 +306,10 @@ export default {
           throw new Error('Failed to fetch patients');
         }
         const data = await response.json();
-        patients.value = data; // Set the fetched patients to the component data
+        patients.value = data; 
         return Promise.resolve(data);
       } catch (error) {
         console.error('Error fetching patients:', error);
-        // Handle the error appropriately (show a message, retry, etc.)
         return Promise.reject(error);
       }
     };
@@ -346,7 +342,7 @@ export default {
       if (selectedOption.value === '4') {
         timeValue.value = '';
       } else {
-        timeValue.value = '00:20:00'; // Set a default time value for other options
+        timeValue.value = '00:20:00'; 
       }
     };
 
@@ -388,11 +384,10 @@ export default {
         tme = timeValue.value || null;
         actvedeactivestatus = activedeactivestatus.value || null;
         if (!patents) {
-          // If patient_id is empty or null, assign null to it
+          
           patents = null;
         }
         if (!pratices) {
-          // If patient_id is empty or null, assign null to it
           pratices = null;
         }
         if(!actvedeactivestatus){
@@ -402,8 +397,8 @@ export default {
         const response = await fetch(`/patients/worklist/saveuser-filters/${pratices}/${patents}/${patentsmodules}/${tmeoption}/${tme}/${actvedeactivestatus}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // Specify the content type
-            'X-CSRF-TOKEN': csrfToken, // Include the CSRF token in the headers
+            'Content-Type': 'application/json', 
+            'X-CSRF-TOKEN': csrfToken, 
           },
         });
         if (response.ok) {
@@ -416,7 +411,6 @@ export default {
     };
 
     const handleReset = async () => {
-      // Reset form fields and table data
       selectedPractice.value = "";
       selectedPatients.value = "";
     }
@@ -425,10 +419,8 @@ export default {
   try {
  
         if (!patient_id) {
-          // If patient_id is empty or null, assign null to it
           patient_id = null;
         }
-      // Fetch data from the server
       const response = await fetch(`/patients/worklist/${practice_id}/${patient_id}/${module_id}/${timeoption}/${time}/${activedeactivestatus}`);
       if (!response.ok) {
         throw new Error('Failed to fetch patient list');
