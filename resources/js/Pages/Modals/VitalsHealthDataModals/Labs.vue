@@ -135,7 +135,12 @@ export default {
             try {
                 loading.value = true;
                 // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}`);
+                const pathname = window.location.pathname;
+                const segments = pathname.split('/');
+                segments.shift(); 
+                module_name.value = segments[0];
+                component_name.value = segments[1];
+                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}/${component_name.value}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
                 }
