@@ -201,7 +201,6 @@ export default {
         const row = params.data;
         const camelCaseFullName = row.full_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         return `<div style="display: flex; align-items: center;">
-                    <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
                     <span style="margin-left: 4px;">${camelCaseFullName}</span>
                 </div>`;
     },
