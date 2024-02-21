@@ -36,6 +36,7 @@ export default {
   setup(props) {
     let landingtime = ref(null);
     onBeforeMount(() => {
+      document.title = 'Monthly Monitoring |  Renova Healthcare';
       landingtime.value = props.landingTime.landing_time;
     });
     return {

@@ -160,6 +160,7 @@ export default {
     const PatientStatusRef = ref();
     
     onBeforeMount(() => {
+      document.title = 'Worklist | Renova Healthcare';
        fetchPractices();
         fetchPatients();
     });
