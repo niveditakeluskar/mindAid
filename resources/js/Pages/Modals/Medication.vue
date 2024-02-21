@@ -350,6 +350,7 @@ export default {
             try {
                 const medicationToEdit = passRowData.value.find(medication => medication.id == id);
                 if (medicationToEdit) {
+                    const form = document.getElementById('medications_form');
                     medication_id.value = medicationToEdit.id;
                     selectedMedication.value = medicationToEdit.med_id;
                     description.value = medicationToEdit.description;
