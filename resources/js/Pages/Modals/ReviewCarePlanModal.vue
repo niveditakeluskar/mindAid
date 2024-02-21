@@ -548,6 +548,12 @@ export default {
                 const response = await axios.post('/ccm/care-plan-development-diagnosis-save', formData);
                 if (response && response.status == 200) {
                     clearGoals();
+                    nextTick(() => {
+                additionalgoals();
+                additionalsymptoms();
+                additionaltasks();
+                isSaveButtonDisabled.value = false;
+            });
                     selectedCode.value = '';
             selectedDiagnosis.value = '';
             comments.value = '';
