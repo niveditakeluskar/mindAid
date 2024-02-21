@@ -116,7 +116,7 @@ export default {
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Lab', field: 'description', filter: true },
+                { headerName: 'Lab', field: 'description', filter: true }, 
                 { headerName: 'Lab Date', field: 'lab_date' },
                 { headerName: 'Reading', field: 'labparameter' },
                 { headerName: 'Notes', field: 'notes' },
