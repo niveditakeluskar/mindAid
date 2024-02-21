@@ -190,7 +190,7 @@ export default {
                 const sPageURL = window.location.pathname;
                 const parts = sPageURL.split("/");
                 const mm = parts[parts.length - 2];
-                const response = await fetch(`${baseUrl}/ccm/allergies/${props.patientId}/drug`);
+                const response = await fetch(`${baseUrl}/ccm/allergies/${props.patientId}/drug?mm=${mm}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
