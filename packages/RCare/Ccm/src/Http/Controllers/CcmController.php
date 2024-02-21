@@ -1086,7 +1086,7 @@ class CcmController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
-      
+
         if ($status_flag == 1) {
             $check = CallWrap::where('task_id', $task_id)->delete();
 
@@ -2446,7 +2446,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 }
             }
             foreach ($steps as $step) {
-               
+
                 $new_stage_id          = $step->stage_id;
                 $steps_id              = $step->id;
                 $step_name             = $step->description;
@@ -2460,66 +2460,66 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 $template_type         = $request_step_data['template_type_id'];
                 $current_monthly_notes = $request_step_data['current_monthly_notes'];
                 if (isset($request_step_data['question'])) {
-                $data = array(
-                    'contact_via'   => 'questionnaire',
-                    'template_type' => $template_type,
-                    'uid'           => $uid,
-                    'module_id'     => $module_id,
-                    'component_id'  => $component_id,
-                    'template_id'   => $template_id,
-                    'template'      => sanitizeVariable(json_encode($request_step_data['question'])),
-                    'monthly_notes' => $current_monthly_notes,
-                    'stage_id'      => $new_stage_id,
-                    'stage_code'    => $steps_id,
-                    'created_by'    => session()->get('userid'),
-                    'patient_id'    => $patient_id
-                );
-                foreach ($request_step_data['question'] as $key => $value) {
-                    $checkboxVal = '';
-                    if (is_array($value)) {
-                        foreach ($value as $k  => $v) {
-                            if ($v) {
-                                $checkboxVal = $checkboxVal . str_replace('_', ' ', $k) . ',';
+                    $data = array(
+                        'contact_via'   => 'questionnaire',
+                        'template_type' => $template_type,
+                        'uid'           => $uid,
+                        'module_id'     => $module_id,
+                        'component_id'  => $component_id,
+                        'template_id'   => $template_id,
+                        'template'      => sanitizeVariable(json_encode($request_step_data['question'])),
+                        'monthly_notes' => $current_monthly_notes,
+                        'stage_id'      => $new_stage_id,
+                        'stage_code'    => $steps_id,
+                        'created_by'    => session()->get('userid'),
+                        'patient_id'    => $patient_id
+                    );
+                    foreach ($request_step_data['question'] as $key => $value) {
+                        $checkboxVal = '';
+                        if (is_array($value)) {
+                            foreach ($value as $k  => $v) {
+                                if ($v) {
+                                    $checkboxVal = $checkboxVal . str_replace('_', ' ', $k) . ',';
+                                }
                             }
+                            $value = substr($checkboxVal, 0, -1);
                         }
-                        $value = substr($checkboxVal, 0, -1);
+                        $tp = str_replace('_', ' ', $key);
+                        if (str_replace('_', ' ', $key) == "score") {
+                            $tp = $step_name . ' ' . str_replace('_', ' ', $key);
+                        }
+                        $notes = array(
+                            'uid'                 => $uid,
+                            'record_date'         => Carbon::now(),
+                            'topic'               => $tp,
+                            'notes'               => $value,
+                            'created_by'          => session()->get('userid'),
+                            'patient_id'          => $patient_id,
+                            'template_type'       => 'qs' . $template_id,
+                            'sequence'            => $sequence,
+                            'sub_sequence'        => $new_sub_sequence
+                        );
+                        if ($value != '') {
+                            CallWrap::create($notes);
+                            $new_sub_sequence++;
+                        }
                     }
-                    $tp = str_replace('_', ' ', $key);
-                    if (str_replace('_', ' ', $key) == "score") {
-                        $tp = $step_name . ' ' . str_replace('_', ' ', $key);
-                    }
-                    $notes = array(
+                    $notes1 = array(
                         'uid'                 => $uid,
                         'record_date'         => Carbon::now(),
-                        'topic'               => $tp,
-                        'notes'               => $value,
+                        'topic'               => $step_name . " Notes",
+                        'notes'               => $current_monthly_notes,
                         'created_by'          => session()->get('userid'),
                         'patient_id'          => $patient_id,
                         'template_type'       => 'qs' . $template_id,
                         'sequence'            => $sequence,
                         'sub_sequence'        => $new_sub_sequence
                     );
-                    if ($value != '') {
-                        CallWrap::create($notes);
-                        $new_sub_sequence++;
+                    if ($current_monthly_notes != '') {
+                        CallWrap::create($notes1);
                     }
+                    $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
                 }
-                $notes1 = array(
-                    'uid'                 => $uid,
-                    'record_date'         => Carbon::now(),
-                    'topic'               => $step_name . " Notes",
-                    'notes'               => $current_monthly_notes,
-                    'created_by'          => session()->get('userid'),
-                    'patient_id'          => $patient_id,
-                    'template_type'       => 'qs' . $template_id,
-                    'sequence'            => $sequence,
-                    'sub_sequence'        => $new_sub_sequence
-                );
-                if ($current_monthly_notes != '') {
-                    CallWrap::create($notes1);
-                }
-                $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
-            }
                 //$record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name);
             }
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
@@ -2528,7 +2528,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         } catch (\Exception $ex) {
             DB::rollBack();
             //return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-       }
+        }
     }
 
 
@@ -3595,68 +3595,78 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         $data['created_by'] = session()->get('userid');
                         $insert_query = FollowUp::create($data);
                     }
-                     
-                    $additionalservices8 = "Veterans Services:".$servicesdata8.";";  
-                   
-                } 
 
-                
-            if($authorized_cm_only == true){
-                foreach($authorizedcmonly as $key=>$value){
-                    if($value == 1){ 
-                        $s9 = str_replace('_',' ', $key);
-                        $servicesdata9 = $servicesdata9.$s9.", ";  
-                    } 
+                    $additionalservices8 = "Veterans Services:" . $servicesdata8 . ";";
                 }
-                $additionalservices9 = "Authorized CM Only:".$servicesdata9.";";  
-            } 
 
 
-                if($no_additional_services_provided == true){  
+                if ($authorized_cm_only == true) {
+                    foreach ($authorizedcmonly as $key => $value) {
+                        if ($value == 1) {
+                            $s9 = str_replace('_', ' ', $key);
+                            $servicesdata9 = $servicesdata9 . $s9 . ", ";
+                        }
+                    }
+                    $additionalservices9 = "Authorized CM Only:" . $servicesdata9 . ";";
+                }
+
+
+                if ($no_additional_services_provided == true) {
                     $additionalservices10 = "No Additional Services Provided";
                     $servicedata =   $additionalservices10;
-                }else{
-                    $servicedata = $additionalservices1." ".$additionalservices2." ".$additionalservices3." ".$additionalservices4." ".$additionalservices5." ".$additionalservices6." ".$additionalservices7." ".$additionalservices8." ".$additionalservices9;      
-    
+                } else {
+                    $servicedata = $additionalservices1 . " " . $additionalservices2 . " " . $additionalservices3 . " " . $additionalservices4 . " " . $additionalservices5 . " " . $additionalservices6 . " " . $additionalservices7 . " " . $additionalservices8 . " " . $additionalservices9;
                 }
-    
-                
-                $additional_services_data = array(  
+
+
+                $additional_services_data = array(
                     'uid'                       => $uid,
                     'record_date'               => Carbon::now(),
-                    'topic'                     => 'Additional Services:',  
-                    'notes'                     => $servicedata ,
-                    'created_by'                => session()->get('userid') , 
+                    'topic'                     => 'Additional Services:',
+                    'notes'                     => $servicedata,
+                    'created_by'                => session()->get('userid'),
                     'patient_id'                => $patient_id,
                     'status'                    => 1
-                ); 
+                );
 
-                $cd=  CallWrap::where('patient_id', $patient_id)
-                        ->where('topic', 'like', 'Additional Services :%')            
-                        ->whereMonth('created_at', date('m'))
-                        ->whereYear('created_at', date('Y')) 
-                        ->update(['status'=>0]);
-                 CallWrap::create($additional_services_data);  
-                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
-                 if($additionalservices6!=''){ 
-                    $form_name= $form_name.'_additional_services'; 
-                    $check =  PatientTimeRecords::where('patient_id',$patient_id)
-                    ->whereMonth('record_date',$currentmonth)->whereYear('record_date',$currentyear)
-                    ->where('form_name',$form_name)->exists(); 
-                    if($check!=true){
+                $cd =  CallWrap::where('patient_id', $patient_id)
+                    ->where('topic', 'like', 'Additional Services :%')
+                    ->whereMonth('created_at', date('m'))
+                    ->whereYear('created_at', date('Y'))
+                    ->update(['status' => 0]);
+                CallWrap::create($additional_services_data);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                if ($additionalservices6 != '') {
+                    $form_name = $form_name . '_additional_services';
+                    $check =  PatientTimeRecords::where('patient_id', $patient_id)
+                        ->whereMonth('record_date', $currentmonth)->whereYear('record_date', $currentyear)
+                        ->where('form_name', $form_name)->exists();
+                    if ($check != true) {
                         // print_r($start_time .'====='. $end_time); die;
                         $start_time = "00:00:00";
-                        $time2 = "00:04:00"; 
+                        $time2 = "00:04:00";
                         $st = strtotime("01-01-2000 00:00:00");
                         $et = strtotime("01-01-2000 00:04:00");
                         $form_start_time1 =  date("m-d-Y H:i:s", $st);
                         $form_save_time1 =  date("m-d-Y H:i:s", $et);
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
-						//echo "here";
-                        $end_time = date("H:i:s",strtotime($start_time)+$secs); 
-                        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
-                        $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);
-                    } 
+                        //echo "here";
+                        $end_time = date("H:i:s", strtotime($start_time) + $secs);
+                        $record_time  = CommonFunctionController::recordTimeSpent(
+                            $start_time,
+                            $end_time,
+                            $patient_id,
+                            $module_id,
+                            $component_id,
+                            $stage_id,
+                            $billable,
+                            $uid,
+                            $step_id,
+                            $form_name,
+                            $form_start_time1,
+                            $form_save_time1
+                        );
+                    }
                 }
             } else {
                 return 'blank form';
@@ -3674,7 +3684,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         //dd($request->all());
         $patient_id            = sanitizeVariable($request->input('patient_id'));
         $emr_complete = $request->has('emr_complete') ? '1' : '0';
- //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
+        //($request->emr_complete == false ) ? '0' : sanitizeVariable($request->emr_complete);
         $task_name             = sanitizeVariable($request->task_name);
         $followupmaster_task   = sanitizeVariable($request->followupmaster_task);
         $selected_task_name    = sanitizeVariable($request->selected_task_name);
@@ -4049,20 +4059,20 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         }
 
         $datas = array(
-            'email'=>'renova@d-insights.global', 
-            'name'=> 'Renova System', 
+            'email' => 'renova@d-insights.global',
+            'name' => 'Renova System',
             'subject' => $subject,
         );
 
         $meg = $email_content;
         Mail::send([], [], function ($message) use ($meg, $to, $subject) {
-        //Mail::send(array(), array(), function ($message) use ($meg, $to, $subject) {
+            //Mail::send(array(), array(), function ($message) use ($meg, $to, $subject) {
             $message->from('renova@d-insights.global', 'Renova System');
             $message->to($to);
             $message->subject($subject);
             $message->html($meg);
         });
-       
+
         if (count(Mail::failures()) == 0) {
             echo 'Mail Send ' . Carbon::now();
         }
@@ -4307,10 +4317,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
 
-        $assigncm = UserPatients::where('patient_id', $uid)->where('status',1)->get();
-        $usnumber = Users::where('id',$assigncm[0]->user_id)->get();
+        $assigncm = UserPatients::where('patient_id', $uid)->where('status', 1)->get();
+        $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
 
-        if(isset($PatientDevices->vital_devices)){
+        if (isset($PatientDevices->vital_devices)) {
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
             foreach ($js as $val) {
@@ -4341,7 +4351,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $replace_devicelist = str_replace("[device_list]", $device, $replace_secondary);
         $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
         $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_final);
-        $scripts['finaldata']= $replace_usnumber;
+        $scripts['finaldata'] = $replace_usnumber;
         return $scripts;
     }
 

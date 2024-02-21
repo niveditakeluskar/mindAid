@@ -27,7 +27,10 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
+<<<<<<< HEAD
     include: ['vuex'], // Ensure Vuex is included in the optimized dependencies
+=======
+>>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
   },
   resolve: {
     alias: {

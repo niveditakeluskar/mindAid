@@ -1,6 +1,7 @@
 <?php
 
 namespace RCare\Org\OrgPackages\Users\src\Models;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use RCare\System\Support\DashboardFetchable;
 use RCare\System\Support\ModelMapper;
@@ -16,32 +17,32 @@ use Session, DB;
 class Users extends Authenticatable
 {
     use DashboardFetchable, ModelMapper,  DatesTimezoneConversion;
-	protected $table ='ren_core.users';
-	 
-	// const created_at = null;
-	
-	
-	protected $dates = [
+    protected $table = 'ren_core.users';
+
+    // const created_at = null;
+
+
+    protected $dates = [
         'created_at',
         'updated_at',
         'otp_date'
     ];
-		
-	
+
+
     /**
-    * The attributes that are mass assignable.
-    *
-    * @var array
-    */
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $population_include = [
         "id"
     ];
 
     /**
-    * The attributes that are mass assignable.
-    *
-    * @var array
-    */
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'id',
         'f_name',
@@ -62,7 +63,7 @@ class Users extends Authenticatable
         'extension',
         'number',
         'country_code',
-        'otp_code',// add by anand
+        'otp_code', // add by anand
         'max_attempts', // add by anand
         'temp_lock_time', // add by anand
         'block_unblock_status', // add by anand
@@ -70,24 +71,24 @@ class Users extends Authenticatable
         'mfa_status', //add for 2fa
         'created_by',
         'updated_by',
-		'theme'
+        'theme'
     ];
 
     /**
-    * The attributes that should be hidden for arrays.
-    *
-    * @var array
-    */
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
     protected $hidden = [
         'password',
         'remember_token'
     ];
 
     /**
-    * Boot the model.
-    *
-    * @return void
-    */
+     * Boot the model.
+     *
+     * @return void
+     */
     public static function boot()
     {
         parent::boot();
@@ -97,22 +98,23 @@ class Users extends Authenticatable
     }
 
     /**
-    * Fetch all active Users
-    */
+     * Fetch all active Users
+     */
     public static function activeUsers()
     {
         // return Users::all()->where("status", 1);
-        return Users::where("status", 1)->orderBy('f_name','asc')->get();
+        return Users::where("status", 1)->orderBy('f_name', 'asc')->get();
     }
 
     public static function latest($id)
-    {   $id = sanitizeVariable($id); 
+    {
+        $id = sanitizeVariable($id);
         return self::where('id', $id)->orderBy('created_at', 'desc')->first();
     }
 
     /**
-    * Generate some fillable attributes for the model
-    */
+     * Generate some fillable attributes for the model
+     */
     public function generateFillables()
     {
         return $this->fillable;
@@ -123,15 +125,18 @@ class Users extends Authenticatable
         return [];
     }
 
-    public function getReportToName(){
+    public function getReportToName()
+    {
         return $this->users()->f_name;
     }
 
-    public function roleName() {
+    public function roleName()
+    {
         return $this->belongsTo('RCare\Org\OrgPackages\Roles\src\Models\Roles', 'role');
     }
 
-    public function rcareOrgs() {
+    public function rcareOrgs()
+    {
         return $this->belongsTo('RCare\RCareAdmin\AdminPackages\Organization\src\Models\RcareOrgs', 'org_id');
     }
 
@@ -145,34 +150,34 @@ class Users extends Authenticatable
         return $this->belongsToMany("RCare\Org\OrgPackages\Users\src\Models\UserPractices");
     }
 
-    public function practices() {
+    public function practices()
+    {
         return $this->belongsTo('RCare\Org\OrgPackages\Practices\src\Models\Practices', 'practice_id');
     }
 
     public function reportto()
     {
         return $this->belongsTo('RCare\Org\OrgPackages\Users\src\Models\Users', 'report_to');
-
     }
-    
+
     public function users()
     {
-        return $this->belongsTo('RCare\Org\OrgPackages\Users\src\Models\Users','updated_by');
+        return $this->belongsTo('RCare\Org\OrgPackages\Users\src\Models\Users', 'updated_by');
     }
 
     public function office()
     {
-        return $this->belongsTo('RCare\Org\OrgPackages\Offices\src\Models\Office','office_id');
+        return $this->belongsTo('RCare\Org\OrgPackages\Offices\src\Models\Office', 'office_id');
     }
 
-    public function users_responsibility() 
-    {   
-        return $this->hasMany('RCare\Org\OrgPackages\Users\src\Models\UsersResponsibility','user_id');
+    public function users_responsibility()
+    {
+        return $this->hasMany('RCare\Org\OrgPackages\Users\src\Models\UsersResponsibility', 'user_id');
     }
-    
+
     public function responsibility()
     {
-         return $this->belongsTo('RCare\Org\OrgPackages\Responsibility\src\Models\Responsibility','responsibility_id')->where('status',1);
+        return $this->belongsTo('RCare\Org\OrgPackages\Responsibility\src\Models\Responsibility', 'responsibility_id')->where('status', 1);
     }
     /*public function reportto1() 
     {
@@ -180,7 +185,7 @@ class Users extends Authenticatable
 
     }*/
 
-    
+
 
     /**
      * Determine if this user is associated with a practice
@@ -196,7 +201,7 @@ class Users extends Authenticatable
         }
         return False;
     }
-    
+
     /**
      * The role this user belongs to
      *
@@ -228,89 +233,86 @@ class Users extends Authenticatable
             "practice__id" => $this->practice__id,
             "category_id"  => $this->category_id,
             "emp_id"       => $this->emp_id
-           
+
         ];
     }
 
     //public function reportinguser(){
-       // return $this->belongsTo('RCare\Org\OrgPackages\Roles\src\Models\Roles', 'module_id')->withDefault(['module'=>'none']);
-   // }
-   
+    // return $this->belongsTo('RCare\Org\OrgPackages\Roles\src\Models\Roles', 'module_id')->withDefault(['module'=>'none']);
+    // }
 
-   public static function activeCareManager()
-   {   
+
+    public static function activeCareManager()
+    {
         // select u.id, u.f_name, u.l_name, r.role_name 
         // from ren_core.users u left join ren_core.roles r on r.id = u.role where u.status = 1 
         // and (r.id = 5 or  r.id =4 or  r.id = 11 )order by f_name
-      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
+        $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
                                 where u.status = 1 and (UPPER(r.role_name) LIKE UPPER('%Care Manager%') 
                                 or UPPER(r.role_name) LIKE UPPER('%Team Lead%')
                                 or UPPER(r.role_name) LIKE UPPER('%Sr. Care Manager%'))");
-        
-        foreach($cm as $c)
-        {          
+
+        foreach ($cm as $c) {
             $count =  DB::table('task_management.user_patients')
-                    ->where('user_id',$c->id)
-                    ->where("status", 1)
-                    ->distinct('patient_id')->count('patient_id'); 
-            $c->count= $count;   
-        }   
-       return $cm;
+                ->where('user_id', $c->id)
+                ->where("status", 1)
+                ->distinct('patient_id')->count('patient_id');
+            $c->count = $count;
+        }
+        return $cm;
     }
 
-    
-   public static function activeUsersexceptadmin()
-   {   
+
+    public static function activeUsersexceptadmin()
+    {
         // select u.id, u.f_name, u.l_name, r.role_name 
         // from ren_core.users u left join ren_core.roles r on r.id = u.role where u.status = 1 
         // and (r.id = 5 or  r.id =4 or  r.id = 11 )order by f_name
 
-      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
+        $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
                                 where u.status = 1 and r.id != 2");
-                           
-        
-        foreach($cm as $c)
-        {          
+
+
+        foreach ($cm as $c) {
             $count =  DB::table('task_management.user_patients')
-                    ->where('user_id',$c->id)
-                    ->where("status", 1)
-                    ->distinct('patient_id')->count('patient_id'); 
-            $c->count= $count;   
-        }   
-       return $cm;
+                ->where('user_id', $c->id)
+                ->where("status", 1)
+                ->distinct('patient_id')->count('patient_id');
+            $c->count = $count;
+        }
+        return $cm;
     }
 
 
 
-        
+
     public static function RpmActiveCareManager()
-   {
-      $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
+    {
+        $cm = DB::select("select u.id, u.f_name, u.l_name, r.role_name 
                                 from ren_core.users u 
                                 left join ren_core.roles r on r.id = u.role
                                 left join patients.patient_services ps on ps.created_by = u.id 
                                 where u.status = 1 and r.id = 5 and ps.module_id =2 order by f_name");
-        
-        foreach($cm as $c) 
-        {          
+
+        foreach ($cm as $c) {
             $count =  DB::table('task_management.user_patients')
-                    ->where('user_id',$c->id)
-                    ->where("status", 1)
-                    ->distinct('patient_id')->count('patient_id'); 
-            $c->count= $count;   
-        }   
-       return $cm;
+                ->where('user_id', $c->id)
+                ->where("status", 1)
+                ->distinct('patient_id')->count('patient_id');
+            $c->count = $count;
+        }
+        return $cm;
     }
     public static function caremanagerPatients($caremanagerid)
     {
-       $p = DB::table('task_management.user_patients')  
-            ->where('up.user_id',$caremanagerid)
+        $p = DB::table('task_management.user_patients')
+            ->where('up.user_id', $caremanagerid)
             ->count();
-            return $p;
+        return $p;
     }
 
     public function PatientDiagnosis()
