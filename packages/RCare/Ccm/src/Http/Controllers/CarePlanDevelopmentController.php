@@ -1305,7 +1305,7 @@ class CarePlanDevelopmentController extends Controller
                                             where pm.patient_id = '" . $id . "' 
                                             AND EXTRACT(Month from pm.created_at)= '" . $current_month . "'
                                             AND EXTRACT(YEAR from pm.created_at) = '" . $current_year . "' group by pm.med_id) 
-                                        order by pm1.updated_at desc");
+                                        order by pm1.updated_at desc"); 
         } else {
             $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1
