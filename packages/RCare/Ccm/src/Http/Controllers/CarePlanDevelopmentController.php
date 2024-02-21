@@ -428,25 +428,12 @@ class CarePlanDevelopmentController extends Controller
         $allergytype = sanitizeVariable($request->route('allergytype'));
         $data        = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($id, $allergytype);
         $mm = $request->query('mm');
-
-        // return Datatables::of($data)
-        //     ->addIndexColumn()
-        //     ->addColumn('action', function ($row) {
-        //         $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=$editAllergy("'.$row->id.'","'.$row->allergy_type.'",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-        //         $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
-        //         return $btn;
-        //     })
-        //     ->rawColumns(['action'])
-        //     ->make(true);
-
+        $editFunction = ($mm === 'monthly-monitoring' ? 'editAllergy' : 'carePlanDevelopment.editAllergy');
+        $deleteFunction = ($mm === 'monthly-monitoring' ? 'deleteAllergies' : 'carePlanDevelopment.deleteAllergies');
+       
         return Datatables::of($data)
         ->addIndexColumn()
-        ->addColumn('action', function ($row) {
-            // Check if mm is monthly-monitoring
-            $editFunction = $mm === 'monthly-monitoring' ? 'editAllergy' : 'carePlanDevelopment.editAllergy';
-            $deleteFunction = $mm === 'monthly-monitoring' ? 'deleteAllergies' : 'carePlanDevelopment.deleteAllergies';
-            
-            // Construct the button with the appropriate onclick function
+        ->addColumn('action', function ($row) use ($editFunction, $deleteFunction) {
             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick="' . $editFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\', this)" data-original-title="Edit" title="Edit"><i class="editform i-Pen-4"></i></a>';
             $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick="' . $deleteFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\',\'' . $row->patient_id . '\', this)" data-original-title="Delete" title="Delete"><i class="i-Close" style="color: red;cursor: pointer;"></i></a>';
             return $btn;
@@ -514,6 +501,10 @@ class CarePlanDevelopmentController extends Controller
         $id               = sanitizeVariable($Request->route('id'));
         $servicetype      = sanitizeVariable($Request->route('servicetype'));
         $lastMonthService = "";
+        $mm = $Request->query('mm');
+        $editSerFunction = ($mm === 'monthly-monitoring' ? 'editService' : 'carePlanDevelopment.editService');
+        $deleteSerFunction = ($mm === 'monthly-monitoring' ? 'deleteServices' : 'carePlanDevelopment.deleteServices');
+    
         $dataexist        = PatientHealthServices::where("patient_id", $id)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
             $lastMonthService = PatientHealthServices::where("patient_id", $id)->where('status', 1)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->with('users')->get();
@@ -522,9 +513,9 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($lastMonthService)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+            ->addColumn('action',  function ($row) use ($editSerFunction, $deleteSerFunction) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick="' . $editSerFunction . '(\'' . $row->id . '\')" data-original-title="Edit" class="editservice" title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn .= '<a href="javascript:void(0)" class="deleteServices" onclick="' . $deleteSerFunction . '(\'' . $row->id . '\',this)" data-toggle="tooltip" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
