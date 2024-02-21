@@ -16,7 +16,7 @@
                     <input type="hidden" name="module_id" :value="moduleId" />
                     <input type="hidden" name="component_id" :value="componentId" />
                     <input type="hidden" name="module_name" :value="module_name" />
-                    <input type="hidden" name="component_name" :value="component_name" />
+                    <input type="hidden" name="component_name" id="component_name" :value="component_name" />
                     <input type="hidden" name="stage_id" :value="stageId" />
                     <input type="hidden" name="step_id" :value="labsStepId" />
                     <input type="hidden" name="form_name" value="number_tracking_labs_form" />
@@ -135,12 +135,8 @@ export default {
             try {
                 loading.value = true;
                 // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const pathname = window.location.pathname;
-                const segments = pathname.split('/');
-                segments.shift(); 
-                module_name.value = segments[0];
-                component_name.value = segments[1];
-                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}/${component_name.value}`);
+                const component_name = document.getElementById('component_name').value; 
+                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}/${component_name}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
                 }

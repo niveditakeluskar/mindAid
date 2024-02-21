@@ -134,9 +134,11 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/care-plan-development-services', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@saveHealthServices')->name('care.plan.development.services');
 
         //Medication
+
         Route::get('/get-medications-name/{med_name}/existmed_name', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@check_exist_med_name')->name('get.medications.name');
         Route::post('/care-plan-development-medications', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientmedicationData')->name('care.plan.development.medications');
         Route::get('/care-plan-development-medications-medicationslist/{id}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@Medications_list')->name('care.plan.development.medications.medicationslist');
+        Route::get('/care-plan-development-medications-medicationslist/{id}/{component_name}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@Medications_list')->name('care.plan.development.medications.medicationslist');
         Route::get('/get-all-medications_patient-by-id/{id}/medicationspatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientMedicationsById')->name('get.all.medications.patient.by.id');
         Route::get('/get-selected-medications_patient-by-id/{patientId}/{med_id}/selectedmedicationspatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getSelectedMedicationsPatientById')->name('get.selectedmedications.patient.by.id');
         Route::post('/delete-medications_patient-by-id', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientMedicationsById')->name('delete.medications.patient.by.id');
@@ -249,7 +251,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/get-services/{id}/servicespatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getServices')->name('get.services');
 
         Route::get('/care-plan-development-services-list/{id}/{servicetype}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@Services_list')->name('care.plan.development.services.list');
-
+            
         Route::get('/care-plan-development-provider-providerspecilistreviewlist/{id}/{servicetype}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@provider')->name('care.plan.development.provider.providerspecilistreviewlist');
 
         Route::get('/care-plan-development-services-review-otherlist/{id}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@ServicesReview_Other_list')->name('care.plan.development.services.review.otherlist');

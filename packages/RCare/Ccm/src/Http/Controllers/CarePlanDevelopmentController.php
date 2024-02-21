@@ -513,9 +513,10 @@ class CarePlanDevelopmentController extends Controller
         return Datatables::of($lastMonthService)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
-                return $btn;
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
+                    $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+                    return $btn;
+
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -1281,9 +1282,9 @@ class CarePlanDevelopmentController extends Controller
             ->make(true);
     }
 
-    public function Medications_list($id)
+    public function Medications_list(Request $request)
     {
-        $id        = sanitizeVariable($id);
+        $id        = sanitizeVariable($request->route('id'));
         $str = sanitizeVariable(date('Y-m-d', strtotime(date('Y-m') . " -1 month")));
         $Get_year_month = explode("-", sanitizeVariable($str));
         $prev_year       = sanitizeVariable($Get_year_month[0]);
@@ -1292,6 +1293,8 @@ class CarePlanDevelopmentController extends Controller
         $current_year  = date('Y');
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $component_name = sanitizeVariable($request->route('component_name'));
+        // dd($component_name);
         $dataexist = PatientMedication::with('medication')->where("patient_id", $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
             $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
@@ -1316,9 +1319,14 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+            ->addColumn('action', function ($row) use($component_name) {
+                if($component_name == 'monthly-monitoring'){
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
                 $btn = $btn . '<a href="javascript:void(0)" onclick=deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }else{
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=carePlanDevelopment.editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" onclick=carePlanDevelopment.deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }
                 return $btn; //editMedicationsPatient //deleteMedicationsPatient
             })
             ->rawColumns(['action'])
