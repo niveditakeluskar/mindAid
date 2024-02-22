@@ -499,6 +499,12 @@ export default {
                     }
                     const responseData = await response.json();
                     clearGoals();
+                    nextTick(() => {
+                additionalgoals();
+                additionalsymptoms();
+                additionaltasks();
+                isSaveButtonDisabled.value = false;
+            });
                     $('#reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
