@@ -509,6 +509,9 @@ export default {
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
+                    setTimeout(() => {
+                        $('#reviewCareAlert').html('');
+                    }, 3000);
                 } catch (error) {
                     console.error('Error deleting care plan:', error.message);
                 }
