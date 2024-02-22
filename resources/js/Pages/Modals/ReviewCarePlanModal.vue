@@ -31,7 +31,7 @@
                                                                     <div id="reviewCareAlert"></div>
                                                                     <form id="care_plan_form" name="care_plan_form"
                                                                         @submit.prevent="submitCarePlanForm">
-                                                                      
+
                                                                         <div class="alert alert-danger"
                                                                             v-if="showSuccessAlert">
                                                                             <button type="button" class="close"
@@ -69,8 +69,10 @@
                                                                             <input type="hidden" id="cpd_finalize"
                                                                                 value="1">
                                                                             <input type="hidden" name="billable" value="1">
-                                                                            <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" 
-                                                                            :value="reviewCarePlanTimer">
+                                                                            <input type="hidden"
+                                                                                name="timearr[form_start_time]"
+                                                                                class="timearr form_start_time"
+                                                                                :value="reviewCarePlanTimer">
                                                                             <div class="row col-md-12">
                                                                                 <div class="col-md-6"><label>Condition
                                                                                         <span
@@ -98,7 +100,11 @@
                                                                                 <div class="col-md-2">
                                                                                     <label><span class="error"></span>&nbsp;
                                                                                     </label>
-<button type="button" class="col-md-12 btn btn-primary" @click="() => changeCondition('care_plan_form')"  id="render_plan_form"> Display Care Plan</button>
+                                                                                    <button type="button"
+                                                                                        class="col-md-12 btn btn-primary"
+                                                                                        @click="() => changeCondition('care_plan_form')"
+                                                                                        id="render_plan_form"> Display Care
+                                                                                        Plan</button>
                                                                                 </div>
 
                                                                                 <div class="col-md-4 emaillist">
@@ -111,7 +117,9 @@
                                                                                         @change="handleCodeAlert">
                                                                                         <option value="">Select Code
                                                                                         </option>
-                                                                                        <option v-for="code in codeOptions" :key="code" :value="code">{{ code }}</option>
+                                                                                        <option v-for="code in codeOptions"
+                                                                                            :key="code" :value="code">{{
+                                                                                                code }}</option>
 
                                                                                     </select>
                                                                                     <div class="invalid-feedback"
@@ -258,8 +266,8 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                      
-                                                                    
+
+
                                                                     </form>
                                                                     <div id="reviewCareAlert"></div>
 
@@ -314,7 +322,7 @@ export default {
     components: {
         AgGridTable,
     },
- 
+
     setup(props) {
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
@@ -340,7 +348,7 @@ export default {
         const selectedEditDiagnosId = ref('');
         const selectedcondition = ref('');
         const isOpen = ref(false);
-
+        let reviewCarePlanTimer = ref(null);
         const openModal = () => {
             isOpen.value = true;
             fetchCarePlanFormList();
@@ -350,10 +358,10 @@ export default {
             additionalgoals();
             additionalsymptoms();
             additionaltasks();
-           const reviewCaretimerElement = document.getElementById('page_landing_times').value;
-                if (reviewCaretimerElement !== null) {
-                    reviewCarePlanTimer.value = reviewCaretimerElement.value;
-                    }
+            const reviewCaretimerElement = document.getElementById('page_landing_times').value;
+            if (reviewCaretimerElement !== null) {
+                reviewCarePlanTimer.value = reviewCaretimerElement;
+            }
         };
 
         const closeModal = () => {
@@ -420,7 +428,7 @@ export default {
         ]);
 
 
-        let reviewCarePlanTimer = ref(null);
+
         let reviewCarePlanStageId = ref(0);
         let stepID = ref(0);
 
@@ -500,11 +508,11 @@ export default {
                     const responseData = await response.json();
                     clearGoals();
                     nextTick(() => {
-                additionalgoals();
-                additionalsymptoms();
-                additionaltasks();
-                isSaveButtonDisabled.value = false;
-            });
+                        additionalgoals();
+                        additionalsymptoms();
+                        additionaltasks();
+                        isSaveButtonDisabled.value = false;
+                    });
                     $('#reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
@@ -551,14 +559,14 @@ export default {
                 if (response && response.status == 200) {
                     clearGoals();
                     nextTick(() => {
-                additionalgoals();
-                additionalsymptoms();
-                additionaltasks();
-                isSaveButtonDisabled.value = false;
-            });
+                        additionalgoals();
+                        additionalsymptoms();
+                        additionaltasks();
+                        isSaveButtonDisabled.value = false;
+                    });
                     selectedCode.value = '';
-            selectedDiagnosis.value = '';
-            comments.value = '';
+                    selectedDiagnosis.value = '';
+                    comments.value = '';
                     $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
@@ -575,8 +583,8 @@ export default {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     setTimeout(function () {
-						formErrors.value = {};
-                }, 3000);
+                        formErrors.value = {};
+                    }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -617,36 +625,36 @@ export default {
             }
         };
 
-       const getCodeData = async()=>{
-        try {
-            const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`); 
-				if(!response.ok){ 
-						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
-				}
+        const getCodeData = async () => {
+            try {
+                const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+                }
                 const codeData = await response.json();
                 codeOptions.value = codeData.map(item => item.code);
 
-        } catch (error) {
-            console.error('Error fetching Code:', error); // Log specific error message
-        }
-       };
+            } catch (error) {
+                console.error('Error fetching Code:', error);
+            }
+        };
 
         let fetchCode = async () => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                await new Promise((resolve) => setTimeout(resolve, 2000));
                 const response = await fetch(`/ccm/activediagnosis-code`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
                 const codeOptionsArray = Object.entries(codeData).map(([key, value]) => ({
-            value: key,
-            code: value
-        }));
+                    value: key,
+                    code: value
+                }));
 
-            if (Array.isArray(codeOptionsArray)) {
-            codeOptions.value = codeOptionsArray.map(item => item.code); 
-                 }
+                if (Array.isArray(codeOptionsArray)) {
+                    codeOptions.value = codeOptionsArray.map(item => item.code);
+                }
             } catch (error) {
                 console.error('Error fetching code list:', error);
             }
@@ -842,9 +850,9 @@ export default {
 
 
 
-     /*    onMounted(async () => {
-
-        }); */
+        /*    onMounted(async () => {
+   
+           }); */
 
         return {
             openModal,
@@ -944,5 +952,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     /* height: 800px !important; */
-}
-</style>
+}</style>
