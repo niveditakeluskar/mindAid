@@ -82,16 +82,10 @@ if (isset($patient_enroll_date) && $patient_enroll_date != null && count($patien
 
         jQuery(function() {
             jQuery('.click_id').click(function() {
-                // var patientId = $("#hidden_id").val(); 
-                // var moduleId = $("input[name='module_id']").val(); 
-                // util.getPatientDetails(patientId, moduleId);
                 jQuery('.pcpPatientData').hide();
                 jQuery('#' + $(this).attr('target')).show();
             });
             jQuery('.review-click-id').click(function() {
-                // var patientId = $("#hidden_id").val();
-                // var moduleId = $("input[name='module_id']").val(); 
-                // util.getPatientDetails(patientId, moduleId); 
                 jQuery('.cpdReviewData').hide();
                 jQuery('#' + $(this).attr('target')).show();
             });

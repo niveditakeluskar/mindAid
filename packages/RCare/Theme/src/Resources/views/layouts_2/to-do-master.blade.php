@@ -982,7 +982,8 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                                             ?>" /> -->
 
     {{-- common js --}}
-    <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
+    <script src="{{ asset('assets/js/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/js/common-bundle-script.js')}}"></script>
 
     <!--script src="{{  asset('assets/js/ckeditor.js')}}"></script--->
     <script src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
@@ -1059,8 +1060,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             }
         }
 
-<<<<<<< HEAD
-=======
         $("[name='partner_id']").on("change", function() {
             if ($(this).val() == '') {
                 var partner_id = null;
@@ -1071,7 +1070,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         });
 
 
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
         function setIntervalMCFunctionAgain() {
             var id = $("input[name='patient_id']").val();
             $.ajax({
@@ -1176,12 +1174,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         });
 
         /*********************************************************************************************************************************************** */
-<<<<<<< HEAD
-        var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
-        var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-=======
-
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
         var checkTimeInterval = function timerIncrement() {
             sessionIdleTime = localStorage.getItem("idleTime");
             var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
@@ -1190,10 +1182,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             var currentDate = new Date();
             var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
             var idleTime = parseInt(sessionIdleTime) + (res % 60);
-<<<<<<< HEAD
-=======
-
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             if (idleTime >= showPopupTime) {
                 var visiblemodal = $('#logout_modal').is(':visible');
                 if (visiblemodal) {
@@ -1223,10 +1211,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
-<<<<<<< HEAD
-=======
-
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
         var patient_id = $("#patient_id").val();
         var module_id = $("input[name='module_id']").val();
         util.getPatientPreviousMonthCalender(patient_id, module_id);
@@ -1239,10 +1223,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#display_month_year").html(moment().format("MMMM YYYY"));
 
         $("#prev-sidebar-month").click(function() {
-<<<<<<< HEAD
-
-=======
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             var patient_id = $("#patient_id").val();
             var module_id = $("input[name='module_id']").val();
             util.getPatientPreviousMonthCalender(patient_id, module_id);
@@ -1305,10 +1285,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             }
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
         });
-<<<<<<< HEAD
-=======
-
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
         // function curr_month_Fun(){
         $("#next-sidebar-month").click(function() {
             var registeredcalender = $("#regi_mnth").val();
@@ -1317,28 +1293,16 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
             var registeredday = dateObj1.getDate();
             var registeredyear = dateObj1.getFullYear();
-<<<<<<< HEAD
-
-=======
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             var display_month_year_data = $("#display_month_year").text();
             var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
             var display_month_year_datamonth = display_month_year_dataarray[0];
             var display_month_year_datayear = display_month_year_dataarray[1];
             var nxt_year = display_month_year_datayear;
-<<<<<<< HEAD
-
-=======
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             for (var i = 0; i < months.length; i++) {
                 if (months[i] == display_month_year_datamonth) {
                     var nxt_month = i + 1;
                 }
             }
-<<<<<<< HEAD
-
-=======
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             if (display_month_year_datamonth == 'December') {
                 var nxt_month = 0;
                 nxt_year = parseInt(nxt_year) + 1;
@@ -1349,15 +1313,8 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             }
             year = nxt_year;
             month = nxt_month;
-<<<<<<< HEAD
-
             $("#temp").hide();
             $(".previous_month-body").show();
-
-=======
-            $("#temp").hide();
-            $(".previous_month-body").show();
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
             if (registeredcalender.length > 0) {
                 $("#display_month_year").html(months[month] + ' ' + year);
                 month = month + 1; //bcz array starts from 0 so miunused 1 from above
@@ -1367,17 +1324,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 } else {
                     $("#next-sidebar-month").hide();
                 }
-<<<<<<< HEAD
-
-                if (new Date(year, month) < new Date(currentYear, currentMonth)) {
-                    $("#next-sidebar-month").show();
-                } else {
-                    $("#next-sidebar-month").hide();
-                }
-
-
-=======
->>>>>>> adc7c884f83cc5ea149eabc138f419b87b1daa4f
                 if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
                     $("#prev-sidebar-month").show();
                 } else {
