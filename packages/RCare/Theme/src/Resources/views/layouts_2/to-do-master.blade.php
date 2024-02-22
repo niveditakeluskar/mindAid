@@ -982,7 +982,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                                             ?>" /> -->
 
     {{-- common js --}}
-    <script src="{{ asset('assets/js/moment.min.js') }}"></script>
+
     <script src="{{ asset('assets/js/common-bundle-script.js')}}"></script>
 
     <!--script src="{{  asset('assets/js/ckeditor.js')}}"></script--->
