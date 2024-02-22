@@ -599,6 +599,7 @@ export default {
                 alert('please selecte condition!');
             };
         }
+
         let fetchDiagnosis = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
@@ -636,10 +637,14 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
+                console.log(codeData);
+                const codeOptionsArray = Object.entries(codeData).map(([key, value]) => ({
+            value: key,
+            code: value
+        }));
 
-               // Check if codeData is an array
-            if (Array.isArray(codeData)) {
-            codeOptions.value = codeData.map(item => item.code); 
+            if (Array.isArray(codeOptionsArray)) {
+            codeOptions.value = codeOptionsArray.map(item => item.code); 
                  }
             } catch (error) {
                 console.error('Error fetching code list:', error);
