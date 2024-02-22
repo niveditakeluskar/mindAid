@@ -69,6 +69,8 @@
                                                                             <input type="hidden" id="cpd_finalize"
                                                                                 value="1">
                                                                             <input type="hidden" name="billable" value="1">
+                                                                            <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" 
+                                                                            :value="reviewCarePlanTimer">
                                                                             <div class="row col-md-12">
                                                                                 <div class="col-md-6"><label>Condition
                                                                                         <span
@@ -256,17 +258,8 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]"
-                                                                            class="timearr form_start_time"
-                                                                            :value="reviewCarePlanTimer"
-                                                                            v-model="reviewCarePlanTimer">
-                                                                        <input type="hidden"
-                                                                            name="timearr['form_save_time']"
-                                                                            class="form_save_time"><input type="hidden"
-                                                                            name="timearr['pause_start_time']"><input
-                                                                            type="hidden"
-                                                                            name="timearr['pause_end_time']"><input
-                                                                            type="hidden" name="timearr['extra_time']">
+                                                                      
+                                                                    
                                                                     </form>
                                                                     <div id="reviewCareAlert"></div>
 
@@ -475,7 +468,7 @@ export default {
             const timer_start = startTimeInput.value.value;;
             const timer_paused = document.getElementById('time-container').textContent;
             const billable = document.querySelector(`form[name='care_plan_form'] input[name='billable']`).value;
-            const form_start_time = document.querySelector(`form[name='care_plan_form'] .form_start_time`).value;
+            const form_start_time = document.querySelector('input[name="timearr[form_start_time]"]').value;
             const result = confirm("Are you sure you want to delete the Condition");
 
             if (result) {
@@ -637,7 +630,6 @@ export default {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
-                console.log(codeData);
                 const codeOptionsArray = Object.entries(codeData).map(([key, value]) => ({
             value: key,
             code: value
