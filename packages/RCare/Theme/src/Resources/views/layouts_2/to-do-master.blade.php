@@ -982,7 +982,8 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                                             ?>" /> -->
 
     {{-- common js --}}
-    <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
+
+    <script src="{{ asset('assets/js/common-bundle-script.js')}}"></script>
 
     <!--script src="{{  asset('assets/js/ckeditor.js')}}"></script--->
     <script src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
@@ -1047,19 +1048,15 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         }
 
         function getDevice(id) {
-            //alert(id.value);
             if (id.checked) {
                 var y = id.id;
-                //var myTextArea = $('#email_title_area');
                 var editor = CKEDITOR.instances['email_title_area'].getData();
                 var data = editor + '<li>' + y + '</li>';
                 CKEDITOR.instances['email_title_area'].setData(data);
-                // myTextArea.val(myTextArea.val() + '\n' + y);
             } else {
                 var myTextArea = CKEDITOR.instances['email_title_area'].getData();
                 var text = $.trim(myTextArea.replace('<li>' + id.id + '</li>', ""));
                 CKEDITOR.instances['email_title_area'].setData(text);
-
             }
         }
 
@@ -1142,11 +1139,9 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
                 }
             });
-            // setIntervalMCFunction(); //removed in incomming code
             setTimeout(function() {
                 document.getElementById("customizer_id").style.display = "block";
             }, 3000);
-
 
             CKEDITOR.replace('email_title_area');
             $('.select2').select2();
@@ -1179,17 +1174,14 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         });
 
         /*********************************************************************************************************************************************** */
-
         var checkTimeInterval = function timerIncrement() {
             sessionIdleTime = localStorage.getItem("idleTime");
             var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
             var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-
             var systemDate = localStorage.getItem("systemDate");
             var currentDate = new Date();
             var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
             var idleTime = parseInt(sessionIdleTime) + (res % 60);
-
             if (idleTime >= showPopupTime) {
                 var visiblemodal = $('#logout_modal').is(':visible');
                 if (visiblemodal) {
@@ -1219,7 +1211,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
-
         var patient_id = $("#patient_id").val();
         var module_id = $("input[name='module_id']").val();
         util.getPatientPreviousMonthCalender(patient_id, module_id);
@@ -1294,7 +1285,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             }
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
         });
-
         // function curr_month_Fun(){
         $("#next-sidebar-month").click(function() {
             var registeredcalender = $("#regi_mnth").val();
@@ -1316,7 +1306,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             if (display_month_year_datamonth == 'December') {
                 var nxt_month = 0;
                 nxt_year = parseInt(nxt_year) + 1;
-
             } else if (display_month_year_datamonth == 'Patient' ||
                 display_month_year_datamonth == 'Patient CareTools' || display_month_year_datamonth == 'undefined') {
                 var nxt_month = parseInt(registeredmonth) - 1;
@@ -1351,7 +1340,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 $("#prev-sidebar-month").show();
             }
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-
         });
         //******************************************************************************************************************************************************** */                
     </script>
@@ -1359,7 +1347,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
     @yield('page-js')
     <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
     @yield('bottom-js')
-
 </body>
 
 </html>
