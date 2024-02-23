@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Header from './Header.vue'; // Import your header component
-import Footer from './Footer.vue'; // Import your footer component
-import axios from 'axios'; // Import Axios for HTTP requests
+import Header from './Header.vue'; 
+import Footer from './Footer.vue'; 
+import axios from 'axios'; 
 
 export default {
   components: {
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      moduleId: null, // Initialize moduleId to null
+      moduleId: null, 
     };
   },
   async mounted() {
@@ -35,7 +35,7 @@ export default {
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
-      const moduleId = await this.getPageModuleID(); // Fetch moduleID from the server
+      const moduleId = await this.getPageModuleID(); 
       this.initializeScripts(moduleId, patientId);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
@@ -45,9 +45,8 @@ export default {
     async getPageModuleID() {
       try {
      /*    var url = encodeURIComponent(window.location.href); */
-        // Make an API call to your server to fetch the moduleID
-        const response = await axios.get('/get_module_id'); // Replace this with your API endpoint
-        return response.data.moduleID; // Assuming the server sends moduleID in the response
+        const response = await axios.get('/get_module_id'); 
+        return response.data.moduleID; 
 
       } catch (error) {
         throw new Error('Failed to fetch moduleID');
