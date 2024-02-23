@@ -7,7 +7,8 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import LoadingSpinner from './Pages/LoadingSpinner.vue'; // Import the LoadingSpinner component
 
 createInertiaApp({
-  resolve: async (name) => {
+  title: title => `${title} - Renova Healthcare`,
+    resolve: async (name) => {
     //console.log('Resolving component:', name);
     try {
       //console.log('Starting Resolved component:', name);

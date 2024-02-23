@@ -1,5 +1,5 @@
 <template>
-  <LayoutComponent ref="layoutComponentRef" >
+<LayoutComponent ref="layoutComponentRef" >
     <div>
       <loading-spinner :isLoading="isLoading"></loading-spinner>
       <div class="breadcrusmb">
@@ -105,6 +105,11 @@
     </div>
 
   </LayoutComponent>
+
+  <Head>
+    <title>{{ title }}</title>
+    <meta name="description" content="Worklist listing page" />
+  </Head>
 </template>
 
 <script>
@@ -115,10 +120,12 @@ import {
   computed,
   watch,
   AgGridTable,
-  onBeforeMount
+  onBeforeMount,
+  Head
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; 
 import PatientStatus from './Modals/PatientStatus.vue';
+
 
 export default {
   props: {
@@ -128,9 +135,11 @@ export default {
   components: {
     LayoutComponent,
     PatientStatus,
-    AgGridTable
+    AgGridTable,
+    Head
 },
   setup(props) {
+    const title = 'WorkList ';
     const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
@@ -459,6 +468,7 @@ export default {
       handleSubmit,
       handleChange,
       handleReset,
+      title
     };
   },
 };
