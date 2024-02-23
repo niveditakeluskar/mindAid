@@ -2554,8 +2554,8 @@ var getPatientEnrollModule = function (patientId, selmoduleId) {
         url: `/patients/patient-module/${patientId}/patient-module`,
     }).then(function (response) {
         $('.enrolledservice_modules').html('');
-        enr = response.data;
-        count_enroll = enr.length;
+        var enr = response.data;
+        var count_enroll = enr.length;
         for (var i = 0; i < count_enroll; i++) {
             $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
         }
@@ -2574,9 +2574,9 @@ var getPatientDetails = function (patientId, moduleId) {
     }).then(function (response) {
         // ptient enrolleed module in change status
         $('.enrolledservice_modules').html('');
-        enr = response.data.patient_services.length;
+        var enr = response.data.patient_services.length;
         // alert(response.data.patient_services[0].module.module);
-        for (i = 0; i < enr; i++) {
+        for (var i = 0; i < enr; i++) {
             // alert(i);
             // var module_name = response.data.patient[0].patient_services[i].module.module;
             var module_id = response.data.patient_services[i].module_id;
@@ -2584,11 +2584,12 @@ var getPatientDetails = function (patientId, moduleId) {
         }
 
         //
-        count_enroll_Services = response.data.patient_services.length;
+        var count_enroll_Services = response.data.patient_services.length;
         var enroll_services = [];
         var enroll_services_status = [];
-        for (i = 0; i < count_enroll_Services; i++) {
-            enroll_services_status = response.data.patient_services[i].status;
+        for (var i = 0; i < count_enroll_Services; i++) {
+            var patient_enroll_services_status = "";
+            var enroll_services_status = response.data.patient_services[i].status;
             if (enroll_services_status == 0) {
                 patient_enroll_services_status = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
             } else if (enroll_services_status == 1) {
@@ -2603,7 +2604,7 @@ var getPatientDetails = function (patientId, moduleId) {
                 $("#add_patient_devices").show();
             }
         }
-        console.log(enroll_services + 'enroll_services')
+        // console.log(enroll_services + 'enroll_services')
         $(".patient_enroll_services").html(enroll_services.toString());
 
         //dropdown for change modules in Change Patient Status priya 14 04 2023
@@ -2682,7 +2683,7 @@ var getPatientDetails = function (patientId, moduleId) {
             var mob = response.data.patient[0].mob;
         }
         $(".patient_contact_num").text(mob + '|' + home_num);
-
+        var consent_to_text;
         if (response.data.consent_to_text == "1") {
             consent_to_text = "Consent to text - Yes";
         } else {
@@ -2929,8 +2930,9 @@ var getPatientDetails = function (patientId, moduleId) {
         $("#spirometerpeflow").val(spirometerpeflow);
 
         var personal_notes = '';
+        console.log("response.data", response.data);
         if (response.data.personal_notes != '') {
-            var personal_notes = response.data.personal_notes['static']['personal_notes'];
+            personal_notes = response.data.personal_notes;//response.data.personal_notes['static']['personal_notes'];
         }
         $("textarea#personal_notes").val(personal_notes);
         var research_study = '';
@@ -3082,6 +3084,26 @@ var getToDoListData = function (patientId, moduleId) {
         console.error(error, error.response);
     });
 };
+var getAssignPatientListData = function (practice,patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        // $('.badge').html($('#count_patient').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
 var getAssignPatientListData = function (practice,patient) { //debugger;
     if (practice == '') {
         practice = 0;

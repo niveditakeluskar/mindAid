@@ -107,7 +107,8 @@ export default {
             return verification.value !== 1 && (index === 2 || index === 3 || index === 4 || index === 5);
         };
 
-        const changeCallTab = (index) => {
+        const changeCallTab = async (index) => {
+            await populateFunction();
             if (verification.value !== 1 && (index === 2 || index === 3 || index === 4 || index === 5)) {
                 // Do nothing or handle as needed
             } else {

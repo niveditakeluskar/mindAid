@@ -47,19 +47,19 @@ use RCare\Org\OrgPackages\Diagnosis\src\Models\DiagnosisCode;
 use RCare\Patients\Models\PatientFirstReview;
 use RCare\Ccm\Http\Requests\AllergiesAddRequest;
 use RCare\Ccm\Http\Requests\ServicesAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsFamilyAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsDataAddRequest;
+use RCare\Ccm\Http\Requests\PatientsFamilyAddRequest;
+use RCare\Ccm\Http\Requests\PatientsDataAddRequest;
 use RCare\Ccm\Http\Requests\PatientsVitalsDataAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsProvidersAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsProviderSpecilistAddRequest;
+use RCare\Ccm\Http\Requests\PatientsProvidersAddRequest;
+use RCare\Ccm\Http\Requests\PatientsProviderSpecilistAddRequest;
 use RCare\Ccm\Http\Requests\PatientsMedicationAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsTravelAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsHobbiesAddRequest;
-use RCare\Ccm\src\Http\Requests\PatientsPetAddRequest;
+use RCare\Ccm\Http\Requests\PatientsTravelAddRequest;
+use RCare\Ccm\Http\Requests\PatientsHobbiesAddRequest;
+use RCare\Ccm\Http\Requests\PatientsPetAddRequest;
 use RCare\Ccm\Http\Requests\PatientsDiagnosisRequest;
 use RCare\Ccm\Http\Requests\PatientsLabRequest;
 use RCare\Ccm\Http\Requests\PatientsImagingRequest;
-use RCare\Ccm\src\Http\Requests\PatientsRelativeAddRequest;
+use RCare\Ccm\Http\Requests\PatientsRelativeAddRequest;
 use RCare\Ccm\Http\Requests\PatientsHealthDataRequest;
 use RCare\Org\OrgPackages\Modules\src\Models\Module;
 use RCare\Org\OrgPackages\StageCodes\src\Models\StageCode;
@@ -4169,7 +4169,8 @@ class CarePlanDevelopmentController extends Controller
                             );
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
                             if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
+                                $new_high_vallue = $high_val[$labvalue][$i] ?? null;
+                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $new_high_vallue . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');

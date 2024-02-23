@@ -104,7 +104,7 @@ class PatientController extends Controller
             'fin_number'  => $fin_number
         );
 
-        $patientfin = array( 
+        $patientfin = array(
             'patient_id'    => $patient_id,
             'status'        => '1',
             'fin_number'    => $fin_number
@@ -117,12 +117,12 @@ class PatientController extends Controller
         }
 
         $check_exist_for_month = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', $currentMonth)
-        ->whereYear('updated_at', $currentYear)->exists();
+            ->whereYear('updated_at', $currentYear)->exists();
         if ($check_exist_for_month == true) {
             $patientfin['updated_at'] = Carbon::now();
             $patientfin['updated_by'] = session()->get('userid');
             $update_query = PatientFinNumber::where('patient_id', $patient_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))
-            ->orderBy('id', 'desc')->first()->update($patientfin);
+                ->orderBy('id', 'desc')->first()->update($patientfin);
         } else {
             $patientfin['created_at'] = Carbon::now();
             $patientfin['created_by'] = session()->get('userid');
@@ -221,22 +221,22 @@ class PatientController extends Controller
         $patient_providers = PatientProvider::where('patient_id', $uid)
             // ->with('practice')->with('provider')->with('users')
             ->where('provider_type_id', 1)->where('is_active', 1)->orderby('id', 'desc')
-            ->first(); 
-            // dd($patient_providers);
+            ->first();
+        // dd($patient_providers);
         $practice_id = empty($patient_providers->practice_id) ? '' : $patient_providers->practice_id;
-        
-        if(!empty($practice_id)){
-            $practices= Practices::where('id',$practice_id)->where('is_active', 1)->orderby('id', 'desc')
-            ->first(); 
-            $practice_group_id = empty($practices)?'':$practices->practice_group;
-        }else{
-            $practice_group_id='';
+
+        if (!empty($practice_id)) {
+            $practices = Practices::where('id', $practice_id)->where('is_active', 1)->orderby('id', 'desc')
+                ->first();
+            $practice_group_id = empty($practices) ? '' : $practices->practice_group;
+        } else {
+            $practice_group_id = '';
         }
 
         if (!empty($practice_id)) {   //dd("hii"); 
             $practice_threshold_exist = PracticeThreshold::where('practice_id', $practice_id)->orderby('id', 'desc')->limit(1)->first();
-        }else if(!empty($practice_group_id)){
-         $org_threshold_exist = org_threshold::where('org_id', $practice_group_id)->orderby('id', 'desc')->limit(1)->first();
+        } else if (!empty($practice_group_id)) {
+            $org_threshold_exist = org_threshold::where('org_id', $practice_group_id)->orderby('id', 'desc')->limit(1)->first();
         }
         // dd($practice_threshold_exist);
         if (!empty($practice_threshold_exist)) {
@@ -251,8 +251,9 @@ class PatientController extends Controller
             $heading = "Renova Threshold";
         }
         // dd($threshold);
-        return['heading'=>$heading,
-        'threshold'=>$threshold,
+        return [
+            'heading' => $heading,
+            'threshold' => $threshold,
         ];
         // return response()->json([$threshold, $heading]);
     }
@@ -276,6 +277,56 @@ class PatientController extends Controller
         $patientService = PatientServices::where('patient_id', $patient_id)->where('module_id', $module_id)->get();
         return $patientService;
     }
+
+    // public function cmassignpatient(Request $request)
+    // { //dd("working");
+    //     $login_user = Session::get('userid');
+    //     $configTZ   = config('app.timezone');
+    //     $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+    //     $patient_id = sanitizeVariable($request->route('patient'));
+    //     $practice_id = sanitizeVariable($request->route('practice'));
+
+    //     // $data = "select distinct p.id,p.fname ,p.lname ,p.dob ,p2.name as practice, usr.id,usr.f_name ,usr.l_name, m.id ,m.module  from patients.patient p
+    //     // inner join task_management.user_patients up on up.patient_id =p.id and up.status=1
+    //     // inner join ren_core.users usr on usr.id=up.user_id 
+    //     // LEFT JOIN patients.patient_providers pp ON pp.patient_id = p.id AND pp.is_active = 1 AND pp.provider_type_id = 1 
+    //     // LEFT JOIN ren_core.practices p2 ON p2.id = pp.practice_id
+    //     // inner join patients.patient_services ps on ps.patient_id = p.id and  ps.status in (0,1)
+    //     // inner join ren_core.modules as m on m.id = ps.module_id  
+    //     // where usr.id = $login_user";
+
+    //     //for rpm enrolled patient link 
+    //     $query = DB::table('patients.patient as p')
+    //     ->select('p.id', 'p.fname', 'p.lname', 'p.dob', 'p2.name as practice', 'usr.id as user_id',
+    //         'usr.f_name as user_fname', 'usr.l_name as user_lname', 'm.id as module_id', 'm.module')
+    //     ->leftJoin('task_management.user_patients as up', function ($join) {
+    //         $join->on('up.patient_id', '=', 'p.id')->where('up.status', '=', 1);
+    //     })
+    //     ->leftJoin('ren_core.users as usr', 'usr.id', '=', 'up.user_id')
+    //     ->leftJoin('patients.patient_providers as pp', function ($join) {
+    //         $join->on('pp.patient_id', '=', 'p.id')
+    //             ->where('pp.is_active', '=', 1)
+    //             ->where('pp.provider_type_id', '=', 1);
+    //     })
+    //     ->leftJoin('ren_core.practices as p2', 'p2.id', '=', 'pp.practice_id')
+    //     ->leftJoin('patients.patient_services as ps', function ($join) {
+    //         $join->on('ps.patient_id', '=', 'p.id')->whereIn('ps.status', [0, 1]);
+    //     })
+    //     ->join('ren_core.modules as m', 'm.id', '=', 'ps.module_id')
+    //     ->where('usr.id', '=', $login_user);
+
+    //     if ($practice_id && $practice_id != 'null' && $practice_id != 0) {
+    //         $query->where('pp.practice_id', '=', $practice_id);
+    //     }
+
+    //     if ($patient_id && $patient_id != 'null' && $patient_id != 0) {
+    //         $query->where('p.id', '=', $patient_id);
+    //     }
+
+    //     $query = $query->get();
+
+    //     return view('Patients::patient.cm-assigned-patient-right', compact('query'));
+    // }
 
 
     public function fetchPatientModule(Request $request)
@@ -335,8 +386,8 @@ class PatientController extends Controller
         $research_study_data = (PatientPartResearchStudy::latest($uid, 'patient_id') ? PatientPartResearchStudy::latest($uid, 'patient_id')->population() : "");
         $patient_threshold = (PatientThreshold::latest($uid, 'patient_id') ? PatientThreshold::latest($uid, 'patient_id')->population() : "");
         //dd($patient_threshold);
-        $personal_notes = empty($personal_notes_data)? '' : $personal_notes_data['static']['personal_notes'];
-        $research_study = empty($research_study_data)? '' : $research_study_data['static']['part_of_research_study'];
+        $personal_notes = empty($personal_notes_data) ? '' : $personal_notes_data['static']['personal_notes'];
+        $research_study = empty($research_study_data) ? '' : $research_study_data['static']['part_of_research_study'];
         $systolichigh = empty($patient_threshold) ? '' : $patient_threshold['static']['systolichigh'];
         $systoliclow = empty($patient_threshold) ? '' : $patient_threshold['static']['systoliclow'];
 
@@ -369,22 +420,22 @@ class PatientController extends Controller
         } else {
             $allreadydevice = 0;
         }
-        
-        $PatientDevices = PatientDevices::where('patient_id',$uid)->orderby('id','desc')->first();
-        
-        $device_code = empty($PatientDevices->device_code)?'':$PatientDevices->device_code;
-        
-        $device_status = empty($PatientDevices->shipping_status)?'':$PatientDevices->shipping_status;
 
- 
-        $rpmDevices = (PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1) ? 
-        PatientDevices::with('devices')->where('patient_id',$uid)->where('status',1)->orderBy('created_at','desc')->get() :" ");
+        $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+
+        $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
+
+        $device_status = empty($PatientDevices->shipping_status) ? '' : $PatientDevices->shipping_status;
+
+
+        $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1) ?
+            PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
         // dd($rpmDevices);
-        if(isset($rpmDevices[0]->vital_devices)){
+        if (isset($rpmDevices[0]->vital_devices)) {
 
             $data = json_decode($rpmDevices[0]->vital_devices, true);
             $show_device = "";
-            
+
             if (is_array($data)) {
                 foreach ($data as $item) {
                     if (array_key_exists("vid", $item)) {
@@ -392,15 +443,15 @@ class PatientController extends Controller
                             ->where('status', '1')
                             ->orderBy('id', 'asc')
                             ->first();
-            
+
                         if (!empty($dev)) {
                             $parts = explode(" ", $dev->device_name);
                             $devices = implode('-', $parts);
-            
+
                             $filename = RPMProtocol::where("device_id", $item['vid'])
                                 ->where('status', '1')
                                 ->first();
-            
+
                             if (!empty($filename)) {
                                 $filenames = $filename->file_name;
                                 $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
@@ -409,7 +460,7 @@ class PatientController extends Controller
                         }
                     }
                 }
-            }            
+            }
 
             $patient_assign_device = rtrim($show_device, ', ');
         } else {
@@ -424,57 +475,57 @@ class PatientController extends Controller
             $enroll_in_rpm   = 0;
         }
 
-   return [
-           'patient'               => $patient,
-           'patient_services'      => $patient_services,
-           'gender'                => $gender,
-           'military_status'       => $military_status,
-           'age'                   => $age,
-           'PatientAddress'        => $PatientAddress,
-           'add_1'                 => $add_1,
-           'add_2'                 => $add_2,
-           'city'                  => $city,
-           'state'                 => $state, 
-           'zipcode'               => $zipcode,
-           'date_enrolled'         => $date_enrolled,
-           'suspended_from'        => $suspended_from,
-           'suspended_to'          => $suspended_to,
-           'provider_name'         => $provider_name,
-           'practice_emr'          => $practice_emr,
-           'practice_name'         => $practice_name,
-           // 'UserPatients' => $UserPatients,
-           'caremanager_name'      => $caremanager_name,
-           'patient_enroll_date'   => $patient_enroll_date,
-           'device_code'           => $device_code,
-           'device_status'         => $device_status,
-           'non_billabel_time'     => $non_billabel_time,
-           'billable_time'         => $billable_time,
-           'personal_notes'        => $personal_notes,
-           'research_study'        => $research_study,
-           // 'patient_threshold'=>$patient_threshold
-           'systolichigh'          => $systolichigh,
-           'systoliclow'           => $systoliclow,
-           'diastolichigh'         => $diastolichigh,
-           'diastoliclow'          => $diastoliclow,
-           'bpmhigh'               => $bpmhigh,
-           'bpmlow'                => $bpmlow,
-           'oxsathigh'             => $oxsathigh,
-           'oxsatlow'              => $oxsatlow,
-           'glucosehigh'           => $glucosehigh, 
-           'glucoselow'            => $glucoselow,
-           'weighthigh'            => $weighthigh,
-           'weightlow'             => $weightlow,
-           'temperaturehigh'       => $temperaturehigh,
-           'temperaturelow'        => $temperaturelow,
-           'spirometerfevhigh'     => $spirometerfevhigh,
-           'spirometerfevlow'      => $spirometerfevlow,
-           'spirometerpefhigh'     => $spirometerpefhigh,
-           'spirometerpeflow'      => $spirometerpeflow,
-           'patient_assign_device' => $patient_assign_device,
-           'consent_to_text'       => $consent_to_text,
-           'allreadydevice'        => $allreadydevice,
-           'billable'              => $billable,
-           'enroll_in_rpm'         => $enroll_in_rpm
+        return [
+            'patient'               => $patient,
+            'patient_services'      => $patient_services,
+            'gender'                => $gender,
+            'military_status'       => $military_status,
+            'age'                   => $age,
+            'PatientAddress'        => $PatientAddress,
+            'add_1'                 => $add_1,
+            'add_2'                 => $add_2,
+            'city'                  => $city,
+            'state'                 => $state,
+            'zipcode'               => $zipcode,
+            'date_enrolled'         => $date_enrolled,
+            'suspended_from'        => $suspended_from,
+            'suspended_to'          => $suspended_to,
+            'provider_name'         => $provider_name,
+            'practice_emr'          => $practice_emr,
+            'practice_name'         => $practice_name,
+            // 'UserPatients' => $UserPatients,
+            'caremanager_name'      => $caremanager_name,
+            'patient_enroll_date'   => $patient_enroll_date,
+            'device_code'           => $device_code,
+            'device_status'         => $device_status,
+            'non_billabel_time'     => $non_billabel_time,
+            'billable_time'         => $billable_time,
+            'personal_notes'        => $personal_notes,
+            'research_study'        => $research_study,
+            // 'patient_threshold'=>$patient_threshold
+            'systolichigh'          => $systolichigh,
+            'systoliclow'           => $systoliclow,
+            'diastolichigh'         => $diastolichigh,
+            'diastoliclow'          => $diastoliclow,
+            'bpmhigh'               => $bpmhigh,
+            'bpmlow'                => $bpmlow,
+            'oxsathigh'             => $oxsathigh,
+            'oxsatlow'              => $oxsatlow,
+            'glucosehigh'           => $glucosehigh,
+            'glucoselow'            => $glucoselow,
+            'weighthigh'            => $weighthigh,
+            'weightlow'             => $weightlow,
+            'temperaturehigh'       => $temperaturehigh,
+            'temperaturelow'        => $temperaturelow,
+            'spirometerfevhigh'     => $spirometerfevhigh,
+            'spirometerfevlow'      => $spirometerfevlow,
+            'spirometerpefhigh'     => $spirometerpefhigh,
+            'spirometerpeflow'      => $spirometerpeflow,
+            'patient_assign_device' => $patient_assign_device,
+            'consent_to_text'       => $consent_to_text,
+            'allreadydevice'        => $allreadydevice,
+            'billable'              => $billable,
+            'enroll_in_rpm'         => $enroll_in_rpm
         ];
     }
 
@@ -968,7 +1019,6 @@ class PatientController extends Controller
                 } else {
                     return 0;
                 }
-
             })
             ->addColumn('action', function ($row) {
                 if ($row->practice_id == '') {
@@ -1155,19 +1205,6 @@ class PatientController extends Controller
         } else {
             $component_id = "0";
         }
-
-
-        // $Condition = DB::select( DB::raw("select distinct id,code,condition,diagnosis,
-        //                                   max(updated_at) as date
-        //                                   FROM patients.patient_diagnosis_codes 
-        //                                   where updated_at >= date_trunc('month', current_date)  
-        //                                   AND  updated_at >= date_trunc('year', current_date)
-        //                                   AND patient_id = '".$patient_id."'
-        //                                   AND status = 1 
-        //                                   group  by id,code,condition,diagnosis 
-        //                                   order by condition asc
-        //                                   "));
-
         $Condition = DB::select("select distinct diagnosis, 
                         max(updated_at) as date
                         FROM patients.patient_diagnosis_codes 
@@ -1180,12 +1217,8 @@ class PatientController extends Controller
                         ");
 
         $chronicCondition = empty($Condition) ? '' : $Condition;
-        // dd( $chronicCondition);
-
         $patientdiagnosis = PatientDiagnosis::where('status', 1)->where('patient_id', $patient_id)->latest()->first();
         $patientdiagnosislastmodified = PatientDiagnosis::with('users_created_by')->where('status', 1)->where('patient_id', $patient_id)->latest()->first();
-
-        // dd( $chronicCondition);  
 
         if ($chronicCondition == "" || $chronicCondition == null) {
         } else {
@@ -1215,12 +1248,8 @@ class PatientController extends Controller
                     $chronic->review_date = $reviewdate;
                 }
             }
-            // dd( $chronicCondition);
         }
-        // dd($chronicCondition);
-
-
-
+        
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1) ? PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
 
         //dd($rpmDevices[0]->vital_devices);
@@ -1228,7 +1257,7 @@ class PatientController extends Controller
         if (isset($rpmDevices[0]->vital_devices)) {
             $data = json_decode($rpmDevices[0]->vital_devices, true);
             $show_device = "";
-            
+
             if (is_array($data)) {
                 foreach ($data as $item) {
                     if (array_key_exists("vid", $item)) {
@@ -1236,15 +1265,15 @@ class PatientController extends Controller
                             ->where('status', '1')
                             ->orderBy('id', 'asc')
                             ->first();
-            
+
                         if (!empty($dev)) {
                             $parts = explode(" ", $dev->device_name);
                             $devices = implode('-', $parts);
-            
+
                             $filename = RPMProtocol::where("device_id", $item['vid'])
                                 ->where('status', '1')
                                 ->first();
-            
+
                             if (!empty($filename)) {
                                 $filenames = $filename->file_name;
                                 $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
@@ -1253,27 +1282,7 @@ class PatientController extends Controller
                         }
                     }
                 }
-            } 
-
-          /*   for ($j = 0; $j < count($data); $j++) {
-
-                if (array_key_exists("vid", $data[$j])) {
-                    $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
-                    if (!empty($filename)) {
-                        $filenames = $filename->file_name;
-
-                        $dev =  Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
-                        if (!empty($dev)) {
-                            $parts = explode(" ", $dev->device_name);
-                            $devices = implode('-', $parts);
-
-                            $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
-
-                            $show_device .= $dev->device_name . " (" . $btn . "), ";
-                        }
-                    }
-                }
-            } */
+            }
 
             $patient_assign_device = rtrim($show_device, ', ');
         } else {
@@ -1321,12 +1330,13 @@ class PatientController extends Controller
         $careplan_finalization_date = PatientServices::latest_module($patient_id, $module_id);
         $patient = (Patients::where('id', $patient_id) ? Patients::where('id', $patient_id)->get() : "");
         $personal_notes = (PatientPersonalNotes::latest($patient_id, 'patient_id') ? PatientPersonalNotes::latest($patient_id, 'patient_id')->population() : "");
+        $all_personal_notes = (PatientPersonalNotes::with('users')->where ('patient_id', $patient_id)->get() ? PatientPersonalNotes::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
         $research_study = (PatientPartResearchStudy::latest($patient_id, 'patient_id') ? PatientPartResearchStudy::latest($patient_id, 'patient_id')->population() : "");
-        // dd($patientdiagnosislastmodified['']);
+        $all_research_study = (PatientPartResearchStudy::with('users')->where ('patient_id', $patient_id)->get() ? PatientPartResearchStudy::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
         if ($module_id == '3') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
         } else if ($module_id == '2') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
             //return view('Ccm::monthly-monitoring.patient-details',['patient'=>$patient], compact('chronicCondition','rpmDevices','medication','lastContactDate','ellapsedTime','currentEllapsedTime','previousEllapsedTime','personal_notes','research_study'));
         } else {
             return view('Patients::patient.traning-checklist', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'patient_assign_device', 'device_education_training'));
@@ -1398,7 +1408,7 @@ class PatientController extends Controller
         $stage_id     = sanitizeVariable($request->stage_id);
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
-        $step_id      = 0; 
+        $step_id      = 0;
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
@@ -1580,7 +1590,6 @@ class PatientController extends Controller
         }
 
         return $device;
-        
     }
 
     public function getPatentDevice(Request $request)
@@ -1613,11 +1622,11 @@ class PatientController extends Controller
         foreach ($device as $device) {
 
             echo '<li>
-    <label class="forms-element checkbox checkbox-outline-primary"> 
-    <input class="ckbox" name ="device_ids[' . $device->id . ']"  id ="' . $device->device_name . '" value="' . $device->id . '" type="checkbox" onChange=getDevice(this) >
-    <span class="">' . $device->device_name . '</span><span class="checkmark"></span>             
-    </label> 
-    </li>';
+                <label class="forms-element checkbox checkbox-outline-primary"> 
+                <input class="ckbox" name ="device_ids[' . $device->id . ']"  id ="' . $device->device_name . '" value="' . $device->id . '" type="checkbox" onChange=getDevice(this) >
+                <span class="">' . $device->device_name . '</span><span class="checkmark"></span>             
+                </label> 
+                </li>';
         }
         //return $device;
     }
@@ -2014,7 +2023,7 @@ class PatientController extends Controller
     }
 
 
-   /*  public function practicePatientsNew($practice) //modified by ashvini on 10th nov 2020
+    /*  public function practicePatientsNew($practice) //modified by ashvini on 10th nov 2020
     {
         $patients = [];
         $cid = session()->get('userid');
@@ -2089,54 +2098,101 @@ class PatientController extends Controller
     } */
 
 
-//optimized query and cached for 24Hrs
-public function practicePatientsNew($practice)
-{
+    //optimized query and cached for 24Hrs
+    public function practicePatientsNew($practice)
+    {
 
-     // Check if the data is cached
-     $cacheKey = 'practice_patients_'.$practice;
-     if (Cache::has($cacheKey)) {
-         //return Cache::get($cacheKey);
-         return response()->json(Cache::get($cacheKey));
-     }
-     
-     $cid = session()->get('userid');
-     $usersDetails = Users::where('id', $cid)->first();
-     $roleid = $usersDetails->role;
- 
-     $query = DB::table('patients.patient')
-         ->select('patients.patient.id', 'patients.patient.fname', 'patients.patient.lname', 'patients.patient.mname', 'patients.patient.dob', 'patients.patient.mob')
-         ->distinct()
-         ->join('patients.patient_services', 'patients.patient.id', '=', 'patients.patient_services.patient_id')
-         ->join('patients.patient_providers as pp', 'patients.patient.id', '=', 'pp.patient_id')
-         ->where('pp.provider_type_id', 1)
-         ->where('pp.is_active', 1)
-         ->orderBy('patients.patient.fname');
- 
-     if ($practice != "null" && $practice != 0) {
-         $query->where('pp.practice_id', $practice);
-     }
- 
-     if ($roleid == 5) {
-         $query->join('task_management.user_patients as up', function ($join) use ($cid) {
-             $join->on('patients.patient.id', '=', 'up.patient_id')
-                 ->where('up.status', 1)
-                 ->where('up.user_id', $cid);
-         });
-     } elseif ($roleid != 2) {
-         $query->whereIn('pp.practice_id', function ($subQuery) use ($cid) {
-             $subQuery->select('practice_id')->from('ren_core.user_practices')->where('user_id', $cid);
-         });
-     }
- 
-     $patients = $query->get();
- 
-     // Cache the result
-     Cache::put($cacheKey, $patients, now()->addHours(36));
- 
-     return response()->json($patients);
- }
+        // Check if the data is cached
+        $cacheKey = 'practice_patients_' . $practice;
+        if (Cache::has($cacheKey)) {
+            //return Cache::get($cacheKey);
+            return response()->json(Cache::get($cacheKey));
+        }
 
+        $cid = session()->get('userid');
+        $usersDetails = Users::where('id', $cid)->first();
+        $roleid = $usersDetails->role;
+
+        $query = DB::table('patients.patient')
+            ->select('patients.patient.id', 'patients.patient.fname', 'patients.patient.lname', 'patients.patient.mname', 'patients.patient.dob', 'patients.patient.mob')
+            ->distinct()
+            ->join('patients.patient_services', 'patients.patient.id', '=', 'patients.patient_services.patient_id')
+            ->join('patients.patient_providers as pp', 'patients.patient.id', '=', 'pp.patient_id')
+            ->where('pp.provider_type_id', 1)
+            ->where('pp.is_active', 1)
+            ->orderBy('patients.patient.fname');
+
+        if ($practice != "null" && $practice != 0) {
+            $query->where('pp.practice_id', $practice);
+        }
+
+        if ($roleid == 5) {
+            $query->join('task_management.user_patients as up', function ($join) use ($cid) {
+                $join->on('patients.patient.id', '=', 'up.patient_id')
+                    ->where('up.status', 1)
+                    ->where('up.user_id', $cid);
+            });
+        } elseif ($roleid != 2) {
+            $query->whereIn('pp.practice_id', function ($subQuery) use ($cid) {
+                $subQuery->select('practice_id')->from('ren_core.user_practices')->where('user_id', $cid);
+            });
+        }
+
+        $patients = $query->get();
+
+        // Cache the result
+        Cache::put($cacheKey, $patients, now()->addHours(36));
+
+        return response()->json($patients);
+    }
+
+    public function assignpatientlist($practice)
+    {
+        $cid = session()->get('userid');
+        $usersdetails = Users::where('id', $cid)->get();
+        $roleid = $usersdetails[0]->role;
+
+        if ($practice == "null" || $practice == 0) {
+            $patients = DB::table('patients.patient as p')
+                ->select('p.id', 'p.fname', 'p.lname', 'p.mname', 'p.dob', 'p.mob')
+                ->distinct()
+                ->join('task_management.user_patients as up', function ($join) {
+                    $join->on('p.id', '=', 'up.patient_id')
+                        ->where('up.status', '=', 1);
+                })
+                ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                ->join('patients.patient_providers as pp', function ($join) {
+                    $join->on('p.id', '=', 'pp.patient_id')
+                        ->where('pp.is_active', '=', 1)
+                        ->where('pp.provider_type_id', '=', 1);
+                })
+                ->join('patients.patient_services as ps', 'p.id', '=', 'ps.patient_id')
+                ->where('up.user_id', $cid)
+                ->orderBy('p.fname')
+                ->get();
+        } else {
+            $patients = DB::table('patients.patient as p')
+                ->select('p.id', 'p.fname', 'p.lname', 'p.mname', 'p.dob', 'p.mob')
+                ->distinct()
+                ->join('task_management.user_patients as up', function ($join) {
+                    $join->on('p.id', '=', 'up.patient_id')
+                        ->where('up.status', '=', 1);
+                })
+                ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                ->join('patients.patient_services as ps', 'p.id', '=', 'ps.patient_id')
+                ->join('patients.patient_providers as pp', function ($join) use ($practice) {
+                    $join->on('p.id', '=', 'pp.patient_id')
+                        ->where('pp.is_active', '=', 1)
+                        ->where('pp.provider_type_id', '=', 1)
+                        ->where('pp.practice_id', '=', $practice);
+                })
+                ->where('up.user_id', $cid)
+                ->orderBy('p.fname')
+                ->get();
+        }
+
+        return response()->json($patients);
+    }
 
     //created by ashvini 12 jan 2021  
     public function practiceRPMPatients($practice)
@@ -3374,7 +3430,7 @@ public function practicePatientsNew($practice)
                         $patientCallHistoryHTML .= '<th>Call Follow-up date</th><th>Call Follow-up Time</th>';
                     }
                     $ccs = 'Yes';
-                    if($callhistory->call_continue_status == 0){
+                    if ($callhistory->call_continue_status == 0) {
                         $ccs = 'No';
                     }
                     $patientCallHistoryHTML .= '</tr><tr><td>' . $ccs . '</td>';

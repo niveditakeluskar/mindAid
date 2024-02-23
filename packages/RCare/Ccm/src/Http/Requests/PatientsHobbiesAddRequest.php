@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,15 +23,16 @@ class PatientsHobbiesAddRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
-            [   'hobbies_status' => 'required|integer',
-                'hobbies_name.*'=> 'nullable|required_if:hobbies_status,1|min:2|alpha_spaces', 
+        return validationRules(
+            True,
+            [
+                'hobbies_status' => 'required|integer',
+                'hobbies_name.*' => 'nullable|required_if:hobbies_status,1|min:2|alpha_spaces',
                 // 'location.*'   => 'required',
                 // 'frequency.*'  => 'required', 
                 // 'with_whom.*'  => 'required', 
-            //     'notes.*'      => 'required', 
-             ]
+                //     'notes.*'      => 'required', 
+            ]
         );
-
     }
 }

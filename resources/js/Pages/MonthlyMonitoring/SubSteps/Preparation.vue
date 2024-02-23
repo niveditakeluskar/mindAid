@@ -139,7 +139,8 @@ export default {
                   preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
                       $('#preparationAlert').html('');
-                                    }, 3000);
+                  }, 3000);
+                  formErrors.value = {};
                }
                 isLoading.value = false;
 
@@ -148,10 +149,10 @@ export default {
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
-                    setTimeout(function () {
-						formErrors.value = {};
-                }, 3000);
-                    console.log(formErrors);
+               //      setTimeout(function () {
+					// 	formErrors.value = {};
+               //  }, 3000);
+               //      console.log(formErrors);
                 } else {
                   $('#preparationAlert').html('<div class="alert alert-danger">Error: Something Went wrong! Please try Again.</div>');
                     console.error('Error submitting form:', error);
