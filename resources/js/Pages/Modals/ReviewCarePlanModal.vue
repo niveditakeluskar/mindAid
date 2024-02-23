@@ -438,15 +438,15 @@ export default {
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
-                //diagnosisOptions
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                const carePlanData = data.care_plan_form.static; // Adjust this based on your actual data structure
+                const carePlanData = data.care_plan_form.static; 
+                console.log(carePlanData);
                 if (carePlanData && carePlanData.goals) {
-                    goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                    goals.value = JSON.parse(carePlanData.goals); 
                 }
                 selectedDiagnosisId.value = carePlanData.diagnosis;
                 selectedDiagnosis.value = carePlanData.diagnosis;
@@ -454,10 +454,10 @@ export default {
                 selectedcondition.value = carePlanData.condition;
                 comments.value = carePlanData.comments;
                 if (carePlanData && carePlanData.tasks) {
-                    tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                    tasks.value = JSON.parse(carePlanData.tasks); 
                 }
                 if (carePlanData && carePlanData.symptoms) {
-                    symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                    symptoms.value = JSON.parse(carePlanData.symptoms); 
                 }
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
@@ -784,7 +784,6 @@ export default {
 
         const changeCondition = (formName) => {
             isLoading.value = true;
-            // Ensure formName is a string
             if (typeof formName !== 'string') {
                 console.error('Invalid formName:', formName);
                 isLoading.value = false;
@@ -793,7 +792,8 @@ export default {
             $("form[name='" + formName + "'] #editdiagnoid").val();
             var editid = $("form[name='" + formName + "'] #editdiagnoid").val();
             $("form[name='diagnosis_code_form'] #editdiagnoid").val(editid);
-            $("form[name='care_plan_form'] #editdiagnoid").val(editid); // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
+            $("form[name='care_plan_form'] #editdiagnoid").val(editid); 
+            // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
             // $("form[name='" + formName + "'] #disable_diagnosis_button").hide();
             let currentPatientId = props.patientId;
             var id = selectedDiagnosis.value;
@@ -811,7 +811,6 @@ export default {
                 }).then(response => {
                     clearGoals();
                     const carePlanData = response.data.care_plan_form.static; 
-                    console.log(carePlanData,"care plan data");
                     selectedcondition.value = carePlanData.condition;
                     selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
@@ -838,8 +837,6 @@ export default {
             }
 
         };
-
-
 
         /*    onMounted(async () => {
    
