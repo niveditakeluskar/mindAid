@@ -406,14 +406,14 @@ export default {
 
         const alertThresholdfunction = async () => {
             // Access the modal component through the ref
-            console.log("openMModel called");
+            // console.log("openMModel called");
             alertThresholdsRef.value.openModal();
             //   patComDetails();
         };
 
 
         const personalnotesfunction = async () => {
-            console.log("openMModelpersonal notes called");
+            // console.log("openMModelpersonal notes called");
             personalnotesRef.value.openModal();
             // patComDetails();
         };

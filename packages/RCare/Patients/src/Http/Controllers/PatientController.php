@@ -195,13 +195,13 @@ class PatientController extends Controller
         }
     }
 
-    // public function populateFinNumberData($id)
-    // {
-    //     $id = sanitizeVariable($id);
-    //     $data = DB::select("select fin_number from patients.patient where id = '" . $id . "'");
-    //     $result['fin_number_form'] = $data;
-    //     return $result;
-    // }
+    public function populateFinNumberData($id)
+    {
+        $id = sanitizeVariable($id);
+        $data = DB::select("select fin_number from patients.patient where id = '" . $id . "'");
+        $result['fin_number_form'] = $data;
+        return $result;
+    }
 
     public function getPatientRegistrationForm()
     {
