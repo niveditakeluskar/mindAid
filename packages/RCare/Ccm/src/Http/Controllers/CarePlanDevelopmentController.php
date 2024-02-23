@@ -4560,7 +4560,7 @@ class CarePlanDevelopmentController extends Controller
         $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
             from patients.patient_health_data
             where  patient_id =" . $patientId . "
-            and created_at::timestamp between '" . $dateS . "' and '" . $dateE . "' 
+            and health_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
             group by health_data,health_date order by updated_at desc";
         $data = DB::select($qry);
         return Datatables::of($data)

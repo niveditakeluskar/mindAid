@@ -16,7 +16,7 @@
                     <input type="hidden" name="module_id" :value="moduleId" />
                     <input type="hidden" name="component_id" :value="componentId" />
                     <input type="hidden" name="module_name" :value="module_name" />
-                    <input type="text" name="component_name" id="component_name" :value="component_name" />
+                    <input type="hidden" name="component_name" id="component_name" :value="component_name" />
                     <input type="hidden" name="stage_id" :value="stageId" />
                     <input type="hidden" name="step_id" :value="labsStepId" />
                     <input type="hidden" name="form_name" value="number_tracking_labs_form" />

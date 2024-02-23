@@ -435,6 +435,7 @@ export default {
 
         const editPatientDignosis = async (id) => {
             clearGoals();
+            fetchCode();
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
@@ -444,7 +445,7 @@ export default {
                 }
                 const data = await response.json();
                 const carePlanData = data.care_plan_form.static; 
-                console.log(carePlanData);
+              
                 if (carePlanData && carePlanData.goals) {
                     goals.value = JSON.parse(carePlanData.goals); 
                 }
