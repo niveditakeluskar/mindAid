@@ -8,12 +8,6 @@ export default defineConfig({
     laravel({
       input: [
         'resources/js/appInertia.js',
-        'resources/laravel/js/app.js',
-        // 'resources/laravel/js/bootstrap.js',
-        // 'resources/laravel/js/form.js',
-        // 'resources/laravel/js/utility.js',
-        // 'resources/laravel/js/carePlanDevelopment.js',
-        // 'resources/laravel/js/ccmcpdcommonJS.js',
       ],
       refresh: true,
     }),
@@ -27,7 +21,6 @@ export default defineConfig({
     }),
   ],
   optimizeDeps: {
-    include: ['vuex'], // Ensure Vuex is included in the optimized dependencies
   },
   resolve: {
     alias: {
@@ -39,8 +32,6 @@ export default defineConfig({
   build: {
     outDir: 'public/build', // Output directory for Vite-built assets
     assetsDir: 'assets', // Directory within outDir for assets
-    rollupOptions: {
-      input: '/resources/js/appInertia.js',
-    },
+    rollupOptions: {},
   },
 });
