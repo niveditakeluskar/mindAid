@@ -197,8 +197,10 @@ class CarePlanDevelopmentController extends Controller
         $billable              = sanitizeVariable($request->billable);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
-        DB::beginTransaction();
-        try {
+        dd($request);
+
+        // DB::beginTransaction();
+        // try {
             $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $labid)->get();
             $LabName = '';
             if (isset($name_lab[0]->description)) {
@@ -222,7 +224,7 @@ class CarePlanDevelopmentController extends Controller
                     PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete(); 
                 }
             } else {
                 $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)
@@ -235,12 +237,12 @@ class CarePlanDevelopmentController extends Controller
                 }
             }
             $record_time   = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
-            DB::commit();
+            // DB::commit();
             return response(['form_start_time' => $form_save_time]);
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
-        }
+        // } catch (\Exception $ex) {
+        //     DB::rollBack();
+        //     return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        // }
     }
 
     // created by radha 7dec2020

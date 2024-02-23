@@ -79,6 +79,7 @@
                                                                                             class="error">*</span>:</label>
                                                                                     <input type="hidden" name="condition"
                                                                                         v-model="selectedcondition">
+                                                                                        
                                                                                     <select id="diagnosis_condition"
                                                                                         class="custom-select show-tick"
                                                                                         name="diagnosis"
@@ -800,18 +801,6 @@ export default {
             var code = $("form[name='" + formName + "'] #diagnosis_code").val();
             getCodeData();
             getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
-            $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
-            $("form[name='" + formName + "'] #diagnosis_code").val("");
-            $("form[name='" + formName + "'] #append_symptoms").html("");
-            $("form[name='" + formName + "'] #append_goals").html("");
-            $("form[name='" + formName + "'] #append_tasks").html("");
-            $("form[name='" + formName + "'] #symptoms_0").val("");
-            $("form[name='" + formName + "'] #goals_0").val("");
-            $("form[name='" + formName + "'] #tasks_0").val("");
-            $("form[name='" + formName + "'] #support").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").text('');
-
             if (typeof id === "string" && id.trim().length === 0) {
                 isLoading.value = false;
                 alert("Please select Condition options");
@@ -821,16 +810,18 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
-                    const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
+                    const carePlanData = response.data.care_plan_form.static; 
+                    console.log(carePlanData,"care plan data");
+                    selectedcondition.value = carePlanData.condition;
                     selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
-                        goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                        goals.value = JSON.parse(carePlanData.goals); 
                     }
                     if (carePlanData && carePlanData.tasks) {
-                        tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                        tasks.value = JSON.parse(carePlanData.tasks); 
                     }
                     if (carePlanData && carePlanData.symptoms) {
-                        symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                        symptoms.value = JSON.parse(carePlanData.symptoms);
                     }
                     isLoading.value = false;
                 }).catch(error => {
