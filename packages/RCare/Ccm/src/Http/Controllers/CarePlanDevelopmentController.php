@@ -89,6 +89,8 @@ class CarePlanDevelopmentController extends Controller
         $year      = date("Y");
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);
         $dateE = Carbon::now()->endOfMonth();
+        $component_name = sanitizeVariable($request->route('component_name'));
+        // dd($component_name);
         $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
                       plr.reading,
                       ',' ) else STRING_AGG (
@@ -115,10 +117,16 @@ class CarePlanDevelopmentController extends Controller
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
-                return $btn;
+            ->addColumn('action', function ($row) use($component_name) {
+                if($component_name == 'monthly-monitoring'){
+                    $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                    $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                    return $btn;
+                }else{
+                    $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                    $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                    return $btn;
+                }
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -423,21 +431,26 @@ class CarePlanDevelopmentController extends Controller
     }
 
     public function getAllergies(Request $request)
-    {
+    { 
         $id          = sanitizeVariable($request->route('id'));
         $allergytype = sanitizeVariable($request->route('allergytype'));
         $data        = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($id, $allergytype);
-
+        $mm = $request->query('mm');
+        $editFunction = ($mm === 'monthly-monitoring' ? 'editAllergy' : 'carePlanDevelopment.editAllergy');
+        $deleteFunction = ($mm === 'monthly-monitoring' ? 'deleteAllergies' : 'carePlanDevelopment.deleteAllergies');
+       
         return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+        ->addIndexColumn()
+        ->addColumn('action', function ($row) use ($editFunction, $deleteFunction) {
+            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick="' . $editFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\', this)" data-original-title="Edit" title="Edit"><i class="editform i-Pen-4"></i></a>';
+            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick="' . $deleteFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\',\'' . $row->patient_id . '\', this)" data-original-title="Delete" title="Delete"><i class="i-Close" style="color: red;cursor: pointer;"></i></a>';
+            return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+
     }
+
 
     public function getAllergiesOther(Request $request)
     {
@@ -496,6 +509,10 @@ class CarePlanDevelopmentController extends Controller
         $id               = sanitizeVariable($Request->route('id'));
         $servicetype      = sanitizeVariable($Request->route('servicetype'));
         $lastMonthService = "";
+        $mm = $Request->query('mm');
+        $editSerFunction = ($mm === 'monthly-monitoring' ? 'editService' : 'carePlanDevelopment.editService');
+        $deleteSerFunction = ($mm === 'monthly-monitoring' ? 'deleteServices' : 'carePlanDevelopment.deleteServices');
+    
         $dataexist        = PatientHealthServices::where("patient_id", $id)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
             $lastMonthService = PatientHealthServices::where("patient_id", $id)->where('status', 1)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->with('users')->get();
@@ -504,9 +521,9 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($lastMonthService)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+            ->addColumn('action',  function ($row) use ($editSerFunction, $deleteSerFunction) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick="' . $editSerFunction . '(\'' . $row->id . '\')" data-original-title="Edit" class="editservice" title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn .= '<a href="javascript:void(0)" class="deleteServices" onclick="' . $deleteSerFunction . '(\'' . $row->id . '\',this)" data-toggle="tooltip" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -1273,9 +1290,9 @@ class CarePlanDevelopmentController extends Controller
             ->make(true);
     }
 
-    public function Medications_list($id)
+    public function Medications_list(Request $request)
     {
-        $id        = sanitizeVariable($id);
+        $id        = sanitizeVariable($request->route('id'));
         $str = sanitizeVariable(date('Y-m-d', strtotime(date('Y-m') . " -1 month")));
         $Get_year_month = explode("-", sanitizeVariable($str));
         $prev_year       = sanitizeVariable($Get_year_month[0]);
@@ -1284,6 +1301,8 @@ class CarePlanDevelopmentController extends Controller
         $current_year  = date('Y');
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $component_name = sanitizeVariable($request->route('component_name'));
+        // dd($component_name);
         $dataexist = PatientMedication::with('medication')->where("patient_id", $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
             $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
@@ -1294,7 +1313,7 @@ class CarePlanDevelopmentController extends Controller
                                             where pm.patient_id = '" . $id . "' 
                                             AND EXTRACT(Month from pm.created_at)= '" . $current_month . "'
                                             AND EXTRACT(YEAR from pm.created_at) = '" . $current_year . "' group by pm.med_id) 
-                                        order by pm1.updated_at desc");
+                                        order by pm1.updated_at desc"); 
         } else {
             $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1
@@ -1308,9 +1327,14 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+            ->addColumn('action', function ($row) use($component_name) {
+                if($component_name == 'monthly-monitoring'){
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
                 $btn = $btn . '<a href="javascript:void(0)" onclick=deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }else{
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=carePlanDevelopment.editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" onclick=carePlanDevelopment.deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }
                 return $btn; //editMedicationsPatient //deleteMedicationsPatient
             })
             ->rawColumns(['action'])

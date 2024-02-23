@@ -43,6 +43,7 @@ export default {
     const title = 'Monthly Monitor ';
     let landingtime = ref(null);
     onBeforeMount(() => {
+      document.title = 'Monthly Monitoring |  Renova Healthcare';
       landingtime.value = props.landingTime.landing_time;
     });
     return {
