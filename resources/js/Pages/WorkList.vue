@@ -308,7 +308,7 @@ export default {
           practiceId = null;
         }
         
-        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
+        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist');
        if (!response.ok) {
           throw new Error('Failed to fetch patients');
         }
@@ -373,12 +373,12 @@ export default {
 
     const patientReloadFn = async ()=> {
       getPatientList(
-          selectedPractice.value,
-          selectedPatients.value,
-          patientsmodules.value,
-          selectedOption.value,
-          timeValue.value,
-          activedeactivestatus.value
+        selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
+          timeValue.value === '' ? null : timeValue.value,
+          activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
     };
 
