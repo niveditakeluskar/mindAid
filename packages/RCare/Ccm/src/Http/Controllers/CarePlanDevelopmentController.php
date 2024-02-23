@@ -1297,7 +1297,9 @@ class CarePlanDevelopmentController extends Controller
         // dd($component_name);
         $dataexist = PatientMedication::with('medication')->where("patient_id", $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
-            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+            pm1.drug_reaction,pm1.pharmacogenetic_test,rm.description as name,concat(u.f_name,' ', u.l_name) as users,
+            to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
@@ -1307,7 +1309,9 @@ class CarePlanDevelopmentController extends Controller
                                             AND EXTRACT(YEAR from pm.created_at) = '" . $current_year . "' group by pm.med_id) 
                                         order by pm1.updated_at desc"); 
         } else {
-            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+            pm1.drug_reaction,pm1.pharmacogenetic_test,rm.description as name,concat(u.f_name,' ', u.l_name) as users,
+            to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
