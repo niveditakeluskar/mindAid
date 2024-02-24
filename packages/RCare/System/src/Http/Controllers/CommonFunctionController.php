@@ -1043,7 +1043,13 @@ class CommonFunctionController extends Controller
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
         $assigncm = UserPatients::where('patient_id', $uid)->where('status', 1)->get();
-        $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
+        $usnumber = '';
+        $usnumberNumber = '';
+        if(isset($assigncm[0]->user_id)){
+            $usnumberNumber = $usnumber[0]->number;
+            $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
+        }
+        
         if (isset($PatientDevices->vital_devices)) {
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
@@ -1074,7 +1080,7 @@ class CommonFunctionController extends Controller
         $replace_secondary = str_replace("[secondary_contact_number]", $patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]", $device, $replace_secondary);
         $replace_finals = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_finals);
+        $replace_usnumber = str_replace("[phone_number]", $usnumberNumber, $replace_finals);
         $replace_final = strip_tags($replace_usnumber);
 
         if ($patient[0]->consent_to_text == 1) {
