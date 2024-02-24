@@ -161,11 +161,11 @@
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
-                                            href="javascript:void(0)" id="add-patient-devices"
+                                        <!-- <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            href="javascript:void(0)" id="add-patient-devices" 
                                             @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
-                                            :componentId="componentId" :stageid="stageid" />
+                                            :componentId="componentId" :stageid="stageid" /> -->
 
 
                                         <div id="newenrolldate">

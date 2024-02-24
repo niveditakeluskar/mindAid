@@ -79,6 +79,7 @@
                                                                                             class="error">*</span>:</label>
                                                                                     <input type="hidden" name="condition"
                                                                                         v-model="selectedcondition">
+                                                                                        
                                                                                     <select id="diagnosis_condition"
                                                                                         class="custom-select show-tick"
                                                                                         name="diagnosis"
@@ -434,18 +435,19 @@ export default {
 
         const editPatientDignosis = async (id) => {
             clearGoals();
+            fetchCode();
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
-                //diagnosisOptions
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                const carePlanData = data.care_plan_form.static; // Adjust this based on your actual data structure
+                const carePlanData = data.care_plan_form.static; 
+              
                 if (carePlanData && carePlanData.goals) {
-                    goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                    goals.value = JSON.parse(carePlanData.goals); 
                 }
                 selectedDiagnosisId.value = carePlanData.diagnosis;
                 selectedDiagnosis.value = carePlanData.diagnosis;
@@ -453,10 +455,10 @@ export default {
                 selectedcondition.value = carePlanData.condition;
                 comments.value = carePlanData.comments;
                 if (carePlanData && carePlanData.tasks) {
-                    tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                    tasks.value = JSON.parse(carePlanData.tasks); 
                 }
                 if (carePlanData && carePlanData.symptoms) {
-                    symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                    symptoms.value = JSON.parse(carePlanData.symptoms); 
                 }
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
@@ -783,7 +785,6 @@ export default {
 
         const changeCondition = (formName) => {
             isLoading.value = true;
-            // Ensure formName is a string
             if (typeof formName !== 'string') {
                 console.error('Invalid formName:', formName);
                 isLoading.value = false;
@@ -792,7 +793,8 @@ export default {
             $("form[name='" + formName + "'] #editdiagnoid").val();
             var editid = $("form[name='" + formName + "'] #editdiagnoid").val();
             $("form[name='diagnosis_code_form'] #editdiagnoid").val(editid);
-            $("form[name='care_plan_form'] #editdiagnoid").val(editid); // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
+            $("form[name='care_plan_form'] #editdiagnoid").val(editid); 
+            // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
             // $("form[name='" + formName + "'] #disable_diagnosis_button").hide();
             let currentPatientId = props.patientId;
             var id = selectedDiagnosis.value;
@@ -800,18 +802,6 @@ export default {
             var code = $("form[name='" + formName + "'] #diagnosis_code").val();
             getCodeData();
             getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
-            $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
-            $("form[name='" + formName + "'] #diagnosis_code").val("");
-            $("form[name='" + formName + "'] #append_symptoms").html("");
-            $("form[name='" + formName + "'] #append_goals").html("");
-            $("form[name='" + formName + "'] #append_tasks").html("");
-            $("form[name='" + formName + "'] #symptoms_0").val("");
-            $("form[name='" + formName + "'] #goals_0").val("");
-            $("form[name='" + formName + "'] #tasks_0").val("");
-            $("form[name='" + formName + "'] #support").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").text('');
-
             if (typeof id === "string" && id.trim().length === 0) {
                 isLoading.value = false;
                 alert("Please select Condition options");
@@ -821,16 +811,17 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
-                    const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
+                    const carePlanData = response.data.care_plan_form.static; 
+                    selectedcondition.value = carePlanData.condition;
                     selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
-                        goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                        goals.value = JSON.parse(carePlanData.goals); 
                     }
                     if (carePlanData && carePlanData.tasks) {
-                        tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                        tasks.value = JSON.parse(carePlanData.tasks); 
                     }
                     if (carePlanData && carePlanData.symptoms) {
-                        symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                        symptoms.value = JSON.parse(carePlanData.symptoms);
                     }
                     isLoading.value = false;
                 }).catch(error => {
@@ -847,8 +838,6 @@ export default {
             }
 
         };
-
-
 
         /*    onMounted(async () => {
    

@@ -65,7 +65,7 @@ export default {
         $("#status_blockcontent").html(patientStatus.data);
         const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleId}/careplanstatus`);
         $("#careplan_blockcontent").html(carePlanStatus.data);
-        let currentDate = new Date()
+        let currentDate = new Date();
         let year = currentDate.getFullYear();
         let month = currentDate.getMonth() + 1;
         const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleId}/${month}/${year}/previousstatus`);
@@ -91,7 +91,6 @@ export default {
         console.error(error);
       }
 
-
       var $body = $("body");
       $('#dark-checkbox').change(function () {
         if ($(this).prop('checked')) {
@@ -109,7 +108,6 @@ export default {
           }
         });
       });
-
 
       $(document).ready(function () {
         localStorage.setItem("idleTime", 0);
@@ -140,8 +138,8 @@ export default {
           // idleTime = 0;
           localStorage.setItem("idleTime", 0);
         });
-
       });
+
       var sessionIdleTime = 0; // Initialize sessionIdleTime
       var checkTimeInterval = function timerIncrement() {
         // idleTime = idleTime + 1; //Calls every 1 seconds
