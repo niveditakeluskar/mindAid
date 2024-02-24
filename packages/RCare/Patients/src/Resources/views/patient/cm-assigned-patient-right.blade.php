@@ -107,7 +107,7 @@ th     { background:#eee; }
     </div> 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js" integrity="sha512-hUhvpC5f8cgc04OZb55j0KNGh4eh7dLxd/dPSJ5VyzqDWxsayYbojWyl5Tkcgrmb/RVKCRJI1jNlRbVP4WWC4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.js" integrity="sha512-3CuraBvy05nIgcoXjVN33mACRyI89ydVHg7y/HMN9wcTVbHeur0SeBzweSd/rxySapO7Tmfu68+JlKkLTnDFNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     $( document ).ready(function() { 
         
@@ -117,8 +117,6 @@ th     { background:#eee; }
                 var  practiceId= null;
                 // util.getCmAssignPatientList(parseInt(practiceId), $("#patient1"));
             }else if(practiceId!=''){
-                var moment = require("moment");
-require("moment-duration-format");
                 getCmAssignPatientList(parseInt(practiceId),$("#patient1")); 
             }else { 
                 // var  practiceId= null;
