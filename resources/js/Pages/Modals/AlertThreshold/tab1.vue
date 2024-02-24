@@ -16,99 +16,99 @@
                 <input type="hidden" id="timer_runing_status" value="0"> 
                 <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="alertThresholdTime">
                 <!-- systolic -->  
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="systolichigh" id="systolichigh" :value="patient_systolichigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="systoliclow" id="systoliclow" :value="patient_systoliclow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- diastolic -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Diastolic High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="diastolichigh" id="diastolichigh" :value="patient_diastolichigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Diastolic Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="diastoliclow" id="diastoliclow" :value="patient_diastoliclow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Heart -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Heart Rate High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="bpmhigh" id="bpmhigh" :value="patient_bpmhigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Heart Rate Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="bpmlow" id="bpmlow" :value="patient_bpmlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Oxygen -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Oxygen Saturatio High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="oxsathigh" id="oxsathigh" :value="patient_oxsathigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Oxygen Saturatio Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="oxsatlow" id="oxsatlow" :value="patient_oxsatlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Glucose -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Glucose High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="glucosehigh" id="glucosehigh" :value="patient_glucosehigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Glucose Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="glucoselow" id="glucoselow" :value="patient_glucoselow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Temperature -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Temperature High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="temperaturehigh" id="temperaturehigh" :value="patient_temperaturehigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Temperature Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="temperaturelow" id="temperaturelow" :value="patient_temperaturelow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Weight -->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Weight High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="weighthigh" id="weighthigh" :value="patient_weighthigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Weight Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="weightlow" id="weightlow" :value="patient_weightlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Spirometer  FEV-->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-FEV High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="spirometerfevhigh" id="spirometerfevhigh" :value="patient_spirometerfevhigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-FEV Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="spirometerfevlow" id="spirometerfevlow" :value="patient_spirometerfevlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Spirometer  PEF-->
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-PEF High <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="spirometerpefhigh" id="spirometerpefhigh" :value="patient_spirometerpefhigh">
                 </div>
-                <div class="col-md-3 form-group mb-3 ">
+                <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-PEF Low <!-- <span style="color:red">*</span> --></label>
                     <input type="text" class="form-control" name="spirometerpeflow" id="spirometerpeflow" :value="patient_spirometerpeflow">
                 </div>
@@ -207,7 +207,7 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            this.closeModal();
+            // this.closeModal();
         }
     
         onMounted(async () => {
