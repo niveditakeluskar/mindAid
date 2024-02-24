@@ -4,6 +4,8 @@ namespace RCare\System\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use RCare\TaskManagement\Models\UserPatients;
+use RCare\Org\OrgPackages\Users\src\Models\Users;
 use RCare\Patients\Models\PatientTimeRecords;
 use RCare\Patients\Models\PatientTimeButtonLogs;
 use RCare\System\Http\Requests\ManuallyAdjustTimeRequest;
@@ -60,19 +62,19 @@ class CommonFunctionController extends Controller
         $timeArray                      = [];
 
         $billableTime                   = $this->getCcmMonthlyNetTime($patient_id, $module_id);
-	    $checkBillableTime              = (isset($billableTime) && ($billableTime!='0')) ? $billableTime : '00:00:00';
+        $checkBillableTime              = (isset($billableTime) && ($billableTime != '0')) ? $billableTime : '00:00:00';
 
-	    $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
-	    $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime!='0')) ? $nonBillableTime : '00:00:00';
-	    
-        $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
-        $returnTotalTime                = (isset($totalTime) && ($totalTime!='0')) ? $totalTime : '00:00:00';
-    	$timeArray['total_time']        = $returnTotalTime;
+        $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
+        $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
 
-        if($billable == 1){
+        $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+        $returnTotalTime                = (isset($totalTime) && ($totalTime != '0')) ? $totalTime : '00:00:00';
+        $timeArray['total_time']        = $returnTotalTime;
+
+        if ($billable == 1) {
             $timeArray['billable_time']     = $checkBillableTime;
             return $timeArray;
-        }else{
+        } else {
             $timeArray['non_billable_time'] = $checkNonBillableTime;
             return $timeArray;
         }
@@ -327,11 +329,11 @@ class CommonFunctionController extends Controller
 
         //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
         $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time, 1));
-		
-		 //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
-        
+
+        //$form_net_time = gmdate('H:i:s', Carbon::parse($form_save_time)->diffInSeconds(Carbon::parse($form_start_time)));
+
         $net_time   = sanitizeVariable(getNetTime($start_time, $end_time, 0));
-		
+
         $timer_data = array(
             'uid'          => $patient_id,
             'patient_id'   => $patient_id,
@@ -356,7 +358,7 @@ class CommonFunctionController extends Controller
             'comment' => $comments
         );
         //dd($timer_data);  
-        $insert_query = PatientTimeRecords::create($timer_data);  
+        $insert_query = PatientTimeRecords::create($timer_data);
         $assignpatient = assingSessionUser($patient_id);
     }
 
@@ -384,9 +386,9 @@ class CommonFunctionController extends Controller
             $form_net_time = '00:00:00';
             $pause_start_time = sanitizeVariable($request->pause_start_time);
             $pause_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        }else{
-            $splitStartTime = explode(" ",$form_start_time);
-            $splitEndTime = explode(" ",$form_save_time);
+        } else {
+            $splitStartTime = explode(" ", $form_start_time);
+            $splitEndTime = explode(" ", $form_save_time);
             //$form_net_time = sanitizeVariable(getNetTime($splitStartTime[1], $splitEndTime[1]));
             $form_net_time = sanitizeVariable(getNetTime($form_start_time, $form_save_time, 1));
         }
@@ -399,7 +401,7 @@ class CommonFunctionController extends Controller
         }
 
         $net_time   = getNetTime($start_time, $end_time, 0);
-        
+
         $timer_data = array(
             'uid'          => $uid,
             'patient_id'   => $patient_id,
@@ -619,35 +621,37 @@ class CommonFunctionController extends Controller
     //Check if this month’s data exists for PatientVitalsData; If not, copy from last month
     public static function checkPatientVitalsDataExistForCurrentMonthOrCopyFromLastMonth($patient_id)
     {
+
         $check_exist_patient_vital  = PatientVitalsData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if (isset($check_exist_patient_vital) && ($check_exist_patient_vital == false || $check_exist_patient_vital == null || $check_exist_patient_vital == "")) {
-            // if($check_exist_patient_vital){
-            // $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
-            // $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
-            // $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
-            /*$user_id = session()->get('userid');
+            //if($check_exist_patient_vital){
+            $getMaxDateForPreviousPatientVitalsDataData = PatientVitalsData::where('patient_id', $patient_id)->max('created_at');
+            $month = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->month;
+            $year = Carbon::parse($getMaxDateForPreviousPatientVitalsDataData)->year;
+            $user_id = session()->get('userid');
             $current_timestamp = Carbon::now();
             $lastMonthPatientVitalsDataQuery = 'INSERT INTO patients.patient_vitals ( "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", "created_by", "created_at", "updated_at" )
-            ( SELECT \''.$current_timestamp.'\', "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \''.$user_id.'\', \''.$current_timestamp.'\', \''.$current_timestamp.'\' FROM patients.patient_vitals WHERE "patient_id" = '.$patient_id.' order by id desc limit 1 )';
-            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);*/
-            // $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->get()->last();
-            // if($lastMonthPatientVitalsData) {
-            //     $insert_vital   = array(
-            //         'patient_id'    => $patient_id,
-            //         'uid'           => $patient_id,
-            //         'rec_date'      => Carbon::now(),
-            //         'height'        => $lastMonthPatientVitalsData["height"],
-            //         'weight'        => $lastMonthPatientVitalsData["weight"],
-            //         'bmi'           => $lastMonthPatientVitalsData["bmi"],
-            //         'bp'            => $lastMonthPatientVitalsData["bp"],
-            //         'diastolic'     => $lastMonthPatientVitalsData["diastolic"],
-            //         'o2'            => $lastMonthPatientVitalsData["o2"],
-            //         'pulse_rate'    => $lastMonthPatientVitalsData["pulse_rate"],
-            //         'other_vitals'  => $lastMonthPatientVitalsData["other_vitals"],
-            //         'created_by'    => session()->get('userid')
-            //     );
-            //     PatientVitalsData::create($insert_vital);
-            // }
+            ( SELECT "rec_date", "height", "weight", "bmi", "bp", "diastolic", "o2", "pulse_rate", "other_vitals", "patient_id", "uid", \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' FROM patients.patient_vitals WHERE "patient_id" = ' . $patient_id . ' order by id desc limit 1 )';
+            $executeLastMonthPatientVitalsDataQuery = queryEscape($lastMonthPatientVitalsDataQuery);
+            /* $lastMonthPatientVitalsData= PatientVitalsData::where('patient_id', $patient_id)->latest()->first();
+             //dd($lastMonthPatientVitalsData);
+             if($lastMonthPatientVitalsData) {
+                 $insert_vital   = array(
+                     'patient_id'    => $patient_id,
+                     'uid'           => $patient_id,
+                     'rec_date'      => $lastMonthPatientVitalsData["rec_date"],//Carbon::now(),
+                     'height'        => $lastMonthPatientVitalsData["height"],
+                     'weight'        => $lastMonthPatientVitalsData["weight"],
+                     'bmi'           => $lastMonthPatientVitalsData["bmi"],
+                     'bp'            => $lastMonthPatientVitalsData["bp"],
+                     'diastolic'     => $lastMonthPatientVitalsData["diastolic"],
+                     'o2'            => $lastMonthPatientVitalsData["o2"],
+                     'pulse_rate'    => $lastMonthPatientVitalsData["pulse_rate"],
+                     'other_vitals'  => $lastMonthPatientVitalsData["other_vitals"],
+                     'created_by'    => session()->get('userid')
+                 );
+                 PatientVitalsData::create($insert_vital);
+             }*/
         }
     }
 
@@ -869,7 +873,7 @@ class CommonFunctionController extends Controller
     //     }
     // }
 
-    public function getLandingTime()
+    public static function getLandingTime()
     {
         $timeArray['landing_time'] = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         return $timeArray;
@@ -881,14 +885,14 @@ class CommonFunctionController extends Controller
         $module_id                      = sanitizeVariable($moduleId);
         $timeArray                      = [];
         $nowTime = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        if($patient_id != '0'){
-            
-            if($patientID == 'null'){
+        if ($patient_id != '0') {
+
+            if ($patientID == 'null') {
                 $totalTime = '00:00:00';
-                if($startTime != 'null'){
+                if ($startTime != 'null') {
                     //$StartTime = explode(" ",$startTime);
                     $totalTime = getNetTime($startTime, $nowTime, 1);
-                   // $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
+                    // $totalTime = date("H:i:s",strtotime($nowTime)-strtotime($startTime));
 
                 }
             } else {
@@ -899,13 +903,13 @@ class CommonFunctionController extends Controller
                 $nonBillableTime                = $this->getNonBillabelTime($patient_id, $module_id);
                 $checkNonBillableTime           = (isset($nonBillableTime) && ($nonBillableTime != '0')) ? $nonBillableTime : '00:00:00';
                 $timeArray['non_billable_time'] = $checkNonBillableTime;
-    
-                if($startTime == 'null'){
-                    $totalTime = date("H:i:s",strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
-                }else{
+
+                if ($startTime == 'null') {
+                    $totalTime = date("H:i:s", strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
+                } else {
                     //$StartTime = explode(" ",$startTime);
                     $dff = getNetTime($startTime, $nowTime, 1);
-                    $totalTime = date("H:i:s",strtotime($dff)+strtotime($checkBillableTime)+strtotime($checkNonBillableTime));
+                    $totalTime = date("H:i:s", strtotime($dff) + strtotime($checkBillableTime) + strtotime($checkNonBillableTime));
                 }
             }
 
@@ -943,7 +947,7 @@ class CommonFunctionController extends Controller
             $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
         from task_management.user_patients up where user_id = $caremanager and up.status = 1  and read_status = 1) or 
         patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
-            $data  = DB::select(DB::raw($query));
+            $data  = DB::select($query);
             $count = $data[0]->count;
         } elseif ($roles[0]->role_name == 'Team Lead') {
             $query = "select count(distinct patient_id) from ccm.message_log ml where patient_id in (select distinct patient_id 
@@ -951,7 +955,7 @@ class CommonFunctionController extends Controller
         patient_id in (select distinct  b.patient_id from ren_core.user_practices a join patients.patient_providers b
         on a.practice_id = b.practice_id join ccm.message_log c on b.patient_id = c.patient_id  where a.user_id = $caremanager and b.is_active = 1 and read_status = 1) or
         patient_id  in (select distinct patient_id from ccm.message_log ml where created_by= $caremanager  and read_status = 1) and read_status = 1";
-            $data  = DB::select(DB::raw($query));
+            $data  = DB::select($query);
             $count = $data[0]->count;
         } else {
             $count = MessageLog::where('read_status', 1)->distinct('patient_id')->count('patient_id');
@@ -1038,6 +1042,14 @@ class CommonFunctionController extends Controller
         $patient = Patients::where('id', $uid)->get();
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
+        $assigncm = UserPatients::where('patient_id', $uid)->where('status', 1)->get();
+        $usnumber = '';
+        $usnumberNumber = '';
+        if(isset($assigncm[0]->user_id)){
+            $usnumberNumber = $usnumber[0]->number;
+            $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
+        }
+        
         if (isset($PatientDevices->vital_devices)) {
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
@@ -1067,8 +1079,9 @@ class CommonFunctionController extends Controller
         $data_emr = str_replace("[EMR]", $patient_providers['practice_emr'], $replace_primary);
         $replace_secondary = str_replace("[secondary_contact_number]", $patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]", $device, $replace_secondary);
-        $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $replace_final = strip_tags($replace_final);
+        $replace_finals = str_replace("[devicecode]", $devicecode, $replace_devicelist);
+        $replace_usnumber = str_replace("[phone_number]", $usnumberNumber, $replace_finals);
+        $replace_final = strip_tags($replace_usnumber);
 
         if ($patient[0]->consent_to_text == 1) {
             if ($patient[0]->primary_cell_phone == 1) {

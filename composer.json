@@ -33,6 +33,7 @@
         "nesbot/carbon": "^2.42",
         "php-ds/php-ds": "^1.3",
         "phpoffice/phpword": "^0.18.1",
+        "predis/predis": "^2.2",
         "spatie/pdf-to-text": "^1.4",
         "twilio/sdk": "^6.15",
         "yajra/laravel-datatables-oracle": "^10.8.0"

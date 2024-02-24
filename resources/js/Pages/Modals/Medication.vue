@@ -29,20 +29,23 @@
                                                         <strong> Medication data saved successfully! </strong><span id="text"></span>
                                                     </div> 
                                                     <div class="form-row col-md-12">
+                                                        <input type="hidden" name="id" id="medication_id" v-model="medication_id"/>
                                                         <input type="hidden" name="uid" :value="patientId"/>
                                                         <input type="hidden" name="patient_id" :value="patientId"/>
                                                         <input type="hidden" name="start_time" value="00:00:00"> 
                                                         <input type="hidden" name="end_time" value="00:00:00">
                                                         <input type="hidden" name="module_id" :value="moduleId"/>
                                                         <input type="hidden" name="component_id" :value="componentId"/>
-                                                        <input type="hidden" name="stage_id" value="11"/><!-- :value="medicationStageId"/> -->
+                                                        <input type="hidden" name="module_name" :value="module_name" />
+                                                        <input type="hidden" name="component_name" id="component_name" :value="component_name" />
+                                                        <input type="hidden" name="stage_id" :value="medicationStageId"/>
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
                                                         <input type="hidden" name="billable" value="1">
                                                         <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime">
                                                         <div class="col-md-6 form-group mb-3 med_id">
                                                             <label for="medication_med_id">Select Medication<span class='error'>*</span></label> 
-                                                            <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication">
+                                                            <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication" @change="onMedicationChanged()">
                                                                 <option value="">Select Medication</option>
                                                                 <option v-for="medication in medications" :key="medication.id" :value="medication.id">
                                                                     {{ medication.description }}
@@ -52,62 +55,62 @@
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3" style="display:none" id="med_name"> 
                                                             <label for="description">Medication Name<span class='error'>*</span></label>
-                                                            <input type="text" name="med_description" id="description" class="form-control" placeholder="Enter Medication Description Name" />
+                                                            <input type="text" name="med_description" id="description" class="form-control" placeholder="Enter Medication Description Name" v-model="med_description" />
                                                             <!-- <div class="invalid-feedback" v-if="formErrors.med_description" style="display: block;">{{ formErrors.med_description[0] }}</div> -->
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3 description">
                                                             <label for="medication_description">Description</label>
-                                                            <input type="text" name="description" id="medication_description" class="form-control" />
+                                                            <input type="text" name="description" id="medication_description" class="form-control" v-model="description" />
                                                             <!-- <div class="invalid-feedback" v-if="formErrors.description" style="display: block;">{{ formErrors.description[0] }}</div> -->
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3"> 
                                                             <label for="medication_purpose">Purpose<span class='error'>*</span></label>
-                                                            <input type="text" name="purpose" id="medication_purpose" class="form-control" />
+                                                            <input type="text" name="purpose" id="medication_purpose" class="form-control" v-model="purpose" />
                                                             <div class="invalid-feedback" v-if="formErrors.purpose" style="display: block;">{{ formErrors.purpose[0] }}</div>
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3">
                                                             <label for="medication_strength">Strength<span class='error'>*</span></label>
-                                                            <input type="text" name="strength" id="medication_strength" class="form-control" />
+                                                            <input type="text" name="strength" id="medication_strength" class="form-control" v-model="strength" />
                                                             <div class="invalid-feedback" v-if="formErrors.strength" style="display: block;">{{ formErrors.strength[0] }}</div>
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3">
                                                             <label for="medication_dosage">Dosage<span class='error'>*</span></label>
-                                                            <input type="text" name="dosage" id="medication_dosage" class="form-control" />
+                                                            <input type="text" name="dosage" id="medication_dosage" class="form-control" v-model="dosage" />
                                                             <div class="invalid-feedback" v-if="formErrors.dosage" style="display: block;">{{ formErrors.dosage[0] }}</div>
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3">
                                                             <label for="medication_route">Route<span class='error'>*</span></label>
-                                                            <input type="text" name="route" id="medication_route" class="form-control" />
+                                                            <input type="text" name="route" id="medication_route" class="form-control" v-model="route" />
                                                             <div class="invalid-feedback" v-if="formErrors.route" style="display: block;">{{ formErrors.route[0] }}</div>
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3">
                                                             <label for="medication_frequency">Frequency<span class='error'>*</span></label>
-                                                            <input type="text" name="frequency" id="medication_frequency" class="form-control" />
+                                                            <input type="text" name="frequency" id="medication_frequency" class="form-control" v-model="frequency" />
                                                             <div class="invalid-feedback" v-if="formErrors.frequency" style="display: block;">{{ formErrors.frequency[0] }}</div>
                                                         </div>
                                                         <div class="col-md-4 form-group mb-3">
                                                             <label for="duration">Duration<span class='error'>*</span></label>
-                                                            <input type="text" name="duration" id="duration" class="form-control" />
+                                                            <input type="text" name="duration" id="duration" class="form-control" v-model="duration" />
                                                             <div class="invalid-feedback" v-if="formErrors.duration" style="display: block;">{{ formErrors.duration[0] }}</div>
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="pharmacy_name">Pharmacy Name</label>
-                                                            <input type="text" name="pharmacy_name" id="pharmacy_name" class="form-control" />
+                                                            <input type="text" name="pharmacy_name" id="pharmacy_name" class="form-control" v-model="pharmacy_name" />
                                                             <!-- <div class="invalid-feedback" v-if="formErrors.pharmacy_name" style="display: block;">{{ formErrors.pharmacy_name[0] }}</div> -->
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="pharmacy_phone_no">Pharmacy Phone Number</label>
-                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" />
+                                                            <input type="text" name="pharmacy_phone_no" id="pharmacy_phone_no" class="form-control" v-model="pharmacy_phone_no" />
                                                             <div class="invalid-feedback" v-if="formErrors.pharmacy_phone_no" style="display: block;">{{ formErrors.pharmacy_phone_no[0] }}</div>
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="medication_drug_reaction">Adverse Drug Reactions</label>
-                                                            <input type="text" name="drug_reaction" id="medication_drug_reaction" class="form-control" />
+                                                            <input type="text" name="drug_reaction" id="medication_drug_reaction" class="form-control" v-model="drug_reaction" />
                                                             <!-- <div class="invalid-feedback" v-if="formErrors.drug_reaction" style="display: block;">{{ formErrors.drug_reaction[0] }}</div> -->
                                                         </div>
                                                         <div class="col-md-6 form-group mb-3">
                                                             <label for="medication_pharmacogenetic_test">Pharmacogenetics Test</label>
-                                                            <input type="text" name="pharmacogenetic_test" id="medication_pharmacogenetic_test" class="form-control" />
+                                                            <input type="text" name="pharmacogenetic_test" id="medication_pharmacogenetic_test" class="form-control" v-model="pharmacogenetic_test" />
                                                             <!-- <div class="invalid-feedback" v-if="formErrors.pharmacogenetic_test" style="display: block;">{{ formErrors.pharmacogenetic_test[0] }}</div> -->
                                                         </div>
                                                     </div>
@@ -137,21 +140,7 @@
                 <div class="separator-breadcrumb border-top"></div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="table-responsive">
-                            <ag-grid-vue
-                                style="width: 100%; height: 100%;"
-                                id="medication-list"
-                                class="ag-theme-alpine"
-                                :columnDefs="columnDefs.value"
-                                :rowData="rowData.value"
-                                :defaultColDef="defaultColDef"
-                                :gridOptions="gridOptions"
-                                :loadingCellRenderer="loadingCellRenderer"
-                                            :loadingCellRendererParams="loadingCellRendererParams"
-                                            :rowModelType="rowModelType"
-                                            :cacheBlockSize="cacheBlockSize"
-                                            :maxBlocksInCache="maxBlocksInCache"></ag-grid-vue>
-                        </div>
+                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs"/>
                     </div>
                 </div>
             </div>
@@ -168,77 +157,45 @@ import {
     ref,
     onBeforeMount,
     onMounted,
-    AgGridVue,
+    AgGridTable,
     // Add other common imports if needed
 } from '../commonImports';
-import LayoutComponent from '../LayoutComponent.vue'; // Import your layout component
 import axios from 'axios';
+import Inputmask from 'inputmask';
+
 export default {
 	props: {
 		patientId: Number,
 		moduleId: Number,
         componentId: Number,
 	},
-    data() {
-        return {
-            isOpen: false,
-            formErrors: {},
-            showAlert: false,
-        };
-    },
     components: {
-        LayoutComponent,
-        AgGridVue,
-    },
-    methods: {
-        openModal() {
-            this.isOpen = true;
-        },
-        closeModal() {
-            this.isOpen = false;
-        },
-        async submitMedicationForm() {
-            let myForm = document.getElementById('medications_form');
-            let formData = new FormData(myForm);
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
-            try {
-                this.formErrors = {};
-                const response = await axios.post('/ccm/care-plan-development-medications', formData);
-                if (response && response.status == 200) {
-                    this.showAlert = true;
-                    updateTimer(this.patientId, '1', this.moduleId);
-                    $(".form_start_time").val(response.data.form_start_time);
-                    this.fetchPatientMedicationList();
-                    document.getElementById("medications_form").reset();
-                    let select_box = document.getElementById("medication_med_id");
-                    select_box.selectedIndex = -1;
-                    setTimeout(() => {
-                        this.showAlert = false;
-                        this.medicationTime = document.getElementById('page_landing_times').value;
-                    }, 3000);
-                }
-            } catch (error) {
-                if (error.response && error.response.status === 422) {
-                    this.formErrors = error.response.data.errors;
-                } else {
-                    console.error('Error submitting form:', error);
-                }
-            }
-            // this.closeModal();
-        }
+        AgGridTable,
     },
 	setup(props) {
-        const rowData = reactive({ value: [] }); // Initialize rowData as an empty array
+        const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
-        const loadingCellRenderer = ref(null);
-        const loadingCellRendererParams = ref(null);
-        const rowModelType = ref(null);
-        const cacheBlockSize = ref(null);
+        let isOpen = ref(false);
+        const module_name = ref('');
+        const component_name = ref('');
+        let formErrors = ref([]);
+        let showAlert = ref(false);
         let medications = ref([]);
         let selectedMedication = ref('');
-        const maxBlocksInCache = ref(null);
-        let columnDefs = reactive({
-            value: [
+        let med_description = ref('');
+        let description = ref('');
+        let purpose = ref('');
+        let strength = ref('');
+        let dosage = ref('');
+        let route = ref('');
+        let frequency = ref('');
+        let duration = ref('');
+        let pharmacy_name = ref('');
+        let pharmacy_phone_no = ref('');
+        let drug_reaction = ref('');
+        let pharmacogenetic_test = ref('');
+        let medication_id = ref('');
+        let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
                     valueGetter: 'node.rowIndex + 1',
@@ -256,23 +213,16 @@ export default {
                 { headerName: 'Created By', field: 'users'},
                 { headerName: 'Last Modified On', field: 'updated_at' },
                 { headerName: 'Reviewed Data', field: 'task_completed_at' },
-                { headerName: 'Action', field: 'action' },
-            ]
-        });
-        const defaultColDef = ref({
-            sortable: true,
-            filter: true,
-            pagination: true,
-            minWidth: 100,
-            flex: 1,
-            editable: false,
-        });
-        const gridOptions = reactive({
-            // other properties...
-            pagination: true,
-            paginationPageSize: 20, // Set the number of rows per page
-            domLayout: 'autoHeight', // Adjust the layout as needed
-        });
+                { 
+                    headerName: 'Action',
+                    field: 'action',
+                    cellRenderer: function (params) {
+                        const row = params.data;
+                        return row && row.action ? row.action : '';
+                    },
+                },
+            ]);
+       
         let medicationTime = ref(null);
         let medicationStageId = ref(0);
         let stepID = ref(0);
@@ -281,15 +231,16 @@ export default {
             try {
                 loading.value = true;
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/care-plan-development-medications-medicationslist/${props.patientId}`);
+                const component_name = document.getElementById('component_name').value; 
+                const response = await fetch(`/ccm/care-plan-development-medications-medicationslist/${props.patientId}/${component_name}`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch followup task list');
+                    throw new Error('Failed to fetch patient medication list');
                 }
                 loading.value = false;
                 const data = await response.json();
-                rowData.value = data.data;
+                passRowData.value = data.data;
             } catch (error) {
-                console.error('Error fetching followup task list:', error);
+                console.error('Error fetching patient medication list:', error);
                 loading.value = false;
             }
         };
@@ -308,46 +259,192 @@ export default {
                 loading.value = false;
             }
         };
+
+        let submitMedicationForm = async () => {
+            let myForm = document.getElementById('medications_form');
+            let formData = new FormData(myForm);
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+            try {
+                formErrors.value = {};
+                const response = await axios.post('/ccm/care-plan-development-medications', formData);
+                if (response && response.status == 200) {
+                    showAlert.value = true;
+                    updateTimer(props.patientId, '1', props.moduleId);
+                    $(".form_start_time").val(response.data.form_start_time);
+                    await fetchPatientMedicationList();
+                    // document.getElementById("medications_form").reset();
+                    selectedMedication.value = null;
+                    description.value = null;
+                    purpose.value = null;
+                    strength.value = null;
+                    dosage.value = null;
+                    route.value = null;
+                    frequency.value = null;
+                    duration.value = null;
+                    pharmacy_name.value = null;
+                    pharmacy_phone_no.value = null;
+                    drug_reaction.value = null;
+                    pharmacogenetic_test.value = null;
+                    medication_id.value = null;
+                    setTimeout(() => {
+                        showAlert.value = false;
+                        medicationTime.value = document.getElementById('page_landing_times').value;
+                    }, 3000);
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 422) {
+                    formErrors.value = error.response.data.errors;
+                } else {
+                    console.error('Error submitting form:', error);
+                }
+            }
+        }
+        
         let getStageID = async () => {
             try {
                 let medicationSageName = 'Patient_Data';
                 let response = await axios.get(`/get_stage_id/${props.moduleId}/${props.componentId}/${medicationSageName}`);
-                medicationStageId = response.data.stageID;
-                console.log("stageIdstageId", medicationStageId);
-                getStepID(medicationStageId);
+                medicationStageId.value = response.data.stageID;
+                getStepID(medicationStageId.value);
             } catch (error) {
                 throw new Error('Failed to fetch Patient Data stageID');
             }
+        };
+
+        let deleteMedications = async (id, obj) => {
+            if (window.confirm("Are you sure you want to delete this Medication?")) {
+                const formData = {
+                    id: id,
+                    uid: props.patientId,
+                    patient_id: props.patientId,
+                    module_id: props.moduleId,
+                    component_id: props.componentId,
+                    stage_id: medicationStageId.value,
+                    step_id: stepID.value,
+                    form_name: 'medications_form',
+                    billable: 1,
+                    start_time: "00:00:00",
+                    end_time: "00:00:00",
+                    form_start_time: document.getElementById('page_landing_times').value,
+                };
+                axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+                try {
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                    const response = await axios.post(`/ccm/delete-medications_patient-by-id`, formData);
+                    if (response && response.status == 200) {
+                        // showMedicalSuppliesAlert.value = true;
+                        updateTimer(props.patientId, '1', props.moduleId);
+                        $(".form_start_time").val(response.data.form_start_time);
+                        await fetchPatientMedicationList();
+                        setTimeout(() => {
+                            // showMedicalSuppliesAlert.value = false;
+                            medicationTime.value = document.getElementById('page_landing_times').value;
+                        }, 3000);
+                    }
+                } catch (error) {
+                    console.error('Error deletting record:', error);
+                }
+            }
+        }
+
+        const exposeDeleteMedication = () => {
+            window.deleteMedications = deleteMedications;
+        };
+
+        let editMedications = async (id) => {
+            try {
+                const medicationToEdit = passRowData.value.find(medication => medication.id == id);
+                if (medicationToEdit) {
+                    const form = document.getElementById('medications_form');
+                    medication_id.value = medicationToEdit.id;
+                    selectedMedication.value = medicationToEdit.med_id;
+                    description.value = medicationToEdit.description;
+                    purpose.value = medicationToEdit.purpose;
+                    strength.value = medicationToEdit.strength;
+                    dosage.value = medicationToEdit.dosage;
+                    route.value = medicationToEdit.route;
+                    frequency.value = medicationToEdit.frequency;
+                    duration.value = medicationToEdit.duration;
+                    pharmacy_name.value = medicationToEdit.pharmacy_name;
+                    pharmacy_phone_no.value = medicationToEdit.pharmacy_phone_no;
+                    drug_reaction.value = medicationToEdit.drug_reaction;
+                    pharmacogenetic_test.value = medicationToEdit.pharmacogenetic_test;
+                    form.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error editing medication:', error);
+            }
+        }
+
+        const exposeEditMedication = () => {
+            window.editMedications = editMedications;
         };
 
         let getStepID = async (sid) => {
             try {
                 let stepname = 'Medication';
                 let response = await axios.get(`/get_step_id/${props.moduleId}/${props.componentId}/${sid}/${stepname}`);
-                stepID = response.data.stepID;
-                console.log("stepIDstepID", stepID);
+                stepID.value = response.data.stepID;
             } catch (error) {
                 throw new Error('Failed to fetch stageID');
             }
         };
 
+        const openModal = async () => {
+            isOpen.value = true;
+        };
+
+        const closeModal = async () => {
+            isOpen.value = false;
+        };
+
+        let onMedicationChanged = async () => {
+            let med_id = selectedMedication.value;
+            try {
+                loading.value = true;
+                const response = await axios.get(`/ccm/get-selected-medications_patient-by-id/${props.patientId}/${med_id}/selectedmedicationspatient`);
+                if (response && response.status == 200) {
+                    loading.value = false;
+                    let data = response.data?.medications_form?.static ?? null;
+                    if (data) {
+                        medication_id.value = data.id;
+                        selectedMedication.value = data.med_id;
+                        description.value = data.description;
+                        purpose.value = data.purpose;
+                        strength.value = data.strength;
+                        dosage.value = data.dosage;
+                        route.value = data.route;
+                        frequency.value = data.frequency;
+                        duration.value = data.duration;
+                        pharmacy_name.value = data.pharmacy_name;
+                        pharmacy_phone_no.value = data.pharmacy_phone_no;
+                        drug_reaction.value = data.drug_reaction;
+                        pharmacogenetic_test.value = data.pharmacogenetic_test;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching patient medication:', error);
+                loading.value = false;
+            }
+        }
+
         onBeforeMount(() => {
-            loadingCellRenderer.value = 'CustomLoadingCellRenderer';
-            loadingCellRendererParams.value = {
-                loadingMessage: 'One moment please...',
-            };
-            rowModelType.value = 'serverSide';
-            cacheBlockSize.value = 20;
-            maxBlocksInCache.value = 10;
             fetchPatientMedicationList();
             fetchMedications();
             getStageID();
+            const pathname = window.location.pathname;
+            const segments = pathname.split('/');
+            segments.shift();
+            module_name.value = segments[0];
+            component_name.value = segments[1];
         });
 
         onMounted(async () => {
             try {
                 medicationTime.value = document.getElementById('page_landing_times').value;
-                console.log("medication time", medicationTime);
+                exposeDeleteMedication();
+                exposeEditMedication();
+                Inputmask({ mask: '(999) 999-9999' }).mask('#pharmacy_phone_no');
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -356,16 +453,36 @@ export default {
         return {
             loading,
             columnDefs,
-            rowData,
-            defaultColDef,
-            gridOptions,
+            passRowData,
             medications,
+            submitMedicationForm,
             selectedMedication,
+            med_description,
+            description,
+            purpose,
+            strength,
+            dosage,
+            route,
+            frequency,
+            duration,
+            pharmacy_name,
+            pharmacy_phone_no,
+            drug_reaction,
+            pharmacogenetic_test,
+            medication_id,
             medicationTime,
             medicationStageId,
             stepID,
             fetchPatientMedicationList,
-            // fetchMedicationList,
+            editMedications,
+            showAlert,
+            formErrors,
+            openModal,
+            closeModal,
+            isOpen,
+            onMedicationChanged,
+            module_name,
+            component_name,
         };
     }
 

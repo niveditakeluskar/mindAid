@@ -1328,6 +1328,23 @@ class FormServiceProvider extends ServiceProvider
            ?>';
         });
 
+        Blade::directive("selectassignpatient", function ($expression) {
+            return '<?php
+               $loginid = session()->get("userid");
+               $options    = [];
+               $params     = [' . $expression . '];
+               $name       = $params[0]; 
+               $attributes = defaultParameter($params, 1, []);
+               $selected   = defaultParameter($params, 2, "");       
+               foreach (RCare\Patients\Models\Patients::assignpatients($loginid) as $assignpatient) { 
+                    $options[$assignpatient->id] = $assignpatient->fname . " " . $assignpatient->mname . " " . $assignpatient->lname;
+               }
+               $options = array_unique($options);
+               echo RCare\System\Support\Form::select("Patient", $name, $options, $attributes, $selected);
+            ?>';
+        });
+        
+
         Blade::directive("selectrpmpatient", function ($expression) {
             
             

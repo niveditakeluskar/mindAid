@@ -26,7 +26,7 @@
                         <div class="mc-footer">
                             <div class="row">
                                 <div class="col-lg-12 text-right">
-                                    <button type="submit" id="save-text" class="btn  btn-primary m-1">Submit</button>
+                                    <button type="submit" id="save-text" class="btn  btn-primary m-1" :disabled="(timerStatus == 1) === true ">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -52,6 +52,7 @@ export default {
          formErrors: {},
          stageId:null,
          showAlert: false,
+         timerStatus: null,
       };
     },
     components: {
@@ -60,6 +61,7 @@ export default {
     },
     mounted() {
       this.time = document.getElementById('page_landing_times').value;
+      this.timerStatus = document.getElementById('timer_runing_status').value;
       this.getStageID();
    },
    methods: {

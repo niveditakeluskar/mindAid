@@ -1,5 +1,5 @@
 <template>
-	<div class="card">
+	<div class="">
 		<div class="row" style="margin-bottom:5px;">
 			<div class="col-lg-12 mb-3">
 				<select name="top_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire" v-on:change="fetchMonthlyQuestion">
@@ -15,12 +15,11 @@
 			<strong> General question data saved successfully! </strong><span id="text"></span>
 		</div>
 		<div v-html='decisionTree'></div>
-		
 		<div class="alert alert-success general_success" id="success-alert" style="display: none;">
 			<button type="button" class="close" data-dismiss="alert">x</button>
 			<strong> General question data saved successfully! </strong><span id="text"></span>
 		</div>
-		<select name="bottom_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire">
+		<select name="bottom_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire" v-on:change="fetchMonthlyQuestion">
 			<option value="">Select General Question</option>
 			<option v-for="questionaire in questionnaire" :key="questionaire.id" :value="questionaire.id" >
 			{{ questionaire.description }}
@@ -45,22 +44,38 @@ export default {
 			questionnaire: null,
 			decisionTree: null,
 			start_time: null,
-
+			module_id: null,
+			stage_id: null,
+			step :null,
+			timerStatus: null,
 		};
 	},
 	mounted() {
-		this.fetchQuestionnaireData();
+		this.patientEnrolled();
+		//this.fetchQuestionnaireData();
 	},
 	methods: {
+		async patientEnrolled() {
+			await axios.get(`/ccm/enrolled/${this.patientId}/${this.moduleId}/${this.componentId}/ccm_enrolled`)
+				.then(response => {
+					this.module_id = response.data.module_id;
+					this.stage_id =  response.data.stage_id;
+					this.step = response.data.step;
+					this.fetchQuestionnaireData();
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+		},
+
 		async fetchQuestionnaireData() {
 			
-			await axios.get(`/org/stage_code/${this.moduleId}/17/stage_code_list`)
+			await axios.get(`/org/stage_code/${this.module_id}/${this.stage_id}/stage_code_list`)
 				.then(response => {
 					this.questionnaire = response.data;
 					//console.log("questionnaire===>", this.questionnaire);
-					this.selectedQuestionnaire = 38;
+					this.selectedQuestionnaire = this.step;
 					this.fetchMonthlyQuestion();
-					//console.log("gen"+selectedQuestionnaire.value);
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);
@@ -68,15 +83,11 @@ export default {
 		},
 
 		async fetchMonthlyQuestion(){
-			$("#preloader").show();
-			console.log('fetch questions'+this.selectedQuestionnaire);
 			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/${this.componentId}/question_list`)
 				.then(response => {
 					this.decisionTree = response.data;
-					console.log(document.getElementById('page_landing_times').value);
-					//document.getElementsByClassName("timearr").value = document.getElementById('page_landing_times').value;
 					this.start_time = document.getElementById('page_landing_times').value;
-					console.log("timer="+this.start_time);
+					this.timerStatus = document.getElementById('timer_runing_status').value;
 					this.savedGeneralQuestion();
 				})
 				.catch(error => {
@@ -86,6 +97,9 @@ export default {
 		async savedGeneralQuestion(){
 			await axios.get(`/ccm/get-savedQuestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/saved_question`)
 				.then(response => {
+					if(this.timerStatus == 1){
+						document.getElementById("generalQue"+this.selectedQuestionnaire).disabled= true;
+					}
 					let genQuestion = response.data;
 					var off = 1;
 					for(var i = 0; i < genQuestion.length; i++){
@@ -94,7 +108,6 @@ export default {
 						this.checkQuestion(editGq,off);
 						off++;
 					}
-					$("#preloader").hide();
 				})
 				.catch(error => {
 					console.error('Error fetching data:', error);
@@ -103,12 +116,10 @@ export default {
 		checkQuestion(obj,i){
 			var tree = JSON.stringify(obj);
             var treeobj = JSON.parse(tree);
-			console.log(treeobj);
             for (var j = 1; j < 15; j++) {
 				//Object.keys(treeobj.qs.opt).forEach(function(j) {
                 if ((treeobj.qs.opt).hasOwnProperty(j)) {
                     var prnt = $('input[value="' + (treeobj.qs.q).replace( /[\r\n]+/gm, "" ) + '"]').parents('.mb-4').attr('id');
-					console.log(prnt);
                     $('#' + prnt).find('input:radio[value="' + treeobj.qs.opt[j].val + '"], input:checkbox[value="' + treeobj.qs.opt[j].val + '"]').attr('checked', true).change();
                     if($('#' + prnt).find('input[type=text]').attr('id')){
                         var textid = $('#' + prnt).find('input[type=text]').attr('id');
@@ -157,10 +168,6 @@ export default {
 				this.renderEditquestion(objj, z, nct);
 			}
 		},
-		
 	},
-	
 };
-
-
 </script>

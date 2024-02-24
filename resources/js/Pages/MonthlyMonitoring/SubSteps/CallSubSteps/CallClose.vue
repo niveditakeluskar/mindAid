@@ -62,7 +62,7 @@
 									</label>
 								</div>
 								<div class="">
-									<label class="mr-3 col-lg-12">Monthly Notes:
+									<label style="width: 100%;">Monthly Notes:
 										<textarea class="forms-element form-control" name="q2_notes" v-model="q2_notes"></textarea>
 									</label>
 									<div class="invalid-feedback"></div>
@@ -71,6 +71,7 @@
 									<hr />
 									<div class="col-12 text-center"><h3>Best Time to contact</h3></div>
 									<ContactTime />  
+									<hr />
 								</div> 
 							</div>
 						</div>
@@ -79,7 +80,7 @@
 						<div class="mc-footer">
 							<div class="row">
 								<div class="col-lg-12 text-right">
-									<button type="submit" class="btn  btn-primary m-1 office-visit" id="save-call-close">Next</button>								
+									<button type="submit" class="btn  btn-primary m-1 office-visit" id="save-call-close" :disabled="(timerStatus == 1) === true ">Next</button>								
 								</div>
 							</div>
 						</div>
@@ -105,6 +106,7 @@ export default {
 			query2: null,
 			formErrors: {},
 			showAlert: false,
+			timerStatus:null,
 		};
 	},
 	components: {
@@ -112,6 +114,7 @@ export default {
 	},
 	mounted() {
 		this.getCallCloseStageID();
+		this.timerStatus = document.getElementById('timer_runing_status').value;
 	},
 	methods: {
 		async getCallCloseStageID() {
@@ -187,6 +190,7 @@ export default {
 					setTimeout(() => {
 						this.showAlert = false;
 					}, 3000);
+					this.$emit('form-submitted');
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 422) {

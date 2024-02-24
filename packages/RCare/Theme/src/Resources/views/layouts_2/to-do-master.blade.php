@@ -58,6 +58,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
 } ?>
 
 <body class="layout_2 text-left {{$themeMode}}">
+    {{-- <!-- @vite(['resources/js/appInertia.js','resources/laravel/js/bootstrap.js','resources/laravel/js/form.js', 'resources/laravel/js/utility.js','resources/laravel/js/carePlanDevelopment.js', 'resources/laravel/js/ccmcpdcommonJS.js']) --> --}}
 
     <!-- <div id="app">        -->
     @php
@@ -94,21 +95,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
     $component_name = \Request::segment(2);
     $module_name = \Request::segment(1);
     $patient_list = \Request::segment(3);
-    // $current_url = url()->current();
-    // $previous_url = url()->previous();
-    // Session::set('_current.url', $current_url);
-    // Session::set('_previous.url', $previous_url);
-    // $data = \Request::Session()->all();
-    // dd($data);
-    // print_r($component_name);
-    // print_r($patient_list);
-    // if($component_name != "monthly-monitoring-patients" && $component_name != "monthly-monitoring-patient-list")
-    // if($module_name!= '' && $module_name!='patients' && $patient_list!='patients' && ($module_name=='ccm' || $module_name=='rpm'))
-    //  dd("hiiii".$module_name);
-
     if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
-        // echo $component_name . $module_name; 
-
     ?>
         @include('Theme::layouts_2.patient_caretool_data')
         @include('Theme::layouts_2.patient_status')
@@ -120,6 +107,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         @include('Theme::layouts_2.previous-month-notes')
     <?php } ?>
     @include('Theme::layouts_2.to-list-customizer')
+    @include('Theme::layouts_2.cm-patient-assign')
 
 
     <!-- </div> -->
@@ -143,6 +131,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- LAModel Ended here -->
 
@@ -853,6 +842,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                 } ?>">
                         <input type="hidden" name="start_time" value="00:00:00">
                         <input type="hidden" name="end_time" value="00:00:00">
+                        <input type="hidden" name="fromstarttime" id="fromstarttime">
                         <input type="hidden" name="module_id" value="{{ $module_id }}" />
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
@@ -992,7 +982,8 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                                                                             ?>" /> -->
 
     {{-- common js --}}
-    <script src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
+
+    <script src="{{ asset('assets/js/common-bundle-script.js')}}"></script>
 
     <!--script src="{{  asset('assets/js/ckeditor.js')}}"></script--->
     <script src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
@@ -1047,8 +1038,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
     <!-- (Optional) Latest compiled and minified JavaScript translation files
             <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script> -->
 
-
-
     <script>
         function devicesclear() {
             $("#devices_form input[name='device_id']").val('');
@@ -1056,29 +1045,22 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             $('#partner_devices_id').val('');
             $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
             $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
-
         }
 
         function getDevice(id) {
-            //alert(id.value);
             if (id.checked) {
                 var y = id.id;
-                //var myTextArea = $('#email_title_area');
                 var editor = CKEDITOR.instances['email_title_area'].getData();
                 var data = editor + '<li>' + y + '</li>';
                 CKEDITOR.instances['email_title_area'].setData(data);
-                // myTextArea.val(myTextArea.val() + '\n' + y);
             } else {
                 var myTextArea = CKEDITOR.instances['email_title_area'].getData();
                 var text = $.trim(myTextArea.replace('<li>' + id.id + '</li>', ""));
                 CKEDITOR.instances['email_title_area'].setData(text);
-
             }
         }
 
         $("[name='partner_id']").on("change", function() {
-            //alert("working");
-            //alert($(this).val());
             if ($(this).val() == '') {
                 var partner_id = null;
                 util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
@@ -1093,7 +1075,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             $.ajax({
                 url: "/messaging/get-message-count",
                 type: 'GET',
-                // dataType: 'json', // added data type
                 success: function(res) {
                     $(".message-notification").html('');
                     $(".message-notification").append(res.trim());
@@ -1124,20 +1105,14 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             util.getSessionLogoutTimeWithPopupTime();
             var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
             $(this).mousemove(function(e) {
-                // idleTime = 0;
                 localStorage.setItem("idleTime", 0);
             });
 
             $(this).keypress(function(e) {
-                // idleTime = 0;
                 localStorage.setItem("idleTime", 0);
             });
 
-
-
             var $body = $("body");
-
-
             // //Dark version
             $('#dark-checkbox').change(function() {
                 if ($(this).prop('checked')) {
@@ -1156,10 +1131,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 });
             });
 
-
             $("[name='partner_id']").on("change", function() {
-                //alert("working");
-                //alert($(this).val());
                 if ($(this).val() == '') {
                     var partner_id = null;
                     util.updatePartnerDevice(parseInt(partner_id), $("#partner_devices_id"));
@@ -1167,8 +1139,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     util.updatePartnerDevice(parseInt($(this).val()), $("#partner_devices_id"));
                 }
             });
-
-            setIntervalMCFunction();
             setTimeout(function() {
                 document.getElementById("customizer_id").style.display = "block";
             }, 3000);
@@ -1184,8 +1154,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     url: '/patients/systemThresholdTab/' + patient_id + '/' + module_id,
                     type: 'get',
                     success: function(data) {
-                        //    alert(JSON.stringify(data));
-
                         $("#heading_thr").html(data[1]);
                         $("#p_systolichigh").html(data[0].systolichigh);
                         $("#p_systoliclow").html(data[0].systoliclow);
@@ -1199,53 +1167,22 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                         $("#p_glucoselow").html(data[0].glucoselow);
                         $("#p_temperaturehigh").html(data[0].temperaturehigh);
                         $("#p_temperaturelow").html(data[0].temperaturelow);
-
                     }
                 })
             });
-
             util.totalTimeSpentByCM();
-
-            // $(function() {
-            //     $('textarea').each(function() {
-            //         $(this).height($(this).prop('scrollHeight'));
-            //     });
-            // });
-
-
         });
 
-
         /*********************************************************************************************************************************************** */
-
-
         var checkTimeInterval = function timerIncrement() {
-            // idleTime = idleTime + 1; //Calls every 1 seconds
             sessionIdleTime = localStorage.getItem("idleTime");
-
-            // var showPopupTime = sessionStorage.getItem("showPopupTime");
-            // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
-
-
             var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
             var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-
             var systemDate = localStorage.getItem("systemDate");
             var currentDate = new Date();
             var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
             var idleTime = parseInt(sessionIdleTime) + (res % 60);
-
-
-            console.log("idleTime-" + idleTime);
-            // console.log("showPopupTime-"+showPopupTime);
-            // console.log("sessionTimeoutInSeconds-"+sessionTimeoutInSeconds);
-
-
             if (idleTime >= showPopupTime) {
-
-                console.log('idleTime in if loop idleTime >= showPopupTime');
-
-                // $('#logout_modal').modal('show');   
                 var visiblemodal = $('#logout_modal').is(':visible');
                 if (visiblemodal) {
                     console.log('visiblemodal');
@@ -1254,29 +1191,16 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 }
 
                 if (idleTime >= sessionTimeoutInSeconds) {
-
-                    console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
                     var visiblemodal = $('#logout_modal').is(':visible');
-
                     if (visiblemodal) {
-                        console.log('visiblemodal in sessiontimeout');
-                        // $('#logout_modal').modal('hide');   
                         $("#sign-out-btn")[0].click();
                         var base_url = window.location.origin;
-                        // alert(base_url);  
                         window.location.href = base_url + '/rcare-login';
                         window.location.reload();
-
                     }
-
                 }
-
-
-
             }
-
             localStorage.setItem("idleTime", idleTime);
-            // localStorage.setItem("idleTime", 0);
             localStorage.setItem("systemDate", currentDate);
         }
 
@@ -1287,9 +1211,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#logout_no").click(function(e) {
             $('#logout_modal').modal('hide');
         });
-
-
-
         var patient_id = $("#patient_id").val();
         var module_id = $("input[name='module_id']").val();
         util.getPatientPreviousMonthCalender(patient_id, module_id);
@@ -1302,8 +1223,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
         $("#display_month_year").html(moment().format("MMMM YYYY"));
 
         $("#prev-sidebar-month").click(function() {
-
-
             var patient_id = $("#patient_id").val();
             var module_id = $("input[name='module_id']").val();
             util.getPatientPreviousMonthCalender(patient_id, module_id);
@@ -1312,14 +1231,9 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
             var registeredday = dateObj1.getDate();
             var registeredyear = dateObj1.getFullYear();
-
-
             // ==================================================== //
-
-
             var patient_id = $("#hidden_id").val();
             var module_id = $("input[name='module_id']").val();
-
             var display_month_year_data = $("#display_month_year").text();
             var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
             var display_month_year_datamonth = display_month_year_dataarray[0];
@@ -1329,25 +1243,18 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
             for (var i = 0; i < months.length; i++) {
                 if (months[i] == display_month_year_datamonth) {
                     var prev_month = i - 1;
-
                 }
-
             }
 
             if (display_month_year_datamonth == 'January') {
                 var prev_month = 11;
-                // console.log("Januray  year within loop",prev_year );
                 var prev_year = prev_year - 1;
             }
 
-
             if (registeredcalender.length > 0) {
-
                 $("#display_month_year").html(months[prev_month] + ' ' + prev_year);
-
                 year = prev_year;
                 month = prev_month + 1;
-
                 if (new Date(year, month) < new Date(currentYear, currentMonth)) {
                     $("#next-sidebar-month").show();
                 } else {
@@ -1365,10 +1272,7 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     $("#temp").html('');
                     $('#temp').append($(".patientCaretool-body").html());
                 }
-
-
             } else {
-
                 var displaymonth = months[currentMonth - 2];
                 var displaydata = "Patient CareTools"
                 $("#display_month_year").html(displaydata);
@@ -1380,62 +1284,38 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 $('#temp').append($(".patientCaretool-body").html());
             }
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-
         });
-
-
-
-
         // function curr_month_Fun(){
         $("#next-sidebar-month").click(function() {
-
             var registeredcalender = $("#regi_mnth").val();
             var dateObj1 = new Date(registeredcalender);
             var month_name = dateObj1.getMonth();
             var registeredmonth = dateObj1.getMonth() + 1; //months from 1-12 =>Because getmonth() start from 0.
             var registeredday = dateObj1.getDate();
             var registeredyear = dateObj1.getFullYear();
-
-
             var display_month_year_data = $("#display_month_year").text();
             var display_month_year_dataarray = display_month_year_data.split(' '); //21spt
             var display_month_year_datamonth = display_month_year_dataarray[0];
             var display_month_year_datayear = display_month_year_dataarray[1];
             var nxt_year = display_month_year_datayear;
-            // console.log("display_month_year_datamonth", display_month_year_datamonth);
-
             for (var i = 0; i < months.length; i++) {
                 if (months[i] == display_month_year_datamonth) {
                     var nxt_month = i + 1;
-
                 }
-
             }
-
-
             if (display_month_year_datamonth == 'December') {
                 var nxt_month = 0;
                 nxt_year = parseInt(nxt_year) + 1;
-
             } else if (display_month_year_datamonth == 'Patient' ||
                 display_month_year_datamonth == 'Patient CareTools' || display_month_year_datamonth == 'undefined') {
-
                 var nxt_month = parseInt(registeredmonth) - 1;
                 nxt_year = registeredyear;
-
             }
-
-
             year = nxt_year;
             month = nxt_month;
-
-
             $("#temp").hide();
             $(".previous_month-body").show();
-
-
             if (registeredcalender.length > 0) {
-
                 $("#display_month_year").html(months[month] + ' ' + year);
                 month = month + 1; //bcz array starts from 0 so miunused 1 from above
 
@@ -1444,9 +1324,6 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                 } else {
                     $("#next-sidebar-month").hide();
                 }
-
-
-
                 if (new Date(year, month) >= new Date(registeredyear, registeredmonth)) {
                     $("#prev-sidebar-month").show();
                 } else {
@@ -1456,28 +1333,20 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                     $('#temp').html('');
                     $('#temp').append($(".patientCaretool-body").html());
                 }
-
-
-
             } else {
-
                 var displaymonth = months[currentMonth - 1];
                 $("#display_month_year").html(displaymonth + ' ' + year);
                 $("#next-sidebar-month").hide();
                 $("#prev-sidebar-month").show();
             }
             util.getPatientPreviousMonthNotes(patient_id, module_id, month, year);
-
         });
-
-
         //******************************************************************************************************************************************************** */                
     </script>
 
     @yield('page-js')
     <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
     @yield('bottom-js')
-
 </body>
 
 </html>

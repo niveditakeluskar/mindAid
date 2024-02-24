@@ -11,17 +11,21 @@
                     <input type="hidden" name="hid_stage_id" />
                     <input type="hidden" name="form_name" value="relationship_form">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
-                    <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
+                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
                         <strong> Relationship data saved successfully! </strong><span id="text"></span>
                     </div>
                     <div v-html="RelationshipQuestionnaire"></div>
+                    <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
+                        <button type="button" class="close" data-dismiss="alert">x</button>
+                        <strong> Relationship data saved successfully! </strong><span id="text"></span>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
                         <div class="row">
                             <div class="col-lg-12 text-right">
-                                <button type="submit" id="save-question" class="btn btn-primary m-1">Next</button>
+                                <button type="submit" id="save-question" class="btn btn-primary m-1" :disabled="(timerStatus == 1) === true ">Next</button>
                             </div>
                         </div>
                     </div>
@@ -45,11 +49,13 @@ export default {
             formErrors: {},
 			showAlert: false,
             time:null,
+            timerStatus:null,
         };
     },
     mounted() {
         this.fetchData();
         this.time = document.getElementById('page_landing_times').value;
+        this.timerStatus = document.getElementById('timer_runing_status').value;
     },
     methods: {
         fetchData() {
@@ -76,6 +82,7 @@ export default {
                         this.time = document.getElementById('page_landing_times').value;
 						this.showAlert = false;
 					}, 3000);
+                    this.$emit('form-submitted');
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 422) {

@@ -36,11 +36,13 @@ class PreparationAddRequest extends FormRequest
             'nd_notes'                            => 'nullable|required_if:newdiagnosis,1|min:2|text_comments_slash',
             'med_added_or_discon'                 => 'required|integer',
             'med_added_or_discon_notes'           => 'nullable|required_if:med_added_or_discon,1|min:2|text_comments_slash',
-            'report_requirnment1'                 => 'required_without_all:report_requirnment2,report_requirnment3',
-            'report_requirnment2'                 => 'required_without_all:report_requirnment1,report_requirnment3',
-            'report_requirnment3'                 => 'required_without_all:report_requirnment1,report_requirnment2',
-                'anything_else'                      => 'nullable|min:2|text_comments_slash',
-                'pcp_reviwewd'                        => 'nullable|required_if:this_month,1',
+            'report_requirnment1'                 => 'required_without_all:report_requirnment2,report_requirnment3,report_requirnment4,report_requirnment5',
+            'report_requirnment2'                 => 'required_without_all:report_requirnment1,report_requirnment3,report_requirnment4,report_requirnment5',
+            'report_requirnment4'                 => 'required_without_all:report_requirnment1,report_requirnment2,report_requirnment3,report_requirnment5',
+            'report_requirnment5'                 => 'required_without_all:report_requirnment1,report_requirnment2,report_requirnment3,report_requirnment4',
+            'report_requirnment3'                 => 'required_without_all:report_requirnment1,report_requirnment2,report_requirnment4,report_requirnment5',
+            'anything_else'                      => 'nullable|min:2|text_comments_slash',
+            'pcp_reviwewd'                        => 'nullable|required_if:this_month,1',
             ]
             );
 

@@ -769,7 +769,7 @@
             $st = explode(" ", $start_time);
             $et = explode(" ", $end_time);
             $startdate = explode('-', $st[0]);
-            //-dd($startdate);
+            // dd($startdate);
             $month = $startdate[0];
             $day   = $startdate[1];
             $year  = $startdate[2];
@@ -1350,7 +1350,7 @@
         return $data;
     }
 
-    function renderTree($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid)
+    function renderTrees($treeObj, $lab, $val, $tree_key, $answarFormet, $seq, $tempid)
     {
         $optCount = count((array) $treeObj);
         $javaObj = json_encode($treeObj);
@@ -1394,7 +1394,7 @@
         if (RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 3)->where('status', 1)->exists() && RCare\Patients\Models\PatientServices::where('patient_id', $patientId)->where('module_id', 2)->where('status', 1)->exists()) {
             $enrollinRPM = 2;
         }
-        $module_id = getPageModuleName();
+        $module_id = $module_id;
         $submodule_id = $componentId;
         $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
         $content = "";
@@ -1461,7 +1461,7 @@
                     $content = $content . '<input type="hidden" name="sq[' . $value['id'] . '][0]" value="0">';
                     $content = $content . '<div class="d-inline-flex mb-2 col-md-12">';
                     if (property_exists($queData->question->qs, 'opt')) {
-                        $rendOption = renderTree($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF, 0, $value['id']);
+                        $rendOption = renderTrees($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF, 0, $value['id']);
                         $content = $content . $rendOption;
                     }
                     $content = $content . '</div>';
@@ -1572,7 +1572,7 @@
                                 }
                             }
                             $q_arr         = $question_data->question->q;
-                            //$content = $content . '<div class="card-title">'.$step_name.'</div>';
+                            // $content = $content . '<div class="card-title">' . $step_name . '</div>';
                             //$content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[\'template_id\']" value="'.json_decode($questionnaire[0]->id).'">';
 
                             $content = $content . "<input type='hidden' name=" . $step_name_trimmed . "[template_id] value=" . json_decode($questionnaire->id) . ">";

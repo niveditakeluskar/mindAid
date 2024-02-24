@@ -141,7 +141,8 @@
 <!-- <div> -->
 	<div >
 		<h4>Medications:</h4>
-		@if(count($PatientMedication1)>0)
+		<!-- if(count($PatientMedication1)>0) -->
+		@if(is_array($PatientMedication1) && count($PatientMedication1) > 0)
 			<div>
 				<table class="tbl">
 						<thead> 
@@ -377,7 +378,7 @@
 			<?php $i=0;?>
 			@foreach ($patient_vitals as $key => $rec)
 			<?php $i++;?>
-				@if(!empty($rec->weight && $rec->bmi && $rec->bp && $rec->o2 && $rec->height && $rec->pulse_rate))
+				@if(!empty($rec->weight || $rec->bmi || $rec->bp || $rec->o2 || $rec->height || $rec->pulse_rate))
 					<?php 
 					( sizeof($patient_vitals) == $i) ? $style_border="" : $style_border="border-bottom:1px dashed #dee2e6; margin-bottom:20px;";
 					?>

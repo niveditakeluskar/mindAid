@@ -1,5 +1,6 @@
-import { onBeforeMount,reactive,ref, onMounted, computed, watch } from 'vue';
-import { AgGridVue } from 'ag-grid-vue3';
+import { onBeforeMount,reactive,ref, onMounted, computed, watch  } from 'vue';
+import { Head  } from '@inertiajs/vue3';
+import AgGridTable from './components/AgGridTable.vue';
 
 
 export {
@@ -8,7 +9,8 @@ export {
   onMounted,
   computed,
   watch,
-  AgGridVue,
   onBeforeMount,
+  AgGridTable,
+  Head 
   // Add other common imports if needed
 };
