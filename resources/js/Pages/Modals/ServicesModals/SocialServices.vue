@@ -101,7 +101,11 @@ export default {
                     field: 'users.f_name',
                     cellRenderer: function (params) {
                         const row = params.data;
-                        return row && row.users.f_name ? row.users.f_name + ' ' + row.users.l_name : 'N/A';
+                        if (row && row.users && row.users.f_name) {
+                            return row.users.f_name + ' ' + (row.users.l_name || ''); // Added a check for l_name as well
+                        } else {
+                            return 'N/A';
+                        }
                     },
                 },
                 { headerName: 'Last Modified On', field: 'updated_at' },
@@ -120,7 +124,10 @@ export default {
             try {
                 loading.value = true;
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/5`);
+                const sPageURL = window.location.pathname;
+                const parts = sPageURL.split("/");
+                const mm = parts[parts.length - 2];
+                const response = await fetch(`/ccm/care-plan-development-services-list/${props.patientId}/5?mm=${mm}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }

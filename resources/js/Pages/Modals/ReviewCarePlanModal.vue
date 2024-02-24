@@ -31,7 +31,7 @@
                                                                     <div id="reviewCareAlert"></div>
                                                                     <form id="care_plan_form" name="care_plan_form"
                                                                         @submit.prevent="submitCarePlanForm">
-                                                                      
+
                                                                         <div class="alert alert-danger"
                                                                             v-if="showSuccessAlert">
                                                                             <button type="button" class="close"
@@ -69,12 +69,17 @@
                                                                             <input type="hidden" id="cpd_finalize"
                                                                                 value="1">
                                                                             <input type="hidden" name="billable" value="1">
+                                                                            <input type="hidden"
+                                                                                name="timearr[form_start_time]"
+                                                                                class="timearr form_start_time"
+                                                                                :value="reviewCarePlanTimer">
                                                                             <div class="row col-md-12">
                                                                                 <div class="col-md-6"><label>Condition
                                                                                         <span
                                                                                             class="error">*</span>:</label>
                                                                                     <input type="hidden" name="condition"
                                                                                         v-model="selectedcondition">
+                                                                                        
                                                                                     <select id="diagnosis_condition"
                                                                                         class="custom-select show-tick"
                                                                                         name="diagnosis"
@@ -96,7 +101,11 @@
                                                                                 <div class="col-md-2">
                                                                                     <label><span class="error"></span>&nbsp;
                                                                                     </label>
-<button type="button" class="col-md-12 btn btn-primary" @click="() => changeCondition('care_plan_form')"  id="render_plan_form"> Display Care Plan</button>
+                                                                                    <button type="button"
+                                                                                        class="col-md-12 btn btn-primary"
+                                                                                        @click="() => changeCondition('care_plan_form')"
+                                                                                        id="render_plan_form"> Display Care
+                                                                                        Plan</button>
                                                                                 </div>
 
                                                                                 <div class="col-md-4 emaillist">
@@ -109,7 +118,9 @@
                                                                                         @change="handleCodeAlert">
                                                                                         <option value="">Select Code
                                                                                         </option>
-                                                                                        <option v-for="code in codeOptions" :key="code" :value="code">{{ code }}</option>
+                                                                                        <option v-for="code in codeOptions"
+                                                                                            :key="code" :value="code">{{
+                                                                                                code }}</option>
 
                                                                                     </select>
                                                                                     <div class="invalid-feedback"
@@ -256,17 +267,8 @@
                                                                                 id="save_care_plan_form"
                                                                                 :disabled="isSaveButtonDisabled">Review/Save</button>
                                                                         </div>
-                                                                        <input type="hidden" name="timearr[form_start_time]"
-                                                                            class="timearr form_start_time"
-                                                                            :value="reviewCarePlanTimer"
-                                                                            v-model="reviewCarePlanTimer">
-                                                                        <input type="hidden"
-                                                                            name="timearr['form_save_time']"
-                                                                            class="form_save_time"><input type="hidden"
-                                                                            name="timearr['pause_start_time']"><input
-                                                                            type="hidden"
-                                                                            name="timearr['pause_end_time']"><input
-                                                                            type="hidden" name="timearr['extra_time']">
+
+
                                                                     </form>
                                                                     <div id="reviewCareAlert"></div>
 
@@ -321,7 +323,7 @@ export default {
     components: {
         AgGridTable,
     },
- 
+
     setup(props) {
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
@@ -347,7 +349,7 @@ export default {
         const selectedEditDiagnosId = ref('');
         const selectedcondition = ref('');
         const isOpen = ref(false);
-
+        let reviewCarePlanTimer = ref(null);
         const openModal = () => {
             isOpen.value = true;
             fetchCarePlanFormList();
@@ -357,10 +359,10 @@ export default {
             additionalgoals();
             additionalsymptoms();
             additionaltasks();
-           const reviewCaretimerElement = document.getElementById('page_landing_times').value;
-                if (reviewCaretimerElement !== null) {
-                    reviewCarePlanTimer.value = reviewCaretimerElement.value;
-                    }
+            const reviewCaretimerElement = document.getElementById('page_landing_times').value;
+            if (reviewCaretimerElement !== null) {
+                reviewCarePlanTimer.value = reviewCaretimerElement;
+            }
         };
 
         const closeModal = () => {
@@ -427,24 +429,25 @@ export default {
         ]);
 
 
-        let reviewCarePlanTimer = ref(null);
+
         let reviewCarePlanStageId = ref(0);
         let stepID = ref(0);
 
         const editPatientDignosis = async (id) => {
             clearGoals();
+            fetchCode();
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
-                //diagnosisOptions
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                const carePlanData = data.care_plan_form.static; // Adjust this based on your actual data structure
+                const carePlanData = data.care_plan_form.static; 
+              
                 if (carePlanData && carePlanData.goals) {
-                    goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                    goals.value = JSON.parse(carePlanData.goals); 
                 }
                 selectedDiagnosisId.value = carePlanData.diagnosis;
                 selectedDiagnosis.value = carePlanData.diagnosis;
@@ -452,10 +455,10 @@ export default {
                 selectedcondition.value = carePlanData.condition;
                 comments.value = carePlanData.comments;
                 if (carePlanData && carePlanData.tasks) {
-                    tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                    tasks.value = JSON.parse(carePlanData.tasks); 
                 }
                 if (carePlanData && carePlanData.symptoms) {
-                    symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                    symptoms.value = JSON.parse(carePlanData.symptoms); 
                 }
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
@@ -475,7 +478,7 @@ export default {
             const timer_start = startTimeInput.value.value;;
             const timer_paused = document.getElementById('time-container').textContent;
             const billable = document.querySelector(`form[name='care_plan_form'] input[name='billable']`).value;
-            const form_start_time = document.querySelector(`form[name='care_plan_form'] .form_start_time`).value;
+            const form_start_time = document.querySelector('input[name="timearr[form_start_time]"]').value;
             const result = confirm("Are you sure you want to delete the Condition");
 
             if (result) {
@@ -506,10 +509,19 @@ export default {
                     }
                     const responseData = await response.json();
                     clearGoals();
+                    nextTick(() => {
+                        additionalgoals();
+                        additionalsymptoms();
+                        additionaltasks();
+                        isSaveButtonDisabled.value = false;
+                    });
                     $('#reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
+                    setTimeout(() => {
+                        $('#reviewCareAlert').html('');
+                    }, 3000);
                 } catch (error) {
                     console.error('Error deleting care plan:', error.message);
                 }
@@ -549,14 +561,14 @@ export default {
                 if (response && response.status == 200) {
                     clearGoals();
                     nextTick(() => {
-                additionalgoals();
-                additionalsymptoms();
-                additionaltasks();
-                isSaveButtonDisabled.value = false;
-            });
+                        additionalgoals();
+                        additionalsymptoms();
+                        additionaltasks();
+                        isSaveButtonDisabled.value = false;
+                    });
                     selectedCode.value = '';
-            selectedDiagnosis.value = '';
-            comments.value = '';
+                    selectedDiagnosis.value = '';
+                    comments.value = '';
                     $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
@@ -573,8 +585,8 @@ export default {
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     setTimeout(function () {
-						formErrors.value = {};
-                }, 3000);
+                        formErrors.value = {};
+                    }, 3000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -599,6 +611,7 @@ export default {
                 alert('please selecte condition!');
             };
         }
+
         let fetchDiagnosis = async () => {
             try {
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
@@ -614,33 +627,36 @@ export default {
             }
         };
 
-       const getCodeData = async()=>{
-        try {
-            const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`); 
-				if(!response.ok){ 
-						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
-				}
+        const getCodeData = async () => {
+            try {
+                const response = await fetch(`/ccm/get_diagnosis_all_codes/${selectedDiagnosis.value}/get_diagnosis_all_codes`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+                }
                 const codeData = await response.json();
                 codeOptions.value = codeData.map(item => item.code);
 
-        } catch (error) {
-            console.error('Error fetching Code:', error); // Log specific error message
-        }
-       };
+            } catch (error) {
+                console.error('Error fetching Code:', error);
+            }
+        };
 
         let fetchCode = async () => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
+                await new Promise((resolve) => setTimeout(resolve, 2000));
                 const response = await fetch(`/ccm/activediagnosis-code`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch code list');
                 }
                 const codeData = await response.json();
+                const codeOptionsArray = Object.entries(codeData).map(([key, value]) => ({
+                    value: key,
+                    code: value
+                }));
 
-               // Check if codeData is an array
-            if (Array.isArray(codeData)) {
-            codeOptions.value = codeData.map(item => item.code); 
-                 }
+                if (Array.isArray(codeOptionsArray)) {
+                    codeOptions.value = codeOptionsArray.map(item => item.code);
+                }
             } catch (error) {
                 console.error('Error fetching code list:', error);
             }
@@ -769,7 +785,6 @@ export default {
 
         const changeCondition = (formName) => {
             isLoading.value = true;
-            // Ensure formName is a string
             if (typeof formName !== 'string') {
                 console.error('Invalid formName:', formName);
                 isLoading.value = false;
@@ -778,7 +793,8 @@ export default {
             $("form[name='" + formName + "'] #editdiagnoid").val();
             var editid = $("form[name='" + formName + "'] #editdiagnoid").val();
             $("form[name='diagnosis_code_form'] #editdiagnoid").val(editid);
-            $("form[name='care_plan_form'] #editdiagnoid").val(editid); // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
+            $("form[name='care_plan_form'] #editdiagnoid").val(editid); 
+            // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
             // $("form[name='" + formName + "'] #disable_diagnosis_button").hide();
             let currentPatientId = props.patientId;
             var id = selectedDiagnosis.value;
@@ -786,18 +802,6 @@ export default {
             var code = $("form[name='" + formName + "'] #diagnosis_code").val();
             getCodeData();
             getDiagnosisIdfromPatientdiagnosisid(editid, condition_name, code, formName, currentPatientId);
-            $("form[name='" + formName + "'] input[name='condition']").val(condition_name);
-            $("form[name='" + formName + "'] #diagnosis_code").val("");
-            $("form[name='" + formName + "'] #append_symptoms").html("");
-            $("form[name='" + formName + "'] #append_goals").html("");
-            $("form[name='" + formName + "'] #append_tasks").html("");
-            $("form[name='" + formName + "'] #symptoms_0").val("");
-            $("form[name='" + formName + "'] #goals_0").val("");
-            $("form[name='" + formName + "'] #tasks_0").val("");
-            $("form[name='" + formName + "'] #support").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").val("");
-            $("form[name='" + formName + "'] textarea[name='comments']").text('');
-
             if (typeof id === "string" && id.trim().length === 0) {
                 isLoading.value = false;
                 alert("Please select Condition options");
@@ -807,16 +811,17 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
-                    const carePlanData = response.data.care_plan_form.static; // Adjust this based on your actual data structure
+                    const carePlanData = response.data.care_plan_form.static; 
+                    selectedcondition.value = carePlanData.condition;
                     selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
-                        goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
+                        goals.value = JSON.parse(carePlanData.goals); 
                     }
                     if (carePlanData && carePlanData.tasks) {
-                        tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
+                        tasks.value = JSON.parse(carePlanData.tasks); 
                     }
                     if (carePlanData && carePlanData.symptoms) {
-                        symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
+                        symptoms.value = JSON.parse(carePlanData.symptoms);
                     }
                     isLoading.value = false;
                 }).catch(error => {
@@ -834,11 +839,9 @@ export default {
 
         };
 
-
-
-     /*    onMounted(async () => {
-
-        }); */
+        /*    onMounted(async () => {
+   
+           }); */
 
         return {
             openModal,
@@ -938,5 +941,4 @@ export default {
 .modal-content {
     overflow-y: auto !important;
     /* height: 800px !important; */
-}
-</style>
+}</style>

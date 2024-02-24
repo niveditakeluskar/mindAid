@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Header from './Header.vue'; // Import your header component
-import Footer from './Footer.vue'; // Import your footer component
-import axios from 'axios'; // Import Axios for HTTP requests
+import Header from './Header.vue'; 
+import Footer from './Footer.vue'; 
+import axios from 'axios'; 
 
 export default {
   components: {
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      moduleId: null, // Initialize moduleId to null
+      moduleId: null, 
     };
   },
   async mounted() {
@@ -35,7 +35,7 @@ export default {
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
-      const moduleId = await this.getPageModuleID(); // Fetch moduleID from the server
+      const moduleId = await this.getPageModuleID(); 
       this.initializeScripts(moduleId, patientId);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
@@ -45,9 +45,8 @@ export default {
     async getPageModuleID() {
       try {
      /*    var url = encodeURIComponent(window.location.href); */
-        // Make an API call to your server to fetch the moduleID
-        const response = await axios.get('/get_module_id'); // Replace this with your API endpoint
-        return response.data.moduleID; // Assuming the server sends moduleID in the response
+        const response = await axios.get('/get_module_id'); 
+        return response.data.moduleID; 
 
       } catch (error) {
         throw new Error('Failed to fetch moduleID');
@@ -58,11 +57,15 @@ export default {
         const taskMangeResp = await axios.get(`/task-management/patient-to-do/${patientId}/${moduleId}/list`);
         $("#toDoList").html(taskMangeResp.data);
         $('.badge').html($('#count_todo').val());
+
+        const cmAssignpatientstatus = await axios.get(`/patients/cm-assignpatient/0/${patientId}/cmassignpatient`);
+        $("#patientassignlist").html(cmAssignpatientstatus.data);
+
         const patientStatus = await axios.get(`/patients/patient-status/${patientId}/${moduleId}/status`);
         $("#status_blockcontent").html(patientStatus.data);
         const carePlanStatus = await axios.get(`/ccm/careplan-status/${patientId}/${moduleId}/careplanstatus`);
         $("#careplan_blockcontent").html(carePlanStatus.data);
-        let currentDate = new Date()
+        let currentDate = new Date();
         let year = currentDate.getFullYear();
         let month = currentDate.getMonth() + 1;
         const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleId}/${month}/${year}/previousstatus`);
@@ -88,7 +91,6 @@ export default {
         console.error(error);
       }
 
-
       var $body = $("body");
       $('#dark-checkbox').change(function () {
         if ($(this).prop('checked')) {
@@ -106,7 +108,6 @@ export default {
           }
         });
       });
-
 
       $(document).ready(function () {
         localStorage.setItem("idleTime", 0);
@@ -137,8 +138,8 @@ export default {
           // idleTime = 0;
           localStorage.setItem("idleTime", 0);
         });
-
       });
+
       var sessionIdleTime = 0; // Initialize sessionIdleTime
       var checkTimeInterval = function timerIncrement() {
         sessionIdleTime = localStorage.getItem("idleTime");

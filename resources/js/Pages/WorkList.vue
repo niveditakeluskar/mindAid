@@ -1,5 +1,5 @@
 <template>
-  <LayoutComponent ref="layoutComponentRef" >
+<LayoutComponent ref="layoutComponentRef" >
     <div>
       <loading-spinner :isLoading="isLoading"></loading-spinner>
       <div class="breadcrusmb">
@@ -105,6 +105,11 @@
     </div>
 
   </LayoutComponent>
+
+  <Head>
+    <title>{{ title }}</title>
+    <meta name="description" content="Worklist listing page" />
+  </Head>
 </template>
 
 <script>
@@ -115,10 +120,12 @@ import {
   computed,
   watch,
   AgGridTable,
-  onBeforeMount
+  onBeforeMount,
+  Head
 } from './commonImports';
 import LayoutComponent from './LayoutComponent.vue'; 
 import PatientStatus from './Modals/PatientStatus.vue';
+
 
 export default {
   props: {
@@ -128,9 +135,11 @@ export default {
   components: {
     LayoutComponent,
     PatientStatus,
-    AgGridTable
+    AgGridTable,
+    Head
 },
   setup(props) {
+    const title = 'WorkList ';
     const { callExternalFunctionWithParams } = PatientStatus.setup();
     const layoutComponentRef = ref(null);
     const passRowData = ref([]);
@@ -201,7 +210,6 @@ export default {
         const row = params.data;
         const camelCaseFullName = row.full_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
         return `<div style="display: flex; align-items: center;">
-                    <img src="https://mnt1.d-insights.global/assets/images/faces/avatar.png" width="50px" class="user-image">
                     <span style="margin-left: 4px;">${camelCaseFullName}</span>
                 </div>`;
     },
@@ -301,7 +309,7 @@ export default {
           practiceId = null;
         }
         
-        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist'); // Call the API endpoint
+        const response = await fetch('/patients/ajax/patientlist/' + practiceId + '/patientlist');
        if (!response.ok) {
           throw new Error('Failed to fetch patients');
         }
@@ -366,12 +374,12 @@ export default {
 
     const patientReloadFn = async ()=> {
       getPatientList(
-          selectedPractice.value,
-          selectedPatients.value,
-          patientsmodules.value,
-          selectedOption.value,
-          timeValue.value,
-          activedeactivestatus.value
+        selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedPatients.value === '' ? null : selectedPatients.value,
+          patientsmodules.value === '' ? null : patientsmodules.value,
+          selectedOption.value === '' ? null : selectedOption.value,
+          timeValue.value === '' ? null : timeValue.value,
+          activedeactivestatus.value === '' ? null : activedeactivestatus.value
         );
     };
 
@@ -460,6 +468,7 @@ export default {
       handleSubmit,
       handleChange,
       handleReset,
+      title
     };
   },
 };

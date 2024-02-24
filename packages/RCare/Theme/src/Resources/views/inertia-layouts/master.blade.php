@@ -59,8 +59,9 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
+            @inertia
             @vite('resources/js/appInertia.js')
-                @inertia
+               
             </div>
             @include('Theme::layouts_2.footer')
         </div> <!-- ============ Body content End ============= -->
@@ -77,6 +78,7 @@
     }
     ?>
     @include('Theme::layouts_2.to-list-customizer')
+    @include('Theme::layouts_2.cm-patient-assign')
     <!-- ============ Horizontal Layout End ============= -->
 
     <!-- Model Started here -->

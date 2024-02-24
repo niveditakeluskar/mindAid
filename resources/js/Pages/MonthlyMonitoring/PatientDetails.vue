@@ -9,12 +9,17 @@
       </div>
     </div>
   </LayoutComponent>
+  <Head>
+    <title>{{ title }}</title>
+    <meta name="description" content="Monthly Monitoring Page" />
+  </Head>
 </template>
 
 <script>
 import {
   ref,
   onBeforeMount,
+  Head
 } from '../commonImports';
 import LayoutComponent from '../LayoutComponent.vue';
 import PatientBasicInfo from '../Patients/Components/PatientBasicInfo.vue';
@@ -31,9 +36,11 @@ export default {
   components: { 
       LayoutComponent,
       PatientBasicInfo,
-      PatientMonthlyMonitoringDetails
+      PatientMonthlyMonitoringDetails,
+      Head
   },
   setup(props) {
+    const title = 'Monthly Monitor ';
     let landingtime = ref(null);
     onBeforeMount(() => {
       document.title = 'Monthly Monitoring |  Renova Healthcare';
@@ -41,6 +48,7 @@ export default {
     });
     return {
       landingtime,
+      title
     };
   },
 }
