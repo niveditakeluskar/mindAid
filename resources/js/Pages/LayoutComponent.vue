@@ -148,31 +148,14 @@ export default {
 
       var sessionIdleTime = 0; // Initialize sessionIdleTime
       var checkTimeInterval = function timerIncrement() {
-        // idleTime = idleTime + 1; //Calls every 1 seconds
         sessionIdleTime = localStorage.getItem("idleTime");
-
-        // var showPopupTime = sessionStorage.getItem("showPopupTime");
-        // var sessionTimeoutInSeconds = sessionStorage.getItem("sessionTimeoutInSeconds");
-
-
         var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
         var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-
         var systemDate = localStorage.getItem("systemDate");
         var currentDate = new Date();
         var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
         var idleTime = parseInt(sessionIdleTime) + (res % 60);
-
-
-        //console.log("idleTime-" + idleTime);
-        // console.log("showPopupTime-"+showPopupTime);
-        console.log("sessionTimeoutInSeconds-" + sessionTimeoutInSeconds);
-
-
         if (idleTime >= showPopupTime) {
-
-          console.log('idleTime in if loop idleTime >= showPopupTime');
-
           // $('#logout_modal').modal('show');   
           var visiblemodal = $('#logout_modal').is(':visible');
           if (visiblemodal) {
@@ -182,10 +165,8 @@ export default {
           }
 
           if (idleTime >= sessionTimeoutInSeconds) {
-            console.log('idleTime in if loop idleTime >= sessionTimeoutInSeconds');
             var visiblemodal = $('#logout_modal').is(':visible');
             if (visiblemodal) {
-              console.log('visiblemodal in sessiontimeout');
               // $('#logout_modal').modal('hide');   
               $("#sign-out-btn")[0].click();
               var base_url = window.location.origin;
