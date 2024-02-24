@@ -28,14 +28,13 @@
                     <label class="checkbox noAllergiesLbl"  style="z-index: 1;"> 
                         <!-- @click="hideShowNKDAMsg('drugcount','msg');" -->
                     No Known Drug Allergies
-                    <input type="checkbox" v-model="allergyStatus"  name="allergy_status" @change="noAllergiesCheck" style="position: absolute; z-index: -1;">
+                    <input type="checkbox" v-model="allergyStatus"  name="allergy_status" @change="noAllergiesCheck" style="position: absolute; z-index: -1;" :checked="allergyStatus" value="1">
                     <div id="msg" style="color:red; display:none">Please delete all data from below table to enable checkbox!</div>
                     <span class="checkmark"></span>
                     </label>
 
                     <input type = "hidden" id="drugcount" :value="drugAllergiesRowCount"> 
-                    <DrugForm :formErrors="formErrors" />
-                    
+                    <DrugForm :formErrors="formErrors" />                    
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
@@ -89,8 +88,15 @@ export default {
     },
     data() {
         return {
-        allergyStatus: false, 
-        drugAllergiesRowData: [] 
+            allergyStatus: 0,
+            // specify: '',
+            // typeOfReactions: '',
+            // severity: '',
+            // courseOfTreatment: '',
+            // notes: '',
+            // formSubmitted: false,
+            drugAllergiesRowData: [] , 
+            formErrors: {}
         };
     },
     computed: {
@@ -111,6 +117,7 @@ export default {
         noAllergiesCheck() {
             if (this.allergyStatus) {
                 // alert("Checkbox is checked!");
+                this.allergyStatus = 1;
                 var form = $('.noallergiescheck').closest('form');
                 var formname = "allergy_drug_form";
                 this.hideShowNKDAMsg('drugcount', 'msg');
@@ -128,6 +135,10 @@ export default {
                 $("form[name='" + formname + "'] textarea[name='notes']").prop("disabled", true);
             } else {
                 // alert("Checkbox is unchecked!");
+                if (!this.specify || !this.typeOfReactions || !this.severity || !this.courseOfTreatment) {
+                    this.allergyStatus = 0;
+                return;
+                }
                 var form = $('.noallergiescheck').closest('form');
                 var formname = "allergy_drug_form";
                 $("form[name='" + formname + "']")[0].reset();
@@ -205,7 +216,7 @@ export default {
 
         
         
-        let submitAllergiesForm = async () => {
+        let submitAllergiesForm = async () => { //debugger;
             formErrors.value = {};
             let myForm = document.getElementById('allergy_drug_form');
             let formData = new FormData(myForm);
@@ -236,6 +247,9 @@ export default {
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
+                    setTimeout(function () {
+                        formErrors.value = {};
+                    }, 5000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
@@ -342,15 +356,14 @@ export default {
 
         return {
             loading,
+            formErrors,
             submitAllergiesForm,
             drugallergiesStageId,
             drugallergiesStepId,
-            formErrors,
             drugallergiesTime,
             showDurgAlert,
             drugAllergiescolumnDefs,
             drugAllergiesRowData,
-          
             fetchPatientDrugList,
             deleteAllergies,
             editAllergy,

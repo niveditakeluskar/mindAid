@@ -1518,9 +1518,24 @@ class CarePlanDevelopmentController extends Controller
         );
     }
 
-    public function saveAllergy(AllergiesAddRequest $request)
-    { // 
-        // dd($request);
+    public function saveAllergy(Request $request)
+    { // AllergiesAddRequest
+
+        $allergy_status      = sanitizeVariable($request->allergy_status); 
+        if ($allergy_status == null || $allergy_status == '') { 
+            $validatedData = $request->validate([
+                'specify' => 'required',
+                'type_of_reactions' => 'required',
+                'severity' => 'required',
+                'course_of_treatment' => 'required',
+                'notes' => 'nullable|text_comments_slash',
+            ], [
+                'specify' => 'The specify field is required when above checkbox is not checked.',
+                'type_of_reactions' => 'The type of reactions field is required when above checkbox is not checked.',
+                'severity' => 'The severity field is required when above checkbox is not checked.',
+                'course_of_treatment' => 'The course of treatment field is required when above checkbox is not checked.',
+            ]);
+        }
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -1539,13 +1554,15 @@ class CarePlanDevelopmentController extends Controller
         $step_id             = sanitizeVariable($request->step_id);
         $form_name           = sanitizeVariable($request->form_name);
         $billable            = sanitizeVariable($request->billable);
-        $allergy_status      = sanitizeVariable($request->allergy_status);
+        // $allergy_status      = sanitizeVariable($request->allergy_status);
+        // dd($allergy_status);
         $noallergymsg        = sanitizeVariable($request->noallergymsg);
+        // dd($allergy_status);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            if ($allergy_status == 'on') {
+            if ($allergy_status == 'on' || $allergy_status == '1') {
                 $noallergymsg = sanitizeVariable($request->noallergymsg);
             } else {
                 $noallergymsg = '';
@@ -1563,6 +1580,7 @@ class CarePlanDevelopmentController extends Controller
                 'allergy_status'     => $noallergymsg,
                 'status'             => 1
             );
+            // dd($insert_allergy);
             if ($tab == 'review-allergy') {
                 $insert_allergy['review'] = 1;
             }
