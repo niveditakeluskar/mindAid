@@ -185,8 +185,15 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-call-callclose', formData);
 				if (response && response.status == 200) {
 					this.showAlert = true;
+					var year = (new Date).getFullYear();
+               		var month = (new Date).getMonth() + 1
 					updateTimer(this.patientId, 1, this.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
+					const taskMangeResp = await axios.get(`/task-management/patient-to-do/${this.patientId}/${this.moduleId}/list`);
+                     $("#toDoList").html(taskMangeResp.data);
+                     $('.badge').html($('#count_todo').val());
+                     const previousMonths = await axios.get(`/ccm/previous-month-status/${this.patientId}/${this.moduleId}/${month}/${year}/previousstatus`);
+                     $("#previousMonthData").html(previousMonths.data);
 					setTimeout(() => {
 						this.showAlert = false;
 					}, 3000);

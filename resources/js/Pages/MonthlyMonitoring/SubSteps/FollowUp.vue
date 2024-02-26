@@ -366,8 +366,15 @@ export default {
 					};
 					emr_complete.value = 0;
 					fetchFollowupMasterTaskList();
+					var year = (new Date).getFullYear();
+               		var month = (new Date).getMonth() + 1
 					$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
+					const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+                     $("#toDoList").html(taskMangeResp.data);
+                     $('.badge').html($('#count_todo').val());
+                     const previousMonths = await axios.get(`/ccm/previous-month-status/${props.patientId}/${props.moduleId}/${month}/${year}/previousstatus`);
+                     $("#previousMonthData").html(previousMonths.data);
 					$(".form_start_time").val(response.data.form_start_time);
 					time.value = response.data.form_start_time;
 					setTimeout(function () {
