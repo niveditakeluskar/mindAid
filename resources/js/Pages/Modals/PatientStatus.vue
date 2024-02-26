@@ -313,7 +313,7 @@
                         setTimeout(function () {
                             $('#patientalertdiv').html('');
                         }, 3000);
-                    }
+                    } 
                 }
             };
 

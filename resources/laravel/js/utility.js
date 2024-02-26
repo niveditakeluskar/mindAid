@@ -2640,11 +2640,17 @@ var getPatientDetails = function (patientId, moduleId) {
         //second column
         var fname = '';
         if (response.data.patient[0].fname != '') {
-            var fname = response.data.patient[0].fname;
+             first_name = response.data.patient[0].fname;
+            var fname = first_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
         var lname = '';
         if (response.data.patient[0].lname != '') {
-            var lname = response.data.patient[0].lname;
+            last_name = response.data.patient[0].lname;
+            var lname = last_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
         $(".patient_name").text(fname + ' ' + lname);
 
@@ -2730,8 +2736,12 @@ var getPatientDetails = function (patientId, moduleId) {
 
         var assignCM = '';
         if (response.data.caremanager_name != '') {
-            assignCM = response.data.caremanager_name;
+            cm_name = response.data.caremanager_name; 
+            var assignCM = cm_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
+        
         $(".patient_assign_cm").text(assignCM);
 
         //fift column
