@@ -153,20 +153,21 @@
                                             <span v-for="(service, index) in enrolledServices" :key="index"
                                                 v-html="service"></span>
                                         </span>
-                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
+                                        <!-- <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
                                             @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
-                                                data-placement="top" data-original-title="Additional Device"></i></a>
+                                                data-placement="top" data-original-title="Additional Device"></i></a> -->
                                         <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
+                                        
                                         <!-- add-patient-devices -->
-                                        <!-- <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
-                                            href="javascript:void(0)" id="add-patient-devices" 
+                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
+                                            href="javascript:void(0)" id="add-patient-devices"
                                             @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
-                                            :componentId="componentId" :stageid="stageid" /> -->
-
+                                            :componentId="componentId" :stageid="stageid" />
+                                        <br/>
 
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"

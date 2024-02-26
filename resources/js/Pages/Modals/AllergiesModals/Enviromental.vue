@@ -90,7 +90,8 @@ export default {
     data() {
         return {
         allergyStatus: false, 
-        enviromentalAllergiesRowData: []
+        enviromentalAllergiesRowData: [],
+        formErrors: {}
         };
     },
     computed: {
@@ -238,6 +239,9 @@ export default {
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
+                    setTimeout(function () {
+                        formErrors.value = {};
+                    }, 5000);
                 } else {
                     console.error('Error submitting form:', error);
                 }

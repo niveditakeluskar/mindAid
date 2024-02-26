@@ -73,10 +73,11 @@
                                 <label for="programs"  data-toggle="tooltip" title="Enrolled Services" data-original-title="Patient Enrolled Services">
                                     <i class="text-muted i-Library"></i>: <span id="enroll_services" class="patient_enroll_services"></span> 
                                 </label>
-                                <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
+                                <!-- <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
                                     <i class="plus-icons i-Add" id="adddevice" style="font-size: 15px;" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i>
-                                </a>
+                                </a> -->
                                <!-- ash -->
+                                <br/>
                                 <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm add_patient_devices" data-toggle="modal" data-target="#add-patient-devices" style="background-color:#27a7de;border:none;display: none;" id="add_patient_devices">Devices</a>  
                                 <!-- !ash -->
                                 <br/>
