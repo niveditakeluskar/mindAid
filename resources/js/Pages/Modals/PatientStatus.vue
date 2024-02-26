@@ -1,6 +1,6 @@
 <template>
     <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 490px;left: 32%;min-height: 400px;max-height: 485px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 730px;left: 22%;min-height: 400px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -64,7 +64,7 @@
                             </div>
                             <div class="col-md-12" id="date_value">
                                 <div class="form-group row">
-                                    <div class="col-md-6 form-group mb-3" id="fromdate">
+                                    <div class="col-md-4 form-group mb-3" id="fromdate">
                                         <label for="date" id="from_date">From Date <span class="error">*</span></label>
                                         <input name="activedeactivefromdate" id="fromdate" type="date">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivefromdate" style="display: block;">{{ formErrors.activedeactivefromdate[0] }}</div>
@@ -79,9 +79,9 @@
                                         <input name="activedeactivetodate" id="todate" type="date">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivetodate" style="display: block;">{{ formErrors.activedeactivetodate[0] }}</div>
                                     </div>
-                                    <div class="col-md-6 form-group mb-3" id="deactivation_drpdwn_div">
-                                        <label for="deactivation_drpdwn">Reason for Deactivation</label>
-                                        <select id="practices" class="custom-select show-tick select2" name="deactivation_drpdwn">
+                                    <div class="col-md-8 form-group mb-3" id="deactivation_drpdwn_div">
+                                        <label for="deactivation_drpdwn" class="col-md-5">Reason for Deactivation</label>
+                                        <select id="practices" class="custom-select show-tick select2 col-md-7" name="deactivation_drpdwn">
                                             <option value="">Select Deactivation Reasons</option>
                                             <option v-for="Deactivation in Deactivations" :key="Deactivation.id" :value="Deactivation.id">
                                             {{ Deactivation.reasons }}
@@ -336,49 +336,3 @@
         },
     };
 </script>
-<style>
-    .goal-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2px;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        background-color: white;
-        z-index: 1000;
-        margin: 2%;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-    }
-
-    .modal.open {
-        display: block;
-        opacity: 1;
-    }
-
-    .overlay.open {
-        display: block;
-    }
-
-    .modal-content {
-        overflow-y: auto !important;
-        /* height: 500px !important; */
-    }
-    .modal-body {
-        flex: 0;
-    }
-</style>
