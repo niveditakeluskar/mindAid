@@ -339,16 +339,16 @@ export default {
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
         const isLoading = ref(false);
-        const goals = ref([]); // Use ref to declare reactive goals array
-        const tasks = ref([]); // Use ref to declare reactive goals array
-        const symptoms = ref([]); // Use ref to declare reactive goals array
+        const goals = ref([]); 
+        const tasks = ref([]); 
+        const symptoms = ref([]); 
         const isInitialGoalFilled = ref(false);
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
-        const goalsText = ref(''); // Use ref for the concatenated goals string
+        const goalsText = ref(''); 
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const passRowData = ref([]); // Initialize rowData as an empty array
+        const passRowData = ref([]); 
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);
@@ -548,7 +548,6 @@ export default {
                 }
                 loading.value = false;
                 const data = await response.json();
-                // Check if data.data is not undefined before assigning it to rowData
                 if (data.data) {
                     passRowData.value = data.data;
                 } else {
@@ -759,7 +758,6 @@ export default {
         };
 
         watchEffect(() => {
-            // Update goalsText whenever goals array changes
             goals.value = goals.value.filter((goal) => goal.trim() !== '');
             symptoms.value = symptoms.value.filter((symptom) => symptom.trim() !== '');
             tasks.value = tasks.value.filter((task) => task.trim() !== '');
