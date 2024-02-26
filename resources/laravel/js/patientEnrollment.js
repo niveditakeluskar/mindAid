@@ -900,92 +900,94 @@ $('#add_replace_device').on('change', function () {
 
 });
 
-$('body').on('click', '.change_device_status_active', function () { 
-    var id = $(this).data('id');
-    if (confirm("Are you sure you want to Deactivate this Device")) {
-        $.ajaxSetup({
-         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    $.ajax({
-        type: 'post',
-        url: '/patients/delete-device/' + id,
-        // data: {"_token": "{{ csrf_token() }}","id": id},
-        data: { "id": id },
-        // alert(data);
-        success: function (response) {
-            ccmcpdcommonJS.renderDeviceTableData();
-            $("#success").show();
-            var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong> Deactivated Successfully!</strong></div>';
-            $("#success").html(txt);
-            setTimeout(function () {
-            $("#success").hide();
-            }, 3000);
-        }
-    });
-    } else { return false; }
-});
+// $('body').on('click', '.change_device_status_active', function () { 
+//     var id = $(this).data('id');
+//     if (confirm("Are you sure you want to Deactivate this Device")) {
+//         $.ajaxSetup({
+//          headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         }
+//     });
+//     $.ajax({
+//         type: 'post',
+//         url: '/patients/delete-device/' + id,
+//         // data: {"_token": "{{ csrf_token() }}","id": id},
+//         data: { "id": id },
+//         // alert(data);
+//         success: function (response) {
+//             ccmcpdcommonJS.renderDeviceTableData();
+//             $("#success").show();
+//             var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong> Deactivated Successfully!</strong></div>';
+//             $("#success").html(txt);
+//             setTimeout(function () {
+//             $("#success").hide();
+//             }, 3000);
+//         }
+//     });
+//     } else { return false; }
+// });
                             
-$('body').on('click', '.change_device_status_deactive', function () {
-    var id = $(this).data('id');
-    if (confirm("Are you sure you want to Activate this Device")) {
-        $.ajaxSetup({
-            headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            type: 'post',
-            url: '/patients/delete-device/' + id,
-            // data: {"_token": "{{ csrf_token() }}","id": id},
-            data: { "id": id },
-            success: function (response) {
-                ccmcpdcommonJS.renderDeviceTableData();
-                $("#success").show();
-                var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device  Activated Successfully!</strong></div>';
-                $("#success").html(txt);
-                setTimeout(function () {
-                $("#success").hide();
-            }, 3000);
-            }
-        });
-    } else { return false;  }
-});
+// $('body').on('click', '.change_device_status_deactive', function () {
+//     var id = $(this).data('id');
+//     if (confirm("Are you sure you want to Activate this Device")) {
+//         $.ajaxSetup({
+//             headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             }
+//         });
+//         $.ajax({
+//             type: 'post',
+//             url: '/patients/delete-device/' + id,
+//             // data: {"_token": "{{ csrf_token() }}","id": id},
+//             data: { "id": id },
+//             success: function (response) {
+//                 ccmcpdcommonJS.renderDeviceTableData();
+//                 $("#success").show();
+//                 var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device  Activated Successfully!</strong></div>';
+//                 $("#success").html(txt);
+//                 setTimeout(function () {
+//                 $("#success").hide();
+//             }, 3000);
+//             }
+//         });
+//     } else { return false;  }
+// });
 
-$('body').on('click', '.editDevicesdata', function () { //alert("working");
-    $("#devices_form input[name='device_id']").val('');
-    $('#partner_id').val(''); 
-    $('#partner_devices_id').val('');
-    $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
-    $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
-    $("#modelHeading1").text('Edit Device');
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/"),
-    id = parts[parts.length - 1];
-    var id = $(this).data('id');
-    var data = "";
-    URL_POPULATE1 = "/patients/ajax/populatedevice";
-    var formpopulateurl = URL_POPULATE1 + "/" + id;
-    console.log("formpopulateurl" + formpopulateurl);
-    console.log("data" + data);
-    //populateForm(id, "ajax/populatedevice/"+ id);
-    populateForm(data, formpopulateurl);
-});
+// $('body').on('click', '.editDevicesdata', function () { //alert("working");
+//     $("#devices_form input[name='device_id']").val('');
+//     $('#partner_id').val(''); 
+//     $('#partner_devices_id').val('');
+//     $(`form[name="devices_form"]`).find(".is-invalid").removeClass("is-invalid");
+//     $(`form[name="devices_form"]`).find(".invalid-feedback").html("");
+//     $("#modelHeading1").text('Edit Device');
+//     var sPageURL = window.location.pathname;
+//     parts = sPageURL.split("/"),
+//     id = parts[parts.length - 1];
+//     var id = $(this).data('id');
+//     $('#idd').val(id); 
+//     var data = "";
+    
+//     URL_POPULATE1 = "/patients/ajax/populatedevice";
+//     var formpopulateurl = URL_POPULATE1 + "/" + id;
+//     console.log("formpopulateurl" + formpopulateurl);
+//     console.log("data" + data);
+//     //populateForm(id, "ajax/populatedevice/"+ id);
+//     populateForm(data, formpopulateurl);
+// });
 
-$('body').on('click','.patient_finnumber',function () { 
-    $("#fin_number_form input[name='fin_number']").val('');
-    $(`form[name="fin_number_form"]`).find(".is-invalid").removeClass("is-invalid");
-    $(`form[name="fin_number_form"]`).find(".invalid-feedback").html("");
-    var sPageURL = window.location.pathname;
-    parts = sPageURL.split("/");
-    id = parts[parts.length - 1];   
-    var idd = $(this).data('id');
-    var data = "";
-    URL_POPULATE1 = "/patients/ajax/populatefinnumber";
-    var formpopulateurl = URL_POPULATE1 + "/" + id;   
-    populateForm(data, formpopulateurl);
-});
+// $('body').on('click','.patient_finnumber',function () { 
+//     $("#fin_number_form input[name='fin_number']").val('');
+//     $(`form[name="fin_number_form"]`).find(".is-invalid").removeClass("is-invalid");
+//     $(`form[name="fin_number_form"]`).find(".invalid-feedback").html("");
+//     var sPageURL = window.location.pathname;
+//     parts = sPageURL.split("/");
+//     id = parts[parts.length - 1];   
+//     var idd = $(this).data('id');
+//     var data = "";
+//     URL_POPULATE1 = "/patients/ajax/populatefinnumber";
+//     var formpopulateurl = URL_POPULATE1 + "/" + id;   
+//     populateForm(data, formpopulateurl);
+// });
 
 
 $(document).ready(function () {
