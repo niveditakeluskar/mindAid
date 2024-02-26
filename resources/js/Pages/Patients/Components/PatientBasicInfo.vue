@@ -374,7 +374,7 @@ export default {
         const non_billabel_time = ref();
         const total_time = ref(); 
         const PatientStatusRef = ref();
-        
+
         // const enrolledServices = ref(null);
         const enrolledServices = ref([]);
         const patientDetails = ref(null);
@@ -477,7 +477,7 @@ export default {
                 const suspendedFromDate = data.patient_services[0].suspended_from;
                 if (suspendedFromDate) {
                     const dateObject = new Date(suspendedFromDate);
-                    const formattedDate = `-${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
+                    const formattedDate = `${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
                     suspended_from_date.value = formattedDate;
                 } else {
                     suspended_from_date.value = ''; // Handle the case when suspended_from_date is null or undefined
@@ -486,7 +486,7 @@ export default {
                 const suspendedToDate = data.patient_services[0].suspended_to;
                 if (suspendedToDate) {
                     const dateObject = new Date(suspendedToDate);
-                    const formattedDate = `-${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
+                    const formattedDate = `${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
                     suspended_to_date.value = formattedDate;
                 } else {
                     suspended_to_date.value = ''; // Handle the case when suspended_from_date is null or undefined
