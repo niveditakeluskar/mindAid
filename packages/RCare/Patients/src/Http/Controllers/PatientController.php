@@ -421,9 +421,24 @@ class PatientController extends Controller
             $allreadydevice = 0;
         }
 
-        $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+        // $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+        // $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
 
-        $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
+        $PatientDevices = DB::select(("select distinct STRING_AGG (device_code, ', ') 
+        from patients.patient_devices
+        where patient_id ='".$uid."'
+        group by device_code"));
+
+        $resultArray = [];
+        foreach ($PatientDevices as $item) {
+            // Extract the "string_agg" value and split it into an array using the comma as a delimiter
+            $values = explode(', ', $item->string_agg);
+            // Add the values to the result array
+            $resultArray = array_merge($resultArray, $values);
+        }
+
+        // Join the values into a comma-separated string
+        $device_code = implode(', ', $resultArray);
 
         $device_status = empty($PatientDevices->shipping_status) ? '' : $PatientDevices->shipping_status;
 

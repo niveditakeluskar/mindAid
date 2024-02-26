@@ -69,8 +69,7 @@
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
                                         </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
-                                            href="javascript:void(0)" id="show-modal1" @click="alertThresholdfunction">Alert
-                                            Thresholds</a>
+                                            href="javascript:void(0)" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
                                             :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                             :patient_systolichigh="patient_systolichigh"
@@ -111,35 +110,37 @@
                                     <div class="col-md-2 right-divider">
                                         <i class="text-muted i-Search-People"></i>
                                         <span data-toggle="tooltip" data-placement="right" title="Enrollment Status"
-                                            :textContent="patient_module" data-original-title="Patient Enrollment Status"
+                                            data-original-title="Patient Enrollment Status"
                                             id="PatientStatus" class="mb-1">
-                                        </span>
+                                        </span> 
+                                        <!-- :textContent="patient_module" -->
                                         <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId" :PatientBasicInfoTab="PatientBasicInfoReload"/>
-                                        <span patient_enroll_date v-if="patient_module_status == '1'">
+                                        <span patient_enroll_date v-if="patient_module_status == '1'"> Active
                                             <a @click="() => patientServiceStatus('1')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="active">
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Activate"></i>
                                             </a>
-                                        </span>
+                                        </span> 
 
-                                        <span patient_enroll_date v-if="patient_module_status == '0'">
+                                        <span patient_enroll_date v-if="patient_module_status == '0'"> Suspended
                                             <a @click="() => patientServiceStatus('0')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="suspend">
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Suspended"></i>
                                             </a>
-                                            Form : <span :textContent="suspended_from_date"></span>
-                                            To : <span :textContent="suspended_to_date"></span>
+                                                From - : <span :textContent="suspended_from_date "></span>
+                                                To - : <span :textContent="suspended_to_date "></span>
                                         </span>
-                                        <span patient_enroll_date v-if="patient_module_status == '2'">
+                                        <span patient_enroll_date v-if="patient_module_status == '2'"> Deactivated
                                             <a @click="() => patientServiceStatus('2')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="deactive">
                                                 <i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Deactivate"></i>
                                             </a>
+                                            <span :textContent="suspended_from_date"></span>
                                         </span>
-                                        <span patient_enroll_date v-if="patient_module_status == '3'">
+                                        <span patient_enroll_date v-if="patient_module_status == '3'">  Deceased
                                             <a @click="() => patientServiceStatus('3')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="deceased">
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip"
@@ -154,7 +155,7 @@
                                                 v-html="service"></span>
                                         </span>
                                         <!-- <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
-                                            @click="add_additional_devicesfunction">
+                                            @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
                                                 data-placement="top" data-original-title="Additional Device"></i></a> -->
                                         <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
@@ -164,9 +165,9 @@
                                         <!-- add-patient-devices -->
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="add-patient-devices"
-                                            @click="add_devicesfunction">Devices</a>
+                                            @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
-                                            :componentId="componentId" :stageid="stageid" />
+                                            :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
                                         <br/>
 
                                         <div id="newenrolldate">
@@ -292,7 +293,7 @@ export default {
         patient_bpmlow: Number,
         patient_oxsathigh: Number,
         patient_oxsatlow: Number,
-        patient_glucosehigh: Number,
+        patient_glucosehigh: Number, 
         patient_glucoselow: Number,
         patient_temperaturehigh: Number,
         patient_temperaturelow: Number,
@@ -318,8 +319,6 @@ export default {
         PatientStatus,
         // AdditionalDevices,
     },
-    
-
     setup(props) {
         const { callExternalFunctionWithParams } = PatientStatus.setup();
         const veteranRef = ref();
@@ -380,10 +379,10 @@ export default {
         // const enrolledServices = ref(null);
         const enrolledServices = ref([]);
         const patientDetails = ref(null);
-        const EditPatientUrl = '/patients/registered-patient-edit/' + props.patientId + '/' + props.moduleId + '/' + props.componentId + '/0';
+        const EditPatientUrl = '/patients/registerd-patient-edit/' + props.patientId + '/' + props.moduleId + '/' + props.componentId + '/0';
         var pause_stop_flag = 0;
         var pause_next_stop_flag = 0;
-        // const showAddPatientAddDevices = ref(false);
+        const showAddPatientDevices = ref(false);
 
         const patientServiceStatus = async (pstatus) => {
             PatientStatusRef.value.openModal();
@@ -392,15 +391,17 @@ export default {
 
 
         const add_devicesfunction = async () => {
-            DeviceModalRef.value.openModal();
+            console.log("openModeladdDevices");
+            AddDeviceModalRef.value.openModal();
         };
 
         const add_additional_devicesfunction = async () => {
             //additional_devicesRef.value.openModal();
-            AddDeviceModalRef.value.openModal();
+            DeviceModalRef.value.openModal();
         };
 
         const veteranServicefunction = async () => {
+            console.log("openMModelV called");
             veteranRef.value.openModal();
             // patComDetails();
         }
@@ -436,13 +437,13 @@ export default {
                     throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
                 }
                 const data = await response.json();
-
+                // alert(data.patient[0].fin_number);
                 const dobParts = data.patient[0].dob.split('-');
                 const formattedDob = `${dobParts[1]}-${dobParts[2]}-${dobParts[0]}`;
                 patientDetails.value = data;
                 billable_time.value = data.billable_time;
                 non_billabel_time.value = data.non_billabel_time;
-
+                // patientName.value = data.patient[0].fname + " " + data.patient[0].lname;
                 // Capitalize the first letter of the first name
                 const patientFname = data.patient[0].fname.replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -456,27 +457,43 @@ export default {
                 patientMob.value = data.patient[0].mob;
                 consent_to_text.value = data.consent_to_text;
                 finNumber.value = data.patient[0].fin_number;
+                consent_to_text.value = data.consent_to_text;
                 military_status.value = data.military_status;
-
-                // Check if PatientAddress exists before constructing the address
                 if (data.PatientAddress) {
                     patientAddress.value = `${data.PatientAddress.add_1}, ${data.PatientAddress.add_2}, ${data.PatientAddress.city}, ${data.PatientAddress.state}, ${data.PatientAddress.zipcode}`;
                 } else {
+                    // Handle the case when PatientAddress is null
                     patientAddress.value = '';
                 }
-
                 practice_name.value = data.practice_name;
                 provider_name.value = data.provider_name;
                 practice_emr.value = data.practice_emr;
+                // caremanager_name.value = data.caremanager_name;
                 caremanager_name.value = data.caremanager_name.replace(/\b\w/g, (char) => char.toUpperCase());
                 date_enrolled.value = data.date_enrolled;
                 patient_module.value = data.patient_services[0].module.module;
                 patient_module_status.value = data.patient_services[0].status;
 
-                suspended_from_date.value = data.patient_services[0].suspended_from;
-                suspended_to_date.value = data.patient_services[0].suspended_to;
-                patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status
-                patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status;
+                // suspended_from_date.value = data.patient_services[0].suspended_from;
+                const suspendedFromDate = data.patient_services[0].suspended_from;
+                if (suspendedFromDate) {
+                    const dateObject = new Date(suspendedFromDate);
+                    const formattedDate = `-${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
+                    suspended_from_date.value = formattedDate;
+                } else {
+                    suspended_from_date.value = ''; // Handle the case when suspended_from_date is null or undefined
+                }
+                // suspended_to_date.value = data.patient_services[0].suspended_to;
+                const suspendedToDate = data.patient_services[0].suspended_to;
+                if (suspendedToDate) {
+                    const dateObject = new Date(suspendedToDate);
+                    const formattedDate = `-${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')}-${dateObject.getFullYear()}`;
+                    suspended_to_date.value = formattedDate;
+                } else {
+                    suspended_to_date.value = ''; // Handle the case when suspended_from_date is null or undefined
+                }
+                patient_device.value = data.device_code;
+                // patient_device.value = data.device_code + ' ' + data.patient_assign_device + ' ' + data.device_status
 
                 personal_notes_data.value = data.personal_notes;
                 research_study_data.value = data.research_study;
@@ -499,39 +516,48 @@ export default {
                 patient_spirometerfevlow.value = data.temperaturelow;
                 patient_spirometerpefhigh.value = data.spirometerpefhigh;
                 patient_spirometerpeflow.value = data.spirometerpeflow;
-                
+                props.loading = "done";
+
                 const patientServices = data.patient_services;
                 const countEnrollServices = patientServices.length;
                 const enrollServices = [];
-                for (let i = 0; i < countEnrollServices; i++) {
+                for (let i = 0; i < countEnrollServices; i++) { 
                     const enrollServicesStatus = patientServices[i].status;
                     let patientEnrollServicesStatus = '';
-
-                    switch (enrollServicesStatus) {
-                        case 0:
-                            patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
-                            break;
-                        case 1:
-                            patientEnrollServicesStatus = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
-                            break;
-                        case 2:
-                            patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
-                            break;
-                        case 3:
-                            patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
-                            break;
-                        default:
-                            break;
+                    //  console.log(enrollServicesStatus +"enrollServicesStatus");
+                    if(enrollServicesStatus == 1 ){ //'Active';
+                     patientEnrollServicesStatus ='<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
+                    }else if(enrollServicesStatus == 0){ //'Suspended'
+                        patientEnrollServicesStatus ='<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
+                    }else if (enrollServicesStatus == 2){ //'Deactivated'
+                        patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
+                    }else if(enrollServicesStatus == 3){ //'Deceased'
+                        patientEnrollServicesStatus ='<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
                     }
+                    // switch (enrollServicesStatus) {
+                    //     case 0:
+                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
+                    //         break;
+                    //     case 1:
+                    //         patientEnrollServicesStatus = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
+                    //         break;
+                    //     case 2:
+                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
+                    //         break;
+                    //     case 3:
+                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
+                    //         break;
+                    //     default:
+                    //         break;
+                    // }
 
-                    const module = patientServices[i].module.module;
+                    const module = patientServices[i].module.module +' ';
 
-                    const fetchedServices = `${module}-${patientEnrollServicesStatus}`;
+                    const fetchedServices = `${module} - ${patientEnrollServicesStatus}`;
                     enrollServices.push(fetchedServices);
                     if (module === 'RPM') {
                         // Toggle visibility using a reactive property
-                        // this.showAddPatientAddDevices = true;
-                        // this.add_devicesfunction =true;
+                        // this.showAddPatientDevices = true;
                     }
                 }
                 enrolledServices.value = enrollServices;
@@ -540,8 +566,7 @@ export default {
                 console.error('Error fetching Patient details:', error.message); // Log specific error message
                 // Handle the error appropriately
             }
-        };
-
+        }
 
         const logTimeStart = async (patientId, moduleId, subModuleId, stageId, billable, stepId, formName) => {
             var timerStart = $('.form_start_time').val();
@@ -655,7 +680,6 @@ export default {
         }
 
         const PatientBasicInfoReload = async () => {
-            // alert("fdase");
             patComDetails();
             countDownFunc();
         };
@@ -680,6 +704,10 @@ export default {
             alertThresholdsRef,
             veteranServicefunction,
             veteranRef,
+            add_devicesfunction,
+            add_devicesRef,
+            //   add_additional_devicesfunction,
+            // additional_devicesRef
             patient_finnumber_function,
             finnumberRef,
             personalnotesfunction,

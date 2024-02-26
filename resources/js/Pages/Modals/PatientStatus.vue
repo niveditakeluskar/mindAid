@@ -210,6 +210,7 @@
             };
 
             const callExternalFunctionWithParams = (param1, param2) => {
+                debugger;
                 if ($.isNumeric(param1) == true) {
                     const patientId = param1;
                     var selmoduleId = $("#modules").val();
