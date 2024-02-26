@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -39,12 +37,13 @@
         $themeMode = "dark-theme";
     }
     ?>
-
-    @inertiaHead
+    <div class='loadscreen' id="preloader">
+        <div class="loader "><!-- spinner-bubble spinner-bubble-primary -->
+            <img src="/images/loading.gif" width="150" height="150">
+        </div>
+    </div>
 </head>
-
 <body class="layout_2 text-left {{$themeMode}}">
-    @vite('resources/js/appInertia.js')
     @php
     $layout = session('layout');
     @endphp
@@ -52,6 +51,7 @@
     $component_name = \Request::segment(2);
     $module_name = \Request::segment(1);
     $patient_list = \Request::segment(3);
+    $showLoader = true;
     ?>
     <div class="app-admin-wrap layout-horizontal-bar clearfix">
         @include('Theme::layouts_2.header-menu') <!-- ============ end of header menu ============= -->
@@ -59,8 +59,9 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
-
-                @inertia
+            @inertia
+            @vite('resources/js/appInertia.js')
+               
             </div>
             @include('Theme::layouts_2.footer')
         </div> <!-- ============ Body content End ============= -->
@@ -77,6 +78,7 @@
     }
     ?>
     @include('Theme::layouts_2.to-list-customizer')
+    @include('Theme::layouts_2.cm-patient-assign')
     <!-- ============ Horizontal Layout End ============= -->
 
     <!-- Model Started here -->

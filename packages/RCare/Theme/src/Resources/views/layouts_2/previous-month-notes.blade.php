@@ -9,9 +9,9 @@
                 Monthly Notes
                 @hidden('regi_mnth',['id'=>'regi_mnth'])
                 <div style="float:right">
-                    <i class="btn btn-primary i-Left mr-2" id="prev-sidebar-month"></i>
+                    <i class="btn btn-primary i-Left mr-2" id="prev-sidebar-month" onclick="prevMomths()"></i>
                     <span id="display_month_year"></span>
-                    <i class="btn btn-primary i-Right mr-2" id="next-sidebar-month" style='display:none'></i>
+                    <i class="btn btn-primary i-Right mr-2" id="next-sidebar-month"  onclick="nextMonths()" style='display:none'></i>
                 </div>
             </div>
         </div>
@@ -30,6 +30,3 @@
     </div>
 </div>
 
-@section('bottom-js')
-<!-- ============ End Customizer ============= -->
-@endsection

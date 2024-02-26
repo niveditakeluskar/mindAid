@@ -91,7 +91,8 @@ export default {
     data() {
         return {
         allergyStatus: false, 
-        PetRelatedAllergiesRowData: []
+        PetRelatedAllergiesRowData: [],
+        formErrors: {}
         };
     },
     computed: {
@@ -191,7 +192,10 @@ export default {
                 loading.value = true;
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
                  const baseUrl = window.location.origin;
-                const response = await fetch(`${baseUrl}/ccm/allergies/${props.patientId}/petrelated`);
+                 const sPageURL = window.location.pathname;
+                const parts = sPageURL.split("/");
+                const mm = parts[parts.length - 2];
+                const response = await fetch(`${baseUrl}/ccm/allergies/${props.patientId}/petrelated?mm=${mm}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
@@ -237,6 +241,9 @@ export default {
             } catch (error) {
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
+                    setTimeout(function () {
+                        formErrors.value = {};
+                    }, 5000);
                 } else {
                     console.error('Error submitting form:', error);
                 }
