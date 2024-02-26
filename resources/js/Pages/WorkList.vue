@@ -232,7 +232,7 @@ export default {
       },
       { headerName: 'Practice', field: 'pracpracticename', flex: 2 },
       {
-    headerName: 'Last contact Date',
+    headerName: 'Last Contact Date',
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
