@@ -166,8 +166,37 @@
                     echo $personal_notes['static']['personal_notes']; 
                 }
             ?>
-            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#view-more" style="background-color:#27a7de;border:none;" id="view-more-personal-notes">View More</a>
+            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="view-more-personal-notes">View More</a>
         </span>
+    </div>
+    <div class="view_personal_notes" style="display:none">
+        <?php if(isset($all_personal_notes) && $all_personal_notes != "") { ?> 
+            <div class="col-lg-12 mb-1 table-responsive">
+                <table  class="display table table-striped table-bordered" style="width:100%; border: 1px solid #00000029;">
+                    <thead>
+                        <tr> 
+                            <th>Sr.No.</th>
+                            <th>Description</th>
+                            <th>Record Date</th>
+                            <th>Last Modified By</th>
+                            <th>Last Modified On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $m=0;?>
+                        <?php foreach ($all_personal_notes as $notes) { ?>
+                            <tr>
+                                <td class="personal_notes_<?php echo $m?>"><?php echo $m;?></td>
+                                <td class="personal_notes_<?php echo $m?>"><?php echo $notes->personal_notes ;?></td>
+                                <td class="personal_notes_<?php echo $m?>"><?php echo $notes->rec_date; ?></td>
+                                <td class="personal_notes_<?php echo $m?>"><?php echo $notes->update_date; ?></td>
+                                <td class="personal_notes_<?php echo $m?>"><?php echo $notes->userfname ."  ".$notes->userlname?></td>  
+                            </tr>
+                        <?php $m++;} ?>
+                    </tbody> 
+                </table>
+            </div>
+        <?php } ?> 
     </div>
     <div class="col-lg-12 mb-1">
         <label class=" "><strong>Part of Research Study:</strong></label>
@@ -177,8 +206,37 @@
                     echo $research_study['static']['part_of_research_study']; 
                 }
             ?>
-            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#view-more" style="background-color:#27a7de;border:none;" id="view-more-part-of-research-study">View More</a>
+            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="view-more-part-of-research-study">View More</a>
         </span>
+    </div>
+    <div class="view_more_research_study" style="display:none;">
+        <?php if(isset($all_research_study) && $all_research_study != "") { ?> 
+            <div class="col-lg-12 mb-1 table-responsive">
+                <table  class="display table table-striped table-bordered" style="width:100%; border: 1px solid #00000029;">
+                <thead>
+                        <tr> 
+                            <th>Sr.No.</th>
+                            <th>Description</th>
+                            <th>Record Date</th>
+                            <th>Last Modified By</th>
+                            <th>Last Modified On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $n =0;?>
+                        <?php foreach ($all_research_study as $research_study) { ?>
+                            <tr>
+                                <td class="research_study_<?php echo $n?>"><?php echo $n;?></td>
+                                <td class="research_study_<?php echo $n?>"><?php echo $research_study->part_of_research_study ;?></td>
+                                <td class="research_study_<?php echo $n?>"><?php echo $research_study->rec_date; ?></td>
+                                <td class="research_study_<?php echo $n?>"><?php echo $research_study->update_date; ?></td>
+                                <td class="research_study_<?php echo $n?>"><?php echo $research_study->userfname ."  ".$research_study->userlname?></td>  
+                            </tr>
+                        <?php $n++;} ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php } ?>
     </div>
     <div class="col-lg-12 mb-1">
         <?php 
@@ -195,105 +253,28 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div id="view-more" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-    <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title"></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="view-more-list" class="display table table-striped table-bordered" style="width:100%; border: 1px solid #00000029;">
-                        <thead>
-                            <tr> 
-                                <th>Sr.No.</th>
-                                <th>Description</th>
-                                <th>Record Date</th>
-                                <th>Last Modified By</th>
-                                <th>Last Modified On</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody> 
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
     $( document ).ready(function() {
         $('.ps__rail-y').hide(); 
+        $("#view-more-personal-notes").click(function(){
+           var check =  $('.view_personal_notes').is(":visible");   // The same works with show
+            // $('.view_personal_notes').is(":hidden");   // The same works with hidden
+            if(check == false){
+                $(".view_personal_notes").css("display", "block");
+            }else{
+                $(".view_personal_notes").css("display", "none");
+            }
+
+            $('.personal_notes_0').hide();
+        });
+        $("#view-more-part-of-research-study").click(function(){
+            var check =  $('.view_more_research_study').is(":visible");   // The same works with show
+            if(check == false){
+                $(".view_more_research_study").css("display", "block");
+            }else{
+                $(".view_more_research_study").css("display", "none");
+            }
+            $('.research_study_0').hide();
+        });
     });
-    $("#view-more-personal-notes, #view-more-part-of-research-study").click(function(){
-        var id = $(this).attr("id");
-        if(id == "view-more-personal-notes") {
-            $("#view-more .modal-title").html("Personal Notes");
-            var renderPersonalNotesTable =  function() {
-                var columns = [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                    { data: 'personal_notes', name: 'personal_notes' },
-                    { data: 'rec_date', name: 'rec_date',"render":function (value) {
-                        if ((value === null) || (value === "") || (value === undefined) ) return "";
-                            return moment(value).format('MM-DD-YYYY'); 
-                        } 
-                    },
-                    { data: null, render: 
-                        function(data, type, full, meta){   
-                            if(data!='' && data!='NULL' && data!=undefined){
-                                if(full['users']=='null' || full['users']==null) {
-                                    return "";
-                                } else {
-                                    if((full.users.f_name=='' || full.users.f_name==null) && (full.users.l_name=='' || full.users.l_name==null))  {
-                                        return "";
-                                    } else {
-                                        return full.users.f_name + ' '+full.users.l_name;
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {data:'updated_at',name:'updated_at'}
-                ];
-                var listUrl = "{{ route('view.more.personal.notes',  $patient[0]->id) }}";
-                util.renderDataTable('view-more-list', listUrl, columns, "{{ asset('') }}");
-            };
-            renderPersonalNotesTable();
-        } else if(id == "view-more-part-of-research-study") {
-            $("#view-more .modal-title").html("Part of Research Study");
-            var renderPartofResearchStudyTable =  function() {
-                var columns = [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-                    { data: 'part_of_research_study', name: 'part_of_research_study' },
-                    { data: 'rec_date', name: 'rec_date',"render":function (value) {
-                        if ((value === null) || (value === "") || (value === undefined) ) return "";
-                            return moment(value).format('MM-DD-YYYY'); 
-                        } 
-                    },
-                    { data: null, render: 
-                        function(data, type, full, meta){   
-                            if(data!='' && data!='NULL' && data!=undefined){
-                                if(full['users']=='null' || full['users']==null) {
-                                    return "";
-                                } else {
-                                    if((full.users.f_name=='' || full.users.f_name==null) && (full.users.l_name=='' || full.users.l_name==null))  {
-                                        return "";
-                                    } else {
-                                        return full.users.f_name + ' '+full.users.l_name;
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {data:'updated_at',name:'updated_at'}
-                ];
-                var listUrl = "{{ route('view.more.part.of.research.study',  $patient[0]->id) }}";
-                util.renderDataTable('view-more-list', listUrl, columns, "{{ asset('') }}");
-            };
-            renderPartofResearchStudyTable();
-        } 
-    }); 
 </script>

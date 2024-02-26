@@ -1,5 +1,5 @@
-<!--============ Customizekar =============  to rotate text use spin in class  (click)="isOpen = !isOpen" -->
-<div class="assingpatient" id="customizer_id2" style="display:none;">
+<!--============ Customizekar =============  to rotate text use spin in class  (click)="isOpen = !isOpen" assingpatient assignpatient-body-->
+<div class="assingpatient" id="customizer_id2" style="display:block;">
     <div class="handle" id="customizer_id2"  data-toggle="tooltip" data-placement="left" title="Search Patient">
         <i class="i-Search-People"> <!-- <span> Current Month Notes </span> --> </i> 
         <!-- <span class="badge">0</span> -->

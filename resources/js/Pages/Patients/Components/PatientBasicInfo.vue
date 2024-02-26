@@ -12,7 +12,7 @@
                             <input type="hidden" name="service_status" id="service_status">
                             <input type="hidden" id="timer_runing_status" value="0">
                             <div class="col-md-1">
-                                <img src="/../assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
+                                <img src="@@/assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
                             <div class="col-md-11">
                                 <div class="form-row">
@@ -153,20 +153,21 @@
                                             <span v-for="(service, index) in enrolledServices" :key="index"
                                                 v-html="service"></span>
                                         </span>
-                                        <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
+                                        <!-- <a style="margin-left: 15px; font-size: 15px;" class="adddeviceClass" id="deviceadd"
                                             @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
-                                                data-placement="top" data-original-title="Additional Device"></i></a>
+                                                data-placement="top" data-original-title="Additional Device"></i></a> -->
                                         <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
+                                        
                                         <!-- add-patient-devices -->
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="add-patient-devices"
                                             @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
-
+                                        <br/>
 
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
@@ -211,19 +212,19 @@
                                                         data-original-title="Start Timer"
                                                         @click="logTimeStart(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
                                                         style="display: none;cursor: pointer;"><img
-                                                            src="/../assets/images/play.png"
+                                                            src="@@/assets/images/play.png"
                                                             style=" width: 28px;" /></button>
                                                     <button class="button" id="pause" data-toggle="tooltip"
                                                         data-placement="top" title="Pause Timer"
                                                         data-original-title="Pause Timer"
                                                         @click="logTime(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
-                                                        style="cursor: pointer;"><img src="/../assets/images/pause.png"
+                                                        style="cursor: pointer;"><img src="@@/assets/images/pause.png"
                                                             style=" width: 28px;" /></button>
                                                     <button class="button" id="stop" data-toggle="tooltip"
                                                         data-placement="top" title="Stop Timer"
                                                         data-original-title="Stop Timer"
                                                         @click="logTime(patientId, moduleId, 19, 0, 1, 0, 'log_time_ccm_monthly-monitoring')"
-                                                        style="cursor: pointer;"><img src="/../assets/images/stop.png"
+                                                        style="cursor: pointer;"><img src="@@/assets/images/stop.png"
                                                             style=" width: 28px; " /></button>
                                                     <button class="button" id="reset" data-toggle="tooltip"
                                                         data-placement="top" title="Reset Timer"
@@ -263,7 +264,7 @@
 </template>
 <script>
 import { ref, onMounted, defineProps } from 'vue';
-import { usePage } from '@inertiajs/inertia-vue3';
+import { usePage } from '@inertiajs/vue3';
 import moment from 'moment';
 import axios from 'axios';
 import AddDeviceModal from '../../Modals/AddDeviceModal.vue';
@@ -406,14 +407,14 @@ export default {
 
         const alertThresholdfunction = async () => {
             // Access the modal component through the ref
-            console.log("openMModel called");
+            // console.log("openMModel called");
             alertThresholdsRef.value.openModal();
             //   patComDetails();
         };
 
 
         const personalnotesfunction = async () => {
-            console.log("openMModelpersonal notes called");
+            // console.log("openMModelpersonal notes called");
             personalnotesRef.value.openModal();
             // patComDetails();
         };

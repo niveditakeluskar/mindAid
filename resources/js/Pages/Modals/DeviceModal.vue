@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body" style="padding-top:10px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
-                <div id="deviceAlert"></div>
+                <div id="deviceModalAlert"></div>
                 <form name="devices_form" id="devices_form" @submit.prevent="submitDeviceForm">
                     <input type="hidden" name="patient_id" :value="patientId" />
                     <input type="hidden" name="uid" :value="patientId">
@@ -19,14 +19,14 @@
                     <input type="hidden" name="component_id" :value="componentId" />
                     <input type="hidden" name="stage_id" :value="deviceStageId" />
                     <input type="hidden" name="form_name" value="devices_form">
-                    <input type="hidden" name="idd" id="idd">
+                    <input type="hidden" name="idd" id="idd" v-model="selectedEditDeviceId">
                     <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
                         :value="medicationTime" v-model="medicationTime">
                     <div class="row">
                         <div id="devices_success"></div>
                         <div class="col-md-12 form-group">
                             <label>Devices ID<span class='error'>*</span></label>
-                            <input type="text" class="form-control" name="device_id" id="device_id">
+                            <input type="text" class="form-control" name="device_id" id="device_id" v-model="selectedDeviceCode">
                             <div class="invalid-feedback"></div>
                             <div class="invalid-feedback" v-if="formErrors.device_id" style="display: block;">{{
                                 formErrors.device_id[0] }}</div>
@@ -49,7 +49,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label>Partner Devices<span class='error'>*</span></label>
-                            <select class="custom-select show-tick" name="partner_devices_id" >
+                            <select class="custom-select show-tick" name="partner_devices_id" v-model="selectedPartnerDeviceId">
                                 <option v-for="item in partnersDeviceOption" :key="item.id" :value="item.id">
                                     {{ item.device_name }}
                                 </option>
@@ -133,6 +133,7 @@ export default {
         const isInitialSymptomFilled = ref(false);
         const goalsText = ref(''); // Use ref for the concatenated goals string
         const selectedPartnerId = ref('');
+        const selectedDeviceCode =ref('');
         const selectedCode = ref('');
         const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
@@ -141,7 +142,7 @@ export default {
 
         let codeOptions = ref([]);
         let selectedMedication = ref('');
-        const selectedEditDiagnosId = ref('');
+        const selectedEditDeviceId = ref('');
         const selectedcondition = ref('');
 
 
@@ -157,55 +158,84 @@ export default {
             { headerName: 'Last Modifed By', field: 'updated_at' },
             { headerName: 'Last Modifed On', field: 'updated_at' },
             {
-                headerName: 'Action',
-                field: 'action',
-                cellRenderer: (params) => {
-                    const linkContainer = document.createElement('div');
-                    // Edit Button
-                    const editLink = document.createElement('a');
-                    editLink.href = 'javascript:void(0)';
-                    editLink.dataset.toggle = 'tooltip';
-                    editLink.dataset.id = params.data.id;
-                    editLink.dataset.originalTitle = 'Edit';
-                    editLink.classList.add('editDevicesdata');
-                    editLink.title = 'Edit';
-                    const editIcon = document.createElement('i');
-                    editIcon.classList.add('editform', 'i-Pen-4');
-                    editLink.appendChild(editIcon);
+    headerName: 'Action',
+    field: 'action',
+    cellRenderer: (params) => {
+        const linkContainer = document.createElement('div');
 
-                    linkContainer.appendChild(editLink);
+        // Edit Button
+        const editLink = document.createElement('a');
+        editLink.href = 'javascript:void(0)';
+        editLink.dataset.id = params.data.id;
+        editLink.dataset.toggle = 'tooltip';
+        editLink.title = 'Edit';
+        editLink.classList.add('editDevicesdata');
+        const editIcon = document.createElement('i');
+        editIcon.classList.add('editform', 'i-Pen-4');
+        editLink.appendChild(editIcon);
+        linkContainer.appendChild(editLink);
+        // Add event listener to edit link
+        editLink.addEventListener('click', (event) => {
+            const id = event.target.dataset.id;
+            editDeviceId(editLink.dataset.id);
+        });
+        // Status Button
+        const statusLink = document.createElement('a');
+        statusLink.href = 'javascript:void(0)';
+        statusLink.dataset.id = params.data.id;
+        statusLink.classList.add(params.data.status === 1 ? 'change_device_status_active' : 'change_device_status_deactive');
+        statusLink.id = params.data.status === 1 ? 'active' : 'inactive';
+        statusLink.title = params.data.status === 1 ? 'Active' : 'Inactive';
+        const statusIcon = document.createElement('i');
+        statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', 'i-Yes');
+        statusLink.appendChild(statusIcon);
+        linkContainer.appendChild(statusLink);
+        // Add event listener to status link
+        statusLink.addEventListener('click', (event) => {
+            const id = event.target.dataset.id;
+            changeStatus(statusLink.dataset.id);
+        });
+        return linkContainer;
+    },
+}
 
-                    // Add a space
-                    linkContainer.appendChild(document.createTextNode(' '));
 
-                    // Status Button
-                    const statusLink = document.createElement('a');
-                    statusLink.href = 'javascript:void(0)';
-                    statusLink.dataset.id = params.data.id;
 
-                    if (params.data.status === 1) {
-                        statusLink.classList.add('change_device_status_active');
-                        statusLink.id = 'active';
-                        statusLink.title = 'Active';
-                    } else {
-                        statusLink.classList.add('change_device_status_deactive');
-                        statusLink.id = 'deactive';
-                        statusLink.title = 'Deactive';
-                    }
-
-                    const statusIcon = document.createElement('i');
-                    statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', params.data.status === 1 ? 'i-Yes' : 'i-Close');
-                    statusLink.appendChild(statusIcon);
-
-                    linkContainer.appendChild(statusLink);
-
-                    return linkContainer;
-                },
-            }
         ]);
 
+      /*   const changeStatus = (id) => {
+			const statusId = id;
+			if (confirm('Are you sure you want to Activate this Device')) {
+				fetch('/patients/delete-device/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+					},
+					body: new URLSearchParams({
+						statusId
+					})
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP error! Status: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(responseData => {
+						document.getElementById('deviceModalAlert').innerHTML = '<div class="alert alert-success"> Data Saved Successfully </div>';
+						setTimeout(() => {
+							document.getElementById('deviceModalAlert').innerHTML = '';
+						}, 3000);
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			} else {
+				return false;
+			}
+		}; */
     
-
         const fetchDeviceList = async () => {
             try {
                 loading.value = true;
@@ -230,7 +260,7 @@ export default {
 
         const handlePartnerDevice = async () => {
             try {
-        const partnerid = selectedPartnerId; // Replace with the actual partner ID
+        const partnerid = selectedPartnerId.value; // Replace with the actual partner ID
         const response = await axios.get(`/patients/ajax/${partnerid}/practice/practiceId/moduleId/patient`);
         partnersDeviceOption.value = response.data;
 
@@ -243,32 +273,20 @@ export default {
       }
         }
 
-        const editPatientDignosis = async (id) => {
-            clearGoals();
+        const editDeviceId = async (id) => {     
             isLoading.value = true;
             try {
-                selectedEditDiagnosId.value = id;
-
-                const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
+                selectedEditDeviceId.value = id;
+                const response = await fetch(`/patients/ajax/populatedevice/${id}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                const carePlanData = data.care_plan_form.static; // Adjust this based on your actual data structure
-                if (carePlanData && carePlanData.goals) {
-                    goals.value = JSON.parse(carePlanData.goals); // Parse the JSON string to an array
-                }
-                selectedPartnerDeviceId.value = carePlanData.diagnosis;
-                selectedPartnerId.value = carePlanData.diagnosis;
-                selectedCode.value = carePlanData.code;
-                selectedcondition.value = carePlanData.condition;
-                comments.value = carePlanData.comments;
-                if (carePlanData && carePlanData.tasks) {
-                    tasks.value = JSON.parse(carePlanData.tasks); // Parse the JSON string to an array
-                }
-                if (carePlanData && carePlanData.symptoms) {
-                    symptoms.value = JSON.parse(carePlanData.symptoms); // Parse the JSON string to an array
-                }
+                // console.log(data.devices_form[0],"device edit");
+                // console.log(selectedEditDeviceId.value,"device edit ID");
+                selectedDeviceCode.value = data.devices_form[0].device_code;
+                selectedPartnerId.value = data.devices_form[0].partner_id;
+                selectedPartnerDeviceId.value = data.devices_form[0].pdevice_id;
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
             } catch (error) {
@@ -277,58 +295,39 @@ export default {
             }
         };
 
-        const deletePatientDignosis = async (id) => {
-            const module_id = props.moduleId;
-            const component_id = props.componentId;
-            const patient_id = props.patientId;
-            const stage_id = document.querySelector(`form[name='care_plan_form'] input[name='stage_id']`).value;
-            const step_id = document.querySelector(`form[name='care_plan_form'] input[name='step_id']`).value;
-            const form_name = document.querySelector(`form[name='care_plan_form'] input[name='form_name']`).value;
-            const timer_start = startTimeInput.value.value;;
-            const timer_paused = document.getElementById('time-container').textContent;
-            const billable = document.querySelector(`form[name='care_plan_form'] input[name='billable']`).value;
-            const form_start_time = document.querySelector(`form[name='care_plan_form'] .form_start_time`).value;
-            const result = confirm("Are you sure you want to delete the Condition");
-
-            if (result) {
-                try {
-                    const response = await fetch('/ccm/delete-care-plan', {
+        const changeStatus = async (id) => {
+            try {
+                if (confirm('Are you sure you want to Activate this Device')) {
+                    const response = await fetch(`/patients/delete-device/${id}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: new URLSearchParams({
-                            id: id,
-                            start_time: timer_start,
-                            end_time: timer_paused,
-                            module_id: module_id,
-                            component_id: component_id,
-                            patient_id: patient_id,
-                            stage_id: stage_id,
-                            step_id: step_id,
-                            form_name: form_name,
-                            billable: billable,
-                            form_start_time: form_start_time
+                        body: new URLSearchParams({ 
+                            id: id
                         })
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Failed to delete care plan - ${response.status} ${response.statusText}`);
+                        throw new Error(`Failed to change status - ${response.status} ${response.statusText}`);
                     }
-                    const responseData = await response.json();
-
-                    alert("Deleted Successfully");
-
-                    updateTimer(props.patientId, '1', props.moduleId);
-                    document.querySelector('.form_start_time').value = responseData.form_start_time;
-                    /* document.getElementById('time-container').textContent = AppStopwatch.pauseClock; */
-                    /*       document.getElementById('timer_start').value = timer_paused;
-                          document.getElementById('timer_end').value = timer_paused; */
-                    /*    document.getElementById('time-container').textContent = AppStopwatch.startClock; */
-                } catch (error) {
-                    console.error('Error deleting care plan:', error.message);
+                    if (response && response.status == 200) {
+                        showSuccessAlert.value = true;
+                        fetchDeviceList();
+                        $('#deviceModalAlert').html('<div class="alert alert-success"> Request Processed Successfully </div>');
+                        document.getElementById("devices_form").reset();
+                        setTimeout(() => {
+                            $('#deviceModalAlert').html('');
+                        // medicationTime.value = document.getElementById('page_landing_times').value;
+                        }, 3000);
+                    }
+                    // console.log(responseData);
+                } else {
+                    return false;
                 }
+            } catch (error) {
+                console.error('Error changing status:', error.message);
             }
         };
 
@@ -342,13 +341,13 @@ export default {
                 if (response && response.status == 200) {
                     showSuccessAlert.value = true;
                     fetchDeviceList();
-                    $('#deviceAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+                    $('#deviceModalAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     //alert("Saved Successfully");
                     //updateTimer(props.patientId, '1', props.moduleId);
                     //$(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("devices_form").reset();
                     setTimeout(() => {
-                        $('#deviceAlert').html('');
+                        $('#deviceModalAlert').html('');
                        // medicationTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
@@ -425,6 +424,7 @@ export default {
         });
 
         return {
+            getStageID,
             handlePartnerDevice,
             partnersDeviceOption,
             fetchPartnerDeviceId,
@@ -432,6 +432,7 @@ export default {
             fetchDeviceList,
             isSaveButtonDisabled,
             selectedPartnerDeviceId,
+            selectedDeviceCode,
             comments,
             selectedCode,
             loading,
@@ -454,8 +455,8 @@ export default {
             submitDeviceForm,
             isLoading,
             showSuccessAlert,
-            selectedEditDiagnosId,
-            editPatientDignosis,
+            selectedEditDeviceId,
+            editDeviceId,
             selectedcondition,
             startTimeInput,
         };

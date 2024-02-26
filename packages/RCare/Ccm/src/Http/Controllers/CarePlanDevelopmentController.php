@@ -89,6 +89,8 @@ class CarePlanDevelopmentController extends Controller
         $year      = date("Y");
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);
         $dateE = Carbon::now()->endOfMonth();
+        $component_name = sanitizeVariable($request->route('component_name'));
+        // dd($component_name);
         $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
                       plr.reading,
                       ',' ) else STRING_AGG (
@@ -115,10 +117,16 @@ class CarePlanDevelopmentController extends Controller
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
-                return $btn;
+            ->addColumn('action', function ($row) use($component_name) {
+                if($component_name == 'monthly-monitoring'){
+                    $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                    $btn = $btn . '<i id="labdelid" class="i-Close" onclick=deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                    return $btn;
+                }else{
+                    $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick=carePlanDevelopment.editlabsformnew("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                    $btn = $btn . '<i id="labdelid" class="i-Close" onclick=carePlanDevelopment.deleteLabs("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
+                    return $btn;
+                }
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -172,68 +180,68 @@ class CarePlanDevelopmentController extends Controller
     }
 
     //created by radha(2020-12-17)
-    public function deletePatientlab(Request $request)
-    {
+    public function deletePatientlab(Request $request) {
         $patientId    = sanitizeVariable($request->patientid);
         $labdate      = sanitizeVariable($request->labdate);
         $labid        = sanitizeVariable($request->labid);
         $labdateexist = sanitizeVariable($request->labdateexist);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);  
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id); 
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->form_start_time);
-        $start_time            = sanitizeVariable($request->start_time);
-        $end_time              = sanitizeVariable($request->end_time);
-        $module_id             = sanitizeVariable($request->module_id);
-        $component_id          = sanitizeVariable($request->component_id);
-        $stage_id              = sanitizeVariable($request->stage_id);
-        $step_id               = sanitizeVariable($request->step_id);
-        $form_name             = sanitizeVariable($request->form_name);
-        $billable              = sanitizeVariable($request->billable);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-
         DB::beginTransaction();
-        try {
-            $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $labid)->get();
-            $LabName = '';
-            if (isset($name_lab[0]->description)) {
-                $LabName = $name_lab[0]->description . '(' . $labdate . ')';
-            } else {
-                $LabName = 'Other (' . $labdate . ')';
+        try { 
+            $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id',$labid)->get();
+            $LabName='';
+            if(isset($name_lab[0]->description)){
+                $LabName = $name_lab[0]->description.'('.$labdate.')';
+            }else{
+                $LabName='Other ('.$labdate.')';
             }
-            $topic = 'Lab Data : ' . $LabName;
+            $topic = 'Lab Data : '.$LabName;
 
-            $topic_name_exist  = callwrap::where('patient_id', $patientId)->where('topic', $topic)
-                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-            if ($labdateexist == '1') {
-                $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('lab_date', $labdate)
-                    ->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-                if ($lab_exit == true) {
-                    PatientLabRecs::where('patient_id', $patientId)->where('lab_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
-                    //delete from Callwrap-table
-                    callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
-                } else {
-                    PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
-                    //delete from Callwrap-table
-                    callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+            $topic_name_exist  = callwrap::where('patient_id',$patientId)->where('topic',$topic)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists(); 
+            if($labdateexist=='1') {
+                $lab_exit = PatientLabRecs::where('patient_id',$patientId)->where('lab_date',$labdate)
+                ->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+                if($lab_exit == true) {          
+                    PatientLabRecs::where('patient_id',$patientId )->where('lab_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete(); 
+                //delete from Callwrap-table
+                callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();                         
                 }
+                else{
+                    PatientLabRecs::where('patient_id',$patientId )->where('rec_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                //delete from Callwrap-table
+                callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                } 
             } else {
-                $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)
-                    ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-                if ($lab_exit == true) {
-                    PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
-                    //delete from Callwrap-table
-                    callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
-                }
+                $lab_exit = PatientLabRecs::where('patient_id',$patientId)->where('rec_date',$labdate)->where('lab_test_id',$labid)
+                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+                if($lab_exit == true) {          
+                    PatientLabRecs::where('patient_id',$patientId )->where('rec_date',$labdate)->where('lab_test_id',$labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                //delete from Callwrap-table
+                    callwrap::where('patient_id',$patientId)->where('topic',$topic)//->where('topic_id',$labid)
+                    ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                } 
             }
-            $record_time   = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
             DB::commit();
-            return response(['form_start_time' => $form_save_time]);
-        } catch (\Exception $ex) {
+            return response(['form_start_time' =>$form_save_time]);
+        } catch(\Exception $ex) {
             DB::rollBack();
-            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
         }
     }
+
 
     // created by radha 7dec2020
     public function PopulateLabsData(Request $request)
@@ -423,21 +431,26 @@ class CarePlanDevelopmentController extends Controller
     }
 
     public function getAllergies(Request $request)
-    {
+    { 
         $id          = sanitizeVariable($request->route('id'));
         $allergytype = sanitizeVariable($request->route('allergytype'));
         $data        = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($id, $allergytype);
-
+        $mm = $request->query('mm');
+        $editFunction = ($mm === 'monthly-monitoring' ? 'editAllergy' : 'carePlanDevelopment.editAllergy');
+        $deleteFunction = ($mm === 'monthly-monitoring' ? 'deleteAllergies' : 'carePlanDevelopment.deleteAllergies');
+       
         return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick=editAllergy("' . $row->id . '","' . $row->allergy_type . '",this) data-original-title="Edit" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick=deleteAllergies("' . $row->id . '","' . $row->allergy_type . '","' . $row->patient_id . '",this) data-original-title="delete" class="deletetabAllergies" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+        ->addIndexColumn()
+        ->addColumn('action', function ($row) use ($editFunction, $deleteFunction) {
+            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" class="editallergyother" onclick="' . $editFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\', this)" data-original-title="Edit" title="Edit"><i class="editform i-Pen-4"></i></a>';
+            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" class="deletetabAllergies" onclick="' . $deleteFunction . '(\'' . $row->id . '\',\'' . $row->allergy_type . '\',\'' . $row->patient_id . '\', this)" data-original-title="Delete" title="Delete"><i class="i-Close" style="color: red;cursor: pointer;"></i></a>';
+            return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+
     }
+
 
     public function getAllergiesOther(Request $request)
     {
@@ -496,6 +509,10 @@ class CarePlanDevelopmentController extends Controller
         $id               = sanitizeVariable($Request->route('id'));
         $servicetype      = sanitizeVariable($Request->route('servicetype'));
         $lastMonthService = "";
+        $mm = $Request->query('mm');
+        $editSerFunction = ($mm === 'monthly-monitoring' ? 'editService' : 'carePlanDevelopment.editService');
+        $deleteSerFunction = ($mm === 'monthly-monitoring' ? 'deleteServices' : 'carePlanDevelopment.deleteServices');
+    
         $dataexist        = PatientHealthServices::where("patient_id", $id)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
             $lastMonthService = PatientHealthServices::where("patient_id", $id)->where('status', 1)->where("hid", $servicetype)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->with('users')->get();
@@ -504,9 +521,9 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($lastMonthService)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick=editService("' . $row->id . '") data-original-title="Edit" class="editservice" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                $btn = $btn . '<a href="javascript:void(0)" class="deleteServices" onclick=deleteServices("' . $row->id . '",this) data-toggle="tooltip" title ="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
+            ->addColumn('action',  function ($row) use ($editSerFunction, $deleteSerFunction) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  onclick="' . $editSerFunction . '(\'' . $row->id . '\')" data-original-title="Edit" class="editservice" title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn .= '<a href="javascript:void(0)" class="deleteServices" onclick="' . $deleteSerFunction . '(\'' . $row->id . '\',this)" data-toggle="tooltip" title="Delete"><i class="i-Close" title="Delete" style="color: red;cursor: pointer;"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -1273,9 +1290,9 @@ class CarePlanDevelopmentController extends Controller
             ->make(true);
     }
 
-    public function Medications_list($id)
+    public function Medications_list(Request $request)
     {
-        $id        = sanitizeVariable($id);
+        $id        = sanitizeVariable($request->route('id'));
         $str = sanitizeVariable(date('Y-m-d', strtotime(date('Y-m') . " -1 month")));
         $Get_year_month = explode("-", sanitizeVariable($str));
         $prev_year       = sanitizeVariable($Get_year_month[0]);
@@ -1284,9 +1301,13 @@ class CarePlanDevelopmentController extends Controller
         $current_year  = date('Y');
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $component_name = sanitizeVariable($request->route('component_name'));
+        // dd($component_name);
         $dataexist = PatientMedication::with('medication')->where("patient_id", $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
         if ($dataexist == true) {
-            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+            pm1.drug_reaction,pm1.pharmacogenetic_test,rm.description as name,concat(u.f_name,' ', u.l_name) as users,
+            to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
@@ -1294,9 +1315,11 @@ class CarePlanDevelopmentController extends Controller
                                             where pm.patient_id = '" . $id . "' 
                                             AND EXTRACT(Month from pm.created_at)= '" . $current_month . "'
                                             AND EXTRACT(YEAR from pm.created_at) = '" . $current_year . "' group by pm.med_id) 
-                                        order by pm1.updated_at desc");
+                                        order by pm1.updated_at desc"); 
         } else {
-            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,rm.description as name,concat(u.f_name,' ', u.l_name) as users,to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
+            $data = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+            pm1.drug_reaction,pm1.pharmacogenetic_test,rm.description as name,concat(u.f_name,' ', u.l_name) as users,
+            to_char(pm1.updated_at at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at
                                         from patients.patient_medication pm1
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
                                         left join ren_core.users u on u.id = pm1.created_by
@@ -1308,9 +1331,14 @@ class CarePlanDevelopmentController extends Controller
         }
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+            ->addColumn('action', function ($row) use($component_name) {
+                if($component_name == 'monthly-monitoring'){
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
                 $btn = $btn . '<a href="javascript:void(0)" onclick=deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }else{
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-original-title="Edit" onclick=carePlanDevelopment.editMedications("' . $row->id . '") title="Edit"><i class="editform i-Pen-4"></i></a>';
+                $btn = $btn . '<a href="javascript:void(0)" onclick=carePlanDevelopment.deleteMedications("' . $row->id . '",this)  title="Delete" data-id="' . $row->id . '" ><i class="i-Close-Window" style="color:red;"></i></a>';
+                }
                 return $btn; //editMedicationsPatient //deleteMedicationsPatient
             })
             ->rawColumns(['action'])
@@ -1494,9 +1522,24 @@ class CarePlanDevelopmentController extends Controller
         );
     }
 
-    public function saveAllergy(AllergiesAddRequest $request)
-    { // 
-        // dd($request);
+    public function saveAllergy(Request $request)
+    { // AllergiesAddRequest
+
+        $allergy_status      = sanitizeVariable($request->allergy_status); 
+        if ($allergy_status == null || $allergy_status == '') { 
+            $validatedData = $request->validate([
+                'specify' => 'required',
+                'type_of_reactions' => 'required',
+                'severity' => 'required',
+                'course_of_treatment' => 'required',
+                'notes' => 'nullable|text_comments_slash',
+            ], [
+                'specify' => 'The specify field is required when above checkbox is not checked.',
+                'type_of_reactions' => 'The type of reactions field is required when above checkbox is not checked.',
+                'severity' => 'The severity field is required when above checkbox is not checked.',
+                'course_of_treatment' => 'The course of treatment field is required when above checkbox is not checked.',
+            ]);
+        }
         $uid                 = sanitizeVariable($request->uid);
         $patient_id          = sanitizeVariable($request->patient_id);
         $allergy_type        = sanitizeVariable($request->allergy_type);
@@ -1515,13 +1558,15 @@ class CarePlanDevelopmentController extends Controller
         $step_id             = sanitizeVariable($request->step_id);
         $form_name           = sanitizeVariable($request->form_name);
         $billable            = sanitizeVariable($request->billable);
-        $allergy_status      = sanitizeVariable($request->allergy_status);
+        // $allergy_status      = sanitizeVariable($request->allergy_status);
+        // dd($allergy_status);
         $noallergymsg        = sanitizeVariable($request->noallergymsg);
+        // dd($allergy_status);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         DB::beginTransaction();
         try {
-            if ($allergy_status == 'on') {
+            if ($allergy_status == 'on' || $allergy_status == '1') {
                 $noallergymsg = sanitizeVariable($request->noallergymsg);
             } else {
                 $noallergymsg = '';
@@ -1539,6 +1584,7 @@ class CarePlanDevelopmentController extends Controller
                 'allergy_status'     => $noallergymsg,
                 'status'             => 1
             );
+            // dd($insert_allergy);
             if ($tab == 'review-allergy') {
                 $insert_allergy['review'] = 1;
             }
@@ -4169,7 +4215,8 @@ class CarePlanDevelopmentController extends Controller
                             );
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
                             if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
+                                $new_high_vallue = $high_val[$labvalue][$i] ?? null;
+                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $new_high_vallue . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
@@ -4535,7 +4582,7 @@ class CarePlanDevelopmentController extends Controller
         $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
             from patients.patient_health_data
             where  patient_id =" . $patientId . "
-            and created_at::timestamp between '" . $dateS . "' and '" . $dateE . "' 
+            and health_date::timestamp between '" . $dateS . "' and '" . $dateE . "' 
             group by health_data,health_date order by updated_at desc";
         $data = DB::select($qry);
         return Datatables::of($data)

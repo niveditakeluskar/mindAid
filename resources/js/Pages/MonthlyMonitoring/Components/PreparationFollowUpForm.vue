@@ -256,7 +256,7 @@
 				data-toggle="modal" data-target="#myModal" target="diagnosis-codes" style="display:none" :disabled="(timerStatus == 1) === true ">Create Care
 				Plan</button>&nbsp;&nbsp;
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal" :disabled="(timerStatus == 1) === true ">Review Care Plan</button>
-			<ReviewCarePlanModal ref="ReviewCarePlanModal" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
+			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
 				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
 

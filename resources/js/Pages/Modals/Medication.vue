@@ -36,6 +36,8 @@
                                                         <input type="hidden" name="end_time" value="00:00:00">
                                                         <input type="hidden" name="module_id" :value="moduleId"/>
                                                         <input type="hidden" name="component_id" :value="componentId"/>
+                                                        <input type="hidden" name="module_name" :value="module_name" />
+                                                        <input type="hidden" name="component_name" id="component_name" :value="component_name" />
                                                         <input type="hidden" name="stage_id" :value="medicationStageId"/>
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
@@ -174,6 +176,8 @@ export default {
         const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
         let isOpen = ref(false);
+        const module_name = ref('');
+        const component_name = ref('');
         let formErrors = ref([]);
         let showAlert = ref(false);
         let medications = ref([]);
@@ -227,7 +231,8 @@ export default {
             try {
                 loading.value = true;
                 await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const response = await fetch(`/ccm/care-plan-development-medications-medicationslist/${props.patientId}`);
+                const component_name = document.getElementById('component_name').value; 
+                const response = await fetch(`/ccm/care-plan-development-medications-medicationslist/${props.patientId}/${component_name}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch patient medication list');
                 }
@@ -427,6 +432,11 @@ export default {
             fetchPatientMedicationList();
             fetchMedications();
             getStageID();
+            const pathname = window.location.pathname;
+            const segments = pathname.split('/');
+            segments.shift();
+            module_name.value = segments[0];
+            component_name.value = segments[1];
         });
 
         onMounted(async () => {
@@ -471,6 +481,8 @@ export default {
             closeModal,
             isOpen,
             onMedicationChanged,
+            module_name,
+            component_name,
         };
     }
 
