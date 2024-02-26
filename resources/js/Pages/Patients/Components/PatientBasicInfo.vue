@@ -372,10 +372,9 @@ export default {
         const patient_spirometerpeflow = ref();
         const billable_time = ref();
         const non_billabel_time = ref();
-        const total_time = ref();
+        const total_time = ref(); 
         const PatientStatusRef = ref();
-
-
+        
         // const enrolledServices = ref(null);
         const enrolledServices = ref([]);
         const patientDetails = ref(null);
