@@ -1506,12 +1506,14 @@ class PatientController extends Controller
         if ($status == 1) {
             $status = array('status' => 0, 'updated_by' => session()->get('userid'));
             $update_query = PatientDevices::where('id', $id)->orderBy('id', 'desc')->update($status);
-            return "inactive";
+            return $update_query;
+            // return "inactive";
             // return view('Holiday::holiday');
         } else {
             $status = array('status' => 1, 'updated_by' => session()->get('userid'));
             $update_query = PatientDevices::where('id', $id)->orderBy('id', 'desc')->update($status);
-            return "active";
+            return $update_query;
+            // return "active";
             // return view('Holiday::holiday');
         }
     }

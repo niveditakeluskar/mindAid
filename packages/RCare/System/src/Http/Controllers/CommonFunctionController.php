@@ -1043,11 +1043,12 @@ class CommonFunctionController extends Controller
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
         $assigncm = UserPatients::where('patient_id', $uid)->where('status', 1)->get();
+       
         $usnumber = '';
         $usnumberNumber = '';
         if(isset($assigncm[0]->user_id)){
-            $usnumberNumber = $usnumber[0]->number;
             $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
+            $usnumberNumber = $usnumber[0]->number;
         }
         
         if (isset($PatientDevices->vital_devices)) {
