@@ -33,9 +33,6 @@ class RpmEnrolledReportController extends Controller
     public function RpmEnrolledReportSearch(Request $request)
     {     
         $monthly = date('Y-m');
-        //date('2022-05'); 
-        // $year = date('Y', strtotime($monthly));
-        // $month = date('m', strtotime($monthly));
         $patient = sanitizeVariable($request->route('patient'));
         $practices = sanitizeVariable($request->route('practices'));
         $shipping_status = sanitizeVariable($request->route('shipping_status'));
@@ -44,9 +41,9 @@ class RpmEnrolledReportController extends Controller
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
      
-         $pracgrp; 
-         $p;
-         $pr;
+        $pracgrp; 
+        $p;
+        $pr;
 
         
     
@@ -98,15 +95,6 @@ class RpmEnrolledReportController extends Controller
 
         if($fromdate=='null' || $fromdate=='')
         {
-            //   $date=date("Y-m-d"); 
-            //   $year = date('Y', strtotime($date));
-            //   $month = date('m', strtotime($date));
-            //   $fromdate = $year."-".$month."-01 00:00:00";
-            //   $todate = $date." 23:59:59"; 
-    
-            //   $dt1 = DatesTimezoneConversion::userToConfigTimeStamp( $fromdate);
-            //   $dt2 = DatesTimezoneConversion::userToConfigTimeStamp( $todate);        
-
             $dt1 ='null';
             $dt2 ='null';  
             $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,$dt1,$dt2)";  
@@ -120,8 +108,8 @@ class RpmEnrolledReportController extends Controller
            
            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
-        // dd($query);
-        $data = DB::select( DB::raw($query) ); 
+        // dd($query);  
+        $data = DB::select($query); 
         return Datatables::of($data) 
         ->addIndexColumn()
             ->addColumn('device', function($row){ 

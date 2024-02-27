@@ -444,6 +444,10 @@ export default {
 						document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
 						updateTimer(props.patientId, '1', props.moduleId);
 						time.value = responseData.form_start_time;
+							const taskMangeResp =  axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+							$("#toDoList").html(taskMangeResp.data);
+							$('.badge').html($('#count_todo').val());
+						
 					})
 					.catch(error => {
 						console.error('Error:', error);
