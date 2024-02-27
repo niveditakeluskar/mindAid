@@ -212,7 +212,24 @@
             const callExternalFunctionWithParams = (param1, param2) => {
                 if ($.isNumeric(param1) == true) {
                     const patientId = param1;
-                    var selmoduleId = $("#modules").val();
+                    var available_moduleId = $("#modules").val();
+                    var selmoduleId;
+
+                    if (available_moduleId !== undefined) {
+                        selmoduleId = available_moduleId;
+                    } else {
+                        const baseUrl = window.location.origin;
+                        const sPageURL = window.location.pathname;
+                        const parts = sPageURL.split("/");
+                        var selmodule_name= parts[parts.length - 3];
+                        if(selmodule_name=='ccm'){
+                            selmoduleId = 3;
+                        }
+                        if(selmodule_name=='rpm'){
+                            selmoduleId = 2;
+                        }
+                        // alert(selmoduleId + ' selmoduleId');
+                    }
                     axios({
                         method: "GET",
                         url: `/patients/patient-module/${patientId}/patient-module`,
@@ -316,7 +333,6 @@
                     } 
                 }
             };
-
             return {
                 fetchLandingTime,
                 selectPatientId,
