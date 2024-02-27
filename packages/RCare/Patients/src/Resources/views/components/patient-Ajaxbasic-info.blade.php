@@ -78,7 +78,9 @@
                                 </a> -->
                                <!-- ash -->
                                 <br/>
+                                <?php if($m_id =='2'){?>
                                 <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm add_patient_devices" data-toggle="modal" data-target="#add-patient-devices" style="background-color:#27a7de;border:none;display: none;" id="add_patient_devices">Devices</a>  
+                                <?php }?>
                                 <!-- !ash -->
                                 <br/>
                                 <div id="newenrolldate">      

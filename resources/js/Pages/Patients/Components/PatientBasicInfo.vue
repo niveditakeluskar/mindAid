@@ -163,13 +163,14 @@
                                         <br />
                                         
                                         <!-- add-patient-devices -->
+                                        <span v-if ="moduleId =='2'">
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="add-patient-devices"
                                             @click="add_additional_devicesfunction">Devices</a>
                                         <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
                                         <br/>
-
+                                        </span>
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
                                                 data-original-title="Enrolled Date"><i class="text-muted i-Over-Time"></i> :
@@ -322,12 +323,9 @@ export default {
     setup(props) {
         const { callExternalFunctionWithParams } = PatientStatus.setup();
         const veteranRef = ref();
-        const add_devicesRef = ref();
-        const additional_devicesRef = ref();
         const AddDeviceModalRef = ref();
         const DeviceModalRef = ref();
         const alertThresholdsRef = ref();
-        // const additional_devicesRef = ref();
         const finnumberRef = ref();
         const personalnotesRef = ref();
         const researchstudyRef = ref();
@@ -395,34 +393,24 @@ export default {
         };
 
         const add_additional_devicesfunction = async () => {
-            //additional_devicesRef.value.openModal();
             DeviceModalRef.value.openModal();
         };
 
         const veteranServicefunction = async () => {
-            console.log("openMModelV called");
             veteranRef.value.openModal();
-            // patComDetails();
         }
 
         const alertThresholdfunction = async () => {
-            // Access the modal component through the ref
-            // console.log("openMModel called");
             alertThresholdsRef.value.openModal();
-            //   patComDetails();
         };
 
 
         const personalnotesfunction = async () => {
-            // console.log("openMModelpersonal notes called");
             personalnotesRef.value.openModal();
-            // patComDetails();
         };
 
         const researchstudyfunction = async () => {
-            console.log("openModelResearchStudy");
             researchstudyRef.value.openModal();
-            // patComDetails();
         };
 
         const patient_finnumber_function = async () => {
@@ -533,31 +521,11 @@ export default {
                     }else if(enrollServicesStatus == 3){ //'Deceased'
                         patientEnrollServicesStatus ='<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
                     }
-                    // switch (enrollServicesStatus) {
-                    //     case 0:
-                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
-                    //         break;
-                    //     case 1:
-                    //         patientEnrollServicesStatus = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
-                    //         break;
-                    //     case 2:
-                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
-                    //         break;
-                    //     case 3:
-                    //         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
-                    //         break;
-                    //     default:
-                    //         break;
-                    // }
 
                     const module = patientServices[i].module.module +' ';
 
                     const fetchedServices = `${module} - ${patientEnrollServicesStatus}`;
                     enrollServices.push(fetchedServices);
-                    if (module === 'RPM') {
-                        // Toggle visibility using a reactive property
-                        // this.showAddPatientDevices = true;
-                    }
                 }
                 enrolledServices.value = enrollServices;
 
@@ -696,17 +664,11 @@ export default {
             DeviceModalRef,
             veteranRef,
             add_devicesfunction,
-            add_devicesRef,
             add_additional_devicesfunction,
-            additional_devicesRef,
             alertThresholdfunction,
             alertThresholdsRef,
             veteranServicefunction,
             veteranRef,
-            add_devicesfunction,
-            add_devicesRef,
-            //   add_additional_devicesfunction,
-            // additional_devicesRef
             patient_finnumber_function,
             finnumberRef,
             personalnotesfunction,
