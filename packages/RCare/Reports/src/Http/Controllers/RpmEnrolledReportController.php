@@ -121,7 +121,7 @@ class RpmEnrolledReportController extends Controller
            $query="select * from patients.rpm_enrolled_patient_report($pr,$p,$ss,'".$dt1."','".$dt2."')";  
         }      
         // dd($query);
-        $data = DB::select( DB::raw($query) ); 
+        $data = DB::select( ($query) ); 
         return Datatables::of($data) 
         ->addIndexColumn()
             ->addColumn('device', function($row){ 
@@ -292,7 +292,7 @@ class RpmEnrolledReportController extends Controller
     // public function populateshipping(Request $request){ 
     //         $id = sanitizeVariable($request->id);
     //         // $PatientDevices = (PatientDevices::self($id) ? PatientDevices::self($id)->population() : "");
-    //         $PatientDevices =  DB::select( DB::raw("select pd.updated_at,pd.status,p.id, pd.patient_id, pd.courier_service_provider , pd.shipping_date, pd.shipping_status,pd.welcome_call,pd.device_code
+    //         $PatientDevices =  DB::select( ("select pd.updated_at,pd.status,p.id, pd.patient_id, pd.courier_service_provider , pd.shipping_date, pd.shipping_status,pd.welcome_call,pd.device_code
     //         from patients.patient_devices pd
     //         left join patients.patient p on pd.patient_id = p.id
     //         where p.id  = '".$id."' and pd.status = 1 " ));
@@ -308,7 +308,7 @@ class RpmEnrolledReportController extends Controller
         $device_id = sanitizeVariable($request->device_code);
         // dd($device_code);
 
-        $PatientDevices =  DB::select( DB::raw("select pd.status,p.id, pd.patient_id, pd.courier_service_provider , pd.shipping_date, pd.shipping_status,
+        $PatientDevices =  DB::select( ("select pd.status,p.id, pd.patient_id, pd.courier_service_provider , pd.shipping_date, pd.shipping_status,
         ps.welcome_call,pd.device_code
         from patients.patient_services ps
         left join patients.patient p on ps.patient_id = p.id
@@ -346,7 +346,7 @@ class RpmEnrolledReportController extends Controller
             left join ren_core.partner_devices_listing as pdd on pdd.id = pd.partner_device_id 
             where pd.patient_id  = '".$id."'";  
         // dd($query); and pd.partner_id = 3
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select( ($query) );
         return Datatables::of($data)
         ->addIndexColumn()
         ->addColumn('action', function($row){
@@ -386,7 +386,7 @@ class RpmEnrolledReportController extends Controller
           } else{}
 
         // dd($query);
-        $data = DB::select( DB::raw($query) ); 
+        $data = DB::select( ($query) ); 
         return Datatables::of($data) 
         ->addIndexColumn()
         ->make(true);
@@ -403,7 +403,7 @@ class RpmEnrolledReportController extends Controller
     
         foreach ($device as $p) {
             $id = $p->id;
-            $pro = \DB::select(\DB::raw("select pd.device_code, pd.patient_id, pd.id, pd.status
+            $pro = DB::select(("select pd.device_code, pd.patient_id, pd.id, pd.status
                 from patients.patient_devices pd 
                 left join ren_core.users as u on pd.updated_by = u.id
                 left join ren_core.partners as p on p.id = pd.partner_id 

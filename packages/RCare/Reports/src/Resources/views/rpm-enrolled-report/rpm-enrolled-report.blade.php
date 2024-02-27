@@ -114,11 +114,11 @@
                             <th>Sr No.</th>
                             <th>Patient Name</th> 
                             <th>Practice Name</th>
-                            <th>Care Manger Name</th>                      
+                            <th width="150px;">Care Manger Name</th>                      
                             <th>DOB</th>
                             <!-- <th>Shipping Date</th> -->
                             <th>Enrollment Date</th>
-                            <th>Shipping Status</th>
+                            <th width="96px">Shipping Status</th>
                             <th>Welcome Call</th>
                             <th>Device</th>
                             <th width="270px">Action</th> 
