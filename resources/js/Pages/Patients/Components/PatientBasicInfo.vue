@@ -523,11 +523,10 @@ export default {
                     }
 
                     const module = patientServices[i].module.module +' ';
-                    if (patientServices[i].module.module === 'RPM') {
-                        $("#add-patient-devices").show();  
-                        // Toggle visibility using a reactive property
-                        // this.showAddPatientDevices = true;
-                    }else{
+                    // console.log(patientServices[i].module.module+"rrrrrr");
+                    if (patientServices[i].module.module.trim().includes('RPM')) {
+                        $("#add-patient-devices").show();
+                    } else {
                         $("#add-patient-devices").hide();
                     }
                     const fetchedServices = `${module} - ${patientEnrollServicesStatus}`;
