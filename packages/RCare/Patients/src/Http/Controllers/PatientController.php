@@ -1393,6 +1393,7 @@ class PatientController extends Controller
         $pdevices=array();
         $id                 = sanitizeVariable($request->uid);
         $rowid              = sanitizeVariable($request->idd);
+        // dd($rowid);
         $patient_id         = sanitizeVariable($request->patient_id);
         $module_id          = sanitizeVariable($request->module_id);
         $currentMonth       = date('m');

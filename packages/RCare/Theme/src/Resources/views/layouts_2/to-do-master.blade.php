@@ -169,7 +169,7 @@
                 <input type="hidden" name="module_id" value="{{ $module_id }}" />
                 <input type="hidden" name="component_id" value="{{ $submodule_id }}" /> 
                 <input type="hidden" name="stage_id" value="{{ $stage_id }}" /> 
-                <input type="hidden" name="form_name" value="devices_form">
+                <input type="hidden" name="form_name" value="fin_number_form">
                 <input type="hidden" name="idd" id="idd">
 
                 <div class="row">

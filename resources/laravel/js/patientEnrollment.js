@@ -40,7 +40,8 @@ var populateForm = function (data, url) {
                   //console.log(result[key][0].pdevice_id);
                   var partner_id = result[key][0].partner_id;
                   var pdevice_id = result[key][0].pdevice_id;
-                  $('#idd').val(result[key][0].id);
+                //   $('#idd').val(result[key][0].id);
+                  $("form[name='devices_form'] #idd").val(result[key][0].id); 
                   $("form[name='devices_form'] #device_id").val(result[key][0].device_code);
                   $("#partner_id").val(partner_id);
                   //$("#partner_devices_id").val(pdevice_id);
