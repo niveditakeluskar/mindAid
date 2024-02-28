@@ -3243,8 +3243,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         ->whereYear('created_at', date('Y')) 
                         ->update(['status'=>0]);
                  CallWrap::create($additional_services_data);  
-                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, 
-                 $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
+                 $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);
                  if($additionalservices6!=''){ 
                     $form_name= $form_name.'_additional_services'; 
                     $check =  PatientTimeRecords::where('patient_id',$patient_id)
@@ -3254,11 +3253,12 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         // print_r($start_time .'====='. $end_time); die;
                         $start_time = "00:00:00";
                         $time2 = "00:04:00"; 
-                        $st = strtotime("00-00-0000 00:00:00");
-                        $et = strtotime("00-00-0000 00:04:00");
+                        $st = strtotime("01-01-2000 00:00:00");
+                        $et = strtotime("01-01-2000 00:04:00");
                         $form_start_time1 =  date("m-d-Y H:i:s", $st);
                         $form_save_time1 =  date("m-d-Y H:i:s", $et);
                         $secs = strtotime($time2) - strtotime($start_time);  //strtotime("00:00:00"); 
+						//echo "here";
                         $end_time = date("H:i:s",strtotime($start_time)+$secs); 
                         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, 
                         $billable, $uid,$step_id,$form_name, $form_start_time1, $form_save_time1);
@@ -3888,6 +3888,10 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $patient = Patients::where('id', $uid)->get();
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status',1)->latest()->first();
         $nin = array();
+
+        $assigncm = UserPatients::where('patient_id', $uid)->where('status',1)->get();
+        $usnumber = Users::where('id',$assigncm[0]->user_id)->get();
+
         if(isset($PatientDevices->vital_devices)){
             $dv = $PatientDevices->vital_devices;
             $js = json_decode($dv);
@@ -3918,7 +3922,8 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $replace_secondary = str_replace("[secondary_contact_number]",$patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]",$device, $replace_secondary);
         $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $scripts['finaldata']= $replace_final;
+        $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_final);
+        $scripts['finaldata']= $replace_usnumber;
         return $scripts;
     }
     

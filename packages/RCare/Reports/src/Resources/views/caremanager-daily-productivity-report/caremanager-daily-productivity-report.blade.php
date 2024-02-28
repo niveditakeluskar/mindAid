@@ -138,6 +138,7 @@
            .columns.adjust();
         });
         util.getToDoListData(0, {{getPageModuleName()}});
+        util.getAssignPatientListData(0, 0);
         getDailyCaremanagerList();
         function convert(str) {
           var date = new Date(str),

@@ -43,20 +43,20 @@ class TaskManagementController extends Controller {
     // }
     
 
-    public function getToDoListData($patient_id,$module_id){
+    public function getToDoListData($patient_id,$module_id){ //dd("working");
         $login_user = Session::get('userid');
         $configTZ   = config('app.timezone');
         $userTZ     = Session::get('timezone') ? Session::get('timezone') : config('app.timezone'); 
         $patient_id = sanitizeVariable($patient_id);
         $module_id  = sanitizeVariable($module_id); 
-        //dd("anand".$module_id.",".$patient_id.",".$login_user.",".$configTZ.",".$userTZ);
+        // dd("anand".$module_id.",".$patient_id.",".$login_user.",".$configTZ.",".$userTZ);
 
         $data = "select
          fname, lname, id, task_time,  task_notes, notes, module_id, component_id, patient_id,
          module, components, created_at, enrolled_service_id,
          to_char(task_date at time zone '".$configTZ ."' at time zone '".$userTZ."','MM-DD-YYYY HH12:MI:SS')::timestamp as tt,userfname,userlname 
          from patients.SP_TO_DO_LIST($patient_id,$login_user,'".$configTZ ."','".$userTZ."')";
-         // dd($data);
+        //  dd($data);
         $query = DB::select( DB::raw($data) );
         // dd($query);
         return view('TaskManagement::components.to-do-list',compact('query','patient_id'));

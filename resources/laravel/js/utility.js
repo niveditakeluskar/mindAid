@@ -1856,6 +1856,37 @@ var getPatientList = function (practiceId, selectElement, selectedPatients = nul
     });
 };
 
+var getCmAssignPatientList = function (practiceId, selectElement, selectedPatients = null) {
+    selectElement.html($("<option value=''>").html("Select Patient"));
+    // if (!practiceId) {
+    //     return;
+    // }
+
+    axios({
+        method: "GET",
+        //url: `/patients/ajax/practice/${practiceId}/${moduleId}/patient`
+        url: `/patients/ajax/assignpatientlist/${practiceId}/assignpatientlist`,
+    }).then(function (response) {
+        Object.values(response.data).forEach(function (patient) {
+            var mname;
+            if ((patient.mname != "") && (patient.mname != null) && (patient.mname != undefined)) {
+                mname = patient.mname;
+            } else {
+                mname = "";
+            }
+            $("<option>").val(patient.id).html(patient.fname + " " + mname + " " + patient.lname + ", DOB: " + moment(patient.dob).format('MM-DD-YYYY')).appendTo(selectElement);
+            // $("<option>").val(patient.id).html(patient.fname + " " + mname + " " +patient.lname + ", DOB: " + viewsDateFormat(patient.dob)).appendTo(selectElement);
+        });
+        if (selectedPatients) {
+            selectElement.val(selectedPatients);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
+
+
 /**
  * Update the list of call ccript to select from
  *
@@ -2767,6 +2798,22 @@ var getPatientDetails = function (patientId, moduleId) {
         }
         $(".patient_device_code").text(device_code)
 
+        var device_status = '';
+        if (response.data.device_status != '') {
+            shipping_status = response.data.device_status;
+            if(shipping_status == 1){
+                device_status = 'Dispatched';
+            }else if(shipping_status == 2){
+                device_status = 'Delivered';
+            }else if(shipping_status == 3){
+                device_status = 'Pending';
+            }else{
+                device_status = ''; 
+            }
+        }
+
+        $(".device_delivery_status").text(device_status);
+
         if (response.data.billable_time != '') {
             $("#btime").html(response.data.billable_time)
         }
@@ -3024,16 +3071,33 @@ var getFollowupListData = function (patientId, moduleId) {
     });
 };
 
-var getToDoListData = function (patientId, moduleId) {
+var getToDoListData = function (patientId, moduleId) { 
     axios({
         method: "GET",
         url: `/task-management/patient-to-do/${patientId}/${moduleId}/list`,
-    }).then(function (response) {
-
+    }).then(function (response) { 
         // console.log(response.data);
         $("#toDoList").html(response.data);
-        //alert();
         $('.badge').html($('#count_todo').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+var getAssignPatientListData = function (practice,patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        // $('.badge').html($('#count_patient').val());
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -3093,6 +3157,9 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $('.form_start_time').val(response.data.form_start_time);
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
+        $(".change_status_flag").attr("disabled", false);
+        $('.click_id').css({'opacity':'','pointer-events':''}); 
+        $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
             pause_stop_flag = 0;
@@ -3134,6 +3201,9 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             updateTimer(patientId, billable, moduleId);
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
+            $(".change_status_flag").attr("disabled", true);
+            $('.click_id').css({'opacity':'0.5','pointer-events':'none'}); 
+            $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
             alert("Timer paused and Time Logged successfully.");
@@ -3285,6 +3355,33 @@ var getPracticelistaccordingtopracticegrp = function (practicegrpId, selectEleme
         console.error(error, error.response);
     });
 };
+
+var pateintdevicecode = function(id, selectElement, selecteddevice = null){
+    $(selectElement)
+    .empty()
+    .append('<option value="">Select Device</option>');
+        if (!id) {
+            id = null;
+
+        }
+        if (isNaN(id)) {
+            id = null;
+        }
+        axios({
+            method: "GET",
+            url: `/reports/ajax/patientdevice/${id}/pateintdevice`,
+        }).then(function (response) { console.log(response);
+            // $("<option>").val('0').html('None').appendTo(selectElement);
+            Object.values(response.data).forEach(function (pateint) {
+                $("<option>").val(pateint.id).html(pateint.device_code).appendTo(selectElement);
+            });
+            if (selecteddevice) {
+                selectElement.val(selecteddevice);
+            }
+        }).catch(function (error) {
+            console.error(error, error.response);
+        });
+}
 
 var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectedPractice = null) {
     // alert(practicegrpId);
@@ -4308,6 +4405,7 @@ var setLandingTime = function () {
         var landing_time = data['landing_time'];
         $("#page_landing_times").val(landing_time);
         $(".form_start_time").val(landing_time);
+        $('#stopwatch').css("display", "block");
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -4433,6 +4531,7 @@ window.util = {
     updatePatientList: updatePatientList,
     updatePatientListAssignedDevice: updatePatientListAssignedDevice,
     getPatientList: getPatientList,
+    getCmAssignPatientList: getCmAssignPatientList,
     renderDataTableOrder: renderDataTableOrder,
     renderDataTable: renderDataTable,
     renderDataTable_pdf: renderDataTable_pdf,
@@ -4478,6 +4577,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
+    getAssignPatientListData:getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,
@@ -4494,6 +4594,7 @@ window.util = {
     updatePhysicianListWithoutOther: updatePhysicianListWithoutOther,
     getPracticelistaccordingtopracticegrp: getPracticelistaccordingtopracticegrp,
     getRpmPatientList: getRpmPatientList,
+    pateintdevicecode : pateintdevicecode ,
     getactivityPracticelistaccordingtopracticegrp: getactivityPracticelistaccordingtopracticegrp,
     getnewactivityPracticelistaccordingtopracticegrp: getnewactivityPracticelistaccordingtopracticegrp,
     getappendPracticelistaccordingtopracticegrp: getappendPracticelistaccordingtopracticegrp,

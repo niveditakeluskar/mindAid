@@ -905,16 +905,16 @@ class PatientEnrollmentController extends Controller
             $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
             // $insert_query = PatientEnrollment::create($data);
-
+    
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         
 
-           /* if($module_id == 2){
+           if($module_id == 2){
+
                 $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',$module_id)->where('status',1)->get('id');
                 $SID          = getFormStageId($module_id, $ccmSubModule[0]->id, 'Enroll In RPM');
                 $enroll_msg = CommonFunctionController::sentSchedulMessage($module_id,$patient_id,$SID);
                }
-			*/
 
             DB::commit();
             return response(['form_start_time' =>$form_save_time]);

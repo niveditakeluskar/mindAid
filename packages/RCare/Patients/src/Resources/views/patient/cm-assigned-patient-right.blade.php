@@ -106,19 +106,16 @@ th     { background:#eee; }
         <input type="hidden" id="count_patient" value="{{$i-1}}">
     </div> 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
- -->
 <script>
     $( document ).ready(function() { 
-        
+
         $("[name='practices1']").on("change", function () { 
             var practiceId =$(this).val();
             if(practiceId =='' || practiceId=='0'){
                 var  practiceId= null;
                 // util.getCmAssignPatientList(parseInt(practiceId), $("#patient1"));
             }else if(practiceId!=''){
-                getCmAssignPatientList(parseInt(practiceId),$("#patient1")); 
+                util.getCmAssignPatientList(parseInt(practiceId),$("#patient1")); 
             }else { 
                 // var  practiceId= null;
                 // util.getCmAssignPatientList(parseInt(practiceId), $("#patient1"));
@@ -141,61 +138,12 @@ th     { background:#eee; }
         } else {
             $("#errorPractice").hide(); 
         }
-        getAssignPatientListData(practice,patient);   
+        util.getAssignPatientListData(practice,patient);   
     });
 
     $("#reset1").click(function(){   
         $('#practices1').val('').trigger('change');
         $('#patient1').val('').trigger('change'); 
-        getAssignPatientListData(null,null);   
+        util.getAssignPatientListData(null,null);   
     });
-
-    var getAssignPatientListData = function (practice,patient) { //debugger;
-        if (practice == '') {
-            practice = 0;
-        }
-        if (patient == '') {
-            patient = 0;
-        }
-        axios({
-            method: "GET",
-            url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
-        }).then(function (response) {
-            // console.log(response.data);
-            $("#patientassignlist").html(response.data);
-            //alert();
-            // $('.badge').html($('#count_patient').val());
-        }).catch(function (error) {
-            console.error(error, error.response);
-        });
-    };
-
-    var getCmAssignPatientList = function (practiceId, selectElement, selectedPatients = null) {
-        selectElement.html($("<option value=''>").html("Select Patient"));
-        // if (!practiceId) {
-        //     return;
-        // }
-
-        axios({
-            method: "GET",
-            //url: `/patients/ajax/practice/${practiceId}/${moduleId}/patient`
-            url: `/patients/ajax/assignpatientlist/${practiceId}/assignpatientlist`,
-        }).then(function (response) {
-            Object.values(response.data).forEach(function (patient) {
-                var mname;
-                if ((patient.mname != "") && (patient.mname != null) && (patient.mname != undefined)) {
-                    mname = patient.mname;
-                } else {
-                    mname = "";
-                }
-                $("<option>").val(patient.id).html(patient.fname + " " + mname + " " + patient.lname + ", DOB: " + moment(patient.dob).format('MM-DD-YYYY')).appendTo(selectElement);
-                // $("<option>").val(patient.id).html(patient.fname + " " + mname + " " +patient.lname + ", DOB: " + viewsDateFormat(patient.dob)).appendTo(selectElement);
-            });
-            if (selectedPatients) {
-                selectElement.val(selectedPatients);
-            }
-        }).catch(function (error) {
-            console.error(error, error.response);
-        });
-    };
 </script>

@@ -146,6 +146,7 @@
         $(document).ready(function() {
             //getPatientList();
             util.getToDoListData(0, {{ getPageModuleName() }});
+            util.getAssignPatientListData(0, 0);
             $(".patient-div").hide(); // to hide patient search select
 
             $("[name='practices']").on("change", function () {
