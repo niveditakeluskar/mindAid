@@ -97,13 +97,14 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete" true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system entry completed</span><span
+										<input type="checkbox" name="emr_complete" id="emr_complete"  true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system entry completed</span><span
 											class="checkmark"></span>
 									</label>
-									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
+									<!-- v-model="emr_complete" -->
+									<!-- <div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
 										v-if="formErrors.emr_complete" style="display: block;">{{ formErrors.emr_complete[0]
 										}}
-									</div>
+									</div> -->
 								</div>
 							</div>
 							<div class="row">
