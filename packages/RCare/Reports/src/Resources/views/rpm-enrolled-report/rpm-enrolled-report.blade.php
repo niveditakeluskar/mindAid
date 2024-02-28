@@ -114,11 +114,11 @@
                             <th>Sr No.</th>
                             <th>Patient Name</th> 
                             <th>Practice Name</th>
-                            <th width="150px;">Care Manger Name</th>                      
+                            <th>Care Manger Name</th>                      
                             <th>DOB</th>
                             <!-- <th>Shipping Date</th> -->
                             <th>Enrollment Date</th>
-                            <th width="96px">Shipping Status</th>
+                            <th>Shipping Status</th>
                             <th>Welcome Call</th>
                             <th>Device</th>
                             <th width="270px">Action</th> 
@@ -471,6 +471,10 @@
 
             ];
 
+            // if(practices=='')
+            // { 
+            //     practices=null;
+            // } 
             if(patient=='')
             { 
                 patient=null;
@@ -483,46 +487,46 @@
         }   
 
         
-        // var getdevicecode = function(patient = null){
-        //     var columns =  [
-        //     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-        //     { data: 'device_code', name: 'device_code' },
-        //     { data: 'name', name: 'name' },
-        //     { data: 'device_name', name: 'device_name' },
-        //     {
-        //         data: 'f_name', name: 'f_name', render:
-        //         function (data, type, full, meta) {
-        //             if (data != '' && data != 'NULL' && data != undefined) {
-        //             return data + ' ' + full.l_name;
-        //             } else {
-        //             return '';
-        //             }
-        //         }
-        //     },
-        //     {
-        //         data: 'updated_at', type: 'date-dd-mm-yyyy h:i:s', name: 'updated_at', "render": function (value) {
-        //         if (value === null) return "";
-        //         return util.viewsDateFormatWithTime(value);
-        //         }
-        //     },
+        var getdevicecode = function(patient = null){
+            var columns =  [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            { data: 'device_code', name: 'device_code' },
+            { data: 'name', name: 'name' },
+            { data: 'device_name', name: 'device_name' },
+            {
+                data: 'f_name', name: 'f_name', render:
+                function (data, type, full, meta) {
+                    if (data != '' && data != 'NULL' && data != undefined) {
+                    return data + ' ' + full.l_name;
+                    } else {
+                    return '';
+                    }
+                }
+            },
+            {
+                data: 'updated_at', type: 'date-dd-mm-yyyy h:i:s', name: 'updated_at', "render": function (value) {
+                if (value === null) return "";
+                return util.viewsDateFormatWithTime(value);
+                }
+            },
 
-        //     // {
-        //     //  data: 'update_date', name: 'update_date', "render": function (value) {
-        //     //    if (value === null || value == undefined || value == "") return "";
-        //     //    return moment(value).format('MM-DD-YYYY');
-        //     //  }
-        //     // },
+            // {
+            //  data: 'update_date', name: 'update_date', "render": function (value) {
+            //    if (value === null || value == undefined || value == "") return "";
+            //    return moment(value).format('MM-DD-YYYY');
+            //  }
+            // },
 
-        //     { data: 'action', name: 'action', orderable: false, searchable: false } ];
-        //     if(patient=='')
-        //     { 
-        //         patient=null;
-        //     }
+            { data: 'action', name: 'action', orderable: false, searchable: false } ];
+            if(patient=='')
+            { 
+                patient=null;
+            }
 
-        //     var url = "/reports/devicelist-rpmenrolled/"+patient;
-        //     console.log(url); 
-        //     util.renderDataTable('devices_data_list', url, columns, "{{ asset('') }}");     
-        // }
+            var url = "/reports/devicelist-rpmenrolled/"+patient;
+            console.log(url); 
+            util.renderDataTable('devices_data_list', url, columns, "{{ asset('') }}");     
+        }
 
         var getrpmenrolledpatientlist = function(practices = null,patient = null ,shipping_status=null,fromdate1=null,todate1=null) { 
 
@@ -811,7 +815,7 @@ function devicedetails(rowid) {
     $("form[name='shippdevice_forming_form'] #device_code").next('.invalid-feedback').html('');
     $("#device_form")[0].reset();
     $('#devicedetailsmodel').modal('show');  
-    // getdevicecode(rowid); 
+    getdevicecode(rowid); 
 
     var partner_id = document.getElementById("partner_id");
     var defaultValue = "3"; 
