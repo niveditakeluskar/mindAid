@@ -342,23 +342,21 @@ class PatientController extends Controller
                
                 for($j=0;$j<count($data);$j++){
                    
-                    if (array_key_exists("vid",$data[$j]))
-                    {
-                        // dd($data); 
-                      $dev=  Devices::where('id',$data[$j]->vid)->where('status','1')->orderby('id','asc')->first();
-                      if(!empty($dev)){
-                        $parts = explode(" ", $dev->device_name);
-                        $devices = implode('-', $parts);
-
-                        $filename= RPMProtocol::where("device_id",$data[$j]->vid)->where('status','1')->first();
-                        // dd($data[$j]->vid);
-                        if(!empty($filename)){
-                          $filenames=$filename->file_name;
-                          $btn ='<a href="'.$filenames.'" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
-
-                          $show_device.= $dev->device_name." (".$btn."), ";
+                    if (property_exists($data[$j], "vid")) {
+                        // Access properties using -> operator since $data[$j] is an object
+                        $dev = Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
+                        if (!empty($dev)) {
+                            $parts = explode(" ", $dev->device_name);
+                            $devices = implode('-', $parts);
+                    
+                            $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
+                            if (!empty($filename)) {
+                                $filenames = $filename->file_name;
+                                $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
+                    
+                                $show_device .= $dev->device_name . " (" . $btn . "), ";
+                            }
                         }
-                      }
                     }
                   
                 }
@@ -1506,11 +1504,11 @@ class PatientController extends Controller
         ->addColumn('action', function($row){
                 $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editDevicesdata" title="Edit"><i class=" editform i-Pen-4"></i></a>';
                 if($row->status == 1){
-                  $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                  $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
                   }
                   else 
                   {
-                    $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
+                    $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
                   }
                   return $btn;
         })
