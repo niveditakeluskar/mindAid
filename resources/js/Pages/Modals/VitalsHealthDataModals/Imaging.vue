@@ -164,7 +164,9 @@ export default {
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveImagineResponse.form_start_time);
                     await fetchPatientImagingList();
+                    // imagingItems.value = [];
                     document.getElementById("number_tracking_imaging_form").reset();
+                    imagingItems.value = [{ imaging: '', imaging_date: '' }];
                     setTimeout(() => {
                         showImagingAlert.value = false;
                         imagingTime.value = document.getElementById('page_landing_times').value;

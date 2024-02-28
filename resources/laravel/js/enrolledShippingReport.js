@@ -109,50 +109,50 @@ var onAdddeviceData = function (formObj, fields, response) {
 	// }
 };
 
-// $('body').on('click', '.change_device_status_active', function () {
-// 	var id = $(this).data('id');
-// 	var patient = $(this).data('additional-id');
-// 	if(confirm("Are you sure you want to Deactivate this Device")){
-// 	   $.ajaxSetup({
-// 		   headers: {
-// 			   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-// 		   }
-// 	   });
-// 		 $.ajax({
-// 		   type   : 'post',
-// 		   url    : '/reports/delete-devices/'+id,
-// 		  // data: {"_token": "{{ csrf_token() }}","id": id},
-// 		   data   :  {"id": id},
-// 		   success: function(response) {
-// 			//    getdevicecode(patient);
-// 			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Deactivated Successfully!</strong></div>';
-// 			   $("#success").html(txt);
-// 		   }
-// 	   });
-//    }else{ return false;}
-// });
-// $('body').on('click', '.change_device_status_deactive', function () {
-// 	var id = $(this).data('id');
-// 	var patient = $(this).data('additional-id');
-// 	if(confirm("Are you sure you want to Activate this Device")){
-// 	   $.ajaxSetup({
-// 		   headers: {
-// 			   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-// 		   }
-// 	   });
-// 		 $.ajax({
-// 		   type   : 'post',
-// 		   url    : '/reports/delete-devices/'+id,
-// 		  // data: {"_token": "{{ csrf_token() }}","id": id},
-// 		   data   :  {"id": id},
-// 		   success: function(response) {
-// 			//    getdevicecode(patient);
-// 			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Activated Successfully!</strong></div>';
-// 			   $("#success").html(txt);
-// 		   }
-// 	   });
-//    }else{ return false;}
-// });
+$('body').on('click', '.change_device_status_active', function () {
+	var id = $(this).data('id');
+	var patient = $(this).data('additional-id');
+	if(confirm("Are you sure you want to Deactivate this Device")){
+	   $.ajaxSetup({
+		   headers: {
+			   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		   }
+	   });
+		 $.ajax({
+		   type   : 'post',
+		   url    : '/reports/delete-devices/'+id,
+		  // data: {"_token": "{{ csrf_token() }}","id": id},
+		   data   :  {"id": id},
+		   success: function(response) {
+			//    getdevicecode(patient);
+			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Deactivated Successfully!</strong></div>';
+			   $("#success").html(txt);
+		   }
+	   });
+   }else{ return false;}
+});
+$('body').on('click', '.change_device_status_deactive', function () {
+	var id = $(this).data('id');
+	var patient = $(this).data('additional-id');
+	if(confirm("Are you sure you want to Activate this Device")){
+	   $.ajaxSetup({
+		   headers: {
+			   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		   }
+	   });
+		 $.ajax({
+		   type   : 'post',
+		   url    : '/reports/delete-devices/'+id,
+		  // data: {"_token": "{{ csrf_token() }}","id": id},
+		   data   :  {"id": id},
+		   success: function(response) {
+			//    getdevicecode(patient);
+			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Activated Successfully!</strong></div>';
+			   $("#success").html(txt);
+		   }
+	   });
+   }else{ return false;}
+});
 
 $('body').on('click', '.shippingdetail', function () {
     $("form[name='shipping_form'] #courier_service_provider").removeClass('is-invalid');
