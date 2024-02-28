@@ -14,7 +14,7 @@
                             <div class="col-md-1">
                                 <img src="@@/assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
-                            <div class="col-md-11">
+                            <div class="col-md-11"> 
                                 <div class="form-row">
                                     <div class="col-md-2 right-divider">
                                         <div data-toggle="tooltip" data-placement="top" title="Name"
