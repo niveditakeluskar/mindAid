@@ -97,18 +97,21 @@
 							<div class="form-row">
 								<div class="form-group col-md-12">
 									<label class="forms-element checkbox checkbox-outline-primary">
-										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete" true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system entry completed</span><span
-											class="checkmark"></span>
+										<input type="checkbox" name="emr_complete" id="emr_complete" v-model="emr_complete"
+											true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system
+											entry completed</span><span class="checkmark"></span>
 									</label>
-									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
+									<!-- v-model="emr_complete" -->
+									<!-- <div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
 										v-if="formErrors.emr_complete" style="display: block;">{{ formErrors.emr_complete[0]
 										}}
-									</div>
+									</div> -->
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12 text-right">
-									<button type="submit" class="btn  btn-primary m-1 office-visit-save" :disabled="(timerStatus == 1) === true ">Save</button>
+									<button type="submit" class="btn  btn-primary m-1 office-visit-save"
+										:disabled="(timerStatus == 1) === true">Save</button>
 								</div>
 
 							</div>
@@ -117,7 +120,7 @@
 				</div>
 
 				<FollowupModal ref="FollowupModalRef" :moduleId="moduleId" :componentId="componentId"
-					:stageId="followupStageId" :patientId="patientId" :followupCallFunction="FollowupMainFunction"/>
+					:stageId="followupStageId" :patientId="patientId" :followupCallFunction="FollowupMainFunction" />
 				<hr>
 				<div class="col-md-12">
 					<AgGridTable :rowData="rowData" :columnDefs="columnDefs" />
@@ -198,12 +201,14 @@ export default {
 				checkbox.dataset.stepId = row.step_id;
 				checkbox.value = row.status_flag === 1 ? 1 : 0;
 				checkbox.checked = row.status_flag === 1;
-				if(timerStatus.value == 1){
+				if (timerStatus.value == 1) {
 					//document.getElementsByClassName("change_status_flag").disabled= true;
 					checkbox.setAttribute('disabled', true);
 				}
 				// Bind click event handler
-				checkbox.addEventListener('click', changeStatus);
+				checkbox.addEventListener('click', () => {
+					changeStatus(row.id); // 'this' refers to the Vue component instance
+				});
 				return checkbox;
 			} else {
 				return ''; // Or handle the case where the 'action' value is not available
@@ -301,7 +306,7 @@ export default {
 			FollowupModalRef.value.openModal(id, props.patientId);
 		};
 
-		const FollowupMainFunction =  () => {
+		const FollowupMainFunction = () => {
 			fetchFollowupMasterTaskList();
 		};
 
@@ -343,12 +348,12 @@ export default {
 		const followupFormRef = ref(null);
 		const submitFollowupForm = async () => {
 			isLoading.value = true;
-		/* 	let emrCheckbox = document.getElementById('emr_complete');
-			// Set its value based on its checked state
-			let emrValue = emrCheckbox.checked ? 1 : 0;
-			console.log(emrCheckbox,emrValue,"emrvlays");
-			    // Append the checkbox value to the FormData object
-				myForm.append('emr_complete', emrValue); */
+			/* 	let emrCheckbox = document.getElementById('emr_complete');
+				// Set its value based on its checked state
+				let emrValue = emrCheckbox.checked ? 1 : 0;
+				console.log(emrCheckbox,emrValue,"emrvlays");
+					// Append the checkbox value to the FormData object
+					myForm.append('emr_complete', emrValue); */
 			let myForm = document.getElementById('followup_form');
 			let formData = new FormData(myForm);
 			axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -400,8 +405,8 @@ export default {
 			isLoading.value = false;
 		};
 
-		const changeStatus = () => {
-			const id = document.querySelector('.change_status_flag').getAttribute('data-id');
+		const changeStatus = (rid) => {
+			const id = rid; //document.querySelector('.change_status_flag').getAttribute('data-id');
 			const component_id = document.querySelector("form[name='followup_form'] input[name='component_id']").value;
 			const module_id = document.querySelector("form[name='followup_form'] input[name='module_id']").value;
 			const stage_id = document.querySelector("form[name='followup_form'] input[name='stage_id']").value;
@@ -444,6 +449,7 @@ export default {
 						document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
 						updateTimer(props.patientId, '1', props.moduleId);
 						time.value = responseData.form_start_time;
+						updateToDo();
 					})
 					.catch(error => {
 						console.error('Error:', error);
@@ -451,6 +457,12 @@ export default {
 			} else {
 				return false;
 			}
+		};
+
+		const updateToDo = async () => {
+			const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+			$("#toDoList").html(taskMangeResp.data);
+			$('.badge').html($('#count_todo').val());
 		};
 
 		const handleCheckboxChange = (event) => {
@@ -494,6 +506,7 @@ export default {
 			getStageID,
 			handleCheckboxChange,
 			timerStatus,
+			updateToDo,
 		};
 	}
 }

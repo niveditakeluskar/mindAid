@@ -32,7 +32,7 @@ class FollowupInertiaAddRequest extends FormRequest
                 // 'folllowUpTaskData.*.selectedFollowupMasterTask' => 'nullable|integer|required_with:folllowUpTaskData.*.task_name',
                 // 'folllowUpTaskData.*.task_date' => 'nullable|date|after_or_equal:today',
                 // 'folllowUpTaskData.*.notes' => 'nullable|min:2|text_comments_slash',
-                'emr_complete'  => 'required'  //'nullable|required_without:folllowUpTaskData.*.task_name'
+                // 'emr_complete'  => 'required'  //'nullable|required_without:folllowUpTaskData.*.task_name'
             ]
         );
     }
