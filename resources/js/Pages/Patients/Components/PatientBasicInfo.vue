@@ -161,15 +161,14 @@
                                         <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
                                             :componentId="componentId" :stageid="stageid" />
                                         <br />
-                                        
+                                        <span v-for="service in patientenrolledServices" :key="service">
+                                            <span v-if="service.trim() === 'RPM'">
+                                                <!-- Display "btn" if service is "RPM" -->
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
+                                                <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
+                                            </span>
+                                        </span>
                                         <!-- add-patient-devices -->
-                                        <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
-                                            href="javascript:void(0)" id="add-patient-devices"
-                                            @click="add_additional_devicesfunction">Devices</a>
-                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
-                                            :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
-                                        <br/>
-
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
                                                 data-original-title="Enrolled Date"><i class="text-muted i-Over-Time"></i> :
@@ -304,8 +303,8 @@ export default {
         patient_spirometerpefhigh: Number,
         patient_spirometerpeflow: Number,
         loading: "",
-        patientServices: [],
-        patientEnrolledServices: [],
+        // patientServices: [],
+        // patientEnrolledServices: [],
     },
     components: {
         AddDeviceModal,
@@ -374,6 +373,7 @@ export default {
 
         // const enrolledServices = ref(null);
         const enrolledServices = ref([]);
+        const patientenrolledServices = ref([]);
         const patientDetails = ref(null);
         const EditPatientUrl = '/patients/registerd-patient-edit/' + props.patientId + '/' + props.moduleId + '/' + props.componentId + '/0';
         var pause_stop_flag = 0;
@@ -508,6 +508,7 @@ export default {
                 const patientServices = data.patient_services;
                 const countEnrollServices = patientServices.length;
                 const enrollServices = [];
+                const enrolledModule = [];
                 for (let i = 0; i < countEnrollServices; i++) { 
                     const enrollServicesStatus = patientServices[i].status;
                     let patientEnrollServicesStatus = '';
@@ -524,15 +525,17 @@ export default {
 
                     const module = patientServices[i].module.module +' ';
                     // console.log(patientServices[i].module.module+"rrrrrr");
-                    if (patientServices[i].module.module.trim().includes('RPM')) {
-                        $("#add-patient-devices").show();
-                    } else {
-                        $("#add-patient-devices").hide();
-                    }
+                    // if (patientServices[i].module.module.trim().includes('RPM')) {
+                    //     $("#add-patient-devices").show();
+                    // } else {
+                    //     $("#add-patient-devices").hide();
+                    // }
                     const fetchedServices = `${module} - ${patientEnrollServicesStatus}`;
                     enrollServices.push(fetchedServices);
+                    enrolledModule.push(module);
                 }
                 enrolledServices.value = enrollServices;
+                patientenrolledServices.value = enrolledModule;
 
             } catch (error) {
                 console.error('Error fetching Patient details:', error.message); // Log specific error message
@@ -702,6 +705,7 @@ export default {
             suspended_to_date,
             patient_device,
             enrolledServices,
+            patientenrolledServices,
             personal_notes_data,
             research_study_data,
             patient_systolichigh,
