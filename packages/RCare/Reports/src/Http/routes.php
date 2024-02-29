@@ -31,6 +31,8 @@ Route::get('/time-logs-report', function(){
 
         
     Route::middleware(["auth", "web"])->group(function () { 
+        Route::get('/consolidate-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
+        Route::get('/consolidate-searh-data', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
         Route::middleware(["roleAccess"])->group(function () {
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');

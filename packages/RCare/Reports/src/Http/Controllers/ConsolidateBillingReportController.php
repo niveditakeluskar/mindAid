@@ -18,6 +18,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
+use Inertia\Inertia;
 
 class ConsolidateBillingReportController extends Controller
 {   
@@ -34,6 +35,29 @@ class ConsolidateBillingReportController extends Controller
           return view('Reports::monthly-biling-report.consolidated-monthly-billing-report');
           
     }
+
+    public function PatientConsolidateBillingReport(Request $request){
+          $monthly = date('Y-m');
+          $year = date('Y', strtotime($monthly));
+          $month = date('m', strtotime($monthly));
+          
+          $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes 
+          where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
+          $diagnosis = DB::select($diagnosis);    
+          return Inertia::render('Report/ConsolidatedBilling', [
+            'diagnosis' => $diagnosis,
+    ]);
+    }
+
+    public function getConsolidateBillingReport(Request $request){
+      $query = "select * from patients.consolidate_monthly_billing_report_py";
+      $data = DB::select( $query);  
+       
+            return Datatables::of($data) 
+            ->addIndexColumn()            
+            ->make(true);  
+    }
+
     public function ConsolidateMonthlyBilllingReportPatientsSearch(Request $request)
     {   
         $practicesgrp = sanitizeVariable($request->route('practicesgrpid'));  
