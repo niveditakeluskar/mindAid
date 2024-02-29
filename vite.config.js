@@ -8,7 +8,7 @@ export default defineConfig({
     laravel({
       input: [
         'resources/js/appInertia.js',
-        'resources/laravel/js/app.js',
+        //'resources/laravel/js/app.js',
         // 'resources/laravel/js/bootstrap.js',
         // 'resources/laravel/js/form.js',
         // 'resources/laravel/js/utility.js',
@@ -39,7 +39,7 @@ export default defineConfig({
     outDir: 'public/build', // Output directory for Vite-built assets
     assetsDir: 'assets', // Directory within outDir for assets
     rollupOptions: {
-      input: '/resources/js/appInertia.js',
+     // input: '/resources/js/appInertia.js',
     },
   },
 });

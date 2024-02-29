@@ -31,6 +31,8 @@ Route::get('/time-logs-report', function(){
 
         
     Route::middleware(["auth", "web"])->group(function () { 
+       
+        Route::get('/consolidate-monthly-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientMonthlyBillingReport')->name('consolidate.monthly.billing.report'); 
         Route::middleware(["roleAccess"])->group(function () {
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
@@ -417,6 +419,6 @@ Route::get('/time-logs-report', function(){
 
     //call-status-report-search 7th sept 2022
     Route::get('/call-status-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{activedeactivestatus}/{timeperiod}', 'RCare\Reports\Http\Controllers\CallStatusReportController@PatientCallStatusReportSearch')->name('call.status.report.search'); 
-    Route::get('/consolidate-monthly-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientMonthlyBillingReport')->name('consolidate.monthly.billing.report'); 
+    
    
 });
