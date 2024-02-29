@@ -14,7 +14,7 @@ use RCare\Org\OrgPackages\QCTemplates\src\Models\ContentTemplate;
 use RCare\System\Http\Controllers\CommonFunctionController;
 use RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate;
 use RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory;
-use RCare\Org\OrgPackages\Users\src\Models\Users;
+use RCare\Org\OrgPackages\Users\src\Models\Users; 
 use RCare\Org\OrgPackages\Users\src\Models\OrgUserRole;
 use RCare\Org\OrgPackages\Roles\src\Models\Roles;
 use RCare\Org\OrgPackages\Practices\src\Models\Practices;
@@ -421,9 +421,24 @@ class PatientController extends Controller
             $allreadydevice = 0;
         }
 
-        $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+        // $PatientDevices = PatientDevices::where('patient_id', $uid)->orderby('id', 'desc')->first();
+        // $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
 
-        $device_code = empty($PatientDevices->device_code) ? '' : $PatientDevices->device_code;
+        $PatientDevices = DB::select(("select distinct STRING_AGG (device_code, ', ') 
+        from patients.patient_devices
+        where patient_id ='".$uid."'
+        group by device_code"));
+
+        $resultArray = [];
+        foreach ($PatientDevices as $item) {
+            // Extract the "string_agg" value and split it into an array using the comma as a delimiter
+            $values = explode(', ', $item->string_agg);
+            // Add the values to the result array
+            $resultArray = array_merge($resultArray, $values);
+        }
+
+        // Join the values into a comma-separated string
+        $device_code = implode(', ', $resultArray);
 
         $device_status = empty($PatientDevices->shipping_status) ? '' : $PatientDevices->shipping_status;
 
@@ -1553,11 +1568,13 @@ class PatientController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="editDevicesdata" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                if ($row->status == 1) {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_active" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
-                } else {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_deactive" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
-                }
+                if($row->status == 1){
+                    $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                    }
+                    else 
+                    {
+                      $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
+                    }
                 return $btn;
             })
             ->rawColumns(['action'])
