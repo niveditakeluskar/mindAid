@@ -73,10 +73,11 @@
                                 <label for="programs"  data-toggle="tooltip" title="Enrolled Services" data-original-title="Patient Enrolled Services">
                                     <i class="text-muted i-Library"></i>: <span id="enroll_services" class="patient_enroll_services"></span> 
                                 </label>
-                                <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
+                                <!-- <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
                                     <i class="plus-icons i-Add" id="adddevice" style="font-size: 15px;" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i>
-                                </a>
+                                </a> -->
                                <!-- ash -->
+                                <br/>
                                 <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm add_patient_devices" data-toggle="modal" data-target="#add-patient-devices" style="background-color:#27a7de;border:none;display: none;" id="add_patient_devices">Devices</a>  
                                 <!-- !ash -->
                                 <br/>
@@ -98,7 +99,7 @@
                                     <span class="last_time_spend" id="btime"></span></label>
                                     <label for="total time" data-toggle="tooltip" title="Non Billable Time" data-original-title="Non Billable Time">
                                      / <span class="non_billabel_last_time_spend" id="nbtime"></span></label>
-                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/registerd-patient-edit/{{$patient_id}}/{{$m_id}}/{{$c_id}}/{{$enroll_service}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
+                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/registered-patient-edit/{{$patient_id}}/{{$m_id}}/{{$c_id}}/{{$enroll_service}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
                                     <div class="demo-div" style="margin-bottom:5px;">
                                         @hidden("timer_start",["id"=>"timer_start"])
                                         @hidden("timer_end",["id"=>"timer_end"])

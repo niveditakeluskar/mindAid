@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Header from './Header.vue'; 
-import Footer from './Footer.vue'; 
-import axios from 'axios'; 
+import Header from './Header.vue';
+import Footer from './Footer.vue';
+import axios from 'axios';
 
 export default {
   components: {
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      moduleId: null, 
+      moduleId: null,
     };
   },
   async mounted() {
@@ -35,7 +35,7 @@ export default {
       if (str.length == 6) {
         patientId = str[5].split('#')[0];
       }
-      const moduleId = await this.getPageModuleID(); 
+      const moduleId = await this.getPageModuleID();
       this.initializeScripts(moduleId, patientId);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
@@ -44,9 +44,9 @@ export default {
   methods: {
     async getPageModuleID() {
       try {
-     /*    var url = encodeURIComponent(window.location.href); */
-        const response = await axios.get('/get_module_id'); 
-        return response.data.moduleID; 
+        /*    var url = encodeURIComponent(window.location.href); */
+        const response = await axios.get('/get_module_id');
+        return response.data.moduleID;
 
       } catch (error) {
         throw new Error('Failed to fetch moduleID');
@@ -70,6 +70,12 @@ export default {
         let month = currentDate.getMonth() + 1;
         const previousMonths = await axios.get(`/ccm/previous-month-status/${patientId}/${moduleId}/${month}/${year}/previousstatus`);
         $("#previousMonthData").html(previousMonths.data);
+
+        const previousMonthsmonths = await axios.get(`/ccm/previous-month-calendar/${patientId}/${moduleId}/previousstatus`);
+        $("#regi_mnth").val(previousMonthsmonths.data.created_at);
+
+        $("#display_month_year").html(moment().format("MMMM YYYY"));
+
       } catch (error) {
         console.error(error);
       }

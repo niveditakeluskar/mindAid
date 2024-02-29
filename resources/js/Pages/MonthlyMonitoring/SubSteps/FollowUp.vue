@@ -101,10 +101,11 @@
 											true-value="1" false-value="0" @click="handleCheckboxChange"><span>EMR system
 											entry completed</span><span class="checkmark"></span>
 									</label>
-									<div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
+									<!-- v-model="emr_complete" -->
+									<!-- <div id="followup_emr_system_entry_complete_error" class="invalid-feedback"
 										v-if="formErrors.emr_complete" style="display: block;">{{ formErrors.emr_complete[0]
 										}}
-									</div>
+									</div> -->
 								</div>
 							</div>
 							<div class="row">
@@ -370,8 +371,15 @@ export default {
 					};
 					emr_complete.value = 0;
 					fetchFollowupMasterTaskList();
+					var year = (new Date).getFullYear();
+               		var month = (new Date).getMonth() + 1
 					$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
+					const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+                     $("#toDoList").html(taskMangeResp.data);
+                     $('.badge').html($('#count_todo').val());
+                     const previousMonths = await axios.get(`/ccm/previous-month-status/${props.patientId}/${props.moduleId}/${month}/${year}/previousstatus`);
+                     $("#previousMonthData").html(previousMonths.data);
 					$(".form_start_time").val(response.data.form_start_time);
 					time.value = response.data.form_start_time;
 					setTimeout(function () {
@@ -549,6 +557,6 @@ export default {
 
 .modal-content {
 	overflow-y: auto !important;
-	height: 500px !important;
+	/* height: 500px !important; */
 }
 </style>

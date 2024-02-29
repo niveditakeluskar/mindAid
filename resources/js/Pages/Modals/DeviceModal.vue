@@ -187,7 +187,12 @@ export default {
         statusLink.id = params.data.status === 1 ? 'active' : 'inactive';
         statusLink.title = params.data.status === 1 ? 'Active' : 'Inactive';
         const statusIcon = document.createElement('i');
-        statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', 'i-Yes');
+        // statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', 'i-Yes');
+        if (params.data.status === 1) {
+            statusIcon.classList.add('i-Yess', 'i-Yes');
+        } else {
+            statusIcon.classList.add('i-Closee', 'i-Close');
+        }
         statusLink.appendChild(statusIcon);
         linkContainer.appendChild(statusLink);
         // Add event listener to status link
@@ -273,7 +278,7 @@ export default {
       }
         }
 
-        const editDeviceId = async (id) => {          
+        const editDeviceId = async (id) => {     
             isLoading.value = true;
             try {
                 selectedEditDeviceId.value = id;
@@ -282,7 +287,8 @@ export default {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                console.log(data.devices_form[0],"device edit");
+                // console.log(data.devices_form[0],"device edit");
+                // console.log(selectedEditDeviceId.value,"device edit ID");
                 selectedDeviceCode.value = data.devices_form[0].device_code;
                 selectedPartnerId.value = data.devices_form[0].partner_id;
                 selectedPartnerDeviceId.value = data.devices_form[0].pdevice_id;
@@ -295,29 +301,38 @@ export default {
         };
 
         const changeStatus = async (id) => {
-                try {
-                    if (confirm('Are you sure you want to Activate this Device')) {
-                    const response = await fetch('/patients/delete-device/', {
+            try {
+                if (confirm('Are you sure you want to Activate this Device')) {
+                    const response = await fetch(`/patients/delete-device/${id}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        body: new URLSearchParams({
+                        body: new URLSearchParams({ 
                             id: id
                         })
                     });
+
                     if (!response.ok) {
-                        throw new Error(`Failed to changes status - ${response.status} ${response.statusText}`);
+                        throw new Error(`Failed to change status - ${response.status} ${response.statusText}`);
                     }
-                    const responseData = await response.json();
-                    console.log(responseData);
+                    if (response && response.status == 200) {
+                        showSuccessAlert.value = true;
+                        fetchDeviceList();
+                        $('#deviceModalAlert').html('<div class="alert alert-success"> Request Processed Successfully </div>');
+                        document.getElementById("devices_form").reset();
+                        setTimeout(() => {
+                            $('#deviceModalAlert').html('');
+                        // medicationTime.value = document.getElementById('page_landing_times').value;
+                        }, 3000);
+                    }
+                    // console.log(responseData);
                 } else {
-				return false;
-			    }
-                
+                    return false;
+                }
             } catch (error) {
-                    console.error('Error deleting care plan:', error.message);
+                console.error('Error changing status:', error.message);
             }
         };
 

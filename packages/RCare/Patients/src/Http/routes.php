@@ -249,7 +249,7 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get('/registered-patient-list-search/{id}', 'RCare\Patients\Http\Controllers\PatientController@registeredPatientsSearch')->name('patients.registered.patients.search');
         Route::get('/edit-patients-list', 'RCare\Patients\Http\Controllers\PatientController@fetchRegisteredPatients')->name('registered_patients_list');
-        Route::get('/registerd-patient-edit/{id}/{mid}/{cid}/{enroll_service}', 'RCare\Patients\Http\Controllers\PatientController@patientRegisteration')->name('enroll_patient_checklist');
+        Route::get('/registered-patient-edit/{id}/{mid}/{cid}/{enroll_service}', 'RCare\Patients\Http\Controllers\PatientController@patientRegisteration')->name('enroll_patient_checklist');
         Route::get('/ajax/getEditPatientData/{id}', 'RCare\Patients\Http\Controllers\PatientController@patientContactTime');
         Route::post('/patient-uid/validate', 'RCare\Patients\Http\Controllers\PatientController@checkPatientUid');
 

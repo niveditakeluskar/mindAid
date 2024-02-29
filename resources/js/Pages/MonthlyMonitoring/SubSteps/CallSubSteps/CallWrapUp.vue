@@ -313,6 +313,13 @@ export default {
                     $(".form_start_time").val(saveCallWrapUpFormResponse.data.form_start_time);
                     showCallWrapUpAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
+                    var year = (new Date).getFullYear();
+               		var month = (new Date).getMonth() + 1
+                    const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+                    $("#toDoList").html(taskMangeResp.data);
+                    $('.badge').html($('#count_todo').val());
+                    const previousMonths = await axios.get(`/ccm/previous-month-status/${props.patientId}/${props.moduleId}/${month}/${year}/previousstatus`);
+                     $("#previousMonthData").html(previousMonths.data);
                     await fetchCallWrapUpList();
                     document.getElementById("callwrapup_form").reset();
                     setTimeout(() => {

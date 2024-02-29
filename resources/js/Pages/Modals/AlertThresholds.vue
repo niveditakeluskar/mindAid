@@ -72,7 +72,7 @@ export default {
     setup(props) {
         const tabs = ref([ 
             { label: 'Custom Threshold', component: 'Tab1Component' },
-            { label: 'Stanard Threshold', component: 'Tab2Component' },
+            { label: 'Standard Threshold', component: 'Tab2Component' },
         ]);
         const isOpen = ref(false); 
         const loading = ref(false);

@@ -147,10 +147,10 @@ Route::get('/time-logs-report', function(){
         Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
         
        
-        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
-        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
-        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
-        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+        // Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        // Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        // Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        // Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
  
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
