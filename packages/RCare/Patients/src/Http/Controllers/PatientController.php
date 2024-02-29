@@ -1568,11 +1568,13 @@ class PatientController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="editDevicesdata" title="Edit"><i class=" editform i-Pen-4"></i></a>';
-                if ($row->status == 1) {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_active" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
-                } else {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_deactive" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
-                }
+                if($row->status == 1){
+                    $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                    }
+                    else 
+                    {
+                      $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
+                    }
                 return $btn;
             })
             ->rawColumns(['action'])
