@@ -17,7 +17,7 @@
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
 
     {{-- theme css --}}
-    <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
+    <link defer id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css') }}">
 

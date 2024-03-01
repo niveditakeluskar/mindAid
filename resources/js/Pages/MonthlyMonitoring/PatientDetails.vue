@@ -52,28 +52,11 @@ export default {
   setup(props) {
     const title = 'Monthly Monitor ';
     let landingtime = ref(null);
-    let enrolled_date = ref(null);
-    const patComDetails = async () => {
-      try {
-          const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-          if (!response.ok) {
-              throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
-          }
-          const data = await response.json();
-          enrolled_date.value = data.date_enrolled;
-      } catch (error) {
-          console.error('Error fetching Patient details:', error.message); // Log specific error message
-          // Handle the error appropriately
-      }
-    }
     onBeforeMount(() => {
       document.title = 'Monthly Monitoring |  Renova Healthcare';
       landingtime.value = props.landingTime.landing_time;
-      patComDetails();
     });
     return {
-      patComDetails,
-      enrolled_date,
       landingtime,
       title
     };
