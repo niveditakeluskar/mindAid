@@ -54,6 +54,7 @@
     "pdfmake": "^0.1.60",
     "underscore": "^1.9.1",
     "vue-step-wizard": "^0.1.17",
+    "vue3-modal": "^0.1.6",
     "watch": "^1.0.2",
     "wkhtmltopdf": "^0.4.0"
   }
