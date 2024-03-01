@@ -215,13 +215,12 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                     AND EXTRACT(Month FROM effdatetime) = '$month' 
                     AND EXTRACT(Year FROM effdatetime) = '$year'");
             // Observation_Weight::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)->pluck('effdatetime'); 
-            $DateArray = $datetime->toArray();
             $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('weighthigh','weightlow')->orderBy('created_at','desc')->get();
             $arrayreading2 = $reading2->toArray();
             // dd($reading2);
             $arrayreading2 = $reading2->toArray();
-            $arrLength = count($DateArray);
+            $arrLength = count($datetime);
             $uniArray =array();
             $min_threshold_array =isset($reading2[0]['weightlow'])?$reading2[0]['weightlow']:'';
             $max_threshold_array =isset($reading2[0]['weighthigh'])?$reading2[0]['weighthigh']:'';
@@ -371,7 +370,6 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 // Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)->pluck('effdatetime');
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('temperaturehigh','temperaturelow')->orderBy('created_at','desc')->get();
-                $DateArray = $datetime->toArray();
                 $arrayreading2 = $reading2->toArray();
                 $arrLength = count($datetime);
                 $uniArray =array();
@@ -424,12 +422,11 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                         AND EXTRACT(Year FROM effdatetime) = '$year'");
                 //  Observation_Spirometer::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
-                $DateArray = $datetime->toArray();
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('spirometerpefhigh','spirometerpeflow','spirometerfevhigh','spirometerfevlow')->orderBy('created_at','desc')->get();
                 $arrayreading2 = $reading2->toArray();
                 //dd($arrayreading2);
-                $arrLength = count($DateArray);
+                $arrLength = count($datetime);
                 $uniArray =array(); 
                 $min_threshold_array =isset($arrayreading2[0]['spirometerpeflow'])?$arrayreading2[0]['spirometerpeflow']:''; 
                 $max_threshold_array =isset($arrayreading2[0]['spirometerpefhigh'])?$arrayreading2[0]['spirometerpefhigh']:'';
@@ -1053,13 +1050,11 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
      // dd($deviceid);
      $configTZ = config('app.timezone');
      $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-  
             if($deviceid =='1'){
                 $readingWeight = DB::select("select id,weight,unit,
                 to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
-                FROM rpm.observations_bp where patient_id = '$patient_id'");
+                FROM rpm.observations_weight where patient_id = '$patient_id'");
                 //Observation_Weight::where('patient_id',$patient_id)->get(); 
-                // dd($readingWeight);
                 $data =array();
                 foreach ($readingWeight as $row) {
                     $data[] = array(
