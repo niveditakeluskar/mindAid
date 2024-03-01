@@ -3295,19 +3295,32 @@ function onProviderChange(formsObj) {
 	}
 }
 
-function onPracticeChange(formsObj) {
+function onPracticepcpChange(formsObj) { //alert("working");
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	var practice_id = $("form[name='" + formName + "'] #practices").val();
-	if (practice_id == '0') {
-		$("form[name='" + formName + "'] #practices_div").removeClass("col-md-6").addClass("col-md-3");
-		$("form[name='" + formName + "'] #practice_name").show();
-		var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
-	} else {
-		$("form[name='" + formName + "'] #practices_div").removeClass("col-md-3").addClass("col-md-6");
-		$("form[name='" + formName + "'] #prac_name").val("");
-		$("form[name='" + formName + "'] #practice_name").hide();
-		var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
-	}
+	var practices_id = $("form[name='" + formName + "'] #practices").val();
+	// var provider_id = $("form[name='" + formName + "'] #provider_id").val();
+	//alert(practices_id);
+	//alert(formName);
+	if (practices_id == 0) {	
+	}else{ util.updatePcpPhysicianList(parseInt(practices_id),$("form[name='" + formName + "'] #provider_id"));  }
+	// if(practices_id!=''){
+	// 	util.updatePcpPhysicianList(parseInt(practices_id),$("#provider_id")); 
+	// }
+}
+
+function onPracticeChange(formsObj) {
+    var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
+    var practice_id = $("form[name='" + formName + "'] #practices").val();
+    if (practice_id == '0') {
+        $("form[name='" + formName + "'] #practices_div").removeClass("col-md-6").addClass("col-md-3");
+        $("form[name='" + formName + "'] #practice_name").show();
+        var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
+    } else {
+        util.updatePhysicianList(parseInt(practice_id), $("form[name='" + formName + "'] #provider_id"));
+        $("form[name='" + formName + "'] #practices_div").removeClass("col-md-3").addClass("col-md-6");
+        $("form[name='" + formName + "'] #prac_name").val("");
+        $("form[name='" + formName + "'] #practice_name").hide();
+    }
 }
 
 
@@ -4693,6 +4706,7 @@ window.carePlanDevelopment = {
 	editSpecialistProviderPatient: editSpecialistProviderPatient,
 	deleteSpecialistProviderPatient: deleteSpecialistProviderPatient,
 	onProviderChange: onProviderChange,
+	onPracticepcpChange: onPracticepcpChange,
 	onPracticeChange: onPracticeChange,
 	editHobbiesData: editHobbiesData,
 	deleteHobbiesData: deleteHobbiesData,
