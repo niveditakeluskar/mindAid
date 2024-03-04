@@ -218,10 +218,16 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                 <?php 
                     $base_url = 'prod';//url('/');
                     // print_r($DomainFeatures->instance);
-                    if(isset($DomainFeatures->instance) && $base_url != trim($DomainFeatures->instance)) { //"https://rcareproto2.d-insights.global"
-                        $define_server = trim($DomainFeatures->instance);
-                        echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
-                    }else{
+					if(isset($DomainFeatures->instance)){
+						if($base_url == trim($DomainFeatures->instance)){
+							$define_server = trim($DomainFeatures->instance);
+						}
+						else{
+							$define_server = trim($DomainFeatures->instance);
+							echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
+						}
+					}
+                    else{
                         $define_server = '';
                         echo "URL is not registered in the system. Please contact system administrator to check the url";
                     }
