@@ -220,7 +220,7 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                         echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
                     }
                 ?> 
-                <input type="text" id="origin" name="origin" value =<?php echo trim($DomainFeatures->instance)?>>
+                <input type="hidden" id="origin" name="origin" value =<?php echo trim($DomainFeatures->instance)?>>
                     
             </div>
             <div class="card-footer"> 
@@ -328,7 +328,6 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
             //DISABLE AUTO FILL 
             var timezone = moment.tz.guess();
             // alert(timezone);
-            debugger;
             $('#timezone').val(timezone);
             $("#password").attr("autocomplete", "off");
             var origin   = 'prod';//window.location.origin;
