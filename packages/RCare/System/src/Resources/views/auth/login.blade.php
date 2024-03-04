@@ -219,7 +219,9 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                     if($base_url != trim($DomainFeatures->instance)) { //"https://rcareproto2.d-insights.global"
                         echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
                     }
-                ?>
+                ?> 
+                <input type="text" id="origin" name="origin" value =<?php echo trim($DomainFeatures->instance)?>>
+                    
             </div>
             <div class="card-footer"> 
                 <div class="mc-footer">
@@ -326,12 +328,14 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
             //DISABLE AUTO FILL 
             var timezone = moment.tz.guess();
             // alert(timezone);
+            debugger;
             $('#timezone').val(timezone);
             $("#password").attr("autocomplete", "off");
-            var origin   = window.location.origin;
-            if(origin != "https://rcare.d-insights.global"){
+            var origin   = 'prod';//window.location.origin;
+            var instance = $('#origin').val();
+            if(origin != instance){ //https://rcare.d-insights.global
                 $('#confirm_url').modal('show');
-                $('#confirm_url_ok').click(function (){
+                $('#confirm_url_ok').click(function (){ 
                     $('#confirm_url').modal('hide');
                 }); 
                 $('#confirm_url_cancel').click(function (){
