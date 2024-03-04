@@ -214,15 +214,14 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
             </div>
             <div class="modal-body">
                 <?php 
-                    $base_url = url('/');
-                    if($base_url == "https://rcareproto2.d-insights.global") {
-                        echo "You are in the test system – this is not production – do you acknowledge you would like to proceed in the test system?";
-                    } elseif($base_url == "https://rcarestaging.d-insights.global") {
-                        echo "You are in the staging – this is not production – do you acknowledge you would like to proceed in the test system?";
+                    $base_url = 'prod';//url('/');
+                    // print_r($DomainFeatures->instance);
+                    if($base_url != $DomainFeatures->instance) { //"https://rcareproto2.d-insights.global"
+                        echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
                     }
                 ?>
             </div>
-            <div class="card-footer">
+            <div class="card-footer"> 
                 <div class="mc-footer">
                     <div class="row">
                         <div class="col-lg-12 text-right">
@@ -231,7 +230,7 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
