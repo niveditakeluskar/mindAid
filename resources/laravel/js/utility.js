@@ -4046,6 +4046,15 @@ var getChartOnclick = function (data, id, deviceid) {
 
     var subtitle1 = "<b>" + label + "</b>" + " - [Min:" + reading_min + " ]/[Max: " + reading_max + "]";
 
+
+    Highcharts.setOptions({
+        global: {
+            timezoneOffset: new Date().getTimezoneOffset()
+        },
+        time: {
+            timezone: 'America/New_York'
+        }
+    });
     Highcharts.chart(id, {
         chart: {
             type: 'spline',
@@ -4060,7 +4069,7 @@ var getChartOnclick = function (data, id, deviceid) {
             }
         },
         xAxis: {
-            //type: 'datetime',
+            type: 'datetime',
             categories: patientarraydatetime,
             crosshair: true,  //extra
             index: 1,//extra
