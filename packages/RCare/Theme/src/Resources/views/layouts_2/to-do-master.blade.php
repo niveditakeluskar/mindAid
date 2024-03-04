@@ -9,7 +9,7 @@
         <title>@yield('page-title') Renova Healthcare</title>
        <!--  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet"> -->
 
-       
+       <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
        <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
         <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
 <!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> -->
@@ -119,6 +119,7 @@
                     @include('Theme::layouts_2.previous-month-notes')
                 <?php }?>
 					@include('Theme::layouts_2.to-list-customizer') 
+                    @include('Theme::layouts_2.cm-patient-assign') 
 			
              
         <!-- </div> -->
@@ -168,7 +169,7 @@
                 <input type="hidden" name="module_id" value="{{ $module_id }}" />
                 <input type="hidden" name="component_id" value="{{ $submodule_id }}" /> 
                 <input type="hidden" name="stage_id" value="{{ $stage_id }}" /> 
-                <input type="hidden" name="form_name" value="devices_form">
+                <input type="hidden" name="form_name" value="fin_number_form">
                 <input type="hidden" name="idd" id="idd">
 
                 <div class="row">
@@ -746,6 +747,7 @@
                         <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
                         <input type="hidden" name="start_time" value="00:00:00">
                         <input type="hidden" name="end_time" value="00:00:00"> 
+                        <input type="hidden" name="fromstarttime" id="fromstarttime">
                         <input type="hidden" name="module_id" value="{{ $module_id }}" />
                         <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                         <input type="hidden" name="form_name" value="active_deactive_form" />
@@ -1034,7 +1036,6 @@
                             data: {darkmode: ch}
                         });
                 });
-                
 				
 				$("[name='partner_id']").on("change", function () {
                         //alert("working");
@@ -1051,7 +1052,9 @@
                 
 				setTimeout(function () {
 					document.getElementById("customizer_id").style.display = "block";
+					// document.getElementById("customizer_id2").style.display = "block";
 				}, 3000);
+
 				
 				CKEDITOR.replace( 'email_title_area');
                 $('.select2').select2();

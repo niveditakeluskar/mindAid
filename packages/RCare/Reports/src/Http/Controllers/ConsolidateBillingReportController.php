@@ -44,6 +44,7 @@ class ConsolidateBillingReportController extends Controller
         $monthlyto   = sanitizeVariable($request->route('monthlyto'));
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
         $callstatus = sanitizeVariable($request->route('callstatus'));
+        $onlycode =  sanitizeVariable($request->route('onlycode'));
         if($module_id=='null')
         {
            $module_id=3; 
@@ -100,7 +101,7 @@ class ConsolidateBillingReportController extends Controller
                     inner join patients.patient_services ps on pd.patient_id=ps.patient_id
                     where pd.created_at between '".$dt1."'and '".$dt2."' and pd.status =1 and pp.provider_type_id = 1 and pp.is_active =1
                     "; 
-    
+
                 if($practices!="" && $practices !='null'){
                   $query .= " and pp.practice_id =".$practices;
                 }
@@ -117,9 +118,12 @@ class ConsolidateBillingReportController extends Controller
     
               //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
     
-                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
+                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid"; 
+                    if($onlycode == 1){
+                      $query .= " where sp.billingcode != 'null'";
+                    }
                     $data = DB::select( DB::raw($query) );
-                        //  dd($query);
+                         
                         //  dd($data);
                         
                 
@@ -236,17 +240,22 @@ class ConsolidateBillingReportController extends Controller
                         if($data[$i]->call_conti_status == '000'){
                           $data[$i]->call_conti_status='';
                         }
-    
-                        if(is_null($data[$i]->finalize_cpd)){
+						
+						$finalize_cpd_query = PatientServices::where('patient_id',$pid)->where('status',1)->get();						
+						if(count($finalize_cpd_query)>0){
+                        if(is_null($finalize_cpd_query[0]->finalize_cpd)){
                           $finalize_cpd='';
                         }else{
-                          if($data[$i]->finalize_cpd=='1'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='1'){
                             $finalize_cpd ='Yes';
                           } 
-                          if($data[$i]->finalize_cpd=='0'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='0'){
                             $finalize_cpd ='No';
                           }
                         }
+						}else{
+							$finalize_cpd='';
+						}
                         if(is_null($data[$i]->total_reading_days)){
                           $total_reading_days ='';
                         }else{

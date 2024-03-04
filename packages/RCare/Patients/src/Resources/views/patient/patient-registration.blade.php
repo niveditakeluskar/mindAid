@@ -504,8 +504,8 @@
 								<hr>
 								<div class="col-md-6 form-group mb-3">  
 									<label for="entrollment_form">Enrollment From <span class="error">*</span></label> 
-									@select("Select Enrollment From", "entrollment_from", [
-											0 => "Clinic Care Manage",
+									@select("Enrollment From", "entrollment_from", [
+											0 => "Clinic Care Manager",
 											1 => "Remote Care Manager By Phone"
 										])                          
 								</div>
@@ -648,6 +648,7 @@
 			patientRegistration.init();
 			$("#file").removeClass("form-control");
 			util.getToDoListData(0, {{getPageModuleName()}});
+			util.getAssignPatientListData(0, 0);
 			$("#start").hide();
             $("#pause").show();
 			$("#time-container").val(AppStopwatch.startClock);

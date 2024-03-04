@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use RCare\RPM\Http\Controllers\DailyReviewController;
+use RCare\Rpm\Http\Controllers\DailyReviewController;
 
 class RPMReadingReminder extends Command
 { 
@@ -37,7 +37,7 @@ class RPMReadingReminder extends Command
      */
     public function handle()
     {   		
-		Log::info("Reminder ");
+		//Log::info("Reminder ");
 		$controller = new DailyReviewController();
         $r = $controller->noReadingsLastthreedays();      
 		//Log::info("reminder msg outcome".$r);

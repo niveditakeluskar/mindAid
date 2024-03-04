@@ -49,7 +49,8 @@ class PatientDevices extends Model
         'updated_at',
         'device_id',
         'vital_devices',
-        'mrn_no'
+        'mrn_no',
+        'partner_id'
          
 
     ];
@@ -60,6 +61,11 @@ class PatientDevices extends Model
 
     public function devices(){
         return $this->belongsTo('RCare\Org\OrgPackages\Devices\src\Models\Devices','device_id');
+    }
+    public static function device() 
+    {   
+        $id  = '1'; //sanitizeVariable($patient_id);
+        return self::where('status', $id)->orderBy('created_at', 'desc')->get();
     }
     
     // public function template(){
