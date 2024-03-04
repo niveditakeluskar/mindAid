@@ -27,7 +27,8 @@ class ApiTellihealth extends Model
     protected $fillable = [
         'id',
         'content',
-        'partner'
+        'partner',
+        'rconnect_transfer_flag'
     ];
 
 }

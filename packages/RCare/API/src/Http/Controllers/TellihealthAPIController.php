@@ -40,12 +40,24 @@ class TellihealthAPIController extends Controller {
       }
       public function tellihealth_webhook_observation(Request $request){  
         $content=$request->all();  
-        $newcontent=json_encode($content);      
-        $data=array(
+        $newcontent=json_encode($content);     
+        $response = Http::post('https://rcare2.d-insights.global/API/tellihealth_webhook_data');
+        if ($response->getStatusCode() == 200) {
+          $data=array(
             'content'=>$newcontent,
             'partner'=>'tellihealth',
-            'status' =>'0',            
-        );
+            'status' =>'0', 
+            'rconnect_transfer_flag' => 1           
+          );
+        }else{
+          $data=array(
+            'content'=>$newcontent,
+            'partner'=>'tellihealth',
+            'status' =>'0',
+            'rconnect_transfer_flag' => 0             
+          );
+        }
+       
          $result= ApiTellihealth::create($data);
           if($result)
           {
