@@ -76,6 +76,7 @@ class TellihealthAPIController extends Controller {
             'status' =>'0',
             'rconnect_transfer_flag' => 0             
           );
+          $result= ApiTellihealth::create($data);
           if($result)
           {
             return response()->json("Data inserted successfully!");
