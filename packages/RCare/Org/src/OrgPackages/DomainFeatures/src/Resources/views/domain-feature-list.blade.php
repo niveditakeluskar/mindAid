@@ -133,6 +133,7 @@
                                 <label for="service_name">login Block Time(In Minute)<span class="error">*</span> </label>
                                 @text("block_time", ["id" => "block_time", "class" => "form-control" ])  
                         </div>
+                        
                         <div class="col-md-4 form-group mb-3">
                                 <label for="server_name">Instance Name</label>
                                 @text("instance", ["id" => "instance", "class" => "form-control" ])
