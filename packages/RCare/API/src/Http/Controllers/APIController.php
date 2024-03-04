@@ -382,7 +382,7 @@ else
      $newcontent=json_encode($content);
      $decodecontent=json_decode($newcontent);
      $currenturl = url()->full();	
-     if($currenturl == 'https://rcare.d-insights.global/API/tellihealth_webhook_data'){
+     if($currenturl == 'https://rcare.d-insights.global/API/observations'){
         $response = Http::post('https://rcareconnect.com/API/observations',  $content);
         if($response->getStatusCode() == 200) {
             $data=array(
