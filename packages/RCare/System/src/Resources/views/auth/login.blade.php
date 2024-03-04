@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
 	<!-- <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
@@ -216,11 +218,15 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                 <?php 
                     $base_url = 'prod';//url('/');
                     // print_r($DomainFeatures->instance);
-                    if($base_url != trim($DomainFeatures->instance)) { //"https://rcareproto2.d-insights.global"
+                    if(isset($DomainFeatures->instance) && $base_url != trim($DomainFeatures->instance)) { //"https://rcareproto2.d-insights.global"
+                        $define_server = trim($DomainFeatures->instance);
                         echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
+                    }else{
+                        $define_server = '';
+                        echo "URL is not registered in the system. Please contact system administrator to check the url";
                     }
                 ?> 
-                <input type="hidden" id="origin" name="origin" value =<?php echo trim($DomainFeatures->instance)?>>
+                <input type="hidden" id="origin" name="origin" value =<?php echo $define_server;?>>
                     
             </div>
             <div class="card-footer"> 
