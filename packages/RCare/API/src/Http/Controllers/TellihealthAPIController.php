@@ -43,7 +43,7 @@ class TellihealthAPIController extends Controller {
         $newcontent=json_encode($content);     
         $currenturl = url()->full();	
         if($currenturl == 'https://rcare.d-insights.global/API/tellihealth_webhook_data'){
-          $response = Http::post('https://rcareconnect.d-insights.global/API/tellihealth_webhook_data',$content);
+          $response = Http::post('https://rcareconnect.com/API/tellihealth_webhook_data',$content);
           if ($response->getStatusCode() == 200) {
             $data=array(
               'content'=>$newcontent,

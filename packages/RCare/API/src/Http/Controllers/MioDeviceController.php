@@ -55,7 +55,7 @@ class MioDeviceController extends Controller {
 		$currenturl = url()->full();		
 
 		if($currenturl == 'https://api.medhtech.com/API/data_from_device'){
-            $response = Http::post('https://rcareconnect.d-insights.global/API/data_from_device', $content);
+            $response = Http::post('https://rcareconnect.com/API/data_from_device', $content);
             if ($response->getStatusCode() == 200) {
                 $data=array(
                     'content'=>$newcontent,
@@ -126,7 +126,7 @@ class MioDeviceController extends Controller {
 		// dd($lastElement);
         $newcontent=json_encode($content);
         if($currenturl == 'https://api.medhtech.com/API/data_from_device/'.$deviceid){
-            $response = Http::post('https://rcareconnect.d-insights.global/API/data_from_device/'.$deviceid, $content);
+            $response = Http::post('https://rcareconnect.com/API/data_from_device/'.$deviceid, $content);
             if ($response->getStatusCode() == 200) {
                 $data=array(
                     'content'=>$newcontent,
