@@ -208,15 +208,15 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header"> 
                 <h4 class="modal-title">URL Confirm</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
+            </div> 
             <div class="modal-body">
                 <?php 
                     $base_url = 'prod';//url('/');
                     // print_r($DomainFeatures->instance);
-                    if($base_url != $DomainFeatures->instance) { //"https://rcareproto2.d-insights.global"
+                    if($base_url != trim($DomainFeatures->instance)) { //"https://rcareproto2.d-insights.global"
                         echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
                     }
                 ?>
