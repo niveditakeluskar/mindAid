@@ -9,6 +9,8 @@
         <title>@yield('page-title') Renova Healthcare</title><!-- //Updated by -pranali on 21Oct2020 -->
         <!-- <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet"> -->
         <!--  pri19thnov21 -->
+        
+       <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
         <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
         @yield('before-css') 
         {{-- form wizard --}}

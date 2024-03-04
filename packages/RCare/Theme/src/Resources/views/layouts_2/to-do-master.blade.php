@@ -9,7 +9,7 @@
         <title>@yield('page-title') Renova Healthcare</title>
        <!--  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet"> -->
 
-       
+       <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
        <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
         <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
 <!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> -->
