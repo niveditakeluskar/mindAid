@@ -45,15 +45,43 @@ class DeviceDataReportController extends Controller
         $pdf = PDF::loadView('Reports::device-data-reports.device-data-report-pdf');
         return $pdf->download('users.pdf');
     }
+	
+	public function getAssignDevice(Request $request)
+    {
+      // dd('getAssignDevice');
+      try {
+		  $patientid = sanitizeVariable($request->pid);
+		  $patient_assign_device="";
+		  $patient_assign_deviceid="";
+			
+		  $PatientDevices = PatientDevices::where('patient_id',$patientid)->where('status',1)->orderby('id','desc')->first();
+		  if(!empty($PatientDevices)){
+                $deviceid = $PatientDevices->device_id;
+				$dev=  Devices::where('id',$deviceid)->where('status','1')->orderby('id','asc')->first();
+                       if(!empty($dev)){
+                        $show_device = $dev->device_name;
+                        $show_device_id = $dev->id.","; 
+					   }
+					   return response()->json([ 'patient_assign_deviceid'=>$show_device_id]); 
+            }      
+            
+      }
+      catch(\Exception $ex) {
+          //  DB::rollBack();
+            // return $ex;
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
 
+	/*
     public function getAssignDevice(Request $request)
     {
       // dd('getAssignDevice');
       try {
       $patientid = sanitizeVariable($request->pid);
-
+		
       $PatientDevices = PatientDevices::where('patient_id',$patientid)->where('status',1)->orderby('id','desc')->first();
-      //dd($PatientDevices);
+      
             if(!empty($PatientDevices)){
                 $data = json_decode($PatientDevices->vital_devices);
                 
@@ -67,6 +95,7 @@ class DeviceDataReportController extends Controller
                        if(!empty($dev)){
                         $show_device.= $dev->device_name.", ";
                         $show_device_id.= $dev->id.", ";
+						dd($show_device_id);
                        }
                       }
                   
@@ -78,6 +107,7 @@ class DeviceDataReportController extends Controller
                 $patient_assign_device="";
                 $patient_assign_deviceid="";
             }
+			
             return response()->json([ 'patient_assign_deviceid'=>$patient_assign_deviceid]); 
             }
       catch(\Exception $ex) {
@@ -86,7 +116,7 @@ class DeviceDataReportController extends Controller
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
         }
     }
-
+	*/
     
     public function DDReportSerch(Request $request)
     {

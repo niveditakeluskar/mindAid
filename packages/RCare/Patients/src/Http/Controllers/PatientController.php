@@ -429,54 +429,29 @@ class PatientController extends Controller
         where patient_id ='".$uid."'
         group by device_code"));
 
-        $resultArray = [];
-        foreach ($PatientDevices as $item) {
-            // Extract the "string_agg" value and split it into an array using the comma as a delimiter
-            $values = explode(', ', $item->string_agg);
-            // Add the values to the result array
-            $resultArray = array_merge($resultArray, $values);
-        }
-
-        // Join the values into a comma-separated string
-        $device_code = implode(', ', $resultArray);
-
-        $device_status = empty($PatientDevices->shipping_status) ? '' : $PatientDevices->shipping_status;
-
-
-        $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1) ?
-            PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
-        // dd($rpmDevices);
-        if (isset($rpmDevices[0]->vital_devices)) {
-
-            $data = json_decode($rpmDevices[0]->vital_devices, true);
-            $show_device = "";
-
-            if (is_array($data)) {
-                foreach ($data as $item) {
-                    if (array_key_exists("vid", $item)) {
-                        $dev = Devices::where('id', $item['vid'])
-                            ->where('status', '1')
-                            ->orderBy('id', 'asc')
-                            ->first();
-
+         $data = json_decode($rpmDevices[0]->vital_devices);
+                $show_device="";
+               
+                for($j=0;$j<count($data);$j++){
+                   
+                    if (property_exists($data[$j], "vid")) {
+                        // Access properties using -> operator since $data[$j] is an object
+                        $dev = Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
                         if (!empty($dev)) {
                             $parts = explode(" ", $dev->device_name);
                             $devices = implode('-', $parts);
-
-                            $filename = RPMProtocol::where("device_id", $item['vid'])
-                                ->where('status', '1')
-                                ->first();
-
+                    
+                            $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
                             if (!empty($filename)) {
                                 $filenames = $filename->file_name;
                                 $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
+                    
                                 $show_device .= $dev->device_name . " (" . $btn . "), ";
                             }
                         }
                     }
                 }
             }
-
             $patient_assign_device = rtrim($show_device, ', ');
         } else {
             $patient_assign_device = "";
@@ -1453,6 +1428,7 @@ class PatientController extends Controller
         $pdevices = array();
         $id                 = sanitizeVariable($request->uid);
         $rowid              = sanitizeVariable($request->idd);
+        // dd($rowid);
         $patient_id         = sanitizeVariable($request->patient_id);
         $module_id          = sanitizeVariable($request->module_id);
         $currentMonth       = date('m');
@@ -1569,16 +1545,16 @@ class PatientController extends Controller
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="editDevicesdata" title="Edit"><i class=" editform i-Pen-4"></i></a>';
                 if($row->status == 1){
-                    $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
-                    }
-                    else 
-                    {
-                      $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
-                    }
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                  $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                  }
+                  else 
+                  {
+                    $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
+                  }
+                  return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
     }
 
     public function getPatentDeviceVL(Request $request)

@@ -901,7 +901,6 @@ $('#add_replace_device').on('change', function () {
 
 });
 
-
 $('body').on('click', '.change_device_status_active1', function () { 
     var id = $(this).data('id');
     if (confirm("Are you sure you want to Deactivate this Device")) {

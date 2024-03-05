@@ -35,7 +35,8 @@ class MioWebhook extends Model
          'partner',
          'status',
          'device_id',
-         'url'      
+         'url',
+         'rconnect_transfer_flag'      
 
     ];
 
