@@ -2,10 +2,8 @@
   <div>
     <!-- Header component -->
     <Header />
-
-    <!-- Inertia's slot where individual pages will be rendered -->
     <slot :moduleId="moduleId" />
-
+      <LogoutConfirmationModal ref="LogoutConfirmationModal" />
     <!-- Footer component -->
     <Footer />
   </div>
@@ -15,12 +13,13 @@
 import Header from './Header.vue';
 import Footer from './Footer.vue';
 import axios from 'axios';
-
+import LogoutConfirmationModal from './Modals/LogoutConfirmationModel.vue';
 export default {
   components: {
     Header,
     Footer,
-    axios
+    axios,
+    LogoutConfirmationModal,
   },
   data() {
     return {
@@ -37,6 +36,7 @@ export default {
       }
       const moduleId = await this.getPageModuleID();
       this.initializeScripts(moduleId, patientId);
+      setInterval(this.checkTimeInterval.bind(this), 1000);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
     }
@@ -135,7 +135,7 @@ export default {
         })["catch"](function (error) {
           console.error(error, error.response);
         });
-        var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
+        // var idleInterval = setInterval(checkTimeInterval, 1000); // 1 Seconds
         $(this).mousemove(function (e) {
           // idleTime = 0;
           localStorage.setItem("idleTime", 0);
@@ -145,51 +145,30 @@ export default {
           localStorage.setItem("idleTime", 0);
         });
       });
-
-      var sessionIdleTime = 0; // Initialize sessionIdleTime
-      var checkTimeInterval = function timerIncrement() {
-        sessionIdleTime = localStorage.getItem("idleTime");
-        var showPopupTime = localStorage.getItem("showPopupTime"); //changes by ashvini
-        var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds"); //changes by ashvini
-        var systemDate = localStorage.getItem("systemDate");
-        var currentDate = new Date();
-        var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
-        var idleTime = parseInt(sessionIdleTime) + (res % 60);
-        if (idleTime >= showPopupTime) {
-          // $('#logout_modal').modal('show');   
-          var visiblemodal = $('#logout_modal').is(':visible');
-          if (visiblemodal) {
-            console.log('visiblemodal');
-          } else {
-            $('#logout_modal').modal('show');
-          }
-
-          if (idleTime >= sessionTimeoutInSeconds) {
-            var visiblemodal = $('#logout_modal').is(':visible');
-            if (visiblemodal) {
-              // $('#logout_modal').modal('hide');   
-              $("#sign-out-btn")[0].click();
-              var base_url = window.location.origin;
-              // alert(base_url);  
-              window.location.href = base_url + '/rcare-login';
-              window.location.reload();
-            }
-          }
+    },
+    openLogoutConfirmationModal() {
+      this.$refs.LogoutConfirmationModal.openModal();
+    },
+    checkTimeInterval() {
+      // This function is defined as a method within the Vue component
+      var showPopupTime = localStorage.getItem("showPopupTime");
+      var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds");
+      var systemDate = localStorage.getItem("systemDate");
+      var currentDate = new Date();
+      var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
+      var idleTime = parseInt(localStorage.getItem("idleTime")) + (res % 60);
+      if (idleTime >= showPopupTime) {
+        this.openLogoutConfirmationModal();
+        if (idleTime >= sessionTimeoutInSeconds) {
+          window.location.href = '/logout';
+          window.location.reload();
+          // window.location.href = '/rcare-login';
+          // window.location.reload();
         }
-        localStorage.setItem("idleTime", idleTime);
-        // localStorage.setItem("idleTime", 0);
-        localStorage.setItem("systemDate", currentDate);
-      };
-
-      //end of initializeScripts
-      $("#logout_yes").click(function (e) {
-        $("#sign-out-btn")[0].click();
-      });
-
-      $("#logout_no").click(function (e) {
-        $('#logout_modal').modal('hide');
-      });
-    }
+      }
+      localStorage.setItem("idleTime", idleTime);
+      localStorage.setItem("systemDate", currentDate);
+    },
   },
 };
 </script>

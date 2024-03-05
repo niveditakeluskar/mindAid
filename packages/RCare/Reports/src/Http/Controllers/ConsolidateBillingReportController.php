@@ -18,6 +18,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
+use Inertia\Inertia;
 
 class ConsolidateBillingReportController extends Controller
 {   
@@ -31,7 +32,10 @@ class ConsolidateBillingReportController extends Controller
           where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
           $diagnosis = DB::select($diagnosis);    
           //dd($diagnosis);
-          return view('Reports::monthly-biling-report.consolidated-monthly-billing-report');
+          //return view('Reports::monthly-biling-report.consolidated-monthly-billing-report');
+          return Inertia::render('Rep/Cons', [
+            'diagnosis' => $diagnosis,
+        ]);
           
     }
     public function ConsolidateMonthlyBilllingReportPatientsSearch(Request $request)
