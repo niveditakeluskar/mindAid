@@ -18,7 +18,8 @@
 // });
    
 Route::middleware(["auth", "web"])->group(function () {
-Route::prefix('org')->group(function () {
+Route::prefix('org')->group(function () { 	
+    Route::post('/ajax/domainuploadlogo','RCare\Org\OrgPackages\DomainFeatures\src\Http\Controllers\DomainFeaturesController@domainlogoimage');
        Route::get("/org-domainfeatures", "RCare\Org\OrgPackages\DomainFeatures\src\Http\Controllers\DomainFeaturesController@index")->name("domainfeatures"); 
 
     Route::post('/createDomainFeatures', 'RCare\Org\OrgPackages\DomainFeatures\src\Http\Controllers\DomainFeaturesController@createDomainFeatures')->name('createDomainFeatures'); 
