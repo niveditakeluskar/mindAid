@@ -4096,7 +4096,7 @@ var getChartOnclick = function (data, id, deviceid) {
     //     }
     // });
 
-    Highcharts.chart(id, {
+    let chart = Highcharts.chart(id, {
         chart: {
             type: 'spline',
             events: {
@@ -4187,6 +4187,28 @@ var getChartOnclick = function (data, id, deviceid) {
             }
         }
     });
+    let btn = document.getElementById("btnFullScreen")
+
+    btn.addEventListener('click', function () {
+        Highcharts.FullScreen = function (container) {
+            this.init(container.parentNode); // main div of the chart
+        };
+
+        Highcharts.FullScreen.prototype = {
+            init: function (container) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            }
+        };
+        chart.fullscreen = new Highcharts.FullScreen(chart.container);
+    })
 
 }
 
