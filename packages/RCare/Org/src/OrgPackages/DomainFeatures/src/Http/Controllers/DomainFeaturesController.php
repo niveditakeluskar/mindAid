@@ -49,6 +49,7 @@ class DomainFeaturesController extends Controller{
             'logoutpoptime'     => sanitizeVariable($request->logoutpoptime),
             'idle_time_redirect'=> sanitizeVariable($request->idle_time_redirect),
             'block_time'        => sanitizeVariable($request->block_time),
+            'instance'          => sanitizeVariable($request->instance),
             'updated_by'        => session()->get('userid'),
             'created_by'        => session()->get('userid'),
         );

@@ -67,8 +67,8 @@ class LoginController extends Controller
         $base_url = strtolower(URL::to('/').'/rcare-login'); 
         $DomainFeatures=DomainFeatures::where('features','2FA')
         ->where(DB::raw('lower(url)'), $base_url)
-        ->first();
-    //    dd($DomainFeatures);
+        ->first(); 
+    //    dd($DomainFeatures); 
         $maxAttempts     = isset($DomainFeatures)?$DomainFeatures->password_attempts:''; //3
         //$otp_max_attempts =$DomainFeatures->otp_max_attempts;
         return view('System::login',compact('DomainFeatures'));

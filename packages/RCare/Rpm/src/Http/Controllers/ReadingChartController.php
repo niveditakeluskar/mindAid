@@ -15,6 +15,9 @@ use RCare\Rpm\Models\Observation_Spirometer;
 use RCare\Rpm\Models\Observation_Glucose; 
 use Calendar;
 use DB;
+use DateTime;
+use Session;
+use Carbon\Carbon;
 
 class ReadingChartController extends Controller
 {
@@ -203,6 +206,9 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
         } 
     }
         public function graphreadReadings($patient_id,$deviceid,$month,$year){
+            // dd($patient_id)
+            $configTZ = config('app.timezone');
+            $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         if($deviceid == '1'){
             // $datetime = Observation_Weight::where('patient_id',$patient_id)
             // ->whereMonth('effdatetime',$month)
@@ -221,13 +227,14 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
             $arrayreading2 = $reading2->toArray();
             // dd($reading2);
             $arrayreading2 = $reading2->toArray();
-            $arrLength = count($DateArray);
+            $arrLength = count($datetime);
             $uniArray =array();
             $min_threshold_array =isset($reading2[0]['weightlow'])?$reading2[0]['weightlow']:'';
             $max_threshold_array =isset($reading2[0]['weighthigh'])?$reading2[0]['weighthigh']:'';
-            for($a=0;$a<$arrLength;$a++){
-               $b = date("M j, g:i a",strtotime($DateArray[$a]));
-               $c = array_push($uniArray,$b);
+            foreach ($datetime as $datetime) {
+                // print_r(($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $uniArray[] = $formattedDate;
             }
             $reading = DB::table('rpm.observations_weight')
                 ->where('patient_id', $patient_id)
@@ -278,15 +285,16 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 ->select('oxsathigh','oxsatlow')->orderBy('created_at','desc')->get();
                 $arrayreading2 = $reading2->toArray();
                 // dd($reading2);
-                $arrLength = count($DateArray);
+                $arrLength = count($datetime);
                 $uniArray =array();
                 $min_threshold_array =isset($reading2[0]['oxsatlow'])?$reading2[0]['oxsatlow']:'';
                 $max_threshold_array =isset($reading2[0]['oxsathigh'])?$reading2[0]['oxsathigh']:'';
 
-                for($a=0;$a<$arrLength;$a++){
-                   $b = date("M j, g:i a",strtotime($DateArray[$a]));
-                   $c = array_push($uniArray,$b);
-                } 
+                foreach ($datetime as $datetime) {
+                    // print_r(($datetime->effdatetime));
+                    $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                    $uniArray[] = $formattedDate;
+                }
 
                 // $reading = Observation_Oxymeter::where('patient_id',$patient_id)
                 // ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
@@ -403,16 +411,16 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 $DateArray = $datetime->toArray();
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('temperaturehigh','temperaturelow')->orderBy('created_at','desc')->get();
-                $DateArray = $datetime->toArray();
                 $arrayreading2 = $reading2->toArray();
-                $arrLength = count($DateArray);
+                $arrLength = count($datetime);
                 $uniArray =array();
                 $min_threshold_array =isset($arrayreading2[0]['temperaturehigh'])?$arrayreading2[0]['temperaturehigh']:'';
                 $max_threshold_array =isset($arrayreading2[0]['temperaturelow'])?$arrayreading2[0]['temperaturelow']:'';
 
-                for($a=0;$a<$arrLength;$a++){
-                   $b = date("M j, g:i a",strtotime($DateArray[$a]));
-                   $c = array_push($uniArray,$b);
+                foreach ($datetime as $datetime) {
+                    // print_r(($datetime->effdatetime));
+                    $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                    $uniArray[] = $formattedDate;
                 }
 
                 //$reading = Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
@@ -462,21 +470,21 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
                 ->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
-                $DateArray = $datetime->toArray();
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('spirometerpefhigh','spirometerpeflow','spirometerfevhigh','spirometerfevlow')->orderBy('created_at','desc')->get();
                 $arrayreading2 = $reading2->toArray();
                 //dd($arrayreading2);
-                $arrLength = count($DateArray);
+                $arrLength = count($datetime);
                 $uniArray =array(); 
                 $min_threshold_array =isset($arrayreading2[0]['spirometerpeflow'])?$arrayreading2[0]['spirometerpeflow']:''; 
                 $max_threshold_array =isset($arrayreading2[0]['spirometerpefhigh'])?$arrayreading2[0]['spirometerpefhigh']:'';
                 $min1_threshold_array =isset($arrayreading2[0]['spirometerfevlow'])?$arrayreading2[0]['spirometerfevlow']:'';
                 $max1_threshold_array =isset($arrayreading2[0]['spirometerfevhigh'])?$arrayreading2[0]['spirometerfevhigh']:''; 
 
-                for($a=0;$a<$arrLength;$a++){ 
-                   $b = date("M j, g:i a",strtotime($DateArray[$a]));
-                   $c = array_push($uniArray,$b);
+                foreach ($datetime as $datetime) {
+                    // print_r(($datetime->effdatetime));
+                    $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                    $uniArray[] = $formattedDate;
                 }
 
                 // $reading =  Observation_Spirometer::where('patient_id',$patient_id)
@@ -501,7 +509,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 $arrayreading = $reading->toArray();
                 $arrayreading1 = $reading1->toArray();
 
-               $label = "PEF [L/min]";
+                $label = "PEF [L/min]";
                 $label1 = "FEV [L]";
 
                 $arrayreading_min =$min_threshold_array;
@@ -537,15 +545,17 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('glucosehigh','glucoselow')->orderBy('created_at','desc')->get(); 
                 $arrayreading2 = $reading2->toArray();
-                $arrLength = count($DateArray);
+                $arrLength = count($datetime);
                 $uniArray =array();
                 $min_threshold_array =isset($arrayreading2[0]['glucoselow'])?$arrayreading2[0]['glucoselow']:'';
                 $max_threshold_array =isset($arrayreading2[0]['glucosehigh'])?$arrayreading2[0]['glucosehigh']:'';
 
-                for($a=0;$a<$arrLength;$a++){
-                   $b = date("M j, g:i a",strtotime($DateArray[$a]));
-                   $c = array_push($uniArray,$b);
-                } 
+                foreach ($datetime as $datetime) {
+                    // print_r(($datetime->effdatetime));
+                    $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                    $uniArray[] = $formattedDate;
+                }
+  
 
                 //$reading = Observation_Glucose::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
                 //->pluck('value'); 
@@ -579,23 +589,7 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 'label1'=>$label1,
                 'title_name'=>$chart_text,
                 ]);
-               // return response()->json(['uniArray'=>$uniArray,'arrayreading'=>$arrayreading,'label'=>$label]);
         }
-            // return response()->json(
-            //     ['uniArray'=>$uniArray,
-            //     'arrayreading'=>$arrayreading,
-            //     'arrayreading1'=>$arrayreading1,
-            //     'arrayreading_min' =>$arrayreading_min,
-            //     'arrayreading_max' =>$arrayreading_max,
-            //     'arrayreading_min1' =>$arrayreading_min1,
-            //     'arrayreading_max1' =>$arrayreading_max1,
-            //     'label'=>$label,
-            //     'label1'=>$label1,
-            //     'label_min'=>$label_min,
-            //     'label_max'=>$label_max,
-            //     'label_min1'=>$label_min1,
-            //     'label_max1'=>$label_max1
-            //     ]); 
     }
 
 
@@ -1122,14 +1116,18 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
     // }
     public function getreadCalender($patient_id,$deviceid){
      // dd($deviceid);
+     $configTZ = config('app.timezone');
+     $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
             if($deviceid =='1'){
-                $readingWeight = Observation_Weight::where('patient_id',$patient_id)->get(); 
-                // dd($readingWeight);
+                $readingWeight = DB::select("select id,weight,unit,
+                to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_weight where patient_id = '$patient_id'");
+                //Observation_Weight::where('patient_id',$patient_id)->get(); 
                 $data =array();
                 foreach ($readingWeight as $row) {
                     $data[] = array(
-                          'id'   => $row["id"],
-                          'title'   =>$row["weight"].' '.ucfirst($row["unit"]),
+                          'id'   => $row->id,
+                          'title'   =>$row->weight.' '.ucfirst($row->unit),
                           'start'   =>// DatesTimezoneConversion::userToConfigTimeStamp
                           ($row["effdatetime"]),
                           'end'   =>// DatesTimezoneConversion::userToConfigTimeStamp
@@ -1139,13 +1137,16 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 }
             }
             if($deviceid =='2'){
-                $readingOxy = Observation_Oxymeter::where('patient_id',$patient_id)->get();//->pluck('oxy_qty'); 
+                $readingOxy = DB::select("select id,oxy_qty,oxy_unit,
+                to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_oxymeter where patient_id = '$patient_id'");
+                //Observation_Oxymeter::where('patient_id',$patient_id)->get();//->pluck('oxy_qty'); 
                 $data =array();
                 foreach ($readingOxy as $row) {
                     // print_r($value);
                     $data[] = array(
-                          'id'   => $row["id"],
-                          'title'   =>$row["oxy_qty"].' '.ucfirst($row["oxy_unit"]),
+                          'id'   => $row->id,
+                          'title'   =>$row->oxy_qty.' '.ucfirst($row->oxy_unit),
                           'start'   =>// DatesTimezoneConversion::userToConfigTimeStamp
                           ($row["effdatetime"]),
                           'end'   =>// DatesTimezoneConversion::userToConfigTimeStamp
@@ -1155,30 +1156,34 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 }
             }
             if($deviceid =='3'){
-                $readingBp = Observation_BP::where('patient_id',$patient_id)->get();
-                 // dd($readingBp);
-                $data =array(); 
+                $readingBp = DB::select("select id,systolic_qty,systolic_unit,diastolic_qty,
+                to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_bp where patient_id = '$patient_id'");
+                // Observation_BP::where('patient_id',$patient_id)->get();
+                $data =array();
                     foreach ($readingBp as $row) {
                          // print_r($row);
                         $data[] = array(
-                              'id'   => $row["id"],
-                              'title'   =>'Systolic -'.$row["systolic_qty"].' '.ucfirst($row['systolic_unit']).'/'.'Diastolic -'.$row["diastolic_qty"].' '.ucfirst($row['systolic_unit']),
-                              'start'   =>// DatesTimezoneConversion::userToConfigTimeStamp
-                              ($row["effdatetime"]),
-                              'end'   =>// DatesTimezoneConversion::userToConfigTimeStamp
-                              ($row["effdatetime"])
+                              'id'   => $row->id,
+                              'title'   =>'Systolic -'.$row->systolic_qty.' '.ucfirst($row->systolic_unit).'/'.'Diastolic -'.$row->diastolic_qty.' '.ucfirst($row->systolic_unit),
+                              'start'   =>($row->effdatetime),
+                              'end'   =>($row->effdatetime)
                              );
                     }
 
                 }
                 if($deviceid =='4'){
-                $readingTemp = Observation_Temp::where('patient_id',$patient_id)->get();
+                $readingTemp = DB::select("select id,bodytemp,unit,
+                to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_temp where patient_id = '$patient_id'");
+
+                //Observation_Temp::where('patient_id',$patient_id)->get();
                 $data =array();
                     foreach ($readingTemp as $row) {
                         // print_r($value);
                         $data[] = array(
-                              'id'   => $row["id"],
-                              'title'   =>$row["bodytemp"].' '.ucfirst($row['unit']),
+                              'id'   => $row->id,
+                              'title'   =>$row->bodytemp.' '.ucfirst($row->unit),
                               'start'   =>// DatesTimezoneConversion::userToConfigTimeStamp
                               ($row["effdatetime"]),
                               'end'   =>// DatesTimezoneConversion::userToConfigTimeStamp
@@ -1188,7 +1193,10 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
 
                 }
                 if($deviceid =='5'){
-                $readingSpiro = Observation_Spirometer::where('patient_id',$patient_id)->get();
+                    $readingSpiro = DB::select("select id,fev_value,fev_unit,pef_value,pef_unit,
+                    to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                    FROM rpm.observations_spirometer where patient_id = '$patient_id'");
+                // $readingSpiro = Observation_Spirometer::where('patient_id',$patient_id)->get();
                     $data =array();
                     foreach ($readingSpiro as $row) {
                         // print_r($value);
@@ -1205,7 +1213,10 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 }
 
                 if($deviceid =='6'){
-                $readingGluec = Observation_Glucose::where('patient_id',$patient_id)->get();
+                $readingGluec = DB::select("select id,value,unit,
+                to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_glucose where patient_id = '$patient_id'");
+                //Observation_Glucose::where('patient_id',$patient_id)->get();
                 $data =array();
                 foreach ($readingGluec as $row) {
                     // print_r($value);

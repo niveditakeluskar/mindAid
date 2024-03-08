@@ -98,7 +98,7 @@ Consolidate Billing Report
     <div class="col-md-12 mb-4">
         <div class="card text-rightleft">
             <div class="card-body">
-                <div style="display: none;margin-left:50%" id="load-monthly-billing-tbl">
+                <div style="display: block;margin-left:50%" id="load-monthly-billing-tbl">
                     <div>Loading</div>
                      <span class="loader-bubble loader-bubble-info m-2"></span>
                  </div>
@@ -145,7 +145,7 @@ Consolidate Billing Report
     <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
     <script type="text/javascript">
 
-var getMonthlyBillingPatientList = function(practicesgrp=null,practice = null,provider=null,modules=null,monthly=null,monthlyto=null,activedeactivestatus=null,callstatus=null) {
+var getMonthlyBillingPatientList = function(practicesgrp=null,practice = null,provider=null,modules=null,monthly=null,monthlyto=null,activedeactivestatus=null,callstatus=null,onlycode) {
        
        if(practicesgrp=='')    
        {
@@ -182,7 +182,7 @@ $('.table-responsive').html('<table id="patient-list-'+randomval+'" class="displ
            
 $.ajax({
 type: 'GET',
-url: "/reports/consolidate-monthly-billing-report/search/"+practicesgrp+'/'+practice+"/"+provider+"/"+modules+"/"+monthly+"/"+monthlyto+"/"+activedeactivestatus+"/"+callstatus,
+url: "/reports/consolidate-monthly-billing-report/search/"+practicesgrp+'/'+practice+"/"+provider+"/"+modules+"/"+monthly+"/"+monthlyto+"/"+activedeactivestatus+"/"+callstatus+"/"+onlycode,
 //data: data,
 success: function (datatest) {
 
@@ -267,22 +267,20 @@ $('#load-monthly-billing-tbl').hide();
             var monthly = $('#monthly').val();
             var monthlyto = $('#monthlyto').val();
 
-            // if(monthlyto < monthly)
-            // {
-            //     $('#monthlyto').addClass("is-invalid");
-            //     $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
-            //     $('#monthly').addClass("is-invalid");
-            //     $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
-            // } 
-            
-            // else{ 
-            //     $('#load-monthly-billing-tbl').show();
-            //     $('#monthlyto').removeClass("is-invalid");
-            //     $('#monthlyto').removeClass("invalid-feedback");
-            //     $('#monthly').removeClass("is-invalid");
-            //     $('#monthly').removeClass("invalid-feedback");
-            //     getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null); 
-            // }
+            if(monthlyto < monthly)
+            {
+                $('#monthlyto').addClass("is-invalid");
+                $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
+                $('#monthly').addClass("is-invalid");
+                $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
+            }else{ 
+                $('#load-monthly-billing-tbl').show();
+                $('#monthlyto').removeClass("is-invalid");
+                $('#monthlyto').removeClass("invalid-feedback");
+                $('#monthly').removeClass("is-invalid");
+                $('#monthly').removeClass("invalid-feedback");
+                getMonthlyBillingPatientList(null,null,null,null,monthly,monthlyto,null,null,0); 
+            }
             
             util.getToDoListData(0, {{getPageModuleName()}});
             
@@ -337,22 +335,25 @@ $('#load-monthly-billing-tbl').hide();
             var monthlyto = $('#monthlyto').val();
             var activedeactivestatus= $("#activedeactivestatus").val();
             var callstatus = $("#callstatus").val();
-
+            var only_code = 0;
+            if($("#only_code").is(':checked')){
+                only_code = 1;
+            }
+    
             if(monthlyto < monthly)
             {
                 $('#monthlyto').addClass("is-invalid");
                 $('#monthlyto').next(".invalid-feedback").html("Please select to-month properly .");
                 $('#monthly').addClass("is-invalid");
                 $('#monthly').next(".invalid-feedback").html("Please select from-month properly .");   
-            } 
-            
+            }
             else{ 
                 $('#load-monthly-billing-tbl').show();
                 $('#monthlyto').removeClass("is-invalid");
                 $('#monthlyto').removeClass("invalid-feedback");
                 $('#monthly').removeClass("is-invalid");
                 $('#monthly').removeClass("invalid-feedback");
-                getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus); 
+                getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus,only_code); 
             }
     
         });
@@ -376,6 +377,7 @@ $('#load-monthly-billing-tbl').hide();
                 var provider = null;
                 var monthly =  $("#monthly").val();
                 var monthlyto = $("#monthlyto").val(); 
+                var only_code = 0;
                
         $('#practicesgrp').val('').trigger('change');
         $('#practices').val('').trigger('change'); 
@@ -383,7 +385,7 @@ $('#load-monthly-billing-tbl').hide();
         $('#modules').val('').trigger('change'); 
         $('#activedeactivestatus').val('').trigger('change');
         $('#callstatus').val('').trigger('change');
-        getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus); 
+        getMonthlyBillingPatientList(practicesgrp,practice,provider,modules,monthly,monthlyto,activedeactivestatus,callstatus,only_code); 
         });
 
         

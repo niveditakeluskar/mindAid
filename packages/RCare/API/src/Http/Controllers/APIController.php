@@ -20,6 +20,7 @@ use Session;
 use Illuminate\Support\Str;
 use Exception;
 use RCare\API\Models\ApiException; 
+use Illuminate\Support\Facades\Http;
 
 class APIController extends Controller {
   
@@ -380,8 +381,27 @@ else
      $content=$request->all(); 
      $newcontent=json_encode($content);
      $decodecontent=json_decode($newcontent);
-
-     $data=array('content'=>$newcontent);  
+     $currenturl = url()->full();	
+     if($currenturl == 'https://rcare.d-insights.global/API/observations'){
+        $response = Http::post('https://rcareconnect.com/API/observations',  $content);
+        if($response->getStatusCode() == 200) {
+            $data=array(
+              'content'=>$newcontent, 
+              'rconnect_transfer_flag' => 1           
+            );
+        }else{
+          $data=array(
+            'content'=>$newcontent,
+            'rconnect_transfer_flag' => 0           
+          );
+        }
+     }else{
+      $data=array(
+        'content'=>$newcontent,
+        'rconnect_transfer_flag' => 0           
+      );
+     }
+     
      $result= WebhookObservation::create($data);
      $lastId = $result->id;
      $ecgcredetials=ApiECGCredeintials(); 
