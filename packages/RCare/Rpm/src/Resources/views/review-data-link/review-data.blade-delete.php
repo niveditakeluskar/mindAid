@@ -796,6 +796,7 @@
     } 
 
     function getChartOnclick(data) { 
+        alert("entering..");
     //alert(JSON.stringify(data) +'getChartOnclick');
         var arraydate = JSON.stringify(data.uniArray);
         var patientarraydatetime = JSON.parse(arraydate);
@@ -821,11 +822,15 @@
         var label_max1 = JSON.stringify(data.label_max1);
 
         var title = $('.fc-center').html();
+        Highcharts.setOptions({
+            time: {
+                timezone: 'America/Chicago'
+            }
+        });
         Highcharts.chart('container', {
-
           xAxis: {            
             labels: {
-                rotation: -33,
+                rotation: -90,
             },
           tickInterval:1,
           categories: patientarraydatetime
@@ -846,6 +851,9 @@
           //   width: 1,
           //   color: 'rgba(204,0,0,0.75)'
           // }] 
+        },
+        time: {
+        timezone: 'America/Chicago'
         },
         title: {
             text: title
