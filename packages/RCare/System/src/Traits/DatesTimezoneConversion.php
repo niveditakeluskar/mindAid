@@ -163,6 +163,13 @@ trait DatesTimezoneConversion
 	}  
 
 
+	public function setEffdateAttrbute($value){
+		$this->attributes['effdatetime'] = $this->userToConfigTimeStamp($value);
+	}
+
+	public function getEffdateAttrbute($value){
+		return $this->userTimeStampYmd($value); 		
+	}
 
 
 	

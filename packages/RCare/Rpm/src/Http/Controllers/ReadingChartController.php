@@ -204,10 +204,16 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
     }
         public function graphreadReadings($patient_id,$deviceid,$month,$year){
         if($deviceid == '1'){
-            $datetime = Observation_Weight::where('patient_id',$patient_id)
-            ->whereMonth('effdatetime',$month)
-            ->whereYear('effdatetime',$year) 
-            ->pluck('effdatetime'); 
+            // $datetime = Observation_Weight::where('patient_id',$patient_id)
+            // ->whereMonth('effdatetime',$month)
+            // ->whereYear('effdatetime',$year) 
+            // ->pluck('effdatetime'); 
+
+            $datetime = DB::table('rpm.observations_weight')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('effdatetime');
 
             $DateArray = $datetime->toArray();
             $reading2 = PatientThreshold::where('patient_id',$patient_id)
@@ -223,9 +229,14 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                $b = date("M j, g:i a",strtotime($DateArray[$a]));
                $c = array_push($uniArray,$b);
             }
+            $reading = DB::table('rpm.observations_weight')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('weight');
             //print_r($min_threshold_array);echo "<br>";print_r($max_threshold_array);echo "<br>";
-            $reading = Observation_Weight::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-            ->pluck('weight');
+           // $reading = Observation_Weight::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+           // ->pluck('weight');
             $arrayreading = $reading->toArray();
             $label = "Weight(lbs)";
 
@@ -254,7 +265,12 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
           
         }
         if($deviceid =='2'){
-                $datetime = Observation_Oxymeter::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //$datetime = Observation_Oxymeter::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('effdatetime');
+                $datetime = DB::table('rpm.observations_oxymeter')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
                 ->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
                 $DateArray = $datetime->toArray();
@@ -272,9 +288,15 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                    $c = array_push($uniArray,$b);
                 } 
 
-                $reading = Observation_Oxymeter::where('patient_id',$patient_id)
-                ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('oxy_qty'); 
+                // $reading = Observation_Oxymeter::where('patient_id',$patient_id)
+                // ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                // ->pluck('oxy_qty'); 
+
+                $reading = DB::table('rpm.observations_oxymeter')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('oxy_qty');
                 $arrayreading = $reading->toArray();
                 $label = "Oxygen(%)";
                 $arrayreading_min =$min_threshold_array;
@@ -301,14 +323,18 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
 
         }
         if($deviceid =='3'){
-                $datetime = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('effdatetime');
+                //$datetime = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)->pluck('effdatetime');
+                $datetimes = "select to_char(effdatetime at time zone 'UTC' at time zone 'America/Chicago', 'DD-MM-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_bp WHERE patient_id = '".$patient_id."' AND EXTRACT(Month FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '".$month."' AND EXTRACT(Year FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '".$year."'";
+
+                $DateArray = DB::select( DB::raw($datetimes) );
                 //$uniArray = $datetime->toArray();
-                $DateArray = $datetime->toArray();
+                //$DateArray = $datetime->toArray();
                 $reading2 = PatientThreshold::where('patient_id',$patient_id)
                 ->select('systolichigh','systoliclow','diastolichigh','diastoliclow')->orderBy('created_at','desc')->get();
                 $arrayreading2 = $reading2->toArray();
-                //dd($arrayreading2);
+                //echo count($DateArray);
+                //dd($DateArray[0]->effdatetime);
                 $arrLength = count($DateArray);
                 $uniArray =array(); 
                 $min_threshold_array =isset($arrayreading2[0]['systoliclow'])?$arrayreading2[0]['systoliclow']:'';
@@ -317,14 +343,28 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                 $max1_threshold_array =isset($arrayreading2[0]['diastolichigh'])?$arrayreading2[0]['diastolichigh']:''; 
 
                 for($a=0;$a<$arrLength;$a++){
-                   $b = date("M j, g:i a",strtotime($DateArray[$a]));
+                    //echo $DateArray[$a];
+                   $b = date("M j, g:i a",strtotime($DateArray[$a]->effdatetime));
                    $c = array_push($uniArray,$b);
                 }
 
-                $reading = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('systolic_qty'); 
-                $reading1 = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('diastolic_qty'); 
+                $reading = DB::table('rpm.observations_bp')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('systolic_qty');
+
+                //$reading = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('systolic_qty'); 
+
+                $reading1 = DB::table('rpm.observations_bp')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('diastolic_qty');
+                
+                //$reading1 = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('diastolic_qty'); 
                 // ->select('systolic_qty','diastolic_qty')->get();
                 $arrayreading = $reading->toArray();
                 $arrayreading1 = $reading1->toArray();
@@ -352,7 +392,12 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
         }
 
         if($deviceid =='4'){
-                $datetime = Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //$datetime = Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('effdatetime');
+                $datetime = DB::table('rpm.observations_temp')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
                 ->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
                 $DateArray = $datetime->toArray();
@@ -370,8 +415,13 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                    $c = array_push($uniArray,$b);
                 }
 
-                $reading = Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('bodytemp'); 
+                //$reading = Observation_Temp::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('bodytemp'); 
+                $reading = DB::table('rpm.observations_temp')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('bodytemp');
                 $arrayreading = $reading->toArray();
                 
                 $label = "Thermometer(degrees F)";
@@ -404,7 +454,12 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
         }
         
         if($deviceid=='5'){
-                $datetime = Observation_Spirometer::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //$datetime = Observation_Spirometer::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('effdatetime');
+                $datetime = DB::table('rpm.observations_spirometer')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
                 ->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
                 $DateArray = $datetime->toArray();
@@ -424,12 +479,24 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                    $c = array_push($uniArray,$b);
                 }
 
-                $reading =  Observation_Spirometer::where('patient_id',$patient_id)
-                ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('pef_value');  
-                $reading1 = Observation_Spirometer::where('patient_id',$patient_id)
-                ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('fev_value'); 
+                // $reading =  Observation_Spirometer::where('patient_id',$patient_id)
+                // ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                // ->pluck('pef_value');  
+                // $reading1 = Observation_Spirometer::where('patient_id',$patient_id)
+                // ->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                // ->pluck('fev_value'); 
+
+                $reading = DB::table('rpm.observations_spirometer')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('pef_value');
+
+                $reading1 = DB::table('rpm.observations_spirometer')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('fev_value');
 
                 $arrayreading = $reading->toArray();
                 $arrayreading1 = $reading1->toArray();
@@ -458,7 +525,12 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
 
         }
         if($deviceid=='6'){
-                $datetime = Observation_Glucose::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //$datetime = Observation_Glucose::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('effdatetime');
+                $datetime = DB::table('rpm.observations_glucose')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
                 ->pluck('effdatetime');
                 //$uniArray = $datetime->toArray();
                 $DateArray = $datetime->toArray();
@@ -475,8 +547,13 @@ return response()->json(['readingcnt'=>$countreading[0]->readingcnt,'alertcnt'=>
                    $c = array_push($uniArray,$b);
                 } 
 
-                $reading = Observation_Glucose::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
-                ->pluck('value'); 
+                //$reading = Observation_Glucose::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)
+                //->pluck('value'); 
+                $reading = DB::table('rpm.observations_glucose')
+                ->where('patient_id', $patient_id)
+                ->whereRaw("EXTRACT(MONTH FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$month])
+                ->whereRaw("EXTRACT(YEAR FROM effdatetime at time zone 'UTC' at time zone 'America/Chicago') = ?", [$year])
+                ->pluck('value');
                 $arrayreading = $reading->toArray();
                 
                 $label = "Glucose(mg/dl)";
