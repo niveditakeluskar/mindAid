@@ -122,6 +122,7 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
 <script src="{{asset('assets/js/jspdf.min.js')}}"></script>
+<script src="{{asset('assets/js/jspdf.plugin.autotable.js')}}"></script>
 <script src="{{asset(mix('assets/js/laravel/commonHighchart.js'))}}"></script>
 <script type="text/javascript">
     var getDeviceDataList = function(devices = null, patient_id = null, month = null) {
@@ -879,52 +880,24 @@
             } else {
                 doc.text(10, 116, 'Data from : ' + get_m_month + "-01-" + get_m_year + " to " + get_m_month + "-" + last_dt + '-' + get_m_year);
             }
+
             var z = 0;
             var toppdf = 117;
             var tblcolumn = 0;
             var data = tableToJson($('#Activities-list_2').get(0));
             z = data.length;
-            var generateData = function() {
-                var result = [];
-                var data = tableToJson($('#Activities-list_2').get(0));
-                z = data.length;
-                return data.slice(1);
-            };
-
-            function createHeaders(originalKeys) {
-                var keys = originalKeys.map(key => key.toLowerCase());
-                var result = [];
-                for (var i = 0; i < keys.length; i += 1) {
-                    result.push({
-                        id: keys[i],
-                        name: keys[i],
-                        prompt: originalKeys[i],
-                        width: 65,
-                        align: "center",
-                        padding: 0
-                    });
-                }
-                return result;
-            }
-
-            var headers = createHeaders([
-                "Timestamp",
-                "BP",
-                "HR",
-            ]);
-
-            doc.table(10, 130, generateData(), headers, {
-                autoSize: true,
-                headerBackgroundColor: ("#27A8DE"),
-                headerTextColor: ("#FFFFFF"),
-                cellStart: function(e) {
-                    if (e.data.includes("-r")) {
-                        e.data.replace('-r', '');
-                        doc.setFont(undefined, "bold");
-                        doc.setTextColor(255, 0, 0);
-                    } else {
-                        doc.setFont(undefined, "normal");
-                        doc.setTextColor(0, 0, 0);
+            doc.autoTable({
+                theme: 'grid',
+                html: '#Activities-list_2',
+                startY: 130,
+                headStyles: {
+                    fillColor: [39, 168, 222]
+                },
+                didParseCell: function(data) {
+                    if (data.section === 'body' && data.cell.text[0].includes('-r')) {
+                        data.cell.styles.textColor = "red";
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.text[0].replace('-r', '');
                     }
                 }
             });
@@ -1007,270 +980,6 @@
             alert("Please select proper details");
         }
     });
-
-    // $('#btn').click(function() {
-    //     var chk_practices = $('#practices').val();
-
-    //     if (window.location.href.indexOf('device-data-report/') > 0) {
-    //         var chk_patient = $('#hd_pid').val();
-    //         var chk_prac = 1;
-    //     } else {
-    //         var chk_patient = $('#patient').val();
-    //         var chk_prac = chk_practices;
-    //     }
-
-    //     if (chk_prac != "" && chk_patient != "") {
-    //         var charts = Highcharts.charts,
-    //             doc = new jsPDF('p', 'pt', 'a4', true),
-
-    //             pageHeight = doc.internal.pageSize.height,
-    //             counter = 0,
-    //             promises = [],
-    //             yDocPos = 0,
-    //             k = 0,
-    //             i,
-    //             j;
-    //         // exportUrl = 'https://export.highcharts.com/',
-    //         //doc = new jsPDF(),
-    //         //imgContainer = $('.main-content-wrap'),
-    //         // pageHeight = doc.internal.pageSize.getHeight(),
-    //         // width = doc.internal.pageSize.width,
-    //         // ajaxCalls = [],
-    //         // chart,
-    //         // imgUrl,
-
-
-    //         var patient_ids = $("#hd_pid").val();
-    //         var hd_p_name = $("#hd_p_name").val();
-    //         var hd_dob = $("#hd_dob").val();
-    //         var hd_mrn = $("#hd_mrn").val();
-    //         var date_month = $('#monthly').val();
-    //         var get_m_year = date_month.substring(0, 4);
-    //         var get_m_month = date_month.slice(-2);
-
-    //         var last_date = new Date(get_m_year, get_m_month, 0);
-    //         var last_dt = last_date.getDate();
-    //         var cur_month = (new Date().getMonth() + 1);
-    //         var cur_year = new Date().getFullYear();
-    //         var cur_day = new Date().getDate();
-    //         var cur_MonthYear = cur_month + '-' + cur_day + '-' + cur_year;
-    //         var last = new Date(cur_year, cur_month, 0);
-    //         var lastDay = last.getDate();
-
-    //         var dt = new Date();
-    //         var h = dt.getHours(),
-    //             m = dt.getMinutes();
-    //         var mm;
-    //         (m < 10) ? mm = "0" + m: mm = m;
-    //         var hh;
-    //         (h < 10) ? hh = "0" + h: hh = h;
-
-    //         var times = (hh > 12) ? (hh - 12 + ':' + mm + ' PM') : (hh + ':' + mm + ' AM');
-
-    //         // var img = new Image();
-    //         // img.src =window.location.origin+"/assets/images/logo.png";
-    //         // alert(window.location.origin);
-
-    //         var table = tableToJson($('#Activities-list_2').get(0))
-    //         //  var doc = new jsPDF('p','pt', 'a4', true);
-    //         doc.cellInitialize();
-
-    //         doc.setDrawColor(0);
-    //         doc.setFillColor(39, 168, 222);
-    //         doc.rect(10, 10, 575, 45, 'F');
-
-    //         doc.setTextColor(255, 255, 255);
-    //         doc.setFont("helvetica");
-    //         doc.setFontType("bold");
-    //         doc.text(236, 37, 'Device Data Report');
-    //         // doc.addImage(img, 'PNG', 20, 21);
-
-    //         doc.setTextColor(0);
-    //         doc.setFontSize(12)
-    //         doc.setFontType('normal');
-    //         doc.text(10, 80, hd_p_name);
-    //         doc.setFontSize(10)
-    //         doc.text(10, 93, 'DOB: ' + hd_dob);
-    //         doc.text(100, 93, 'MRN: ' + hd_mrn);
-
-    //         doc.text(10, 104, 'Generated on: ' + cur_MonthYear + " " + times);
-    //         if (window.location.href.indexOf('device-data-report/') > 0) {
-    //             doc.text(10, 116, 'Data from : ' + cur_month + "-01-" + cur_year + " to " + cur_month + "-" + lastDay + '-' + cur_year);
-    //         } else {
-    //             doc.text(10, 116, 'Data from : ' + get_m_month + "-01-" + get_m_year + " to " + get_m_month + "-" + last_dt + '-' + get_m_year);
-
-    //         }
-
-    //         doc.setTextColor(0);
-    //         var z = 0;
-    //         // var imgs = new Image(); 
-    //         // imgs.src =window.location.origin+"/assets/images/i-danger.png";
-    //         var `toppdf` = 117;
-    //         var tblcolumn = 0;
-    //         $.each(table, function(i, row) {
-    //             console.log(row);
-
-    //             z = i;
-    //             console.log("z", z);
-    //             var l = 0;
-    //             // toppdf += 20;
-
-
-    //             $.each(row, function(j, cells) {
-    //                 // console.log("j", j);
-    //                 console.log("cells", cells);
-    //                 if (j == "timestamp") {
-    //                     tblcolumn = 135;
-    //                 } else {
-    //                     tblcolumn += 40;
-    //                 }
-    //                 // console.log("row", row);
-    //                 // console.log("cells", cells);
-    //                 // console.log(tblcolumn + "=" + j);
-    //                 doc.setFontSize(12);
-    //                 if (l == 0) {
-    //                     var cell_width = 116;
-    //                 } else {
-    //                     var cell_width = 51;
-    //                 }
-    //                 if (i == 0) {
-    //                     doc.setTextColor(255, 255, 255);
-    //                     doc.setDrawColor(0);
-    //                     doc.setFillColor(39, 168, 222);
-    //                     doc.printingHeaderRow = true;
-    //                 } else {
-    //                     doc.setFontSize(10)
-    //                     doc.setTextColor(0);
-    //                     doc.setFillColor(255, 255, 255);
-    //                 }
-
-    //                 if (cells.includes("-r")) {
-
-    //                     cells = cells.replace('-r', '');
-    //                     doc.setFontType("bolditalic");
-    //                     doc.setTextColor(255, 0, 0);
-    //                     //doc.addImage(imgs,'PNG',168,toppdf,8,8);
-    //                     // alert(toppdf)
-    //                     // doc.line(130, toppdf, 165, toppdf);
-
-    //                     //doc.line(300, toppdf, 340, toppdf);
-
-    //                 } else {
-    //                     doc.setFontType("normal");
-    //                 }
-
-    //                 if (cells == "-") {
-    //                     doc.setTextColor(255, 255, 255);
-    //                 }
-    //                 console.log("i", i);
-    //                 console.log("cell_width", cell_width);
-    //                 doc.cell(10, 123, cell_width, 20, cells, i); // 1st=left margin,2nd parameter=top margin, 3rd=row cell width 4th=Row height
-
-    //                 l++;
-    //             })
-    //         });
-
-
-    //         /* $.when.apply(null, ajaxCalls).done(function() {
-
-    //                 for (j = 0; j < arguments.length; j++) {
-
-    //                     imgUrl = exportUrl + arguments[j][0];
-
-    //                     promises[j] = toDataURL(imgUrl);
-    //                 }
-    //         */
-    //         Highcharts.downloadURL = function(dataURL, filename) {
-    //             if (dataURL.length > 2000000) {
-
-    //                 dataURL = Highcharts.dataURLtoBlob(dataURL);
-    //                 if (!dataURL) {
-    //                     throw 'Data URL length limit reached';
-    //                 }
-    //             }
-
-    //             promises.push(dataURL);
-    //             counter++;
-    //         };
-
-    //         start = hd_temp_pd.length;
-    //         if (store == hd_temp_pd.length) {
-    //             var st = 0;
-    //         } else {
-    //             var st = store;
-    //         }
-    //         for (i = st; i < hd_temp_pd.length; i++) {
-
-    //             if (hd_temp_pd[i] == 1) {
-    //                 $('#wtcontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 2) {
-    //                 $('#container').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 3) {
-    //                 $('#bpcontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 0) {
-    //                 $('#hartcontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 4) {
-    //                 $('#tempcontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 6) {
-    //                 $('#gulcontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //             if (hd_temp_pd[i] == 5) {
-    //                 $('#spirocontainer').highcharts().exportChartLocal('image/png+xml');
-    //             }
-    //         }
-    //         if (hd_temp_pd.length > 0) {
-    //             store = hd_temp_pd.length;
-    //         } else {
-    //             store = 0;
-    //         }
-    //         var addGraphHight = 0;
-    //         var interval = setInterval(function() {
-    //             // if (counter === 2) {
-
-    //             clearInterval(interval);
-    //             promises.forEach(function(img, index) {
-    //                 //var page = doc.internal.getCurrentPageInfo();
-    //                 var remain_page_hight = pageHeight - [(z * 20) + 170 + addGraphHight + k * 140];
-    //                 console.log('remain_page_hight', remain_page_hight)
-    //                 // alert(remain_page_hight);
-    //                 //  if (yDocPos > pageHeight - 440 ) {
-    //                 if (yDocPos > remain_page_hight) {
-    //                     doc.addPage();
-    //                     yDocPos = 40;
-    //                     k = 0;
-    //                     z = 0;
-    //                 } else {
-    //                     if (index == 0) {
-    //                         yDocPos = (z * 20) + 170 + k * 140;
-    //                         addGraphHight += 440;
-    //                     } else {
-    //                         yDocPos += 440;
-    //                     }
-    //                 }
-    //                 alert(yDocPos);
-
-    //                 var top = yDocPos - 20;
-    //                 doc.setDrawColor(0);
-    //                 doc.setFillColor(242, 244, 244);
-    //                 doc.rect(10, top, 575, 340, 'F');
-
-    //                 doc.addImage(img, 'PNG', 25, yDocPos, 540, 300);
-    //                 k++;
-    //             });
-    //             doc.save(hd_p_name + "-" + patient_ids + "-" + date_month + '.pdf');
-    //             // } 
-    //         }, 100);
-    //     } else {
-    //         alert("Please select proper details");
-    //     }
-
-    // });
-    // //});
 
     function tableToJson(table) {
         var data = [];
