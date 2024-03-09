@@ -139,9 +139,7 @@ class MioDeviceController extends Controller {
         $partner_id = $get_checkDeviceExist[0]->partner_id;
         $observationid = $patient_id.'-'.$time;
 
-        $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
-        $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Reading Message');
-        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
+       
         
             if($patient_id!=null){
 
@@ -207,13 +205,18 @@ class MioDeviceController extends Controller {
                         \DB::select(\DB::raw("update api.mio_webhook t set status=1
                         where  id= '".$id."' and device_id='".$device_id."' "));
                     }
+
+                        $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
+                        $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Reading Message');
+                        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
+                        $count = Observation_BP::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+                        if($count == 16){
+                            $SID1          = getFormStageId(2, $ccmSubModule[0]->id, 'Sixteen Reading');
+                            $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID1);
+                        }
                     }
 
-                    $count = Observation_BP::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
-                    if($count == 16){
-                        $SID1          = getFormStageId(2, $ccmSubModule[0]->id, 'Sixteen Reading');
-                        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID1);
-                    }
+                    
             // }
        
             }else{
