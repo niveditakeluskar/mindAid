@@ -167,8 +167,19 @@ for($i=0;$i<count($devices);$i++){
 
 <!--=========//* show all tab (code End)*//==============-->
 <input type="hidden" id="hd_deviceid" value="<?php echo $Adeviceid[0];?>" >
+<div class="row mt-4">
+<div class="col">
+<div class="card">
+<!-- <div class="card-header device_header">Number of Alerts</div> -->
+<div class="card-body device_box">
+<a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"  style="background-color:#27a7de;border:none;" id="btnFullScreen">View in full screen</a>
 
-
+<div id="container1" style="height: 400px; width: 100%;"></div>
+{{-- @include('Rpm::review-data-link.graph-data') --}}
+</div>                               
+</div>
+</div>
+</div>
 <div class="row mt-4">
 <div class="col">
 <div class="card"> 
@@ -197,15 +208,7 @@ for($i=0;$i<count($devices);$i++){
 <div>
 <button type="button" id="btn_datalist" class="btn btn-primary">Data List</button>
 </div>                               
-<div class="col">
-<div class="card">
-<!-- <div class="card-header device_header">Number of Alerts</div> -->
-<div class="card-body device_box">
-<div id="container1" style="height: 400px; width: 100%;"></div>
-{{-- @include('Rpm::review-data-link.graph-data') --}}
-</div>                               
-</div>
-</div>
+
 </div>
 
 

@@ -16,6 +16,7 @@ use RCare\Rpm\Models\Observation_Weight;
 use RCare\Rpm\Models\Observation_Glucose;
 use RCare\Rpm\Models\Observation_Spirometer;
 use RCare\Rpm\Models\Observation_Temp;
+use Illuminate\Support\Facades\Http;
 
 
 use RCare\Patients\Models\PatientServices;
@@ -52,21 +53,67 @@ class MioDeviceController extends Controller {
 		// dd($content); 
         $newcontent=json_encode($content);  
 		$currenturl = url()->full();		
-        $data=array(
-            'content'=>$newcontent,
-            'partner'=>'miowebhook',
-            'status' =>'0',  
-			'url'  =>  $currenturl
-        );
-         $result= MioWebhook::create($data);
-          if($result)
-          { 
-            return response()->json("Data inserted successfully!");
-          }
-          else
-          {
-            return "failed";
-          }
+
+		if($currenturl == 'https://api.medhtech.com/API/data_from_device'){
+            $response = Http::post('https://rcareconnect.com/API/data_from_device', $content);
+            if ($response->getStatusCode() == 200) {
+                $data=array(
+                    'content'=>$newcontent,
+                    'partner'=>'miowebhook',
+                    'status' =>'0',  
+                    'url'  =>  $currenturl,
+                    'rconnect_transfer_flag' => 1
+                );
+    
+                $result= MioWebhook::create($data);
+                if($result)
+                { 
+                  return response()->json("Data inserted successfully!");
+                }
+                else
+                {
+                  return "failed";
+                }
+            }else{
+                $data=array(
+                    'content'=>$newcontent,
+                    'partner'=>'miowebhook',
+                    'status' =>'0',  
+                    'url'  =>  $currenturl,
+                    'rconnect_transfer_flag' => 0
+                );
+    
+                $result= MioWebhook::create($data);
+                if($result)
+                { 
+                  return response()->json("Data inserted successfully!");
+                }
+                else
+                {
+                  return "failed";
+                }
+            }
+        }else{
+            $data=array(
+                'content'=>$newcontent,
+                'partner'=>'miowebhook',
+                'status' =>'0',  
+                'url'  =>  $currenturl,
+                'rconnect_transfer_flag' => 0
+            );
+
+            $result= MioWebhook::create($data);
+            if($result)
+            { 
+              return response()->json("Data inserted successfully!");
+            }
+            else
+            {
+              return "failed";
+            }
+        }
+
+        
       }
 
       public function mio_webhook_observation(Request $request){  
@@ -77,26 +124,58 @@ class MioDeviceController extends Controller {
 		// $strArray = explode('/',$currenturl);
 		// $lastElement = end(explode('-', $strArray));
 		// dd($lastElement);
-        $newcontent=json_encode($content);      
-        $data=array(
-            'content'=>$newcontent,
-            'partner'=>'miowebhook',
-            'status' =>'0', 
-            'device_id' => $deviceid,
-            'url'  =>  $currenturl          
-        );
-
-        // dd( $data, $deviceid,  $currenturl ); 
-
-         $result= MioWebhook::create($data);
-          if($result)
-          {
-            return response()->json("Data inserted successfully!");
-          }
-          else
-          {
-            return "failed";
-          }
+        $newcontent=json_encode($content);
+        if($currenturl == 'https://api.medhtech.com/API/data_from_device/'.$deviceid){
+            $response = Http::post('https://rcareconnect.com/API/data_from_device/'.$deviceid, $content);
+            if ($response->getStatusCode() == 200) {
+                $data=array(
+                    'content'=>$newcontent,
+                    'partner'=>'miowebhook',
+                    'status' =>'0', 
+                    'device_id' => $deviceid,
+                    'url'  =>  $currenturl,
+                    'rconnect_transfer_flag' => 1          
+                );
+            }else{
+                $data=array(
+                    'content'=>$newcontent,
+                    'partner'=>'miowebhook',
+                    'status' =>'0', 
+                    'device_id' => $deviceid,
+                    'url'  =>  $currenturl,
+                    'rconnect_transfer_flag' => 0          
+                );
+            }
+             $result= MioWebhook::create($data);
+              if($result)
+              {
+                return response()->json("Data inserted successfully!");
+              }
+              else
+              {
+                return "failed";
+              }
+        }else{
+            $data=array(
+                'content'=>$newcontent,
+                'partner'=>'miowebhook',
+                'status' =>'0', 
+                'device_id' => $deviceid,
+                'url'  =>  $currenturl,
+                'rconnect_transfer_flag' => 0          
+            );
+             $result= MioWebhook::create($data);
+              if($result)
+              {
+                return response()->json("Data inserted successfully!");
+              }
+              else
+              {
+                return "failed";
+              }
+        }
+             
+        
       }
     
   

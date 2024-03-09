@@ -29,6 +29,7 @@ use RCare\API\Http\Controllers\VoipWebHookController;
         Route::post('/data_from_device/{id}', 'RCare\API\Http\Controllers\MioDeviceController@mio_webhook_observation')->name('mio_webhook_data_from_device'); 
         Route::post('/process_mio_webhook_observation', 'RCare\API\Http\Controllers\MioDeviceController@process_mio_webhook_observation')->name('process_mio_webhook_observation'); 
         Route::post('/savethresholdreadingofmioWebhook', 'RCare\API\Http\Controllers\MioDeviceController@saveThresholdReadingOfMioWebhook')->name('save_threshold_reading_of_miowebhook'); 
+        Route::post('/getapidatafrommarch', 'RCare\API\Http\Controllers\MioDeviceController@get_api_data_march')->name('get_api_data_from_march'); 
 		
 		Route::put('/order', 'RCare\API\Http\Controllers\APIController@updateOrder');
 		Route::get('/patient-order-list', 'RCare\API\Http\Controllers\APIController@OrderList');
