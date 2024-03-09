@@ -856,7 +856,6 @@
 
             var times = (hh > 12) ? (hh - 12 + ':' + mm + ' PM') : (hh + ':' + mm + ' AM');
 
-            var table = tableToJson($('#Activities-list_2').get(0))
             doc.setDrawColor(0);
             doc.setFillColor(39, 168, 222);
             doc.rect(10, 10, 575, 45, 'F');
