@@ -3071,11 +3071,11 @@ var getFollowupListData = function (patientId, moduleId) {
     });
 };
 
-var getToDoListData = function (patientId, moduleId) { 
+var getToDoListData = function (patientId, moduleId) {
     axios({
         method: "GET",
         url: `/task-management/patient-to-do/${patientId}/${moduleId}/list`,
-    }).then(function (response) { 
+    }).then(function (response) {
         // console.log(response.data);
         $("#toDoList").html(response.data);
         $('.badge').html($('#count_todo').val());
@@ -3083,7 +3083,7 @@ var getToDoListData = function (patientId, moduleId) {
         console.error(error, error.response);
     });
 };
-var getAssignPatientListData = function (practice,patient) { //debugger;
+var getAssignPatientListData = function (practice, patient) { //debugger;
     if (practice == '') {
         practice = 0;
     }
@@ -3158,7 +3158,7 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
         $(".change_status_flag").attr("disabled", false);
-        $('.click_id').css({'opacity':'','pointer-events':''}); 
+        $('.click_id').css({ 'opacity': '', 'pointer-events': '' });
         $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
@@ -3202,7 +3202,7 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
             $(".change_status_flag").attr("disabled", true);
-            $('.click_id').css({'opacity':'0.5','pointer-events':'none'}); 
+            $('.click_id').css({ 'opacity': '0.5', 'pointer-events': 'none' });
             $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
@@ -4617,7 +4617,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
-    getAssignPatientListData:getAssignPatientListData,
+    getAssignPatientListData: getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,
