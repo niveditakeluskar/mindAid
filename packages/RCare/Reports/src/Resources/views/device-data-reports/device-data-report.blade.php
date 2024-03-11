@@ -896,7 +896,7 @@
                     if (data.section === 'body' && data.cell.text[0].includes('-r')) {
                         data.cell.styles.textColor = "red";
                         data.cell.styles.fontStyle = 'bold';
-                        data.cell.text[0].replace('-r', '');
+                        data.cell.text[0] = data.cell.text[0].replace('-r', '');
                     }
                 }
             });
