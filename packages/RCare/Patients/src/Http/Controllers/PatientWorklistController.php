@@ -842,11 +842,11 @@ class PatientWorklistController extends Controller {
               
               $run_score_procedure = 0;    
              }
-  
+             
               return Datatables::of($data)
               ->addIndexColumn()
               ->addColumn('action', function($row)
-              {
+              { 
                   $check = DB::table('patients.patient_diagnosis_codes')   
                   ->where('patient_id',$row->pid)
                   ->latest()

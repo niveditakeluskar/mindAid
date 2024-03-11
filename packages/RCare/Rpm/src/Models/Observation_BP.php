@@ -21,7 +21,8 @@ class Observation_BP extends Model
         'created_at',
         'updated_at',
         'reviewed_date',
-        'addressed_date'         
+        'addressed_date',
+        //'effdatetime'         
     ];
     protected $primaryKey = 'id';
 
