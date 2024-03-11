@@ -796,7 +796,7 @@ class PatientWorklistController extends Controller {
                             ptodate,to_char(csslastdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , 
                             pstatus, ptrtotaltime,psmodule_id , cciconcolor,ccicontitle,pssscore from 
                             patients.worklist_v2($p,$pt,$month, $year,$timeoption,'".$totime."',$roleid, $cid,'".$configTZ ."','".$userTZ."',$status,$module_id)";  
-              } else if($roleid == 2){
+              } else if($roleid == 2 || $roleid == 6 || $roleid ==10){
   
                   $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,
                             ptodate,to_char(csslastdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , 
@@ -970,29 +970,31 @@ class PatientWorklistController extends Controller {
                     cc.review_age_yellow,
                     cc.update_age_years,
                     CASE
-                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) THEN 'red'
+                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) 
+                    or (cc.update_age_years >= 1) THEN 'red'
                     when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)   THEN 'red'
                     when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'green'
-                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )   THEN 'yellow'  
-                    ELSE null
+                    when ( cc.review_age_green > 0 and cc.review_age_yellow = 0 )   THEN 'yellow'  
+                    ELSE null 
                     end AS result,
                     CASE
-                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
-                                                                                                        Aleast one Care Plan not reviewed for more than 6 months or
-                                                                                                        Aleast one Care Plan not updated for more than a year'	
+                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) 
+                    or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
+                    Aleast one Care Plan not reviewed for more than 6 months or
+                    Aleast one Care Plan not updated for more than a year'	
 
-                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
-                                                            Aleast one Care Plan not reviewed for more than 6 months or
-                                                            Aleast one Care Plan not updated for more than a year'
+                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  
+                    THEN 'All the Care Plans not reviewed for more than 6 months or
+                    Aleast one Care Plan not reviewed for more than 6 months or
+                    Aleast one Care Plan not updated for more than a year'
                                                             				
-                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'All the Care Plans have been reviewed within 6 months'
-
-                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )  THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
+                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  
+                    THEN 'All the Care Plans have been reviewed within 6 months'
+                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )  
+                    THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
                     ELSE null
                     end AS resulttitle
-                    
                     from 
-                    
                     (SELECT 
                     patient_id, 
                     count(diagnosis_id)::float as diagnosis_count,
@@ -1004,17 +1006,13 @@ class PatientWorklistController extends Controller {
                             < 6 then 0 else 1 end
                         ) as review_age_green,      
                     sum( case when
-                       
                         ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
                         date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
                         (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float /100 )::float
                         )::float)
                             < 6 then 0 else 1 end  
                         ) as review_age_yellow, 
-                        
-                        
-      
-                        sum( case when
+                    sum( case when
                         ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float *12 + 
                         date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float +
                         (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float /100 )::float
