@@ -789,7 +789,7 @@ class PatientWorklistController extends Controller {
   
               //$query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,ptodate,to_char(csslastdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as csslastdate  , pstatus, ptrtotaltime from 
               //patients.worklist_v2($p,$pt,$month, $year,$timeoption,'".$totime."',$roleid, $cid,'".$configTZ ."','".$userTZ."',$status,$module_id)"; 
-  
+              
              if( $roleid == 5  ){
   
                   $query = "select pid, pfname, plname, pmname, pprofileimg, pdob, pppracticeemr,ppracticeid, pracpracticename,pfromdate,

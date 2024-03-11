@@ -26,6 +26,7 @@ use RCare\Patients\Models\PatientThreshold;
 use RCare\Org\OrgPackages\Threshold\src\Models\GroupThreshold;
 use RCare\Org\OrgPackages\Practices\src\Models\PracticeThreshold;
 use RCare\Org\OrgPackages\Practices\src\Models\OrgThreshold;
+use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
 
 use RCare\API\Models\ApiException;
 use RCare\Rpm\Models\Devices;
@@ -36,6 +37,7 @@ use Exception;
 use DataTables;
 use Session;
 use Illuminate\Support\Str;
+use URL;
 
 class MioDeviceController extends Controller {
 
@@ -204,12 +206,10 @@ class MioDeviceController extends Controller {
         // $deviceName = $datajson['readingType'];
         //$checkDeviceExist= PatientDevices::where('device_code',$device_id)->whereNotNull('device_code')->exists();
         $get_checkDeviceExist= PatientDevices::where('device_code',$device_id)->whereNotNull('device_code')->select('patient_id')->get();
-        
 
         $devicecount = $get_checkDeviceExist->count(); 
         
         if($devicecount > 0){
-    
         $patient_id = $get_checkDeviceExist[0]->patient_id;
         $partner_id = $get_checkDeviceExist[0]->partner_id;
         $observationid = $patient_id.'-'.$time;
@@ -261,11 +261,14 @@ class MioDeviceController extends Controller {
 
                 $check = \DB::select(\DB::raw("select * from  rpm.observations_bp ob
                 where device_id = '".$device_id."' and (effdatetime at time zone 'UTC' at time zone 'CST') = '".$recorddate."'"));
-
+                
                 // dd($check);
                     if(empty($check)){
+                        
                         $o = Observation_BP::create($insert_array);
-						if($o){
+                        $url = strtolower(URL::to('/').'/rcare-login'); 
+						if($o && DomainFeatures::where(DB::raw('lower(url)'), $url)->where('rpm_messages',1)->exists()){
+                            
                             $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
                             $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Reading Message');
                             $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
