@@ -52,6 +52,8 @@ use RCare\Ccm\Models\CallWrap;
 use RCare\Patients\Models\VitalsObservationNotes;
 use RCare\Rpm\Http\Requests\RPMWorklistRequest;
 use RCare\Rpm\Models\Other_Alerts;
+use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
+use URL;
 
 class DailyReviewController extends Controller
 {
@@ -838,7 +840,7 @@ class DailyReviewController extends Controller
                     $vital = 'Oxygen';
                     $deviceid=2;
                    
-                         $updateoxy =   Observation_Oxymeter::where('id',$serialid)->update(['reviewed_flag'=> $reviewstatus,'reviewed_date'=> \          Carbon\Carbon::now() ]); 
+                         $updateoxy =   Observation_Oxymeter::where('id',$serialid)->update(['reviewed_flag'=> $reviewstatus,'reviewed_date'=> \Carbon\Carbon::now() ]); 
 
                          $billingstatuscheck =   Observation_Oxymeter::where('patient_id',$patientid)->whereBetween('effdatetime', [$dt1 , $dt2])->                     pluck('billing'); 
                      
@@ -1305,7 +1307,7 @@ class DailyReviewController extends Controller
 	
 	public function noReadingsLastthreedays()
  {
-     //   dd("hello");
+     $url = strtolower(URL::to('/').'/rcare-login'); 
        $date=date("Y-m-d");
        $year = date('Y', strtotime($date));
        $month = date('m', strtotime($date));
@@ -1357,10 +1359,11 @@ class DailyReviewController extends Controller
       
       $loginuserid = session()->get('userid');  
     
-      $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
-      $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Non Active Message');
-	  
-      $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$d->id,$SID);
+      if(DomainFeatures::where(DB::raw('lower(url)'), $url)->where('rpm_messages',1)->exists()){
+        $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
+        $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Non Active Message');
+        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$d->id,$SID);
+      }
       //$enroll_msg = CommonFunctionController::sentSchedulMessage(2,'2945591',$SID);
 
       /*//$scripts = ContentTemplate::where('id', 42)->where('status', 1)->get(); 

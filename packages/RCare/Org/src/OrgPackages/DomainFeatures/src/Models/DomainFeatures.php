@@ -37,7 +37,8 @@ class DomainFeatures extends Model
         'idle_time_redirect',
         'block_time', 
         'instance',
-        'logo'
+        'logo',
+        'rpm_messages'
     ];
     
     public function users()
