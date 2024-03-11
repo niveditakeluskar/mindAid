@@ -53,10 +53,30 @@ class MessageReplyController extends Controller {
        die; */
        $content=$request->all();  
         $newcontent=json_encode($content); 
-        $data=array(
-            'content'=>$newcontent ,
-            'created_by'=>'symtech'          
-        );
+       
+        $currenturl = url()->full();	
+        if($currenturl == 'https://rcare.d-insights.global/API/sms/reply'){
+            $response = Http::post('https://rcareconnect.com/API/sms/reply',$content);
+            if ($response->getStatusCode() == 200) {
+                $data=array(
+                    'content'=>$newcontent ,
+                    'created_by'=>'symtech',
+                    'rconnect_transfer_flag' => 1         
+                );
+            }else{
+                $data=array(
+                    'content'=>$newcontent ,
+                    'created_by'=>'symtech',
+                    'rconnect_transfer_flag' => 0         
+                );
+            }
+        }else{
+            $data=array(
+                'content'=>$newcontent ,
+                'created_by'=>'symtech',
+                'rconnect_transfer_flag' => 0          
+            );
+        }
        $result= WebhookMessages::create($data);
           if($result)
           {

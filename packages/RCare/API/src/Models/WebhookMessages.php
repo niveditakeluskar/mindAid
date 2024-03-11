@@ -34,7 +34,8 @@ class WebhookMessages extends Model
          'content',
          'created_at' , 
          'updated_at', 
-         'created_by'
+         'created_by',
+         'rconnect_transfer_flag'
 
     ];
 
