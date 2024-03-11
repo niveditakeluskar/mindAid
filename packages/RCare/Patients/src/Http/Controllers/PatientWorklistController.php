@@ -815,7 +815,7 @@ class PatientWorklistController extends Controller {
                             patients.worklist_tlm_v2($p,$pt,$month, $year,$timeoption,'".$totime."',$roleid, $cid,'".$configTZ ."','".$userTZ."',$status,$module_id)";  
               }
                        
-  
+			 
               // $data = DB::select( DB::raw($query) );  
               if($roleid  == 2) {
                   if($module!="null" || $p!="null" || $pt!="null"){   
