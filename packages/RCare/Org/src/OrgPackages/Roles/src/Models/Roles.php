@@ -41,7 +41,7 @@ class Roles extends Model
 
     public static function activeRole()
     {
-        return Roles::all()->where("status", 1);
+        return Roles::all()->where("status", 1)->whereNotIn('id',6)->whereNotIn('id',10);
     }
 
     /**

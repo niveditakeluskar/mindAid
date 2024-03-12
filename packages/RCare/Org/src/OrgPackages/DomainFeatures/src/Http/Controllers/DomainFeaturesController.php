@@ -6,12 +6,35 @@ use RCare\Org\OrgPackages\DomainFeatures\src\Http\Requests\DomainFeaturesAddRequ
 use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
 use DataTables;
 use Session;
+use File,DB;
 class DomainFeaturesController extends Controller{
 
      public function index()
     {   
         return view('DomainFeatures::domain-feature-list'); 
     }
+
+    public function domainlogoimage(Request $request)
+    { 
+        if(isset($_FILES) && !empty($_FILES)) 
+            {        
+            if(sanitizeVariable($request->hasFile('file'))){                  
+               $image = sanitizeVariable($request->file('file'));
+               $url=sanitizeVariable($request->input('url'));
+            //    $lname=sanitizeVariable($request->input('l_name')); 
+               $time=time(); 
+                    $original_name = preg_replace("/\s+/", "_", $image->getClientOriginalName());
+                    $file_extension=$image->getClientOriginalExtension();
+                    $new_name = $image->getClientOriginalName();
+                    $new_name =$url."_".$time.".".$file_extension;  
+                    // dd($new_name);              
+                    $image = $image->move(public_path('images/usersRcare'), $new_name);
+                    $img_path =$new_name;                       
+                    return $img_path;
+            }
+        }
+ 
+   }
 
 
     public function fetchDomainFeatures(Request $request){
@@ -33,7 +56,7 @@ class DomainFeaturesController extends Controller{
         }
         return view('DomainFeatures::domain-feature-list');
     }
-    public function createDomainFeatures(DomainFeaturesAddRequest $request) {
+    public function createDomainFeatures(DomainFeaturesAddRequest $request) { //dd($request);
         $id = sanitizeVariable($request->id); 
         $data = array(
             'url'               => sanitizeVariable($request->url),
@@ -49,18 +72,38 @@ class DomainFeaturesController extends Controller{
             'logoutpoptime'     => sanitizeVariable($request->logoutpoptime),
             'idle_time_redirect'=> sanitizeVariable($request->idle_time_redirect),
             'block_time'        => sanitizeVariable($request->block_time),
+            'instance'          => sanitizeVariable($request->instance),
             'updated_by'        => session()->get('userid'),
             'created_by'        => session()->get('userid'),
         );
-
         $dataExist  = DomainFeatures::where('id', $id)->exists();
+        $domain = DomainFeatures::find($id);
+        $urlId = $domain->id;
+        
         if ($dataExist == true) { 
+
+            $img_path=sanitizeVariable($request->image_path);
+            if($img_path!=' '){
+                $domainlogo = public_path("images/usersRcare/{$domain->logo}"); // get previous image from folder
+                    if (File::exists($domainlogo)) { // unlink or remove previous image from folder
+                            File::delete($domainlogo);
+                    }
+              $img_path1 = sanitizeVariable($request->image_path);
+             
+            }else{
+                $img_path1 = sanitizeVariable($request->input('hidden_domain_logo'));   
+            }
+
+
+            $data['logo']  = $img_path1;
             $data['updated_by']= session()->get('userid'); 
             $update_query = DomainFeatures::where('id',$id)->orderBy('id', 'desc')->first()->update($data);
         } else { 
+            $data['logo']  = sanitizeVariable($request->image_path);
             $data['created_by']= session()->get('userid'); 
             $data['updated_by']= session()->get('userid'); 
             $insert_query = DomainFeatures::create($data);
+            // dd($insert_query);
         }
     }
 
@@ -82,8 +125,15 @@ class DomainFeaturesController extends Controller{
         {
           $id = sanitizeVariable($id); 
             $data = (DomainFeatures::self($id) ? DomainFeatures::self($id)->population() : "");
-            $result['domain_features_form'] = $data;
-            return $result;   
+            $domainFeature = DomainFeatures::find($id);
+            $logoPath = $domainFeature->logo;
+
+            // $result['domain_features_form'] = $data;
+            // return $result;  
+            return [
+                'domain_features_form' => $data,
+                'logo_path' => $logoPath
+            ]; 
         }
 
 

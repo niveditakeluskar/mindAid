@@ -2811,14 +2811,14 @@ var getPatientDetails = function (patientId, moduleId) {
         var device_status = '';
         if (response.data.device_status != '') {
             shipping_status = response.data.device_status;
-            if(shipping_status == 1){
+            if (shipping_status == 1) {
                 device_status = 'Dispatched';
-            }else if(shipping_status == 2){
+            } else if (shipping_status == 2) {
                 device_status = 'Delivered';
-            }else if(shipping_status == 3){
+            } else if (shipping_status == 3) {
                 device_status = 'Pending';
-            }else{
-                device_status = ''; 
+            } else {
+                device_status = '';
             }
         }
 
@@ -3082,7 +3082,7 @@ var getFollowupListData = function (patientId, moduleId) {
     });
 };
 
-var getToDoListData = function (patientId, moduleId) { 
+var getToDoListData = function (patientId, moduleId) {
     axios({
         method: "GET",
         url: `/task-management/patient-to-do/${patientId}/${moduleId}/list`,
@@ -3094,7 +3094,7 @@ var getToDoListData = function (patientId, moduleId) {
         console.error(error, error.response);
     });
 };
-var getAssignPatientListData = function (practice,patient) { //debugger;
+var getAssignPatientListData = function (practice, patient) { //debugger;
     if (practice == '') {
         practice = 0;
     }
@@ -3189,12 +3189,12 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
         $(".change_status_flag").attr("disabled", false);
-        $('.click_id').css({'opacity':'','pointer-events':''}); 
+        $('.click_id').css({ 'opacity': '', 'pointer-events': '' });
         $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
             pause_stop_flag = 0;
-            if(pause_next_stop_flag == 0){
+            if (pause_next_stop_flag == 0) {
                 updateTimeEveryMinutes(patientId, moduleId, response.data.form_start_time);
             }
         }, 60000);
@@ -3233,7 +3233,7 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
             $(".change_status_flag").attr("disabled", true);
-            $('.click_id').css({'opacity':'0.5','pointer-events':'none'}); 
+            $('.click_id').css({ 'opacity': '0.5', 'pointer-events': 'none' });
             $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
@@ -3387,31 +3387,32 @@ var getPracticelistaccordingtopracticegrp = function (practicegrpId, selectEleme
     });
 };
 
-var pateintdevicecode = function(id, selectElement, selecteddevice = null){
+var pateintdevicecode = function (id, selectElement, selecteddevice = null) {
     $(selectElement)
-    .empty()
-    .append('<option value="">Select Device</option>');
-        if (!id) {
-            id = null;
+        .empty()
+        .append('<option value="">Select Device</option>');
+    if (!id) {
+        id = null;
 
-        }
-        if (isNaN(id)) {
-            id = null;
-        }
-        axios({
-            method: "GET",
-            url: `/reports/ajax/patientdevice/${id}/pateintdevice`,
-        }).then(function (response) { console.log(response);
-            // $("<option>").val('0').html('None').appendTo(selectElement);
-            Object.values(response.data).forEach(function (pateint) {
-                $("<option>").val(pateint.id).html(pateint.device_code).appendTo(selectElement);
-            });
-            if (selecteddevice) {
-                selectElement.val(selecteddevice);
-            }
-        }).catch(function (error) {
-            console.error(error, error.response);
+    }
+    if (isNaN(id)) {
+        id = null;
+    }
+    axios({
+        method: "GET",
+        url: `/reports/ajax/patientdevice/${id}/pateintdevice`,
+    }).then(function (response) {
+        console.log(response);
+        // $("<option>").val('0').html('None').appendTo(selectElement);
+        Object.values(response.data).forEach(function (pateint) {
+            $("<option>").val(pateint.id).html(pateint.device_code).appendTo(selectElement);
         });
+        if (selecteddevice) {
+            selectElement.val(selecteddevice);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
 }
 
 var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectedPractice = null) {
@@ -4172,10 +4173,16 @@ var getChartOnclick = function (data, id, deviceid) {
     } else {
         var subtitle2 = "";
     }
-
+    //alert("entering..");
     var subtitle1 = "<b>" + label + "</b>" + " - [Min:" + reading_min + " ]/[Max: " + reading_max + "]";
 
-    Highcharts.chart(id, {
+    // Highcharts.setOptions({
+    //     time: {
+    //         timezone: 'America/Chicago'
+    //     }
+    // });
+
+    let chart = Highcharts.chart(id, {
         chart: {
             type: 'spline',
             events: {
@@ -4190,11 +4197,22 @@ var getChartOnclick = function (data, id, deviceid) {
         },
         xAxis: {
             //type: 'datetime',
+            labels: {
+                rotation: -90,
+                step: 1,
+                padding: 0,
+                style: {
+                    fontSize: '8px'
+                }
+            },
             categories: patientarraydatetime,
             crosshair: true,  //extra
             index: 1,//extra
             gridLineWidth: 1,
         },
+        // time: {
+        //     timezone: 'America/Chicago'
+        // },
         title: {
             text: title_name
         },
@@ -4255,6 +4273,28 @@ var getChartOnclick = function (data, id, deviceid) {
             }
         }
     });
+    let btn = document.getElementById("btnFullScreen")
+
+    btn.addEventListener('click', function () {
+        Highcharts.FullScreen = function (container) {
+            this.init(container.parentNode); // main div of the chart
+        };
+
+        Highcharts.FullScreen.prototype = {
+            init: function (container) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            }
+        };
+        chart.fullscreen = new Highcharts.FullScreen(chart.container);
+    })
 
 }
 
@@ -4448,8 +4488,8 @@ var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
         method: "GET",
         url: `/system/get-total-time/${patientID}/${moduleId}/${starttime}/total-time`,
     }).then(function (response) {
-        if (patientID != 0 ) {
-            if(pause_stop_flag == 0){
+        if (patientID != 0) {
+            if (pause_stop_flag == 0) {
                 var data = response.data;
                 var fial_time = data['total_time'];
                 $("#time-containers").html(fial_time);
@@ -4468,7 +4508,7 @@ var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
                     updateTimeEveryMinutes(patientID, moduleId, start_time);
                 }, 60000);
             }
-        }else{
+        } else {
             var data = response.data;
             $(".message-notification").html('');
             $(".message-notification").append(data['count']);
@@ -4609,7 +4649,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
-    getAssignPatientListData:getAssignPatientListData,
+    getAssignPatientListData: getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,
@@ -4626,7 +4666,7 @@ window.util = {
     updatePhysicianListWithoutOther: updatePhysicianListWithoutOther,
     getPracticelistaccordingtopracticegrp: getPracticelistaccordingtopracticegrp,
     getRpmPatientList: getRpmPatientList,
-    pateintdevicecode : pateintdevicecode ,
+    pateintdevicecode: pateintdevicecode,
     getactivityPracticelistaccordingtopracticegrp: getactivityPracticelistaccordingtopracticegrp,
     getnewactivityPracticelistaccordingtopracticegrp: getnewactivityPracticelistaccordingtopracticegrp,
     getappendPracticelistaccordingtopracticegrp: getappendPracticelistaccordingtopracticegrp,
