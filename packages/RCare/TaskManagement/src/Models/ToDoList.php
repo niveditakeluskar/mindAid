@@ -69,7 +69,7 @@ class ToDoList extends Model
     }
 
     public static function groupedTasks($patient_id) {
-    $query = \DB::select(\DB::raw("SELECT tdl.id as og_id,CONCAT(tdl.id) as id,tdl.task_notes as name, 
+    $query = \DB::select("SELECT tdl.id as og_id,CONCAT(tdl.id) as id,tdl.task_notes as name, 
                 CASE tdl.status_flag 
                            WHEN '0'
                            THEN 'Scheduled-Tasks'
@@ -88,7 +88,7 @@ SELECT ft.id as og_id,CONCAT('st',ft.id) as id,ft.task as name,
                        END AS group_by        
                 FROM ren_core.followup_tasks ft where ft.status = 1 
                 GROUP BY task,ft.id               
-            "));
+            ");
     return $query;
 }
 

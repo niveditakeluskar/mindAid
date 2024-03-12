@@ -19,6 +19,8 @@ use DB;
 class ContentTemplateController extends Controller
 {
 
+   
+
     public function printContentTemplate($id=0){
         $id = sanitizeVariable($id);
         $data = ContentTemplate::find($id);

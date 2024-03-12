@@ -36,7 +36,8 @@ use RCare\API\Http\Controllers\VoipWebHookController;
 		Route::get('/order_list', 'RCare\API\Http\Controllers\APIController@getOrderList')->name('order_list');
 		Route::get('/partner-form', 'RCare\API\Http\Controllers\APIController@PartnerForm')->name('partner.form');
         Route::post('/add-partner-form', 'RCare\API\Http\Controllers\APIController@InsertPartner')->name('add.partner.form');
-		
+       
+
 		Route::post('/tellihealth_webhook_data', 'RCare\API\Http\Controllers\TellihealthAPIController@tellihealth_webhook_observation')
         ->name('tellihealth_webhook_data');
 		

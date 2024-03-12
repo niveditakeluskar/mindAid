@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,14 +23,14 @@ class PatientsDataAddRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
+        return validationRules(
+            True,
             [
-                'add_1'        => 'required|min:3|address', 
+                'add_1'        => 'required|min:3|address',
                 'home_number'  => 'nullable|max:14|phone',
-                'email'        => 'nullable|email|email:rfc,dns|regex:/^[a-zA-Z0-9_.-]+@[a-zA-Z.]+.[a-zA-Z]$/',  
-                'mob'          => 'required|max:14|phone', 
+                'email'        => 'nullable|email|email:rfc,dns|regex:/^[a-zA-Z0-9_.-]+@[a-zA-Z.]+.[a-zA-Z]$/',
+                'mob'          => 'required|max:14|phone',
             ]
         );
-
     }
 }

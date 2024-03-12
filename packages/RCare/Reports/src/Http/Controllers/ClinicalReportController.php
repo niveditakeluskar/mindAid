@@ -128,7 +128,7 @@ class ClinicalReportController extends Controller
                
         //  dd($query);                          
 
-            $data = \DB::select( \DB::raw($query) );    
+            $data = DB::select($query);    
             // dd($data)  ;
         
             // return Datatables::of($data)     
@@ -139,7 +139,7 @@ class ClinicalReportController extends Controller
             // $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
             // $activity = "select count(activity) as total from ren_core.activities where timer_type like '4' and activity_type like 'Routine Response' ";
             $a = "select count(*),activity_type from ren_core.activities where timer_type like '4' group by activity_type";
-            $activity = DB::select( DB::raw($a) );
+            $activity = DB::select($a);
             // dd($activity); 
             // $total_diag = $activity[3]->count;
 
@@ -274,7 +274,7 @@ class ClinicalReportController extends Controller
 
               /*******trying all for activities ***************/
               $all_activity = "select activity_type,ARRAY_AGG(activity || ',' ) as activity from ren_core.activities where timer_type like '4' group by activity_type order by activity_type ";
-              $all_activity = \DB::select( \DB::raw($all_activity) );  
+              $all_activity = DB::select($all_activity);  
               //   dd($all_activity);
                 foreach($all_activity as $all){
                    $specificactivity = $all->activity;

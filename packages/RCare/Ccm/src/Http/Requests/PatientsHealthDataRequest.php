@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,13 +23,13 @@ class PatientsHealthDataRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
+        return validationRules(
+            True,
             [
                 'health_data.*'        => 'required|regex:/^[a-zA-Z0-9 -]+$/',
                 'health_date.*'       => 'required|date|before:tomorrow'
-             
+
             ]
         );
-
     }
 }

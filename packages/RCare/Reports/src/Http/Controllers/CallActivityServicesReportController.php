@@ -100,7 +100,7 @@ class CallActivityServicesReportController extends Controller
         resources_for_medication,medical_renewal,called_office_patientbehalf,referral_support,no_other_services
         from patients.sp_call_activity_services_report($p,$pr,timestamp '".$dt1."',timestamp '".$dt2."' )";          
         // dd($query); 
-        $data = DB::select( DB::raw($query) ); 
+        $data = DB::select($query); 
         // dd($data);
         return Datatables::of($data) 
         ->addIndexColumn()             

@@ -121,9 +121,9 @@ class ToDoListReportController extends Controller {
           $query = "select pid,tmid, pfname, plname, pmname,pstatus,pracpracticename,prprovidername, 
           tmtask,status_flag,enrolled_service_id,mmodulename,tmtaskstatus,tmtaskcategory,task_date,tmtasktime, 
           createdbyfname, createdbylname,caremanagerfname,caremanagerlname,to_char(task_date at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH12:MI:SS') as 
-          tt from patients.task_management_to_do_list($c,$p,$pt,$taskstatus,$status,$roleid, $userid );"; 
+          tt from patients.task_management_to_do_list($c,$p,$pt,$taskstatus,$status,$roleid, $userid )"; 
         // dd($query);
-        $data = DB::select( DB::raw($query) ); 
+        $data = DB::select($query); 
         //dd($data);
             return Datatables::of($data) 
             ->addIndexColumn() 

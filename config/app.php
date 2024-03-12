@@ -162,11 +162,11 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        Harimayco\Menu\MenuServiceProvider::class,
+        
         /*
          * Package Service Providers...
          */
-		'Tymon\JWTAuth\Providers\LaravelServiceProvider',
+		
         /*
          * Application Service Providers...
          */
@@ -196,6 +196,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Mews\Purifier\PurifierServiceProvider::class,
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -210,7 +211,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
@@ -246,13 +246,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Input' => Illuminate\Support\Facades\Input::class,
-        'Throttle' => GrahamCampbell\Throttle\Facades\Throttle::class,
-        'Menu' => Harimayco\Menu\Facades\Menu::class,
+        'Throttle' => GrahamCampbell\Throttle\Facades\Throttle::class,       
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'Purifier' => Mews\Purifier\Facades\Purifier::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
-		'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-		'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

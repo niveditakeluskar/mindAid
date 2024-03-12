@@ -170,6 +170,20 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
+// export default {
+//   // ... other code
+//   onActiveDeactiveClick: function(pid, status) {
+//     // Your function logic here
+//     console.log('PID:', pid);
+//     console.log('Status:', status);
+//     // Other actions...
+//   }
+//   // ... other code
+// };
+
+// var onActiveDeactiveClick = function ($pid, $status) {
+//   var sPageURL = window.location.pathname;
+//   parts = sPageURL.split("/"),
 var onActiveDeactiveClick = function ($pid, $status,$fromstarttime) { console.log($fromstarttime);
     var sPageURL = window.location.pathname;
     parts = sPageURL.split("/"),
@@ -426,8 +440,8 @@ var callMonthllyMonitoringInitFunctions = function () {
   util.getCallScriptsById($("form[name='text_form'] #text_template_id").val(), '#templatearea_sms', "form[name='text_form'] input[name='template_type_id']", "form[name='text_form'] input[name='content_title']");
 
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
-    id = parts[parts.length - 1];
+  var parts = sPageURL.split("/");
+  var id = parts[parts.length - 1];
   var patientId = id;
   var data = "";
   var preparationNotesFormPopulateURL = URL_POPULATE_PREPARATION_NOTES + "/" + patientId + "/current";
@@ -996,8 +1010,8 @@ function newcheckquery2(value) {
  */
 var init = function () {
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
-    id = parts[parts.length - 1];
+  var parts = sPageURL.split("/");
+  var id = parts[parts.length - 1];
   var patientId = id;
   if ($.isNumeric(patientId)) {
     datapopulate(patientId);

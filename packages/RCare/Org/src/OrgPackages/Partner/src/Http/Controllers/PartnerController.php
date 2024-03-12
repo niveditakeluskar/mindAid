@@ -109,6 +109,8 @@ class PartnerController extends Controller {
         
     }
 
+  
+
     //showing list
     public function PartnerList(Request $request) {
         if ($request->ajax()) {

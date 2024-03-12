@@ -128,7 +128,7 @@ class QuestionaireReportController extends Controller {
         $query = "select month_year, bmicount, bpcount, bmi_greater_25, bmi_less_18,bp_140_90, bp_180_110, HgA1C_greater_7, HgA1C_less_7, topic, option, count from patients.questionaire_report($p,$pr,$pracgrp,timestamp '".$dt1."',timestamp '".$dt2."',$gq)";
                              
         //dd($query);
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
         //dd($data);
         return Datatables::of($data) 
         ->addIndexColumn()

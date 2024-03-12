@@ -10,9 +10,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Partner extends Authenticatable implements JWTSubject
+
+class Partner extends Authenticatable 
 {
     use DashboardFetchable, ModelMapper, DatesTimezoneConversion, HasFactory, Notifiable;
 
@@ -49,18 +49,6 @@ class Partner extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-    public function tokenExists($token)
-    {
-        // Check if at least one token exists for this partner
-        return self::where('token', md5($token))->exists();
-    }
+	
+	
 }

@@ -7,7 +7,7 @@
                $module_id = getPageModuleName();
                $submodule_id = getPageSubModuleName(); 
                $stage_id = getFormStageId($module_id, $submodule_id, $enrollServiceName);
-               $checklist_step_id = getFormStepId($module_id, $submodule_id, $stage_id, 'Checklist');             
+               $checklist_step_id = getFormStepId($module_id, $submodule_id, $stage_id, 'Enrollment Checklist');             
             ?>
             <input type="hidden" name="time_rec_module" value="{{$module_id}}">
             <input type="hidden" name="patient_id" value="{{$patient[0]->id}}" />

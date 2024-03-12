@@ -2,8 +2,8 @@ const URL_POPULATE = "/ccm/ajax/populateCarePlanDevelopmentForm";
 var baseURL = window.location.origin + '/';
 var patient_id = $("input[name='patient_id']").val();
 var sPageURL = window.location.pathname;
-parts = sPageURL.split("/"),
-	module = parts[parts.length - 2];
+var parts = sPageURL.split("/");
+var module = parts[parts.length - 2];
 var imagingcount = 0;
 var inc_symptoms = 0;
 var review_inc_symptoms = 0;
@@ -2570,7 +2570,7 @@ $("#review_live_relationship_0").on("change", function () {
 
 var CompletedCheck = function () {
 	var sPageURL = window.location.pathname;
-	parts = sPageURL.split("/"),
+	var parts = sPageURL.split("/"),
 		id = parts[parts.length - 1];
 	var patient_id = id;
 	var familyspouse_step_id = $('form[name="family_spouse_form"] input[name=step_id]').val();
@@ -2642,7 +2642,7 @@ var CompletedCheck = function () {
 
 var populateformdata = function () {
 	var sPageURL = window.location.pathname;
-	parts = sPageURL.split("/"),
+	var parts = sPageURL.split("/"),
 		id = parts[parts.length - 1];
 	var patientId = id;
 	var formpopulateurl = URL_POPULATE + "/" + patientId;
@@ -3295,19 +3295,32 @@ function onProviderChange(formsObj) {
 	}
 }
 
-function onPracticeChange(formsObj) {
+function onPracticepcpChange(formsObj) { //alert("working");
 	var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
-	var practice_id = $("form[name='" + formName + "'] #practices").val();
-	if (practice_id == '0') {
-		$("form[name='" + formName + "'] #practices_div").removeClass("col-md-6").addClass("col-md-3");
-		$("form[name='" + formName + "'] #practice_name").show();
-		var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
-	} else {
-		$("form[name='" + formName + "'] #practices_div").removeClass("col-md-3").addClass("col-md-6");
-		$("form[name='" + formName + "'] #prac_name").val("");
-		$("form[name='" + formName + "'] #practice_name").hide();
-		var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
-	}
+	var practices_id = $("form[name='" + formName + "'] #practices").val();
+	// var provider_id = $("form[name='" + formName + "'] #provider_id").val();
+	//alert(practices_id);
+	//alert(formName);
+	if (practices_id == 0) {	
+	}else{ util.updatePcpPhysicianList(parseInt(practices_id),$("form[name='" + formName + "'] #provider_id"));  }
+	// if(practices_id!=''){
+	// 	util.updatePcpPhysicianList(parseInt(practices_id),$("#provider_id")); 
+	// }
+}
+
+function onPracticeChange(formsObj) {
+    var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
+    var practice_id = $("form[name='" + formName + "'] #practices").val();
+    if (practice_id == '0') {
+        $("form[name='" + formName + "'] #practices_div").removeClass("col-md-6").addClass("col-md-3");
+        $("form[name='" + formName + "'] #practice_name").show();
+        var practice_id = $("form[name='" + formName + "'] #practices option:selected").val();
+    } else {
+        util.updatePhysicianList(parseInt(practice_id), $("form[name='" + formName + "'] #provider_id"));
+        $("form[name='" + formName + "'] #practices_div").removeClass("col-md-3").addClass("col-md-6");
+        $("form[name='" + formName + "'] #prac_name").val("");
+        $("form[name='" + formName + "'] #practice_name").hide();
+    }
 }
 
 
@@ -4693,6 +4706,7 @@ window.carePlanDevelopment = {
 	editSpecialistProviderPatient: editSpecialistProviderPatient,
 	deleteSpecialistProviderPatient: deleteSpecialistProviderPatient,
 	onProviderChange: onProviderChange,
+	onPracticepcpChange: onPracticepcpChange,
 	onPracticeChange: onPracticeChange,
 	editHobbiesData: editHobbiesData,
 	deleteHobbiesData: deleteHobbiesData,

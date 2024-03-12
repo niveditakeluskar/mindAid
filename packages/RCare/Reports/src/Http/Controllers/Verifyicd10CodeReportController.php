@@ -84,7 +84,7 @@ class Verifyicd10CodeReportController extends Controller {
         
       //dd($query);
          
-      $data = DB::select( DB::raw($query) );
+      $data = DB::select($query);
       //dd($data);
       return Datatables::of($data) 
         ->addIndexColumn()
@@ -181,7 +181,7 @@ class Verifyicd10CodeReportController extends Controller {
       
    //dd($query1);
        
-    $data = DB::select( DB::raw($query1) );
+    $data = DB::select($query1);
     //dd($data);
     return Datatables::of($data) 
       ->addIndexColumn()
@@ -268,7 +268,7 @@ class Verifyicd10CodeReportController extends Controller {
       }else{}
 
       //dd($query);
-      $data = DB::select( DB::raw($query) );
+      $data = DB::select($query);
       // dd($data);
             return Datatables::of($data) 
             ->addIndexColumn()            
@@ -308,7 +308,7 @@ class Verifyicd10CodeReportController extends Controller {
       }else{}
 
     // dd($query1);
-      $data = DB::select( DB::raw($query1) );
+      $data = DB::select($query1);
       // dd($data);
             return Datatables::of($data) 
             ->addIndexColumn()            

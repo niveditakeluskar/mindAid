@@ -124,7 +124,7 @@ $('body').on('click', '.change_device_status_active', function () {
 		  // data: {"_token": "{{ csrf_token() }}","id": id},
 		   data   :  {"id": id},
 		   success: function(response) {
-			   getdevicecode(patient);
+			//    getdevicecode(patient);
 			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Deactivated Successfully!</strong></div>';
 			   $("#success").html(txt);
 		   }
@@ -146,7 +146,7 @@ $('body').on('click', '.change_device_status_deactive', function () {
 		  // data: {"_token": "{{ csrf_token() }}","id": id},
 		   data   :  {"id": id},
 		   success: function(response) {
-			   getdevicecode(patient);
+			//    getdevicecode(patient);
 			   var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device Activated Successfully!</strong></div>';
 			   $("#success").html(txt);
 		   }
