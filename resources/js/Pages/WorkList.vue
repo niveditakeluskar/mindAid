@@ -102,8 +102,7 @@
         </div>
       </div>
 
-    </div>
-
+    </div>	
   </LayoutComponent>
 
   <Head>
@@ -477,6 +476,17 @@ export default {
 .fade {
     transition: opacity .15s linear!important;
 }
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the last value (0.5) for the desired opacity */
+    z-index: 1040; /* Adjust the z-index to be above the modal */
+    display: none;
+  }
+
 .modal.open, .modal.show{
 	display: block;
     overflow-x: hidden;
