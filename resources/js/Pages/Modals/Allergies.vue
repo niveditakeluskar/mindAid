@@ -1,8 +1,8 @@
 <!-- ModalForm.vue -->
 <template>
-    <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
-        <div class="modal-content">
+    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+	<div class="modal-dialog  modal-xl">
+        <div class="modal-content" style="padding-top:0px; margin:0px;">
             <div class="modal-header">
                 <h4 class="modal-title">Allergies</h4> 
                 <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
@@ -46,6 +46,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
             </div>
         </div>
+    </div>
     </div>
 </template>
 

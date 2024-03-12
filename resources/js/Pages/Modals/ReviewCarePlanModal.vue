@@ -1,12 +1,13 @@
 <template>
-    <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    
+    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+	<div class="modal-dialog modal-xl" style="padding-top:10px;  ">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Create / Modify Care Plan</h4>
                 <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
-            <div class="modal-body" style="padding-top:10px;">
+            <div class="modal-body" style="padding-top:0px; margin:0px;">
                 <loading-spinner :isLoading="isLoading"></loading-spinner>
                 <div class="row mb-4">
                     <div class="col-md-12">
@@ -299,6 +300,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
             </div>
         </div>
+    </div>
     </div>
 </template>
 
@@ -897,48 +899,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.goal-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    background-color: white;
-    z-index: 1000;
-    margin: 2%;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* Style the overlay */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
-}
-
-/* Show the overlay and modal when modal is open */
-.modal.open {
-    display: block;
-    opacity: 1;
-}
-
-.overlay.open {
-    display: block;
-}
-
-.modal-content {
-    overflow-y: auto !important;
-    /* height: 800px !important; */
-}</style>

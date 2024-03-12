@@ -1,7 +1,8 @@
 <!-- ModalForm.vue -->
 <template>
-    <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    
+    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+	<div class="modal-dialog modal-xl" style="padding-top:10px; ">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Vitals & Health Data</h4> 
@@ -10,7 +11,7 @@
             <div class="modal-body">
                 <div class="row" id="medications">
                     <div class="col-md-12">
-                        <div class="card-body">
+                        <div class="card-body" style="margin:0px; padding:0px">
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul class="nav nav-pills" id="myPillTab" role="tablist">
@@ -38,6 +39,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
             </div>
         </div>
+    </div>
     </div>
 </template>
 

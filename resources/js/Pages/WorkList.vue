@@ -474,54 +474,29 @@ export default {
 };
 </script>
 <style>
-    .goal-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2px;
-    }
-	.modal-content{
-		border:0px !important;
-		border-radius:0px;
-	}
+.fade {
+    transition: opacity .15s linear!important;
+}
+.modal.open, .modal.show{
+	display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.modal.open .modal-dialog,  .modal.show .modal-dialog{
+    -webkit-transform: translate(0);
+    transform: translate(0);
+}
+.modal-md{
+	width:60%;
+}
+.modal-lg{
+	width:80%;
+}
+.modal-xl{
+	width:95%;
+	max-width: 95%;
+}
+	
 
-    .modal {
-        display: none;
-        position: fixed;
-        background-color: white;
-        z-index: 1000;
-        margin: 2%;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-		border:1px solid rgba(0, 0, 0, 0.2);
-		border-radius:0.3rem;
-    }
 
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-    }
-
-    .modal.open {
-        display: block;
-        opacity: 1;
-    }
-
-    .overlay.open {
-        display: block;
-    }
-
-    .modal-content {
-        /*overflow-y: auto !important;
-         height: 500px !important; */
-    }
-    .modal-body {
-        flex: 0;
-    }
 </style>
