@@ -897,6 +897,8 @@ class CcmController extends Controller
         $module_id    = getPageModuleName();
         $submodule_id = getPageSubModuleName();
         $stage_id =  getFormStageId($module_id, $submodule_id, 'Preparation');
+        $patient_enroll_date = PatientServices::latest_module($patient_id, $module_id);
+        $date_enrolled = empty($patient_enroll_date[0]->date_enrolled) ? '' : strtok($patient_enroll_date[0]->date_enrolled, ' ');
         $ccmrpm = 0;
         if ((PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) || $module_id == 2) {
             $ccmrpm = 1;
@@ -909,6 +911,7 @@ class CcmController extends Controller
             'stageid' => $stage_id,
             'landingTime' => $landingTime,
             'ccmRpm' => $ccmrpm,
+            'date_enrolled' => $date_enrolled,
         ]);
     }
 

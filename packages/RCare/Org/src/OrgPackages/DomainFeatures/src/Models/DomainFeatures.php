@@ -35,7 +35,10 @@ class DomainFeatures extends Model
         'updated_by',
         'logoutpoptime',
         'idle_time_redirect',
-        'block_time'
+        'block_time', 
+        'instance',
+        'logo',
+        'rpm_messages'
     ];
     
     public function users()

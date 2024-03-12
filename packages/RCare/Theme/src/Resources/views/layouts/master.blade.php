@@ -8,6 +8,8 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Renova Healthcare</title>
           <!--  andy22nov21 -->
+          
+       <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
            <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
         <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
         @yield('before-css')

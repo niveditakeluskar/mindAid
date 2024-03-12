@@ -455,6 +455,11 @@ export default {
 						console.error('Error:', error);
 					});
 			} else {
+				if($("[data-id="+rid+"]").is(":checked")){
+					$("[data-id="+rid+"]").prop("checked", false);
+				}else{
+					$("[data-id="+rid+"]").prop("checked", true);
+				}
 				return false;
 			}
 		};
