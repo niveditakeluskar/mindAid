@@ -50,7 +50,41 @@ class ConsolidateBillingReportController extends Controller
     }
 
     public function getConsolidateBillingReport(Request $request){
-      $query = "select * from patients.consolidate_monthly_billing_report_py";
+      $practicesgrp = sanitizeVariable($request->route('practicesgrpid'));  
+      $practices = sanitizeVariable($request->route('practiceid'));
+      $provider = sanitizeVariable($request->route('providerid'));
+      $monthly   = sanitizeVariable($request->route('monthly'));
+      $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
+      $callstatus = sanitizeVariable($request->route('callstatus'));
+      $onlycode =  sanitizeVariable($request->route('onlycode'));
+      $m = substr($monthly, -1);//dd($m);
+      $m = (int)$m;
+
+        $monthly = date('Y-m');
+        $year = date('Y', strtotime($monthly));
+        $month = date('m', strtotime($monthly));
+  
+      $query = "select * from patients.consolidate_monthly_billing_report_py sp where months = ".$m." and years = ".$year." ";
+
+      if($practices!="" && $practices !='null'){
+        $query .= " and sp.pracid =".$practices;
+      }
+     
+      if($provider!="" && $provider !='null'){
+        $query .= " and sp.proid =".$provider;
+      }
+      if($practicesgrp!="" && $practicesgrp !='null'){
+        $query .= " and sp.pgroupid =".$practicesgrp;
+      }
+      if($activedeactivestatus!="" && $activedeactivestatus !='null'){
+        $query .= " and sp.pstatus =".$activedeactivestatus;
+      }
+      if($callstatus!="" && $callstatus !='null'){
+        $query .= " and sp.csid =".$callstatus;
+      }
+      if($onlycode == true){
+        $query .= " and sp.billingcode != 'null'";
+      }
       $data = DB::select( $query);  
        
             return Datatables::of($data) 
@@ -144,9 +178,11 @@ class ConsolidateBillingReportController extends Controller
               //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
     
                     $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid"; 
+                    
                     if($onlycode == 1){
                       $query .= " where sp.billingcode != 'null'";
                     }
+                   // dd($query);
                     $data = DB::select( DB::raw($query) );
                          
                         //  dd($data);

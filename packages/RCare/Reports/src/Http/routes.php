@@ -31,8 +31,15 @@ Route::get('/time-logs-report', function(){
 
         
     Route::middleware(["auth", "web"])->group(function () { 
-        Route::get('/consolidate-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
-        Route::get('/consolidate-searh-data', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
+        Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
+        Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
+
+        Route::get('/monthly-billing-reports', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReports')->name('monthly.billing.report'); 
+
+        Route::get('/monthlybilling-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getMonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
+     
+
+
         Route::middleware(["roleAccess"])->group(function () {
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
@@ -98,6 +105,7 @@ Route::get('/time-logs-report', function(){
 
             Route::get('/daily-report', 'RCare\Reports\Http\Controllers\DailyBillableReportController@PatientDailyReport')->name('daily.report'); 
             Route::get('/monthly-billing-report', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReport')->name('monthly.billing.report'); 
+
             Route::get('/enrollment-tracking-report', 'RCare\Reports\Http\Controllers\EnrollmentTrackingReportController@PatientEnrollReport')->name('enrollment.tracking.report');               
             // enrollment-tracking-report/group
             Route::get('/enrollment-tracking-report/practicegroup', 'RCare\Reports\Http\Controllers\EnrollmentTrackingReportController@PracticeGroupEnrollmentTrackingList')->name('enrollment.tracking.report.practicegroup'); 
@@ -254,6 +262,7 @@ Route::get('/time-logs-report', function(){
 
         Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
         Route::get('/monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@MonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
+
         Route::get('/care-manager-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{time}/{care_manager_id}/{fromdate}/{todate}/{timeoption}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CMBillingStatusReport@CareManagerReportSearch')->name('care.manager.report.search');
         Route::post('/billupdate', 'RCare\Reports\Http\Controllers\CMBillingStatusReport@CMBillUpdate')->name('bill.update');
         Route::get('/enrollment-report/search/{practicesgrpid}/{practiceid}/{care_manager_id}/{fromdate}/{todate}/{module}/{provider}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\EnrollmentReportController@EnrollmentReportSearch')->name('enrollment.report.search');

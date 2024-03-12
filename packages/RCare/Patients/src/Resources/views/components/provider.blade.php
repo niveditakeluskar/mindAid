@@ -1,7 +1,7 @@
  <div class="col-md-6 form-group mb-3" id="practices_div">
 	<label for="practice_id">Select a Practice<span class="error">*</label>
 	 <!-- @selectpractices("practice_id",["id"=>"practices"])--> <!-- selectGroupedPractices -->
-	 @selectpracticespcp("practice_id",["id"=>"practices"])
+	 @selectpracticespcp("practice_id",["id"=>"practices" ,"onchange"=>"carePlanDevelopment.onPracticepcpChange(this)"])
 </div>
 
 <div class="col-md-6 form-group mb-3" id="providers_div">  
