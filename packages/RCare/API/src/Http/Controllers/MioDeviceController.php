@@ -26,6 +26,7 @@ use RCare\Patients\Models\PatientThreshold;
 use RCare\Org\OrgPackages\Threshold\src\Models\GroupThreshold;
 use RCare\Org\OrgPackages\Practices\src\Models\PracticeThreshold;
 use RCare\Org\OrgPackages\Practices\src\Models\OrgThreshold;
+use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
 
 use RCare\API\Models\ApiException;
 use RCare\Rpm\Models\Devices;
@@ -36,6 +37,7 @@ use Exception;
 use DataTables;
 use Session;
 use Illuminate\Support\Str;
+use URL;
 
 class MioDeviceController extends Controller {
 
@@ -180,25 +182,20 @@ class MioDeviceController extends Controller {
     
   
     public function process_mio_webhook_observation(){
-      $getData = MioWebhook::where('status',0)->orderBy('id', 'DESC')->get();
+      $getData = MioWebhook::where('status',0)->whereNotNull('device_id')->orderBy('id', 'DESC')->get();
       $d = count($getData);
       $i=1;
       foreach($getData as $value)
       {
         $decodeContent = json_decode($value->content, true);
-
-       
-
-        if(array_key_exists('deviceId', $decodeContent )) {
+        // if(array_key_exists('deviceId', $decodeContent )) {
       
-            //fetch device details
-            $deviceId = $decodeContent['deviceId'];
-            $status = $decodeContent['status'];
-            $imei = $status['imei'];
-            $modelNumber = $decodeContent['modelNumber'];
-          
-
-        }else{
+        //     //fetch device details
+        //     $deviceId = $decodeContent['deviceId'];
+        //     $status = $decodeContent['status'];
+        //     $imei = $status['imei'];
+        //     $modelNumber = $decodeContent['modelNumber'];
+        // }else{
       
         $id = $value['id'];
         $time = $decodeContent['ts'];
@@ -207,20 +204,17 @@ class MioDeviceController extends Controller {
         // $decodeContent = $datajson['data'];
         // $recorddate = date('Y-m-d H:i:s', ($time)/1000); 
         // $deviceName = $datajson['readingType'];
-        $checkDeviceExist= PatientDevices::where('device_code',$device_id)->exists();
-        $get_checkDeviceExist= PatientDevices::where('device_code',$device_id)->select('patient_id')->get();
+        //$checkDeviceExist= PatientDevices::where('device_code',$device_id)->whereNotNull('device_code')->exists();
+        $get_checkDeviceExist= PatientDevices::where('device_code',$device_id)->whereNotNull('device_code')->select('patient_id')->get();
 
         $devicecount = $get_checkDeviceExist->count(); 
         
         if($devicecount > 0){
-    
         $patient_id = $get_checkDeviceExist[0]->patient_id;
         $partner_id = $get_checkDeviceExist[0]->partner_id;
         $observationid = $patient_id.'-'.$time;
 
-        $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
-        $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Reading Message');
-        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
+       
         
             if($patient_id!=null){
 
@@ -267,32 +261,40 @@ class MioDeviceController extends Controller {
 
                 $check = \DB::select(\DB::raw("select * from  rpm.observations_bp ob
                 where device_id = '".$device_id."' and (effdatetime at time zone 'UTC' at time zone 'CST') = '".$recorddate."'"));
-
+                
                 // dd($check);
                     if(empty($check)){
+                        
                         $o = Observation_BP::create($insert_array);
-						
+                        $url = strtolower(URL::to('/').'/rcare-login'); 
+						if($o && DomainFeatures::where(DB::raw('lower(url)'), $url)->where('rpm_messages',1)->exists()){
+                            
+                            $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',2)->where('status',1)->get('id');
+                            $SID          = getFormStageId(2, $ccmSubModule[0]->id, 'Reading Message');
+                            $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID);
+                            $count = Observation_BP::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+                            if($count == 16){
+                                $SID1          = getFormStageId(2, $ccmSubModule[0]->id, 'Sixteen Reading');
+                                $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID1);
+                            }
+                        }
                         $update_threshold = Observation_BP::where('device_id',$device_id)
                         ->where('patient_id',$patient_id)//->where('mrn',$mrn_no)->where('observation_id',$observationid)
                         ->where('effdatetime',$recorddate)
                         ->get();  
                         
                         // dd($update_threshold );
-                    if($update_threshold!=''){
+                        if($update_threshold!=''){
 
-                        $this->saveThresholdReadingOfMioWebhook('BloodPressure',$recorddate,$patient_id,$partner_id,$device_id,$observationid);
-                        // $this->saveThresholdReadings($deviceName,$recorddate,$patient_id,$partner_id,$device_id,$observationid);
-                        // ApiTellihealth::where('id',$id)->update(['status'=>1]);
-                        \DB::select(\DB::raw("update api.mio_webhook t set status=1
-                        where  id= '".$id."' and device_id='".$device_id."' "));
-                    }
+                            $this->saveThresholdReadingOfMioWebhook('BloodPressure',$recorddate,$patient_id,$partner_id,$device_id,$observationid);
+                            // $this->saveThresholdReadings($deviceName,$recorddate,$patient_id,$partner_id,$device_id,$observationid);
+                            // ApiTellihealth::where('id',$id)->update(['status'=>1]);
+                            \DB::select(\DB::raw("update api.mio_webhook t set status=1
+                            where  id= '".$id."' "));
+                        }
                     }
 
-                    $count = Observation_BP::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
-                    if($count == 16){
-                        $SID1          = getFormStageId(2, $ccmSubModule[0]->id, 'Sixteen Reading');
-                        $enroll_msg = CommonFunctionController::sentSchedulMessage(2,$patient_id,$SID1);
-                    }
+                    
             // }
        
             }else{
@@ -301,7 +303,7 @@ class MioDeviceController extends Controller {
 
          }
 
-        }  
+        //}  
      
 
         } 

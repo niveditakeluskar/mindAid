@@ -50,11 +50,11 @@ class PatientWorklistController extends Controller
         $options = [];
         $module_id = 2; //getPageModuleName();
         $submodule_id = 58; //getPageSubModuleName();
-         $stage_id = getFormStageId($module_id, $submodule_id, 'Email');
+        $stage_id = getFormStageId($module_id, $submodule_id, 'Email');
         $step_id =  getFormStepId($module_id, $submodule_id, $stage_id, 'Additional Device');
         $template_id = 0;
 
-        foreach (ContentTemplate::getContentScripts($module_id, $submodule_id, $stage_id, $step_id, $device_id=null) as $contenttemplate) {
+        foreach (ContentTemplate::getContentScripts($module_id, $submodule_id, $stage_id, $step_id, $device_id = null) as $contenttemplate) {
             $options[$contenttemplate->id] = $contenttemplate->content_title;
         }
 
@@ -88,7 +88,7 @@ class PatientWorklistController extends Controller
 
         return response()->json($options);
     }
-    
+
     public function deactivationReasonsList()
     {
         $options = [];
@@ -774,11 +774,11 @@ class PatientWorklistController extends Controller
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
 
         // Pagination parameters
- 
-     // Fetch user details
-    $user = Users::findOrFail($cid);
-    $roleid = $user->role;
-/* 
+
+        // Fetch user details
+        $user = Users::findOrFail($cid);
+        $roleid = $user->role;
+        /* 
 // Enable query logging in Laravel
 DB::connection()->enableQueryLog();
 
@@ -786,11 +786,11 @@ DB::connection()->enableQueryLog();
 $start = microtime(true);
  */
 
-    // Fetch data from the database if not found in cache
-    $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
+        // Fetch data from the database if not found in cache
+        $data = $this->executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid);
 
-    $run_score_procedure = 0;
-    
+        $run_score_procedure = 0;
+
         foreach ($data as $d) {
             if ($d->pssscore == 0) {
                 if ($run_score_procedure == 1) {
@@ -799,7 +799,7 @@ $start = microtime(true);
             }
         }
 
-        
+
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -809,13 +809,13 @@ $start = microtime(true);
                     ->exists();
 
                 $PatientService = PatientServices::where('patient_id', $row->pid)
-                ->where('status', 1)
-                ->whereHas('module', function ($q) {
-                    $q->where('module', 'RPM'); // '=' is optional
-                })
-                ->exists();
-            
-                    $btn2 = '';
+                    ->where('status', 1)
+                    ->whereHas('module', function ($q) {
+                        $q->where('module', 'RPM'); // '=' is optional
+                    })
+                    ->exists();
+
+                $btn2 = '';
                 if ($PatientService == true) {
                     if (!empty($check)) {
                         $btn1 = '<a href="/rpm/care-plan-development/' . $row->pid . '" title="Action" >Care Plan </a>'; //cpd                     
@@ -825,7 +825,7 @@ $start = microtime(true);
                     if (!empty($row->cciconcolor)) {
                         $btn2 = '<a href="javascript:void(0)" data-toggle="tooltip"  title = "' . $row->ccicontitle . '" ><i class="i-Closee i-Data-Yes" style="color: ' . $row->cciconcolor . ' ; cursor: pointer;"></i></a>';
                     }
-                   $btn =  $btn1 . " " . $btn2;
+                    $btn =  $btn1 . " " . $btn2;
                 } else {
                     if (!empty($check)) {
                         $btn1 = '<a href="/ccm/monthly-monitoring/' . $row->pid . '" title="Action" >CCM </a>'; //monthly
@@ -846,73 +846,77 @@ $start = microtime(true);
             })
             ->rawColumns(['action', 'activedeactive', 'addaction'])
             ->make(true);
-
     }
 
-    private function executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid,$roleid)
-{
-    $monthly = Carbon::now();
-    $year = date('Y', strtotime($monthly));
-    $month = date('m', strtotime($monthly));
-    $configTZ = config('app.timezone');
-    $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
-    $p = ($practices !== 'null' && $practices != 0) ? $practices : 'null';
-    $pt = ($patient !== 'null') ? $patient : 'null';
-    $timeoption = ($time == 'null' || $time == '') ? '1' : $timeoption;
-    $totime = ($time == 'null' || $time == '') ? '00:20:00' : $time;
-    $totime = ($time != 'null' && $time != '00:00:00') ? $time : $totime;
-    $timeoption = ($timeoption == '3' && $time == '00:00:00') ? '5' : $timeoption;
-    $timeoption = ($timeoption == '2' && $time == '00:00:00') ? '6' : $timeoption;
-    $status = ($activedeactivestatus == 'null') ? 'null' : $activedeactivestatus;
-    $module_id = ($module == 'null') ? 'null' : $module;
+    private function executeQuery($practices, $patient, $module, $timeoption, $time, $activedeactivestatus, $cid, $roleid)
+    {
+        $monthly = Carbon::now();
+        $year = date('Y', strtotime($monthly));
+        $month = date('m', strtotime($monthly));
+        $configTZ = config('app.timezone');
+        $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $p = ($practices !== 'null' && $practices != 0) ? $practices : 'null';
+        $pt = ($patient !== 'null') ? $patient : 'null';
+        $timeoption = ($time == 'null' || $time == '') ? '1' : $timeoption;
+        $totime = ($time == 'null' || $time == '') ? '00:20:00' : $time;
+        $totime = ($time != 'null' && $time != '00:00:00') ? $time : $totime;
+        $timeoption = ($timeoption == '3' && $time == '00:00:00') ? '5' : $timeoption;
+        $timeoption = ($timeoption == '2' && $time == '00:00:00') ? '6' : $timeoption;
+        $status = ($activedeactivestatus == 'null') ? 'null' : $activedeactivestatus;
+        $module_id = ($module == 'null') ? 'null' : $module;
 
-    $query = $this->constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid,$module_id,$roleid,$month,$year,$configTZ,$userTZ);
-    
-    // Execute the query
-    return DB::select($query);
-}
+        $query = $this->constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid, $module_id, $roleid, $month, $year, $configTZ, $userTZ);
 
-private function constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid,$module_id,$roleid,$month,$year,$configTZ,$userTZ)
-{
-
-    $columns = [
-        'pid',
-        'pfname',
-        'plname',
-        'pmname',
-        'pprofileimg',
-        'pdob',
-        'pppracticeemr',
-        'ppracticeid',
-        'pracpracticename',
-        'pfromdate',
-        'ptodate',
-        "to_char(csslastdate at time zone '$configTZ' at time zone '$userTZ', 'MM-DD-YYYY HH24:MI:SS') as csslastdate",
-        'pstatus',
-        'ptrtotaltime',
-        'psmodule_id',
-        'cciconcolor',
-        'ccicontitle',
-        'pssscore'
-    ];
-
-    switch ($roleid) {
-        case 5:
-            $table = 'patients.worklist_v2';
-            break;
-        case 2:
-            $table = 'patients.worklist_admin_v2';
-            break;
-        default:
-            $table = 'patients.worklist_tlm_v2';
+        // Execute the query
+        return DB::select($query);
     }
 
-    $columnsString = implode(', ', $columns);
+    private function constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid, $module_id, $roleid, $month, $year, $configTZ, $userTZ)
+    {
+
+        $columns = [
+            'pid',
+            'pfname',
+            'plname',
+            'pmname',
+            'pprofileimg',
+            'pdob',
+            'pppracticeemr',
+            'ppracticeid',
+            'pracpracticename',
+            'pfromdate',
+            'ptodate',
+            "to_char(csslastdate at time zone '$configTZ' at time zone '$userTZ', 'MM-DD-YYYY HH24:MI:SS') as csslastdate",
+            'pstatus',
+            'ptrtotaltime',
+            'psmodule_id',
+            'cciconcolor',
+            'ccicontitle',
+            'pssscore'
+        ];
+
+        switch ($roleid) {
+            case 5:
+                $table = 'patients.worklist_v2';
+                break;
+            case 2:
+                $table = 'patients.worklist_admin_v2';
+                break;
+            case 6:
+                $table = 'patients.worklist_admin_v2';
+                break;
+            case 10:
+                $table = 'patients.worklist_admin_v2';
+                break;
+            default:
+                $table = 'patients.worklist_tlm_v2';
+        }
+
+        $columnsString = implode(', ', $columns);
 
 
-    return "SELECT $columnsString FROM $table($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
-
-}
+        return "SELECT $columnsString FROM $table($p,$pt,$month, $year,$timeoption,'" . $totime . "',$roleid, $cid,'" . $configTZ . "','" . $userTZ . "',$status,$module_id)";
+    }
     /*public function addCarePlanAge(Request $request){
 		PatientCareplanAge::truncate();
 		$generate_careplan_age = DB::select('SELECT patients.generate_patient_careplan_age()');
