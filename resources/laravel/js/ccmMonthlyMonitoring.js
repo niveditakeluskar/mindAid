@@ -71,6 +71,7 @@ var populateForm = function (data, url) {
                             var summaryslength = "";
                         }                        
 
+
                         var checklist_data = result[key].static['checklist_data'];
 
                         if (result[key].static['additional_services'] != null && typeof (result[key].static['additional_services']) != "undefined" && result[key].static['additional_services'] != "") {

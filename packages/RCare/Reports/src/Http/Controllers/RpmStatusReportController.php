@@ -200,7 +200,7 @@ class RpmStatusReportController extends Controller
         }
         
         // dd($query);     
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
         // dd($data);
         return Datatables::of($data) 
         ->addIndexColumn()             
@@ -250,7 +250,7 @@ class RpmStatusReportController extends Controller
             inner join patients.patient_services ps on ps.patient_id = ppp.id
             where ps.module_id = 2 and ppp.status = 1  and newpp.provider_type_id =1
              and newpp.is_active=1 and newrp.is_active = 1 and ps.status = 1 ";    
-            $totalRpmPatient=DB::select( DB::raw($query1) );  
+            $totalRpmPatient=DB::select($query1);  
             
 
             $query2="select count(distinct ppp.id) from patients.patient ppp
@@ -260,7 +260,7 @@ class RpmStatusReportController extends Controller
             where ps.module_id = 2 and ppp.status = 1 and newpp.is_active = 1 and newpp.provider_type_id =1 
             and newpp.is_active=1 and newrp.is_active =1 
             and ps.created_at between  '".$fromdate."' and '".$todate." 23:59:59' ";
-            $totalnewlyenrolled=DB::select( DB::raw($query2) );
+            $totalnewlyenrolled=DB::select($query2);
 
            
 
@@ -290,7 +290,7 @@ class RpmStatusReportController extends Controller
 
             $query = "select * from patients.sp_enrolled_in_rpm_details($p,1)"; 
             // dd($query);
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
                     return Datatables::of($data) 
                     ->addIndexColumn()            
                     ->make(true);
@@ -342,7 +342,7 @@ class RpmStatusReportController extends Controller
             }
             $query = "select * from patients.sp_newlyenrolled_in_rpm_details($p,$activedeactivestatus,timestamp '".$fromdate."', timestamp '".$todate."')";   
             // dd($query);
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
                     return Datatables::of($data) 
                     ->addIndexColumn()            
                     ->make(true);  
@@ -385,7 +385,7 @@ class RpmStatusReportController extends Controller
 
             $query2 = "select * from patients.sp_noreadingsinrpm_details($p,$activedeactivestatus,timestamp '".$lastdt1."', timestamp '".$lastdt2."')";
          
-            $newdata = DB::select( DB::raw($query2) );
+            $newdata = DB::select($query2);
                     return Datatables::of($newdata) 
                     ->addIndexColumn()            
                     ->make(true);    

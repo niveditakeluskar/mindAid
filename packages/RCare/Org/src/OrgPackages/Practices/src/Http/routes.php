@@ -1,4 +1,6 @@
 <?php
+use RCare\Org\OrgPackages\Practices\src\Models\Practices;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,21 @@ Route::prefix('org')->group(function () {
                 return view('Practices::practice-main');
             })->name("org_practice");   
         });
+
+        Route::get('/practiceslist', function () {
+             // Define a unique cache key for this data
+           /*  $cacheKey = 'practices_list_WRKLIST';
+            // Check if the data exists in the cache
+            if (Cache::has($cacheKey)) {
+                // Data exists in the cache, retrieve and return it
+                return response()->json(Cache::get($cacheKey));
+            } */
+            $practices = Practices::worklistPractices(); // worklistPractices() fetches practices
+            // Store the fetched data in the cache for future requests
+           /*  Cache::put($cacheKey, $practices, $minutes = 60); */ // Cache for 60 minutes
+            return response()->json($practices);
+        });
+
         Route::post("/subtypeProviders", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@getsubProviders")->name("subtypeProviders");
         Route::get("/org-practices-list", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@PracticeList")->name("org_practices_list");
         Route::get("/org-practices-group-list", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@PracticeGroupList")->name("org_practices_group_list");

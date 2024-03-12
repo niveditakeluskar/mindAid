@@ -1,5 +1,6 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,7 +23,8 @@ class PatientsVitalsDataAddRequest extends FormRequest
      */
     public function rules()
     {
-        return validationRules(True,
+        return validationRules(
+            True,
             // [ 
             // 'height'    => 'nullable|between:0,99.99|required_without_all:weight,bmi,bp,diastolic,o2,pulse_rate', 
             // 'weight'    => 'nullable|between:0,99.99|required_without_all:height,bmi,bp,diastolic,o2,pulse_rate', 
@@ -32,18 +34,17 @@ class PatientsVitalsDataAddRequest extends FormRequest
             // 'o2'   => 'nullable|between:0,99.99|required_without_all:height,weight,bp,diastolic,diastolic,pulse_rate', 
             // 'pulse_rate'=> 'nullable|between:0,99.99|required_without_all:height,weight,bp,diastolic,diastolic,o2',  
             // ]
-            [ 
-                'height'    => 'nullable|numeric', 
-                'weight'    => 'nullable|numeric',  
+            [
+                'height'    => 'nullable|numeric',
+                'weight'    => 'nullable|numeric',
                 // 'bmi'       => 'nullable|numeric', 
-                'bp'        => 'nullable|numeric',   
-                'diastolic' => 'nullable|numeric',  
-                'o2'   => 'nullable|numeric',  
-                'pulse_rate'=> 'nullable|numeric',  
+                'bp'        => 'nullable|numeric',
+                'diastolic' => 'nullable|numeric',
+                'o2'   => 'nullable|numeric',
+                'pulse_rate' => 'nullable|numeric',
                 'oxygen'   => 'nullable|integer',
-                'notes'    =>  'nullable|required_if:oxygen,0|text_comments_slash'   
-                ]
+                'notes'    =>  'nullable|required_if:oxygen,0|text_comments_slash'
+            ]
         );
-
     }
 }

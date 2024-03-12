@@ -104,7 +104,7 @@ class CallStatusReportController extends Controller
         
         
         // dd($query);     
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
         //  dd($data);
         return Datatables::of($data) 
         ->addIndexColumn()             

@@ -105,10 +105,10 @@ class CallActivityPractiseWiseCountReportController extends Controller
 
         $query = "select * from patients.call_and_additional_service_report($prac, $p, $pt,'".$fromdate1."', '".$todate1."')";
         // dd($query);
-        $data = \DB::select( \DB::raw($query) ); 
+        $data = DB::select($query); 
     
         $a = "select count(*),activity_type from ren_core.activities where timer_type like '4' group by activity_type";
-        $activity = DB::select( DB::raw($a) );
+        $activity = DB::select($a);
         //$total_diag = $activity[3]->count;
 
         $arrydata=array(); 
@@ -184,7 +184,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
                   
             //   $add = $total_diag; 
             //   $type_activity = "select activity from ren_core.activities where activity_type like 'Routine Response' ";
-            //   $type_activity = \DB::select( \DB::raw($type_activity) ); 
+            //   $type_activity = \DB::select($type_aivity); 
               
             //   for($k=0;$k < count($type_activity);$k++)
             //   { 
@@ -197,7 +197,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
 
               /*******trying all for activities ***************/
               $all_activity = "select activity_type,ARRAY_AGG(activity || ',' ) as activity from ren_core.activities where timer_type like '4' group by activity_type order by activity_type ";
-              $all_activity = \DB::select( \DB::raw($all_activity) );  
+              $all_activity = DB::select($all_acvity);  
                 // dd($all_activity);
                 foreach($all_activity as $all){
                    $specificactivity = $all->activity;
@@ -338,10 +338,10 @@ class CallActivityPractiseWiseCountReportController extends Controller
 
         $query = "select * from patients.child_call_and_additional_service_report($pracgrp,$pr,$pro,$p,'".$fromdate."','".$todate."' , '".$configTZ."','".$userTZ."')";
     //    dd($query);  
-        $data = \DB::select( \DB::raw($query) ); 
+        $data = \DB::select($query); 
         // dd($data);
         $a = "select count(*),activity_type from ren_core.activities where timer_type like '4' group by activity_type";
-        $activity = DB::select( DB::raw($a) );
+        $activity = DB::select($a);
        // $total_diag = $activity[3]->count;
 
         $arrydata=array(); 
@@ -1297,7 +1297,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
                   
             //   $add = $total_diag; 
             //   $type_activity = "select activity from ren_core.activities where activity_type like 'Routine Response' ";
-            //   $type_activity = \DB::select( \DB::raw($type_activity) ); 
+            //   $type_activity = \DB::select($type_aivity) ); 
               
             //   for($k=0;$k < count($type_activity);$k++)
             //   { 
@@ -1310,7 +1310,7 @@ class CallActivityPractiseWiseCountReportController extends Controller
 
               /*******trying all for activities ***************/
               $all_activity = "select activity_type,ARRAY_AGG(activity || ',' ) as activity from ren_core.activities where timer_type like '4' group by activity_type order by activity_type ";
-              $all_activity = \DB::select( \DB::raw($all_activity) );  
+              $all_activity = DB::select($all_acvity);  
               //   dd($all_activity);
                 foreach($all_activity as $all){
                    $specificactivity = $all->activity;

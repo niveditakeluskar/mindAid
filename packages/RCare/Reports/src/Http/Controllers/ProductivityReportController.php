@@ -341,7 +341,7 @@ $query="select * from patients.caremanager_daywise_productivity_patients
 (timestamp  '".$dt1."',timestamp  '".$dt2."',$care_manager_id,$practices,$status,$module_id)";
 //  echo $query;
 // dd($query);      
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
 // dd($data);   
 return Datatables::of($data) 
 ->addIndexColumn()
@@ -362,12 +362,12 @@ public function ProductivityDailySummary(Request $request){
   //select count(*) from patients.patient;
   // $query="select count(*) from patients.patient where status=1"; 
   $query ="select * from patients.active_patient_count()"; 
-  $totalPatient=DB::select( DB::raw($query) );
+  $totalPatient=DB::select($query);
 
   //select count(*) from ren_core.users where role=5 AND status=1
   $query1="select count(*) from ren_core.users where role=5 AND status=1";
   //"select * from ren_core.caremanagers_count()";  
-  $totalCaremanagers=DB::select(DB::raw($query1) ); 
+  $totalCaremanagers=DB::select($query1); 
 
    //$query2=DB::select("select * from patients.productivity_worked_on_patients('".$first_date."','".$last_date."','".$care_manager_id."')");  
   //$query2="select * from patients.productivity_worked_on_patients_count('".$first_date."','".$last_date."')";
@@ -379,7 +379,7 @@ public function ProductivityDailySummary(Request $request){
        on ptr.patient_id = ptr2.patient_id 
        where date(ptr.created_at) between '".$first_date." 00:00:00' and '".$last_date." 23:59:59'
        ";
-  $dailytotalPatientWorkedon=DB::select( DB::raw($query2) ); 
+  $dailytotalPatientWorkedon=DB::select($query2); 
 
   // $query3=DB::select("select * from patients.productivity_billable_patients( '".$first_date."','".$last_date."','".$care_manager_id."')");
 //   $query3="select count(distinct ptr.patient_id) from 
@@ -391,12 +391,12 @@ public function ProductivityDailySummary(Request $request){
        from patients.view_caremanager_daywise_total_time_spent ptr
        where date(ptr.date_created) between '".$first_date." 00:00:00' and '".$last_date." 23:59:59' 
       AND ptr.billable = 1";
-  $dailytotalBillablePatients = DB::select( DB::raw($query3) );
+  $dailytotalBillablePatients = DB::select($query3);
 
   //select count(*) from ren_core.practices where is_active=1
   $query4="select count(*) from ren_core.practices where is_active=1";
   //"select * from ren_core.practice_count()";  
-  $totalpractices=DB::select( DB::raw($query4) );  
+  $totalpractices=DB::select($query4);  
 
   // $query5 ="select * from patients.productivity_billable_practice('".$first_date."','".$last_date."',$care_manager_id)";
   // $dailytotalpracticebillable =DB::select(DB::raw($query5)); 
@@ -418,25 +418,25 @@ public function ProductivitySummary(Request $request)
   $current_month = date('m', strtotime($take_current_month_year));
 
   $query="select count(*) from patients.patient where status=1";  
-  $totalPatient=DB::select( DB::raw($query) );
+  $totalPatient=DB::select($query);
 
   $query1="select count(*) from ren_core.users where role=5 AND status=1";  
-  $totalCaremanagers=DB::select( DB::raw($query1) );
+  $totalCaremanagers=DB::select($query1);
 
   $query2="select count(distinct ptr.patient_id) 
   from patients.patient_time_records ptr
   inner join patients.patient p on ptr.patient_id=p.id
   left join patients.caremanager_monthwise_total_time_spent pcm on ptr.patient_id = pcm.patient_id
   where pcm.month_created=' ".$current_month."' and pcm.year_created=' ".$current_year." ' ";  
-  $totalPatientWorkedon=DB::select( DB::raw($query2) );
+  $totalPatientWorkedon=DB::select($query2);
 
   $query3="select count(distinct pcm.patient_id) 
   from patients.caremanager_monthwise_total_time_spent pcm,patients.patient p 
   where billable=1 and pcm.patient_id=p.id and pcm.month_created=' ".$current_month."' and pcm.year_created=' ".$current_year." ' ";
-  $totalBillablePatients = DB::select( DB::raw($query3) );
+  $totalBillablePatients = DB::select($query3);
 
   $query4="select count(*) from ren_core.practices where is_active=1";  
-  $totalpractices=DB::select( DB::raw($query4) );
+  $totalpractices=DB::select($query4);
 
   $query5 ="select count(distinct pp.practice_id)
   from patients.caremanager_monthwise_total_time_spent  pcm inner join patients.patient p 
@@ -449,7 +449,7 @@ on pp1.patient_id = pp2.patient_id and pp1.id = pp2.maxid and pp1.provider_type_
 )
 pp  on pcm.patient_id=pp.patient_id
 and pcm.billable=1 and pcm.month_created=' ".$current_month."' and pcm.year_created=' ".$current_year." ' ";
-$totalpracticebillable =DB::select(DB::raw($query5)); 
+$totalpracticebillable =DB::select($query5); 
 
 $data=array('Totalpatient'=>$totalPatient,
   'TotalCareManager'=>$totalCaremanagers,
@@ -480,7 +480,7 @@ public function ProductivityPatients(Request $request)
   $practices =sanitizeVariable($request->route('practice')); 
   $care_manager_id  =$request->route('caremanager');
   $query="select * from patients.patient_details($practices)";
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
     return Datatables::of($data)
     ->addIndexColumn()             
     ->make(true);
@@ -492,7 +492,7 @@ public function ProductivityPractice(Request $request)
   if($request->ajax())
   {   
     $query ="select * from ren_core.practices_details($practices)";
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
     return Datatables::of($data)
     ->addIndexColumn()            
     ->make(true);
@@ -505,7 +505,7 @@ public function ProductivityCaremanager(Request $request)
   if($request->ajax())
   {
     $query ="select * from ren_core.caremanagers_details($caremanager)";
-    $data = DB::select( DB::raw($query) ); 
+    $data = DB::select($query); 
     return Datatables::of($data)  
     ->addIndexColumn()       
     ->make(true);
@@ -581,7 +581,7 @@ if($Reqfromdate!='null' && $Reqtodate!='null')
  $query.=" AND (pcm.month_created between '".$frommonth."' and  '".$tomonth."') and (pcm.year_created between '".$fromyear."' and  '".$toyear."')";
 }
           // echo $query;
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
           // dd($query);
 return Datatables::of($data)     
 ->addIndexColumn()         
@@ -621,7 +621,7 @@ public function ProductivityDailyBillablePatients(Request $request)
   } 
  
 $query = "select * from patients.productivity_billable_patients_details('".$first_date."','".$last_date."',$care_manager_id,$practice_id,$module_id)";
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
 return Datatables::of($data)     
 ->addIndexColumn()         
 ->make(true);
@@ -695,7 +695,7 @@ if($Reqfromdate!='null' && $Reqtodate!='null')
 {
   $query.=" AND (pcm.month_created between '".$frommonth."' and  '".$tomonth."') and (pcm.year_created between '".$fromyear."' and  '".$toyear."')";
 }
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
 return Datatables::of($data) 
 ->addIndexColumn()            
 ->make(true);
@@ -731,7 +731,7 @@ public function ProductivityDailyPatientsWorkedOn(Request $request)
   $query ="select * from patients.productivity_worked_on_patients_details('".$fromdate."','".$todate."',$care_manager_id,$practices,$module_id)";       
   // $query ="select * from patients.productivity_worked_on_patients_details('2020-12-07','2020-12-07',null,24,null)";       
     // dd($query);
-    $data = DB::select( DB::raw($query) );
+    $data = DB::select($query);
     return Datatables::of($data) 
     ->addIndexColumn()            
     ->make(true);
@@ -802,7 +802,7 @@ if($Reqfromdate!='null' && $Reqtodate!='null'){
 }
 
 $query.="group by pp.practice_id,pra.name,pra.location,pra.phone,pra.address,pra.number";
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
 return Datatables::of($data) 
 ->addIndexColumn()            
 ->make(true);
@@ -873,7 +873,7 @@ if($Reqfromdate!='null' && $Reqtodate!='null'){
 }
 
 $query.="group by pp.practice_id,pra.name,pra.location,pra.phone,pra.address,pra.number";
-$data = DB::select( DB::raw($query) );
+$data = DB::select($query);
 return Datatables::of($data) 
 ->addIndexColumn()            
 ->make(true); 

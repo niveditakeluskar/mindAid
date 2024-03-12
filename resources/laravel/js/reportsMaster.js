@@ -9,13 +9,14 @@ var populateForm = function (id, url) {
 			console.log(result);
 			for (var key in result) {
 				form.dynamicFormPopulate(key, result[key]);
-				if(result[key].static['display_name'] != null){
-					var display_name = result[key].static['display_name']; 
-					var report_path_name = result[key].static['report_file_path']; 
-					// $('#ReportNameForm input[name="report_name"]').val(report_name);
-					$('#ReportNameForm input[name="display_name"]').val(display_name);
-					$('#ReportNameForm input[name="report_file_path"]').val(report_path_name);       
-
+				if(result[key] != ''){
+					if(result[key].static['display_name'] != null){
+						var display_name = result[key].static['display_name']; 
+						var report_path_name = result[key].static['report_file_path']; 
+						// $('#ReportNameForm input[name="report_name"]').val(report_name);
+						$('#ReportNameForm input[name="display_name"]').val(display_name);
+						$('#ReportNameForm input[name="report_file_path"]').val(report_path_name);       
+					}
 				}
 			}
 		}

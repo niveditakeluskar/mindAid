@@ -11,7 +11,7 @@ class CallWrapupChecklist extends Model
 {
     //
     use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='ccm.callwrapup_checklist';
+    protected $table ='ccm.callwrapup_checklist'; 
     public $timestamps = TRUE;
         /**
      * The attributes that are mass assignable.
