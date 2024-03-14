@@ -85,6 +85,15 @@
                               <option value="2FA">Multifactor Authentication</option>
                             </select>
                         </div>
+                        <div class="col-md-6 form-group mb-3 pro_image">
+                            <label for="profile_img">Select Logo</label>
+                            @file("file", ["id" => "file", "class" => "form-control",'onchange'=>"uploadfile('add')"])
+                            <input type="hidden" name="image_path" id="image_path">
+                            @isset($logo_path)
+                                @hidden("hidden_domain_logo", ["id" => "hidden_domain_logo", "class" => " ", "value" => $logo_path])
+                            @endisset
+                            <span id="profile_img"></span>
+                        </div>
                         <div class="col-md-6 form-group mb-3">
                             <label for="service_name">Password Attempt<span class="error">*</span> </label>
                             @text("password_attempts", ["id" => "password_attempts", "class" => "form-control  ", "placeholder" => "Enter Password Attempt"])
@@ -129,10 +138,16 @@
                                 @text("idle_time_redirect", ["id" => "idle_time_redirect", "class" => "form-control" ])  
                         </div>
 
-                        <div class="col-md-4 form-group mb-3">
+                        <div class="col-md-6 form-group mb-3">
                                 <label for="service_name">login Block Time(In Minute)<span class="error">*</span> </label>
                                 @text("block_time", ["id" => "block_time", "class" => "form-control" ])  
                         </div>
+                        
+                        <div class="col-md-6 form-group mb-3">
+                                <label for="server_name">Instance Name</label>
+                                @text("instance", ["id" => "instance", "class" => "form-control" ])
+                        </div>
+                        
 
                     </div>
                 </div>    
@@ -310,6 +325,51 @@ var domainfeatureslistData = function(){
           ];
         var table = util.renderDataTable('domain_features_list', "{{ route('fetchDomainFeatures') }}", columns, "{{ asset('') }}");   
 };
+
+
+function uploadfile(action){
+        var token=$('input[name=_token]').val();
+        var fname;
+        var lname;
+        var file_data;
+         if(action=='add') 
+         {
+             url=$('#url').val();
+            //  lname=$('#l_name').val();
+            file_data = $("#file").prop("files")[0];
+         }else
+         {
+            //  fname=$('#edit-f-name').val();
+            //  lname=$('#edit-l-name').val();
+             file_data = $("#fileedit").prop("files")[0];  
+         }
+            //console.log(fname+" test "+lname);
+        var form_data = new FormData();
+        form_data.append("url", url);
+        // form_data.append("l_name", lname);
+        form_data.append("file", file_data);
+        
+        $.ajax({
+            url: '/org/ajax/domainuploadlogo',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN':token
+            },
+            data:form_data,
+            enctype: 'multipart/form-data',
+            success: function(data) {
+                    console.log(data+'domain logo path'); 
+            if(action=='add'){   
+                $('#image_path').val(data);
+            }else{
+                $('#image_path_edit').val(data);
+            }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
 </script>
 
      <!-- <script>

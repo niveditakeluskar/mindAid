@@ -382,12 +382,10 @@ class PatientController extends Controller
         $billable_time_db                = CommonFunctionController::getCcmMonthlyNetTime($uid, $module_id);
         $non_billabel_time = empty($non_billabel_time_db) ? '00:00:00' : $non_billabel_time_db;
         $billable_time = empty($billable_time_db) ? '00:00:00' : $billable_time_db;
-        $personal_notes_data = (PatientPersonalNotes::latest($uid, 'patient_id') ? PatientPersonalNotes::latest($uid, 'patient_id')->population() : "");
-        $research_study_data = (PatientPartResearchStudy::latest($uid, 'patient_id') ? PatientPartResearchStudy::latest($uid, 'patient_id')->population() : "");
+        $personal_notes = (PatientPersonalNotes::latest($uid, 'patient_id') ? PatientPersonalNotes::latest($uid, 'patient_id')->population() : "");
+        $research_study = (PatientPartResearchStudy::latest($uid, 'patient_id') ? PatientPartResearchStudy::latest($uid, 'patient_id')->population() : "");
         $patient_threshold = (PatientThreshold::latest($uid, 'patient_id') ? PatientThreshold::latest($uid, 'patient_id')->population() : "");
         //dd($patient_threshold);
-        $personal_notes = empty($personal_notes_data) ? '' : $personal_notes_data['static']['personal_notes'];
-        $research_study = empty($research_study_data) ? '' : $research_study_data['static']['part_of_research_study'];
         $systolichigh = empty($patient_threshold) ? '' : $patient_threshold['static']['systolichigh'];
         $systoliclow = empty($patient_threshold) ? '' : $patient_threshold['static']['systoliclow'];
 
@@ -428,35 +426,28 @@ class PatientController extends Controller
         $device_status = empty($PatientDevices->shipping_status) ? '' : $PatientDevices->shipping_status;
 
 
-        $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1) ?
-            PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
-        // dd($rpmDevices);
+        $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1) ? PatientDevices::with('devices')->where('patient_id', $uid)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
+
         if (isset($rpmDevices[0]->vital_devices)) {
 
-            $data = json_decode($rpmDevices[0]->vital_devices, true);
+            $data = json_decode($rpmDevices[0]->vital_devices);
             $show_device = "";
 
-            if (is_array($data)) {
-                foreach ($data as $item) {
-                    if (array_key_exists("vid", $item)) {
-                        $dev = Devices::where('id', $item['vid'])
-                            ->where('status', '1')
-                            ->orderBy('id', 'asc')
-                            ->first();
+            for ($j = 0; $j < count($data); $j++) {
 
-                        if (!empty($dev)) {
-                            $parts = explode(" ", $dev->device_name);
-                            $devices = implode('-', $parts);
+                if (property_exists($data[$j], "vid")) {
+                    // Access properties using -> operator since $data[$j] is an object
+                    $dev = Devices::where('id', $data[$j]->vid)->where('status', '1')->orderby('id', 'asc')->first();
+                    if (!empty($dev)) {
+                        $parts = explode(" ", $dev->device_name);
+                        $devices = implode('-', $parts);
 
-                            $filename = RPMProtocol::where("device_id", $item['vid'])
-                                ->where('status', '1')
-                                ->first();
+                        $filename = RPMProtocol::where("device_id", $data[$j]->vid)->where('status', '1')->first();
+                        if (!empty($filename)) {
+                            $filenames = $filename->file_name;
+                            $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
 
-                            if (!empty($filename)) {
-                                $filenames = $filename->file_name;
-                                $btn = '<a href="' . $filenames . '" target="_blank" title="Start" id="detailsbutton">Protocol</a>';
-                                $show_device .= $dev->device_name . " (" . $btn . "), ";
-                            }
+                            $show_device .= $dev->device_name . " (" . $btn . "), ";
                         }
                     }
                 }
@@ -528,7 +519,6 @@ class PatientController extends Controller
             'enroll_in_rpm'         => $enroll_in_rpm
         ];
     }
-
 
     // public function fetchPatientDetailsinModel($patient_id,$module_id){ 
     //     $uid       = sanitizeVariable($patient_id);
@@ -1249,7 +1239,7 @@ class PatientController extends Controller
                 }
             }
         }
-        
+
         $rpmDevices = (PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1) ? PatientDevices::with('devices')->where('patient_id', $patient_id)->where('status', 1)->orderBy('created_at', 'desc')->get() : " ");
 
         //dd($rpmDevices[0]->vital_devices);
@@ -1330,13 +1320,13 @@ class PatientController extends Controller
         $careplan_finalization_date = PatientServices::latest_module($patient_id, $module_id);
         $patient = (Patients::where('id', $patient_id) ? Patients::where('id', $patient_id)->get() : "");
         $personal_notes = (PatientPersonalNotes::latest($patient_id, 'patient_id') ? PatientPersonalNotes::latest($patient_id, 'patient_id')->population() : "");
-        $all_personal_notes = (PatientPersonalNotes::with('users')->where ('patient_id', $patient_id)->get() ? PatientPersonalNotes::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
+        $all_personal_notes = (PatientPersonalNotes::with('users')->where('patient_id', $patient_id)->get() ? PatientPersonalNotes::where('patient_id', $patient_id)->orderby('id', 'desc')->get() : '');
         $research_study = (PatientPartResearchStudy::latest($patient_id, 'patient_id') ? PatientPartResearchStudy::latest($patient_id, 'patient_id')->population() : "");
-        $all_research_study = (PatientPartResearchStudy::with('users')->where ('patient_id', $patient_id)->get() ? PatientPartResearchStudy::where ('patient_id', $patient_id)->orderby('id','desc')->get():''); 
+        $all_research_study = (PatientPartResearchStudy::with('users')->where('patient_id', $patient_id)->get() ? PatientPartResearchStudy::where('patient_id', $patient_id)->orderby('id', 'desc')->get() : '');
         if ($module_id == '3') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'all_personal_notes', 'research_study', 'all_research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
         } else if ($module_id == '2') {
-            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes','all_personal_notes','research_study','all_research_study','non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
+            return view('Patients::patient.patient-status-right', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'lastContactDate', 'ellapsedTime', 'currentEllapsedTime', 'previousEllapsedTime', 'questionnaire_status', 'personal_notes', 'all_personal_notes', 'research_study', 'all_research_study', 'non_billable_time', 'patient_assign_device', 'device_education_training', 'careplan_finalization_date'));
             //return view('Ccm::monthly-monitoring.patient-details',['patient'=>$patient], compact('chronicCondition','rpmDevices','medication','lastContactDate','ellapsedTime','currentEllapsedTime','previousEllapsedTime','personal_notes','research_study'));
         } else {
             return view('Patients::patient.traning-checklist', ['patient' => $patient], compact('documents', 'patientdiagnosislastmodified', 'patientdiagnosis', 'chronicCondition', 'rpmDevices', 'medication', 'patient_assign_device', 'device_education_training'));
@@ -1438,6 +1428,7 @@ class PatientController extends Controller
         $pdevices = array();
         $id                 = sanitizeVariable($request->uid);
         $rowid              = sanitizeVariable($request->idd);
+        // dd($rowid);
         $patient_id         = sanitizeVariable($request->patient_id);
         $module_id          = sanitizeVariable($request->module_id);
         $currentMonth       = date('m');
@@ -1554,9 +1545,9 @@ class PatientController extends Controller
             ->addColumn('action', function ($row) {
                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="editDevicesdata" title="Edit"><i class=" editform i-Pen-4"></i></a>';
                 if ($row->status == 1) {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_active" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_active1" id="active"><i class="i-Yess i-Yes" title="Active"></i></a>';
                 } else {
-                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_deactive" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
+                    $btn = $btn . '<a href="javascript:void(0)" data-id="' . $row->id . '" class="change_device_status_deactive1" id="deactive"><i class="i-Closee i-Close"  title="Deactive"></i></a>';
                 }
                 return $btn;
             })

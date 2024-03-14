@@ -40,7 +40,8 @@ var populateForm = function (data, url) {
                   //console.log(result[key][0].pdevice_id);
                   var partner_id = result[key][0].partner_id;
                   var pdevice_id = result[key][0].pdevice_id;
-                  $('#idd').val(result[key][0].id);
+                //   $('#idd').val(result[key][0].id);
+                  $("form[name='devices_form'] #idd").val(result[key][0].id); 
                   $("form[name='devices_form'] #device_id").val(result[key][0].device_code);
                   $("#partner_id").val(partner_id);
                   //$("#partner_devices_id").val(pdevice_id);
@@ -900,58 +901,58 @@ $('#add_replace_device').on('change', function () {
 
 });
 
-// $('body').on('click', '.change_device_status_active', function () { 
-//     var id = $(this).data('id');
-//     if (confirm("Are you sure you want to Deactivate this Device")) {
-//         $.ajaxSetup({
-//          headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         }
-//     });
-//     $.ajax({
-//         type: 'post',
-//         url: '/patients/delete-device/' + id,
-//         // data: {"_token": "{{ csrf_token() }}","id": id},
-//         data: { "id": id },
-//         // alert(data);
-//         success: function (response) {
-//             ccmcpdcommonJS.renderDeviceTableData();
-//             $("#success").show();
-//             var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong> Deactivated Successfully!</strong></div>';
-//             $("#success").html(txt);
-//             setTimeout(function () {
-//             $("#success").hide();
-//             }, 3000);
-//         }
-//     });
-//     } else { return false; }
-// });
+$('body').on('click', '.change_device_status_active1', function () { 
+    var id = $(this).data('id');
+    if (confirm("Are you sure you want to Deactivate this Device")) {
+        $.ajaxSetup({
+         headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        type: 'post',
+        url: '/patients/delete-device/' + id,
+        // data: {"_token": "{{ csrf_token() }}","id": id},
+        data: { "id": id },
+        // alert(data);
+        success: function (response) {
+            ccmcpdcommonJS.renderDeviceTableData();
+            $("#success").show();
+            var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong> Deactivated Successfully!</strong></div>';
+            $("#success").html(txt);
+            setTimeout(function () {
+            $("#success").hide();
+            }, 3000);
+        }
+    });
+    } else { return false; }
+});
                             
-// $('body').on('click', '.change_device_status_deactive', function () {
-//     var id = $(this).data('id');
-//     if (confirm("Are you sure you want to Activate this Device")) {
-//         $.ajaxSetup({
-//             headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//             }
-//         });
-//         $.ajax({
-//             type: 'post',
-//             url: '/patients/delete-device/' + id,
-//             // data: {"_token": "{{ csrf_token() }}","id": id},
-//             data: { "id": id },
-//             success: function (response) {
-//                 ccmcpdcommonJS.renderDeviceTableData();
-//                 $("#success").show();
-//                 var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device  Activated Successfully!</strong></div>';
-//                 $("#success").html(txt);
-//                 setTimeout(function () {
-//                 $("#success").hide();
-//             }, 3000);
-//             }
-//         });
-//     } else { return false;  }
-// });
+$('body').on('click', '.change_device_status_deactive1', function () {
+    var id = $(this).data('id');
+    if (confirm("Are you sure you want to Activate this Device")) {
+        $.ajaxSetup({
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: 'post',
+            url: '/patients/delete-device/' + id,
+            // data: {"_token": "{{ csrf_token() }}","id": id},
+            data: { "id": id },
+            success: function (response) {
+                ccmcpdcommonJS.renderDeviceTableData();
+                $("#success").show();
+                var txt = '<div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Device  Activated Successfully!</strong></div>';
+                $("#success").html(txt);
+                setTimeout(function () {
+                $("#success").hide();
+            }, 3000);
+            }
+        });
+    } else { return false;  }
+});
 
 // $('body').on('click', '.editDevicesdata', function () { //alert("working");
 //     $("#devices_form input[name='device_id']").val('');

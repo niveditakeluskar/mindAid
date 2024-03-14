@@ -84,6 +84,9 @@ export default {
 				if (response && response.status == 200) {
 					this.showAlert = true;
                     updateTimer(this.patientId, 1, this.moduleId);
+                    const taskMangeResp = await axios.get(`/task-management/patient-to-do/${this.patientId}/${this.moduleId}/list`);
+                     $("#toDoList").html(taskMangeResp.data);
+                     $('.badge').html($('#count_todo').val());
                     $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
                         this.time = document.getElementById('page_landing_times').value;

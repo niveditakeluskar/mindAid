@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -16,7 +17,7 @@
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
 
     {{-- theme css --}}
-    <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
+    <link defer id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
     <link defer rel="stylesheet" href="{{ asset('assets/styles/vendor/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css') }}">
 
@@ -43,6 +44,7 @@
         </div>
     </div>
 </head>
+
 <body class="layout_2 text-left {{$themeMode}}">
     @php
     $layout = session('layout');
@@ -59,9 +61,9 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap  d-flex flex-column">
             <div class="main-content">
-            @inertia
-            @vite('resources/js/appInertia.js')
-               
+                @inertia
+                @vite('resources/js/appInertia.js')
+
             </div>
             @include('Theme::layouts_2.footer')
         </div> <!-- ============ Body content End ============= -->
@@ -82,7 +84,7 @@
     <!-- ============ Horizontal Layout End ============= -->
 
     <!-- Model Started here -->
-    <div class="modal fade" id="logout_modal" aria-hidden="true">
+    <!-- <div class="modal fade" id="logout_modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -98,7 +100,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>

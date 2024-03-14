@@ -20,7 +20,6 @@
                 <div class="form-row">
                   <div class="col-md-6 form-group mb-6">
                     <label for="practicename">Practice Name</label>
-                    <!-- Your selectworklistpractices component -->
                     <select id="practices" class="custom-select show-tick select2" data-live-search="true" v-model="selectedPractice"
                       @change="handlePracticeChange">
                       <option v-for="practice in practices" :key="practice.id" :value="practice.id">
@@ -30,7 +29,6 @@
                   </div>
                   <div class="col-md-6 form-group mb-6">
                     <label for="patientsname">Patient Name</label>
-                    <!-- Your selectallworklistccmpatient component -->
                     <select id="patients" class="custom-select show-tick select2" v-model="selectedPatients">
                       <option value="" selected>All Patients</option>
                       <option v-for="patient in patients" :key="patient.id" :value="patient.id">
@@ -231,7 +229,7 @@ export default {
       },
       { headerName: 'Practice', field: 'pracpracticename', flex: 2 },
       {
-    headerName: 'Last contact Date',
+    headerName: 'Last Contact Date',
     field: 'csslastdate',
     cellRenderer: function (params) {
         const date = params.data.csslastdate;
@@ -518,4 +516,6 @@ export default {
 }
 
 
+
 </style>
+

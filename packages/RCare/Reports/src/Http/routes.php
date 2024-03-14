@@ -31,6 +31,8 @@ Route::get('/time-logs-report', function(){
 
         
     Route::middleware(["auth", "web"])->group(function () { 
+       
+        Route::get('/consolidate-monthly-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientMonthlyBillingReport')->name('consolidate.monthly.billing.report'); 
         Route::middleware(["roleAccess"])->group(function () {
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
@@ -145,10 +147,10 @@ Route::get('/time-logs-report', function(){
         Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
         
        
-        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
-        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
-        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
-        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+        // Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        // Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        // Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        // Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
  
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
@@ -417,6 +419,6 @@ Route::get('/time-logs-report', function(){
 
     //call-status-report-search 7th sept 2022
     Route::get('/call-status-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{activedeactivestatus}/{timeperiod}', 'RCare\Reports\Http\Controllers\CallStatusReportController@PatientCallStatusReportSearch')->name('call.status.report.search'); 
-    Route::get('/consolidate-monthly-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientMonthlyBillingReport')->name('consolidate.monthly.billing.report'); 
+    
    
 });

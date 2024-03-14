@@ -10,7 +10,7 @@
     <title>@yield('page-title') Renova Healthcare</title>
     <!--  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet"> -->
 
-
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
     <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
     <link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">
     <!--     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" /> -->
@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}">
     {{-- theme css --}}
-    <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}">
+    <link id="gull-theme" rel="stylesheet" href="{{ asset(mix('assets/styles/css/themes/lite-purple.min.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">
     <!-- dropdown css -->
 
@@ -40,6 +40,34 @@
     @yield('page-css')
     <style>
         .select2-container .select2-selection--single {
+            height: 34px !important;
+        }
+
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge">< !-- CSRF Token --><meta name="csrf-token" content="{{ csrf_token() }}"><title>@yield('page-title') Renova Healthcare</title>< !-- <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet">--><link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}"><link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">< !-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />--><link rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">@yield('before-css') {
+                {
+                -- form wizard --
+            }
+        }
+
+        <link rel="stylesheet" href="{{ asset('assets/styles/vendor/tsf-wizard.bundle.min.css') }}"> {
+                {
+                -- pickupdate --
+            }
+        }
+
+        <link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.css') }}"><link rel="stylesheet" href="{{ asset('assets/styles/vendor/pickadate/classic.date.css') }}"> {
+                {
+                -- theme css --
+            }
+        }
+
+        <link id="gull-theme" rel="stylesheet" href="{{ asset('assets/styles/css/themes/lite-purple.min.css') }}"><link rel="stylesheet" href="{{ asset('assets/styles/vendor/perfect-scrollbar.css') }}">< !-- dropdown css --><link rel="stylesheet" href="{{ asset('assets/styles/vendor/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css') }}">< !-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->< !-- <script src="{{asset('assets/js/vendor/jquery-3.3.1.min.js')}}"></script>--> {
+                {
+                -- page specific css --
+            }
+        }
+
+        < !-- <link href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet" />--><link rel="Stylesheet" href="{{ asset('assets/styles/external-css/themes-smoothness-jquery-ui.css')}}"><link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">@yield('page-css') <style>.select2-container .select2-selection--single {
             height: 34px !important;
         }
 

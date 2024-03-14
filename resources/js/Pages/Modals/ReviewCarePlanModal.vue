@@ -316,6 +316,13 @@
                                                             </div>
 
                                                         </div>
+
+                                                        <div class="col-md-12 mb-4" style="margin-left: 40px;">      
+  <div class="row mb-12">
+    <a href="javascript:void(0)" data-toggle="tooltip" data-original-title="green" title="green" onclick = "" ><i class="i-Closee  i-Data-Yes" style="color: #33ff33;"></i></a>&nbsp;<p>Care Plans reviewed for 0-6 months&nbsp; &nbsp; &nbsp;</p><a href="javascript:void(0)" data-toggle="tooltip" data-original-title="yellow"  title="yellow" onclick=""><i class="i-Closee  i-Data-Yes" style="color: yellow;"></i></a>&nbsp;<p>Care Plans not reviewed for more than 6 months and less than 12 months&nbsp; &nbsp; &nbsp;</p><a href="javascript:void(0)" data-toggle="tooltip" data-original-title="red"  title="red" onclick = "" ><i class="i-Closee  i-Data-Yes" style="color: red;"></i></a>&nbsp;<p>Care Plans not reviewed for more than or equal to 12 months&nbsp; &nbsp; &nbsp;</p>    
+  </div>
+</div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -373,16 +380,16 @@ export default {
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
         const isLoading = ref(false);
-        const goals = ref([]);
-        const tasks = ref([]);
-        const symptoms = ref([]);
+        const goals = ref([]); 
+        const tasks = ref([]); 
+        const symptoms = ref([]); 
         const isInitialGoalFilled = ref(false);
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
-        const goalsText = ref('');
+        const goalsText = ref(''); 
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const passRowData = ref([]);
+        const passRowData = ref([]); 
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);

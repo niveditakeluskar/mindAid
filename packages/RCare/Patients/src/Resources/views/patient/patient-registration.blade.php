@@ -504,8 +504,8 @@
 								<hr>
 								<div class="col-md-6 form-group mb-3">  
 									<label for="entrollment_form">Enrollment From <span class="error">*</span></label> 
-									@select("Select Enrollment From", "entrollment_from", [
-											0 => "Clinic Care Manage",
+									@select("Enrollment From", "entrollment_from", [
+											0 => "Clinic Care Manager",
 											1 => "Remote Care Manager By Phone"
 										])                          
 								</div>
