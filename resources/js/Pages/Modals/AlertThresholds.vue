@@ -1,7 +1,7 @@
 <!-- Modal.vue -->
 <template>
-    <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 900px; left: 20%; height: 660px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+		<div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Alert Thresholds</h4> 
@@ -28,6 +28,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
             </div>
+        </div>
         </div>
     </div>
 </template>
@@ -126,47 +127,3 @@ export default {
 };
 </script>
 
-<style>
-    .modal {
-        display: none;
-        position: fixed;
-        background-color: white;
-        z-index: 1000;
-        margin: 2%;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        display: none;
-    }
-
-    .modal.open {
-        display: block;
-        opacity: 1;
-    }
-
-    .overlay.open {
-        display: block;
-    }
-
-    .modal-content {
-        overflow-y: auto !important;
-        height: auto !important;
-    }
-
-    .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-        border-color: #2cb8ea #2cb8ea #fff;
-    }
-
-    .nav-tabs .nav-item .nav-link.active {
-        background: #eaf7fd;
-    }
-</style>
