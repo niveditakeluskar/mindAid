@@ -34,6 +34,8 @@ use Illuminate\Support\Facades\DB;
 use DataTables;
 use Carbon\Carbon;
 use RCare\Org\OrgPackages\Users\src\Models\Users;     
+use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
+use URL;
 
 class PatientEnrollmentController extends Controller
 {
@@ -908,8 +910,8 @@ class PatientEnrollmentController extends Controller
     
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         
-
-           if($module_id == 2){
+            $url = strtolower(URL::to('/').'/rcare-login'); 
+           if($module_id == 2 && DomainFeatures::where(DB::raw('lower(url)'), $url)->where('rpm_messages',1)->exists()){
 
                 $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',$module_id)->where('status',1)->get('id');
                 $SID          = getFormStageId($module_id, $ccmSubModule[0]->id, 'Enroll In RPM');

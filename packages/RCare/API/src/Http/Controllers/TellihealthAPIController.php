@@ -14,7 +14,7 @@ use RCare\Rpm\Models\Observation_Glucose;
 use RCare\Rpm\Models\Observation_Spirometer;
 use RCare\Rpm\Models\Observation_Temp;
 
-
+use Illuminate\Support\Facades\Http;
 use RCare\Patients\Models\PatientServices;
 use RCare\Org\OrgPackages\Practices\src\Models\Practices;
 use RCare\Patients\Models\PatientProvider;
@@ -40,13 +40,43 @@ class TellihealthAPIController extends Controller {
       }
       public function tellihealth_webhook_observation(Request $request){  
         $content=$request->all();  
-        $newcontent=json_encode($content);      
-        $data=array(
+        $newcontent=json_encode($content);     
+        $currenturl = url()->full();	
+        if($currenturl == 'https://rcare.d-insights.global/API/tellihealth_webhook_data'){
+          $response = Http::post('https://rcareconnect.com/API/tellihealth_webhook_data',$content);
+          if ($response->getStatusCode() == 200) {
+            $data=array(
+              'content'=>$newcontent,
+              'partner'=>'tellihealth',
+              'status' =>'0', 
+              'rconnect_transfer_flag' => 1           
+            );
+          }else{
+            $data=array(
+              'content'=>$newcontent,
+              'partner'=>'tellihealth',
+              'status' =>'0',
+              'rconnect_transfer_flag' => 0             
+            );
+          }
+        
+          $result= ApiTellihealth::create($data);
+            if($result)
+            {
+              return response()->json("Data inserted successfully!");
+            }
+            else
+            {
+              return "failed";
+            }
+        }else{
+          $data=array(
             'content'=>$newcontent,
             'partner'=>'tellihealth',
-            'status' =>'0',            
-        );
-         $result= ApiTellihealth::create($data);
+            'status' =>'0',
+            'rconnect_transfer_flag' => 0             
+          );
+          $result= ApiTellihealth::create($data);
           if($result)
           {
             return response()->json("Data inserted successfully!");
@@ -55,6 +85,8 @@ class TellihealthAPIController extends Controller {
           {
             return "failed";
           }
+        }
+        
       }
     
   

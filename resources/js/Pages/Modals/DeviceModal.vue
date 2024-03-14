@@ -188,7 +188,12 @@ export default {
         statusLink.id = params.data.status === 1 ? 'active' : 'inactive';
         statusLink.title = params.data.status === 1 ? 'Active' : 'Inactive';
         const statusIcon = document.createElement('i');
-        statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', 'i-Yes');
+        // statusIcon.classList.add(params.data.status === 1 ? 'i-Yess' : 'i-Closee', 'i-Yes');
+        if (params.data.status === 1) {
+            statusIcon.classList.add('i-Yess', 'i-Yes');
+        } else {
+            statusIcon.classList.add('i-Closee', 'i-Close');
+        }
         statusLink.appendChild(statusIcon);
         linkContainer.appendChild(statusLink);
         // Add event listener to status link

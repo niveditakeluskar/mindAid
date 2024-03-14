@@ -158,7 +158,9 @@ export default {
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.data.form_start_time);
                     await fetchPatientHealthDataList();
+                    // healthdataItems.value = [];
                     document.getElementById("number_tracking_healthdata_form").reset();
+                    healthdataItems.value = [{ health_data: '', health_date: '' }];
                     setTimeout(() => {
                         showImagingAlert.value = false;
                         healthdataTime.value = document.getElementById('page_landing_times').value;

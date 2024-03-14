@@ -141,6 +141,9 @@ const formatDate = (dateString) => {
                     props.followupCallFunction();
 /*                     document.getElementById("followup_task_edit_notes").reset();
  */                    $('#followUpAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+                        const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
+			            $("#toDoList").html(taskMangeResp.data);
+			            $('.badge').html($('#count_todo').val());
 					updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
 					followupTime.value = response.data.form_start_time;

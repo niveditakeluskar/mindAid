@@ -276,6 +276,13 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-md-12 mb-4" style="margin-left: 40px;">      
+  <div class="row mb-12">
+    <a href="javascript:void(0)" data-toggle="tooltip" data-original-title="green" title="green" onclick = "" ><i class="i-Closee  i-Data-Yes" style="color: #33ff33;"></i></a>&nbsp;<p>Care Plans reviewed for 0-6 months&nbsp; &nbsp; &nbsp;</p><a href="javascript:void(0)" data-toggle="tooltip" data-original-title="yellow"  title="yellow" onclick=""><i class="i-Closee  i-Data-Yes" style="color: yellow;"></i></a>&nbsp;<p>Care Plans not reviewed for more than 6 months and less than 12 months&nbsp; &nbsp; &nbsp;</p><a href="javascript:void(0)" data-toggle="tooltip" data-original-title="red"  title="red" onclick = "" ><i class="i-Closee  i-Data-Yes" style="color: red;"></i></a>&nbsp;<p>Care Plans not reviewed for more than or equal to 12 months&nbsp; &nbsp; &nbsp;</p>    
+  </div>
+</div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -334,16 +341,16 @@ export default {
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
         const isLoading = ref(false);
-        const goals = ref([]); // Use ref to declare reactive goals array
-        const tasks = ref([]); // Use ref to declare reactive goals array
-        const symptoms = ref([]); // Use ref to declare reactive goals array
+        const goals = ref([]); 
+        const tasks = ref([]); 
+        const symptoms = ref([]); 
         const isInitialGoalFilled = ref(false);
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
-        const goalsText = ref(''); // Use ref for the concatenated goals string
+        const goalsText = ref(''); 
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const passRowData = ref([]); // Initialize rowData as an empty array
+        const passRowData = ref([]); 
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);
@@ -396,9 +403,11 @@ export default {
                     let deleteIconColor = 'red';
 
                     if (data.iconcolor === 'green') {
-                        editIconColor = 'green';
+                        editIconColor = '#33ff33';
                     } else if (data.iconcolor === 'yellow') {
                         editIconColor = 'yellow';
+                    } else if (data.iconcolor === 'red') {
+                        editIconColor = 'red';
                     }
 
                     editIcon.classList.add('text-20', 'i-Closee', 'i-Data-Yes');
@@ -541,7 +550,6 @@ export default {
                 }
                 loading.value = false;
                 const data = await response.json();
-                // Check if data.data is not undefined before assigning it to rowData
                 if (data.data) {
                     passRowData.value = data.data;
                 } else {
@@ -610,7 +618,7 @@ export default {
         const handleCodeAlert = () => {
             alert("Are you sure you want to change the code?");
             if (selectedDiagnosis.value === '') {
-                alert('please selecte condition!');
+                alert('please select condition!');
             };
         }
 
@@ -752,7 +760,6 @@ export default {
         };
 
         watchEffect(() => {
-            // Update goalsText whenever goals array changes
             goals.value = goals.value.filter((goal) => goal.trim() !== '');
             symptoms.value = symptoms.value.filter((symptom) => symptom.trim() !== '');
             tasks.value = tasks.value.filter((task) => task.trim() !== '');
