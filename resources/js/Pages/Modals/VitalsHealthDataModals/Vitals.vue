@@ -162,7 +162,19 @@ export default {
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                { headerName: 'Rec Date', field: 'rec_date', filter: true },
+                {   headerName: 'Rec Date',
+                    field: 'rec_date',
+                    filter: true,
+                    valueFormatter: params => {
+                        const date = new Date(params.value);
+                        const month = date.getMonth() + 1; 
+                        const day = date.getDate();
+                        const year = date.getFullYear();
+
+                        // Format the date as mm-dd-yyyy
+                        return `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}-${year}`;
+                    }
+                },
                 { headerName: 'Height (in)', field: 'height' },
                 { headerName: 'Weight (lbs)', field: 'weight' },
                 { headerName: 'BMI', field: 'bmi' },

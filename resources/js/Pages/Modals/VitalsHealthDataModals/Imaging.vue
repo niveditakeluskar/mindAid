@@ -110,19 +110,18 @@ export default {
                     valueGetter: 'node.rowIndex + 1',
                     initialWidth: 20,
                 },
-                {
-                    headerName: 'Imaging Date',
+                {   headerName: 'Imaging Date',
                     field: 'imaging_date',
                     filter: true,
                     valueFormatter: params => {
-                    // Format the date here
-                    const date = params.value;
-                    if (date) {
-                        const formattedDate = new Date(date).toLocaleDateString('en-GB').replace(/\//g, '-');
-                        return formattedDate;
+                        const date = new Date(params.value);
+                        const month = date.getMonth() + 1; 
+                        const day = date.getDate();
+                        const year = date.getFullYear();
+
+                        // Format the date as mm-dd-yyyy
+                        return `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}-${year}`;
                     }
-                    return '';
-                    },
                 },
                 { headerName: 'Imaging', field: 'imaging_details' },
                 
