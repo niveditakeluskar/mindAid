@@ -144,12 +144,11 @@ export default {
     const callstatus = ref('');
     const isLoading = ref(false);
     const onlycode = true;
-    const patientsmodules = ref('')
+    const patientsmodules = ref('2')
     let c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
     let c_year = new Date().getFullYear();
     const frommonth = c_year + '-' + c_month;
  
-
     let columnDefs = ref([
       {
         headerName: 'Sr. No.',
@@ -173,7 +172,6 @@ export default {
         headerName: 'Patient Fin Number',
         field: 'pfin_number',
       },
-
       {
         headerName: 'DOB',
         field: 'pdob',
@@ -212,7 +210,28 @@ export default {
           return billingcode;
         },
       },
-      { headerName: 'Units', field: 'unit' },
+      { headerName: 'Units', field: '' ,
+      cellRenderer: function (params) {
+          let unitz = "";
+          if ((params.data.ptrtotaltime >= '00:20:00') && (params.data.ptrtotaltime < '00:40:00')) {
+            unitz = 1;
+          }
+          if ((params.data.ptrtotaltime >= '00:40:00') && (params.data.ptrtotaltime < '00:60:00')) {
+            unitz = 1;
+          }
+          if ((params.data.ptrtotaltime >= '00:60:00') && (params.data.ptrtotaltime < '01:30:00')) {
+            unitz = 2;
+          }
+          if ((params.data.ptrtotaltime >= '01:30:00')) {
+            unitz = 1;
+          }
+          if (params.data.billingcode == '99490') {
+            unitz = 1;
+          }
+          return unitz;
+        },
+    
+    },
       {
         headerName: 'Status', field: 'pstatus',
         cellRenderer: function (params) {
@@ -261,7 +280,7 @@ export default {
       },
 
         { headerName: 'Billable', field: '' },
-      { headerName: 'Qualifying Conditions', field: '' },
+      { headerName: 'Qualifying Conditions', field: 'finalize_cpd' },
    
       { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
 
@@ -270,14 +289,16 @@ export default {
 
     const fetchFilters = async () => {
       try {
-        isLoading.value = true;
+       
         let selectedGroupids = selectedGroupid.value;
         let selectedPractices = selectedPractice.value;
         let selectedProviders = selectedProvider.value;
         let activedeactivestatuse = activedeactivestatus.value;
         let callstatuse = callstatus.value;
-        let patientsmodules = patientsmodules.value;
+      
         let m = $("#from_month").val();
+
+   
         if (selectedGroupid.value == '') {
           selectedGroupids = 'null';
         }
@@ -294,11 +315,9 @@ export default {
           callstatuse = 'null';
         }
        
-        if (patientsmodules.value == '') {
-          patientsmodules = 'null';
-        }
+   
 
-        const response = await fetch('/reports/monthlybilling-searh-data/' + selectedGroupids + '/' + selectedPractices + '/' + selectedProviders + '/' +patientsmodules+ '/' + m + '/' + activedeactivestatuse + '/' + callstatuse );
+        const response = await fetch('/reports/monthlybilling-searh-data/' + selectedGroupids + '/' + selectedPractices + '/' + selectedProviders + '/' +patientsmodules.value+ '/' + m + '/' + activedeactivestatuse + '/' + callstatuse );
         const data = await response.json();
         passRowData.value = data.data;
 

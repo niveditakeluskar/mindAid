@@ -64,27 +64,28 @@ class ConsolidateBillingReportController extends Controller
         $year = date('Y', strtotime($monthly));
         $month = date('m', strtotime($monthly));
   
-      $query = "select * from patients.consolidate_monthly_billing_report_py sp where months = ".$m." and years = ".$year." ";
+      $query = "select * from patients.consolidate_monthly_billing_report_py where months = ".$m." and years = ".$year." ";
 
       if($practices!="" && $practices !='null'){
-        $query .= " and sp.pracid =".$practices;
+        $query .= " and pracid =".$practices;
       }
      
       if($provider!="" && $provider !='null'){
-        $query .= " and sp.proid =".$provider;
+        $query .= " and proid =".$provider;
       }
       if($practicesgrp!="" && $practicesgrp !='null'){
-        $query .= " and sp.pgroupid =".$practicesgrp;
+        $query .= " and pgroupid =".$practicesgrp;
       }
       if($activedeactivestatus!="" && $activedeactivestatus !='null'){
-        $query .= " and sp.pstatus =".$activedeactivestatus;
+        $query .= " and pstatus =".$activedeactivestatus;
       }
       if($callstatus!="" && $callstatus !='null'){
-        $query .= " and sp.csid =".$callstatus;
+        $query .= " and csid =".$callstatus;
       }
       if($onlycode == true){
-        $query .= " and sp.billingcode != 'null'";
+        $query .= " and billingcode != 'null'";
       }
+     // $query .= "  LIMIT  10";
       $data = DB::select( $query);  
        
             return Datatables::of($data) 
