@@ -1,7 +1,7 @@
 <!-- AlertThresholds.vue -->
 <template>
-  <div v-if="isOpen" class="overlay open" @click="closeModal"></div>
-  <div v-if="isOpen" class="modal fade open">
+  <div v-if="isOpen" class="modal fade show" >
+	  <div class="modal-dialog ">
       <div class="modal-content">
           <div class="modal-header">
               <h4 class="modal-title">Veteran Service</h4> 
@@ -13,6 +13,7 @@
           <div class="modal-footer">
               <button type="button" class="btn btn-default" @click="closeModal">Close</button>
           </div>
+      </div>
       </div>
   </div>
 </template>
@@ -81,43 +82,3 @@ export default {
 };
 </script>
 
-<style>
-/* Modal styles */
-.modal {
-display: none;
-position: fixed;
-background-color: white;
-z-index: 1000;
-margin: 2%;
-opacity: 0;
-transition: opacity 0.3s ease;
-}
-
-/* Style the overlay */
-.overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.5);
-z-index: 999;
-display: none;
-}
-
-/* Show the overlay and modal when modal is open */
-.modal.open {
-display: block;
-opacity: 1;
-}
-
-.overlay.open {
-display: block;
-}
-
-.modal-content {
-  overflow-y: auto !important;
-  height: auto !important;
-  /* height: 800px !important; */
-}
-</style>
