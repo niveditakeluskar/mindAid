@@ -109,7 +109,7 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            this.closeModal();
+            closeModal();
         }
 
         onMounted(async () => {
