@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 	<div class="modal-dialog ">
         <div class="modal-content followup-modal-content">
             <form name="followup_task_edit_notes" id="followup_task_edit_notes" @submit.prevent="submitFormModal">
@@ -72,14 +72,14 @@ export default {
             stageId.value = newValue;
         });
         // Format the date function
-const formatDate = (dateString) => {
-    // Split the date string and rearrange it to match ISO format (YYYY-MM-DD)
-    const dateParts = dateString.split(' ')[0].split('-');
-    return `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
-};
+        const formatDate = (dateString) => {
+            const dateParts = dateString.split(' ')[0].split('-');
+            return `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+        };
 
         const openModal = (param1, param2) => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             followupTime.value = document.getElementById('page_landing_times').value;
             if ($.isNumeric(param1) == true) {
                 let patientId = param2;
@@ -105,18 +105,16 @@ const formatDate = (dateString) => {
                 }).catch(function (error) {
                     console.error(error, error.response);
                 });
-
             } else {
                 closeModal();
             }
-
-            
         };
 
-        const closeModal = () => {
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
-        
+
         onMounted(async () => {
 			try {
 				followupTime.value = document.getElementById('page_landing_times').value;

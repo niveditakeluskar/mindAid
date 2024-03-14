@@ -1,306 +1,345 @@
 <template>
-    
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
-	<div class="modal-dialog modal-xl" style="padding-top:10px;  ">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Create / Modify Care Plan</h4>
-                <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
-            </div>
-            <div class="modal-body" style="padding-top:0px; margin:0px;">
-                <loading-spinner :isLoading="isLoading"></loading-spinner>
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group ccmPatientData" id="diagnosis-codes" name="diagnosis_codes" style="">
-                                    <div class="row mb-4" id="diagnosis">
-                                        <div class="col-md-12 mb-4">
-                                            <div class="success" id="success"></div>
-                                            <div class="card-body diagnosis-Data">
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12 mb-4">
-                                                        <ul class="nav nav-pills" id="myPillTab" role="tablist">
-                                                            <li class="nav-item">
-                                                                <!-- <a class="nav-link active" id="medication-icon-pill" data-toggle="pill" href="#medication" role="tab" aria-controls="medication" aria-selected="true"><i class="nav-icon color-icon-2 i-Home1 mr-1"></i>MEDICATION</a> -->
-                                                            </li>
-                                                        </ul>
-                                                        <div class="tab-content" id="myPillTabContent">
-                                                            <div class="tab-pane fade show active" id="diagnosis"
-                                                                role="tabpanel" aria-labelledby="diagnosis-icon-pill">
-                                                                <div class="card mb-4">
-                                                                    <div id="reviewCareAlert"></div>
-                                                                    <form id="care_plan_form" name="care_plan_form"
-                                                                        @submit.prevent="submitCarePlanForm">
+    <div class="modal fade" :class="{ 'show': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+        <div class="modal-dialog modal-xl" style="padding-top:10px;  ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create / Modify Care Plan</h4>
+                    <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
+                </div>
+                <div class="modal-body" style="padding-top:0px; margin:0px;">
+                    <loading-spinner :isLoading="isLoading"></loading-spinner>
+                    <div class="row ">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group ccmPatientData" id="diagnosis-codes" name="diagnosis_codes"
+                                        style="">
+                                        <div class="row " id="diagnosis">
+                                            <div class="col-md-12 ">
+                                                <div class="success" id="success"></div>
+                                                <div class="card-body diagnosis-Data">
+                                                    <div class="row ">
+                                                        <div class="col-md-12 ">
+                                                            <ul class="nav nav-pills" id="myPillTab" role="tablist">
+                                                                <li class="nav-item">
+                                                                    <!-- <a class="nav-link active" id="medication-icon-pill" data-toggle="pill" href="#medication" role="tab" aria-controls="medication" aria-selected="true"><i class="nav-icon color-icon-2 i-Home1 mr-1"></i>MEDICATION</a> -->
+                                                                </li>
+                                                            </ul>
+                                                            <div class="tab-content mb-4" id="myPillTabContent">
+                                                                <div class="tab-pane fade show active" id="diagnosis"
+                                                                    role="tabpanel" aria-labelledby="diagnosis-icon-pill">
+                                                                    <div class=" mb-4">
+                                                                        <div id="reviewCareAlert"></div>
+                                                                        <form id="care_plan_form" name="care_plan_form"
+                                                                            @submit.prevent="submitCarePlanForm">
 
-                                                                        <div class="alert alert-danger"
-                                                                            v-if="showSuccessAlert">
-                                                                            <button type="button" class="close"
-                                                                                data-dismiss="alert">x</button>
-                                                                            <strong> Fill All Mandatory Fields!
-                                                                            </strong><span id="text"></span>
-                                                                        </div>
+                                                                            <div class="alert alert-danger"
+                                                                                v-if="showSuccessAlert">
+                                                                                <button type="button" class="close"
+                                                                                    data-dismiss="alert">x</button>
+                                                                                <strong> Fill All Mandatory Fields!
+                                                                                </strong><span id="text"></span>
+                                                                            </div>
 
-                                                                        <div class="form-row col-md-12">
-                                                                            <input type="hidden" name="uid"
-                                                                                :value="patientId" />
-                                                                            <input type="hidden" name="patient_id"
-                                                                                :value="patientId" />
-                                                                            <input type="hidden" name="start_time"
-                                                                                ref="startTimeInput" value="00:00:00">
-                                                                            <input type="hidden" name="end_time"
-                                                                                value="00:00:00">
-                                                                            <input type="hidden" name="module_id"
-                                                                                :value="moduleId" />
-                                                                            <input type="hidden" name="component_id"
-                                                                                :value="componentId" />
-                                                                            <input type="hidden" name="stage_id"
-                                                                                value="11" />
-                                                                            <input type="hidden" name="step_id"
-                                                                                :value="stepID">
-                                                                            <input type="hidden" name="form_name"
-                                                                                value="care_plan_form">
-                                                                            <input type="hidden" name="diagnosis_id"
-                                                                                id="diagnosis_id"
-                                                                                v-model="selectedDiagnosisId">
-                                                                            <input type="hidden" name="hiddenenablebutton"
-                                                                                id="hiddenenablebutton">
-                                                                            <input type="hidden" name="editdiagnoid"
-                                                                                v-model="selectedEditDiagnosId">
-                                                                            <input type="hidden" id="cpd_finalize"
-                                                                                value="1">
-                                                                            <input type="hidden" name="billable" value="1">
-                                                                            <input type="hidden"
-                                                                                name="timearr[form_start_time]"
-                                                                                class="timearr form_start_time"
-                                                                                :value="reviewCarePlanTimer">
-                                                                            <div class="row col-md-12">
-                                                                                <div class="col-md-6"><label>Condition
-                                                                                        <span
-                                                                                            class="error">*</span>:</label>
-                                                                                    <input type="hidden" name="condition"
-                                                                                        v-model="selectedcondition">
-                                                                                        
-                                                                                    <select id="diagnosis_condition"
-                                                                                        class="custom-select show-tick"
-                                                                                        name="diagnosis"
-                                                                                        v-model="selectedDiagnosis"
-                                                                                        @change="handleDiagnosisChange">
-                                                                                        <option
-                                                                                            v-for="item in diagnosisOptions"
-                                                                                            :key="item.id" :value="item.id">
-                                                                                            {{ item.description }}
-                                                                                        </option>
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback"
-                                                                                        v-if="formErrors.diagnosis"
-                                                                                        style="display: block;">{{
-                                                                                            formErrors.diagnosis[0] }}
+                                                                            <div class="form-row col-md-12">
+                                                                                <input type="hidden" name="uid"
+                                                                                    :value="patientId" />
+                                                                                <input type="hidden" name="patient_id"
+                                                                                    :value="patientId" />
+                                                                                <input type="hidden" name="start_time"
+                                                                                    ref="startTimeInput" value="00:00:00">
+                                                                                <input type="hidden" name="end_time"
+                                                                                    value="00:00:00">
+                                                                                <input type="hidden" name="module_id"
+                                                                                    :value="moduleId" />
+                                                                                <input type="hidden" name="component_id"
+                                                                                    :value="componentId" />
+                                                                                <input type="hidden" name="stage_id"
+                                                                                    value="11" />
+                                                                                <input type="hidden" name="step_id"
+                                                                                    :value="stepID">
+                                                                                <input type="hidden" name="form_name"
+                                                                                    value="care_plan_form">
+                                                                                <input type="hidden" name="diagnosis_id"
+                                                                                    id="diagnosis_id"
+                                                                                    v-model="selectedDiagnosisId">
+                                                                                <input type="hidden"
+                                                                                    name="hiddenenablebutton"
+                                                                                    id="hiddenenablebutton">
+                                                                                <input type="hidden" name="editdiagnoid"
+                                                                                    v-model="selectedEditDiagnosId">
+                                                                                <input type="hidden" id="cpd_finalize"
+                                                                                    value="1">
+                                                                                <input type="hidden" name="billable"
+                                                                                    value="1">
+                                                                                <input type="hidden"
+                                                                                    name="timearr[form_start_time]"
+                                                                                    class="timearr form_start_time"
+                                                                                    :value="reviewCarePlanTimer">
+                                                                                <div class="row col-md-12">
+                                                                                    <div class="col-md-6"><label>Condition
+                                                                                            <span
+                                                                                                class="error">*</span>:</label>
+                                                                                        <input type="hidden"
+                                                                                            name="condition"
+                                                                                            v-model="selectedcondition">
+
+                                                                                        <select id="diagnosis_condition"
+                                                                                            class="custom-select show-tick"
+                                                                                            name="diagnosis"
+                                                                                            v-model="selectedDiagnosis"
+                                                                                            @change="handleDiagnosisChange">
+                                                                                            <option
+                                                                                                v-for="item in diagnosisOptions"
+                                                                                                :key="item.id"
+                                                                                                :value="item.id">
+                                                                                                {{ item.description }}
+                                                                                            </option>
+                                                                                        </select>
+                                                                                        <div class="invalid-feedback"
+                                                                                            v-if="formErrors.diagnosis"
+                                                                                            style="display: block;">{{
+                                                                                                formErrors.diagnosis[0] }}
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-md-2">
-                                                                                    <label><span class="error"></span>&nbsp;
-                                                                                    </label>
-                                                                                    <button type="button"
-                                                                                        class="col-md-12 btn btn-primary"
-                                                                                        @click="() => changeCondition('care_plan_form')"
-                                                                                        id="render_plan_form"> Display Care
-                                                                                        Plan</button>
-                                                                                </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <label><span
+                                                                                                class="error"></span>&nbsp;
+                                                                                        </label>
+                                                                                        <button type="button"
+                                                                                            class="col-md-12 btn btn-primary"
+                                                                                            @click="() => changeCondition('care_plan_form')"
+                                                                                            id="render_plan_form"> Display
+                                                                                            Care
+                                                                                            Plan</button>
+                                                                                    </div>
 
-                                                                                <div class="col-md-4 emaillist">
-                                                                                    <label>Code<span class="error">*</span>
-                                                                                        :</label>
-                                                                                    <input type="hidden" id="codeid">
-                                                                                    <select id="diagnosis_code"
-                                                                                        class="custom-select show-tick"
-                                                                                        name="code" v-model="selectedCode"
-                                                                                        @change="handleCodeAlert">
-                                                                                        <option value="">Select Code
-                                                                                        </option>
-                                                                                        <option v-for="code in codeOptions"
-                                                                                            :key="code" :value="code">{{
-                                                                                                code }}</option>
+                                                                                    <div class="col-md-4 emaillist">
+                                                                                        <label>Code<span
+                                                                                                class="error">*</span>
+                                                                                            :</label>
+                                                                                        <input type="hidden" id="codeid">
+                                                                                        <select id="diagnosis_code"
+                                                                                            class="custom-select show-tick"
+                                                                                            name="code"
+                                                                                            v-model="selectedCode"
+                                                                                            @change="handleCodeAlert">
+                                                                                            <option value="">Select Code
+                                                                                            </option>
+                                                                                            <option
+                                                                                                v-for="code in codeOptions"
+                                                                                                :key="code" :value="code">{{
+                                                                                                    code }}</option>
 
-                                                                                    </select>
-                                                                                    <div class="invalid-feedback"
-                                                                                        v-if="formErrors.code"
-                                                                                        style="display: block;">{{
-                                                                                            formErrors.code[0] }}</div>
-                                                                                </div>
+                                                                                        </select>
+                                                                                        <div class="invalid-feedback"
+                                                                                            v-if="formErrors.code"
+                                                                                            style="display: block;">{{
+                                                                                                formErrors.code[0] }}</div>
+                                                                                    </div>
 
-                                                                                <div class="col-md-3 otherlist"
-                                                                                    id="otherlist" style="display:none">
-                                                                                    <label>New Code <span
-                                                                                            class="error">*</span>:</label>
-                                                                                    <input id="new_code"
-                                                                                        class="form-control" name="new_code"
-                                                                                        type="text" value=""
-                                                                                        autocomplete="off">
-                                                                                    <div class="invalid-feedback"></div>
-                                                                                </div>
-
-
-                                                                                <div>
-                                                                                    <button type="button"
-                                                                                        class="btn btn-primary mt-2 ml-3"
-                                                                                        id="enable_diagnosis_button"
-                                                                                        onclick="carePlanDevelopment.enableDiagnosisbutton(this)"
-                                                                                        style="display:none">Enable
-                                                                                        Editing</button>
-                                                                                    <button type="button"
-                                                                                        class="btn btn-primary mt-2 ml-3"
-                                                                                        id="disable_diagnosis_button"
-                                                                                        onclick="carePlanDevelopment.disableDiagnosisbutton(this)"
-                                                                                        style="display:none">Disable
-                                                                                        Editing</button>
-                                                                                </div>
-
-                                                                                <div class="col-md-12">
-                                                                                    <label for="Template">Symptoms<span
-                                                                                            class="error">*</span>
-                                                                                        :</label>
-                                                                                    <div v-for="(symptom, index) in symptoms"
-                                                                                        :key="index" class="goal-container">
-                                                                                        <input :key="index"
-                                                                                            v-model="symptoms[index]"
-                                                                                            placeholder="Enter Symptoms"
-                                                                                            :id="'symptoms_' + index"
+                                                                                    <div class="col-md-3 otherlist"
+                                                                                        id="otherlist" style="display:none">
+                                                                                        <label>New Code <span
+                                                                                                class="error">*</span>:</label>
+                                                                                        <input id="new_code"
                                                                                             class="form-control"
-                                                                                            name="symptoms[]" type="text"
-                                                                                            autocomplete="off"
-                                                                                            :required="index === 0 ? !isInitialSymptomFilled : false">
-                                                                                        <i class="col-md-1 remove-icons i-Remove float-right mb-3"
-                                                                                            @click="removeSymptoms(index)"
-                                                                                            :id="'remove_symptoms_' + index"
-                                                                                            title="Remove Symptoms"></i>
+                                                                                            name="new_code" type="text"
+                                                                                            value="" autocomplete="off">
+                                                                                        <div class="invalid-feedback"></div>
                                                                                     </div>
-                                                                                    <div class="invalid-feedback"></div>
-                                                                                    <i class="plus-icons i-Add"
-                                                                                        id="append_symptoms_icons"
-                                                                                        @click="additionalsymptoms()"
-                                                                                        title="Add symptons"></i>
 
-                                                                                    <div class="col-md-10 mb-3"
-                                                                                        id="append_symptoms"></div>
-                                                                                </div>
 
-                                                                                <div class="col-md-12">
-                                                                                    <label for="contactNumber">Goals<span
-                                                                                            class="error">*</span>
-                                                                                        :</label>
-                                                                                    <div v-for="(goal, index) in goals"
-                                                                                        :key="index" class="goal-container">
-                                                                                        <input :key="index"
-                                                                                            v-model="goals[index]"
-                                                                                            placeholder="Enter Goal"
-                                                                                            :id="'goals_' + index"
-                                                                                            class="form-control"
-                                                                                            name="goals[]" type="text"
-                                                                                            autocomplete="off"
-                                                                                            :required="index === 0 ? !isInitialGoalFilled : false">
-                                                                                        <i class="col-md-1 remove-icons i-Remove float-right mb-3"
-                                                                                            @click="removeGoal(index)"
-                                                                                            :id="'remove_goal_' + index"
-                                                                                            title="Remove Goal"></i>
+                                                                                    <div>
+                                                                                        <button type="button"
+                                                                                            class="btn btn-primary mt-2 ml-3"
+                                                                                            id="enable_diagnosis_button"
+                                                                                            onclick="carePlanDevelopment.enableDiagnosisbutton(this)"
+                                                                                            style="display:none">Enable
+                                                                                            Editing</button>
+                                                                                        <button type="button"
+                                                                                            class="btn btn-primary mt-2 ml-3"
+                                                                                            id="disable_diagnosis_button"
+                                                                                            onclick="carePlanDevelopment.disableDiagnosisbutton(this)"
+                                                                                            style="display:none">Disable
+                                                                                            Editing</button>
                                                                                     </div>
-                                                                                    <i class="plus-icons i-Add"
-                                                                                        id="append_goals_icons"
-                                                                                        @click="additionalgoals()"
-                                                                                        title="Add goals"></i>
-                                                                                    <div class="invalid-feedback"></div>
-                                                                                    <div class="col-md-10 mb-3"
-                                                                                        id="append_goals"></div>
-                                                                                </div>
 
-                                                                                <div class="col-md-12">
-                                                                                    <label for="emailTo">Tasks<span
-                                                                                            class="error">*</span>
-                                                                                        :</label>
-                                                                                    <div v-for="(task, index) in tasks"
-                                                                                        :key="index" class="goal-container">
-                                                                                        <textarea :key="index"
-                                                                                            v-model="tasks[index]"
-                                                                                            placeholder="Enter tasks"
-                                                                                            :id="'tasks_' + index"
-                                                                                            class="form-control"
-                                                                                            name="tasks[]" type="text"
-                                                                                            style="height:50px;overflow-y:hidden;"
-                                                                                            :required="index === 0 ? !isInitialTaskFilled : false"></textarea>
-                                                                                        <i class="col-md-1 remove-icons i-Remove float-right mb-3"
-                                                                                            @click="removeTasks(index)"
-                                                                                            :id="'remove_tasks_' + index"
-                                                                                            title="Remove Task"></i>
+                                                                                    <div class="col-md-12">
+                                                                                        <label for="Template">Symptoms<span
+                                                                                                class="error">*</span>
+                                                                                            :</label>
+                                                                                        <div v-for="(symptom, index) in symptoms"
+                                                                                            :key="index"
+                                                                                            class="goal-container">
+                                                                                            <input :key="index"
+                                                                                                v-model="symptoms[index]"
+                                                                                                placeholder="Enter Symptoms"
+                                                                                                :id="'symptoms_' + index"
+                                                                                                class="form-control"
+                                                                                                name="symptoms[]"
+                                                                                                type="text"
+                                                                                                autocomplete="off"
+                                                                                                :required="index === 0 ? !isInitialSymptomFilled : false">
+                                                                                            <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                @click="removeSymptoms(index)"
+                                                                                                :id="'remove_symptoms_' + index"
+                                                                                                title="Remove Symptoms"></i>
+                                                                                        </div>
+                                                                                        <div class="invalid-feedback"></div>
+                                                                                        <i class="plus-icons i-Add"
+                                                                                            id="append_symptoms_icons"
+                                                                                            @click="additionalsymptoms()"
+                                                                                            title="Add symptons"></i>
+
+                                                                                        <div class="col-md-10 mb-3"
+                                                                                            id="append_symptoms"></div>
                                                                                     </div>
-                                                                                    <div class="invalid-feedback"></div>
-                                                                                    <i class="plus-icons i-Add"
-                                                                                        id="append_tasks_icons"
-                                                                                        @click="additionaltasks()"
-                                                                                        title="Add task"></i>
-                                                                                    <div class="col-md-10 mb-3"
-                                                                                        id="append_tasks"></div>
-                                                                                </div>
+
+                                                                                    <div class="col-md-12">
+                                                                                        <label
+                                                                                            for="contactNumber">Goals<span
+                                                                                                class="error">*</span>
+                                                                                            :</label>
+                                                                                        <div v-for="(goal, index) in goals"
+                                                                                            :key="index"
+                                                                                            class="goal-container">
+                                                                                            <input :key="index"
+                                                                                                v-model="goals[index]"
+                                                                                                placeholder="Enter Goal"
+                                                                                                :id="'goals_' + index"
+                                                                                                class="form-control"
+                                                                                                name="goals[]" type="text"
+                                                                                                autocomplete="off"
+                                                                                                :required="index === 0 ? !isInitialGoalFilled : false">
+                                                                                            <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                @click="removeGoal(index)"
+                                                                                                :id="'remove_goal_' + index"
+                                                                                                title="Remove Goal"></i>
+                                                                                        </div>
+                                                                                        <i class="plus-icons i-Add"
+                                                                                            id="append_goals_icons"
+                                                                                            @click="additionalgoals()"
+                                                                                            title="Add goals"></i>
+                                                                                        <div class="invalid-feedback"></div>
+                                                                                        <div class="col-md-10 mb-3"
+                                                                                            id="append_goals"></div>
+                                                                                    </div>
+
+                                                                                    <div class="col-md-12">
+                                                                                        <label for="emailTo">Tasks<span
+                                                                                                class="error">*</span>
+                                                                                            :</label>
+                                                                                        <div v-for="(task, index) in tasks"
+                                                                                            :key="index"
+                                                                                            class="goal-container">
+                                                                                            <textarea :key="index"
+                                                                                                v-model="tasks[index]"
+                                                                                                placeholder="Enter tasks"
+                                                                                                :id="'tasks_' + index"
+                                                                                                class="form-control"
+                                                                                                name="tasks[]" type="text"
+                                                                                                style="height:50px;overflow-y:hidden;"
+                                                                                                :required="index === 0 ? !isInitialTaskFilled : false"></textarea>
+                                                                                            <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                @click="removeTasks(index)"
+                                                                                                :id="'remove_tasks_' + index"
+                                                                                                title="Remove Task"></i>
+                                                                                        </div>
+                                                                                        <div class="invalid-feedback"></div>
+                                                                                        <i class="plus-icons i-Add"
+                                                                                            id="append_tasks_icons"
+                                                                                            @click="additionaltasks()"
+                                                                                            title="Add task"></i>
+                                                                                        <div class="col-md-10 mb-3"
+                                                                                            id="append_tasks"></div>
+                                                                                    </div>
 
 
-                                                                                <div class="col-md-12">
-                                                                                    <label for="Template">Comment:</label>
-                                                                                    <textarea
-                                                                                        class="forms-element form-control"
-                                                                                        id="diagnosis_comments"
-                                                                                        v-model="comments" name="comments"
-                                                                                        style="height:50px;overflow-y:hidden;"></textarea>
-                                                                                    <div class="invalid-feedback"></div>
+                                                                                    <div class="col-md-12">
+                                                                                        <label
+                                                                                            for="Template">Comment:</label>
+                                                                                        <textarea
+                                                                                            class="forms-element form-control"
+                                                                                            id="diagnosis_comments"
+                                                                                            v-model="comments"
+                                                                                            name="comments"
+                                                                                            style="height:50px;overflow-y:hidden;"></textarea>
+                                                                                        <div class="invalid-feedback"></div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <br>
-                                                                        <div class="alert alert-danger"
-                                                                            style="display: none;">
-                                                                            <button type="button" class="close"
-                                                                                data-dismiss="alert">x</button>
-                                                                            <strong> Fill All Mandatory Fields!
-                                                                            </strong><span id="text"></span>
-                                                                        </div>
-                                                                        <div class="col-md-12">
-                                                                            <button type="submit"
-                                                                                class="btn btn-primary float-right save_care_plan_form"
-                                                                                id="save_care_plan_form"
-                                                                                :disabled="isSaveButtonDisabled">Review/Save</button>
-                                                                        </div>
+                                                                            <br>
+                                                                            <div class="alert alert-danger"
+                                                                                style="display: none;">
+                                                                                <button type="button" class="close"
+                                                                                    data-dismiss="alert">x</button>
+                                                                                <strong> Fill All Mandatory Fields!
+                                                                                </strong><span id="text"></span>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-primary float-right save_care_plan_form"
+                                                                                    id="save_care_plan_form"
+                                                                                    :disabled="isSaveButtonDisabled">Review/Save</button>
+                                                                            </div>
 
 
-                                                                    </form>
-                                                                    <div id="reviewCareAlert"></div>
+                                                                        </form>
+                                                                        <div id="reviewCareAlert"></div>
 
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="separator-breadcrumb border-top"></div>
+                                                            <div class="col-md-12">
+                                                                <div class="row ml-2">
+                                                                    <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                        data-original-title="green" title="green"
+                                                                        onclick=""><i class="i-Closee  i-Data-Yes"
+                                                                            style="color: #33ff33;"></i></a>&nbsp;<p>Care
+                                                                        Plans reviewed for 0-6 months&nbsp; &nbsp; &nbsp;
+                                                                    </p><a href="javascript:void(0)" data-toggle="tooltip"
+                                                                        data-original-title="yellow" title="yellow"
+                                                                        onclick=""><i class="i-Closee  i-Data-Yes"
+                                                                            style="color: yellow;"></i></a>&nbsp;<p>Care
+                                                                        Plans not reviewed for more than 6 months and less
+                                                                        than 12 months&nbsp; &nbsp; &nbsp;</p><a
+                                                                        href="javascript:void(0)" data-toggle="tooltip"
+                                                                        data-original-title="red" title="red" onclick=""><i
+                                                                            class="i-Closee  i-Data-Yes"
+                                                                            style="color: red;"></i></a>&nbsp;<p>Care Plans
+                                                                        not reviewed for more than or equal to 12
+                                                                        months&nbsp; &nbsp; &nbsp;</p>
+                                                                </div>
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="separator-breadcrumb border-top"></div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
+                    <div class="separator-breadcrumb border-top"></div>
+                    <div class="">
+                        <div class="col-md-12">
+                            <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" @click="closeModal">Close</button>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -334,16 +373,16 @@ export default {
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
         const isLoading = ref(false);
-        const goals = ref([]); // Use ref to declare reactive goals array
-        const tasks = ref([]); // Use ref to declare reactive goals array
-        const symptoms = ref([]); // Use ref to declare reactive goals array
+        const goals = ref([]);
+        const tasks = ref([]);
+        const symptoms = ref([]);
         const isInitialGoalFilled = ref(false);
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
-        const goalsText = ref(''); // Use ref for the concatenated goals string
+        const goalsText = ref('');
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const passRowData = ref([]); // Initialize rowData as an empty array
+        const passRowData = ref([]);
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);
@@ -396,9 +435,11 @@ export default {
                     let deleteIconColor = 'red';
 
                     if (data.iconcolor === 'green') {
-                        editIconColor = 'green';
+                        editIconColor = '#33ff33';
                     } else if (data.iconcolor === 'yellow') {
                         editIconColor = 'yellow';
+                    } else if (data.iconcolor === 'red') {
+                        editIconColor = 'red';
                     }
 
                     editIcon.classList.add('text-20', 'i-Closee', 'i-Data-Yes');
@@ -446,10 +487,10 @@ export default {
                     throw new Error('Failed to fetch followup task list');
                 }
                 const data = await response.json();
-                const carePlanData = data.care_plan_form.static; 
-              
+                const carePlanData = data.care_plan_form.static;
+
                 if (carePlanData && carePlanData.goals) {
-                    goals.value = JSON.parse(carePlanData.goals); 
+                    goals.value = JSON.parse(carePlanData.goals);
                 }
                 selectedDiagnosisId.value = carePlanData.diagnosis;
                 selectedDiagnosis.value = carePlanData.diagnosis;
@@ -457,10 +498,10 @@ export default {
                 selectedcondition.value = carePlanData.condition;
                 comments.value = carePlanData.comments;
                 if (carePlanData && carePlanData.tasks) {
-                    tasks.value = JSON.parse(carePlanData.tasks); 
+                    tasks.value = JSON.parse(carePlanData.tasks);
                 }
                 if (carePlanData && carePlanData.symptoms) {
-                    symptoms.value = JSON.parse(carePlanData.symptoms); 
+                    symptoms.value = JSON.parse(carePlanData.symptoms);
                 }
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
@@ -541,7 +582,6 @@ export default {
                 }
                 loading.value = false;
                 const data = await response.json();
-                // Check if data.data is not undefined before assigning it to rowData
                 if (data.data) {
                     passRowData.value = data.data;
                 } else {
@@ -610,7 +650,7 @@ export default {
         const handleCodeAlert = () => {
             alert("Are you sure you want to change the code?");
             if (selectedDiagnosis.value === '') {
-                alert('please selecte condition!');
+                alert('please select condition!');
             };
         }
 
@@ -752,7 +792,6 @@ export default {
         };
 
         watchEffect(() => {
-            // Update goalsText whenever goals array changes
             goals.value = goals.value.filter((goal) => goal.trim() !== '');
             symptoms.value = symptoms.value.filter((symptom) => symptom.trim() !== '');
             tasks.value = tasks.value.filter((task) => task.trim() !== '');
@@ -795,7 +834,7 @@ export default {
             $("form[name='" + formName + "'] #editdiagnoid").val();
             var editid = $("form[name='" + formName + "'] #editdiagnoid").val();
             $("form[name='diagnosis_code_form'] #editdiagnoid").val(editid);
-            $("form[name='care_plan_form'] #editdiagnoid").val(editid); 
+            $("form[name='care_plan_form'] #editdiagnoid").val(editid);
             // $("form[name='" + formName + "'] #enable_diagnosis_button").hide();
             // $("form[name='" + formName + "'] #disable_diagnosis_button").hide();
             let currentPatientId = props.patientId;
@@ -813,14 +852,14 @@ export default {
                     url: `/ccm/get-all-code-by-id/${id}/${props.patientId}/diagnosis`,
                 }).then(response => {
                     clearGoals();
-                    const carePlanData = response.data.care_plan_form.static; 
+                    const carePlanData = response.data.care_plan_form.static;
                     selectedcondition.value = carePlanData.condition;
                     selectedCode.value = carePlanData.code;
                     if (carePlanData && carePlanData.goals) {
-                        goals.value = JSON.parse(carePlanData.goals); 
+                        goals.value = JSON.parse(carePlanData.goals);
                     }
                     if (carePlanData && carePlanData.tasks) {
-                        tasks.value = JSON.parse(carePlanData.tasks); 
+                        tasks.value = JSON.parse(carePlanData.tasks);
                     }
                     if (carePlanData && carePlanData.symptoms) {
                         symptoms.value = JSON.parse(carePlanData.symptoms);
@@ -898,4 +937,3 @@ export default {
 
 };
 </script>
-

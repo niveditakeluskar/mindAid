@@ -58,9 +58,9 @@ const props = defineProps({
   color: #42b983;
 }
 
-.modal-body {
+/* .modal-body {
   margin: 20px 0;
-}
+} */
 
 .modal-default-button {
   float: right;

@@ -1,5 +1,5 @@
 <template>    
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog ">
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
             <div class="modal-content">
@@ -123,13 +123,13 @@
             moduleId: Number,
             componentId: Number,
             PatientWorkList:{
-        type: Function,
-        required: true,
-        },
-        PatientBasicInfoTab:{
-        type: Function,
-        required: true,
-        },
+                type: Function,
+                required: true,
+            },
+            PatientBasicInfoTab:{
+                type: Function,
+                required: true,
+            },
         }, 
         setup(props) {
             const Deactivations = ref([]);
@@ -139,6 +139,7 @@
             const time = ref('');
             const openModal = async () => {
                 isOpen.value = true;
+                document.body.classList.add('modal-open');
                 fetchActiveDeactiveReasons();
                 const element = document.getElementById('page_landing_times');
                 if (!element || element.value === null) {
@@ -154,6 +155,7 @@
             let selectPatientId = ref('');
             const closeModal = () => {
                 isOpen.value = false;
+                document.body.classList.remove('modal-open');
                 $("#status").prop("checked", false);
             };
 
