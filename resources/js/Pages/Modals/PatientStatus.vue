@@ -1,6 +1,6 @@
-<template>
-    <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-    <div class="modal fade" :class="{ 'open': isOpen }" style="width: 730px;left: 22%;min-height: 400px;"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+<template>    
+    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+		<div class="modal-dialog ">
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -109,6 +109,7 @@
                 </div>
             </div>
         </form>
+		</div>
     </div>
 </template>
 <script>
@@ -145,6 +146,7 @@
                     if (landingTime) {
                         time.value = landingTime;
                     }
+					
                 } else {
                     time.value = element.value;
                 }
