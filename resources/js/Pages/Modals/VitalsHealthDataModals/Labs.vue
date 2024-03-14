@@ -117,7 +117,18 @@ export default {
                     initialWidth: 20,
                 },
                 { headerName: 'Lab', field: 'description', filter: true }, 
-                { headerName: 'Lab Date', field: 'lab_date' },
+                {   headerName: 'Lab Date',
+                    field: 'lab_date',
+                    valueFormatter: params => {
+                        const date = new Date(params.value);
+                        const month = date.getMonth() + 1; 
+                        const day = date.getDate();
+                        const year = date.getFullYear();
+
+                        // Format the date as mm-dd-yyyy
+                        return `${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}-${year}`;
+                    }
+                },
                 { headerName: 'Reading', field: 'labparameter' },
                 { headerName: 'Notes', field: 'notes' },
                 {
@@ -372,9 +383,9 @@ export default {
             }
         );
 
-        onBeforeMount(() => {
-            fetchLabs();
-            fetchPatientLabsList();
+        onBeforeMount(async () => {
+            await fetchLabs();
+            await fetchPatientLabsList();
             const pathname = window.location.pathname;
             const segments = pathname.split('/');
             segments.shift();
