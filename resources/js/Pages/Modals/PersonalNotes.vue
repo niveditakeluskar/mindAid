@@ -109,13 +109,13 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            this.closeModal();
+            closeModal();
         }
 
         onMounted(async () => {
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
-                personal_notes_data.value = props.personal_notes_data;
+                personal_notes_data.value = props.personal_notes_data.static.personal_notes;
             } catch (error) {
                 console.error('Error on page load:', error);
             }
