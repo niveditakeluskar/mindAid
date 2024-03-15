@@ -342,7 +342,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
             $datetimes = "select to_char(effdatetime at time zone 'UTC' at time zone 'America/Chicago', 'DD-MM-YYYY HH24:MI:SS') as effdatetime
                 FROM rpm.observations_bp WHERE patient_id = '" . $patient_id . "' AND EXTRACT(Month FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '" . $month . "' AND EXTRACT(Year FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '" . $year . "'";
 
-            $DateArray = DB::select(DB::raw($datetimes));
+            $DateArray = DB::select($datetimes);
             //$uniArray = $datetime->toArray();
             //$DateArray = $datetime->toArray();
             $reading2 = PatientThreshold::where('patient_id', $patient_id)
