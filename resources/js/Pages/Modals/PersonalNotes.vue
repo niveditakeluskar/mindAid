@@ -1,7 +1,8 @@
 <!-- AlertThresholds.vue -->
 <template>
-    <div v-if="isOpen" class="overlay open" @click="closeModal"></div>
-    <div v-if="isOpen" class="modal fade open" style="width: 500px; height: 242px; left: 33%; top: 20%;">
+    
+    <div v-if="isOpen" class="modal fade show"  >
+	<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Personal Notes</h4> 
@@ -45,6 +46,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </template>
 
@@ -97,6 +99,7 @@ export default {
                     document.getElementById("personal_notes_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
+                        closeModal();
                         personalnotesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
@@ -107,13 +110,12 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            this.closeModal();
         }
 
         onMounted(async () => {
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
-                personal_notes_data.value = props.personal_notes_data;
+                personal_notes_data.value = props.personal_notes_data.static.personal_notes ?? null;
             } catch (error) {
                 console.error('Error on page load:', error);
             }
@@ -138,40 +140,3 @@ export default {
     },
 };
 </script>
-
-<style>
-.modal {
-    display: none;
-    position: fixed;
-    background-color: white;
-    z-index: 1000;
-    margin: 2%;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
-}
-
-.modal.open {
-    display: block;
-    opacity: 1;
-}
-
-.overlay.open {
-    display: block;
-}
-
-.modal-content {
-    overflow-y: auto !important;
-    height: auto !important;
-}
-</style>
