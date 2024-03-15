@@ -99,6 +99,7 @@ export default {
                     document.getElementById("personal_notes_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
+                        closeModal();
                         personalnotesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
@@ -109,7 +110,6 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            closeModal();
         }
 
         onMounted(async () => {
