@@ -47,7 +47,6 @@ export default {
   methods: {
     async getPageModuleID() {
       try {
-        /*    var url = encodeURIComponent(window.location.href); */
         const response = await axios.get('/get_module_id');
         return response.data.moduleID;
 
@@ -150,10 +149,9 @@ export default {
       });
     },
     openLogoutConfirmationModal() {
-      console.log("openLogoutConfirmationModal called");
       this.$refs.logoutConfirmationModalRef.openModal();
     },
-    checkTimeInterval() {
+    async checkTimeInterval() {
       var showPopupTime = parseInt(localStorage.getItem("showPopupTime"));
       var sessionTimeoutInSeconds = parseInt(localStorage.getItem("sessionTimeoutInSeconds"));
       var systemDate = new Date(localStorage.getItem("systemDate"));
@@ -163,11 +161,9 @@ export default {
       idleTime = Math.floor(idleTime);
       console.log("checkTimeInterval called", idleTime);
       if (idleTime >= showPopupTime && idleTime < sessionTimeoutInSeconds) {
-        console.log("in if", idleTime);
         this.openLogoutConfirmationModal();
       } else if (idleTime >= sessionTimeoutInSeconds) {
-        console.log("in else if", idleTime);
-        window.location.href = '/logout';
+        await axios.get('/logout');
         window.location.reload();
       }
       localStorage.setItem("idleTime", idleTime);

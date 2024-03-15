@@ -1,21 +1,22 @@
 <!-- ModalForm.vue -->
 <template>
-  <div class="overlay" :class="{ 'open': isOpen }" @click="closeModal"></div>
-  <div class="modal fade" :class="{ 'open': isOpen }" style="width: 500px; height: 242px; left: 33%; top: 20%;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Logout Alert</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <!-- <label>Do you want to logout?</label> -->
-        <label>You are inactive on screen since few minutes. Do you really want to logout?</label>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary float-right" id="logout_yes" data-dismiss="modal"
-          @click.prevent="logout">Yes</button>
-        <button type="button" class="btn btn-default float-left" id="logout_no" data-dismiss="modal"
-          @click.prevent="closeLogoutModal">No</button>
+  <div class="modal fade" :class="{ 'show': isOpen }">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Logout Alert</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- <label>Do you want to logout?</label> -->
+          <label>You are inactive on screen since few minutes. Do you really want to logout?</label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary float-right" id="logout_yes" data-dismiss="modal"
+            @click.prevent="logout">Yes</button>
+          <button type="button" class="btn btn-default float-left" id="logout_no" data-dismiss="modal"
+            @click.prevent="closeLogoutModal">No</button>
+        </div>
       </div>
     </div>
   </div>
