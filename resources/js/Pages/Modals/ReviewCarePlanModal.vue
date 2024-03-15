@@ -365,6 +365,11 @@ export default {
     setup(props) {
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
+        const isDisabled = ref(false);
+        const showButton_enable_diagnosis_button = ref(false);
+        const showButton_disable_diagnosis_button =ref(false);
+        const showButton_remove = ref(true);
+        const showButton_add =ref(true);
         const selectedDiagnosisId = ref('');
         const comments = ref('');
         const formErrors = ref({});
@@ -456,8 +461,10 @@ export default {
                     link.classList.add('ActiveDeactiveClass');
                     link.style.cursor = 'pointer';
 
-                    link.addEventListener('click', (event) => {
+                    link.addEventListener('click', (event,formName) => {
                         if (event.target === editIcon) {
+                            showButton_enable_diagnosis_button.value = true;
+                            showButton_disable_diagnosis_button.value = true;
                             editPatientDignosis(data.id, event.target);
                         } else if (event.target === deleteIcon) {
                             deletePatientDignosis(data.id, event.target);
@@ -476,8 +483,11 @@ export default {
         let stepID = ref(0);
 
         const editPatientDignosis = async (id) => {
+            isDisabled.value = true;
             clearGoals();
             fetchCode();
+            showButton_add.value = false;
+            showButton_remove.value = false; 
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
@@ -510,6 +520,21 @@ export default {
             }
         };
 
+        const enableDiagnosisbutton = (formName) => {
+            showButton_add.value = true; 
+            showButton_remove.value = true;
+            $("form[name='" + formName + "'] #hiddenenablebutton").val(1);
+            isDisabled.value = false;
+        }
+
+        const disableDiagnosisbutton = (formName) => {
+            showButton_add.value = false;
+            showButton_remove.value = false;
+            const edit_id =$("form[name='" + formName + "'] #editdiagnoid").val();
+            $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
+            isDisabled.value = true;
+            editPatientDignosis(edit_id);
+        }
         const deletePatientDignosis = async (id) => {
             const module_id = props.moduleId;
             const component_id = props.componentId;
@@ -606,6 +631,11 @@ export default {
                         additionalsymptoms();
                         additionaltasks();
                         isSaveButtonDisabled.value = false;
+                        showButton_enable_diagnosis_button.value = false;
+                        showButton_disable_diagnosis_button.value = false;
+                        isDisabled.value = false; 
+                        // showButton_add.value = true;
+                        // showButton_remove.value = true; 
                     });
                     selectedCode.value = '';
                     selectedDiagnosis.value = '';
@@ -889,6 +919,11 @@ export default {
             isOpen,
             getCodeData,
             isSaveButtonDisabled,
+            showButton_enable_diagnosis_button,
+            showButton_disable_diagnosis_button,
+            showButton_remove,
+            showButton_add,
+            isDisabled,
             selectedDiagnosisId,
             comments,
             selectedCode,
@@ -929,6 +964,8 @@ export default {
             showSuccessAlert,
             selectedEditDiagnosId,
             editPatientDignosis,
+            enableDiagnosisbutton,
+            disableDiagnosisbutton,
             selectedcondition,
             startTimeInput,
         };
