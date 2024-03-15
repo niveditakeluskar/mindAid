@@ -1,7 +1,5 @@
-<!-- ModalForm.vue -->
 <template>
-    
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 	<div class="modal-dialog modal-xl">
         <div class="modal-content" style="padding-top:0px; margin:0px;">
             <div class="modal-header">
@@ -9,8 +7,8 @@
                 <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
-                <div class="row mb-4" id="medications">
-                    <div class="col-md-12 mb-4">
+                <div class="row" id="medications">
+                    <div class="col-md-12">
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-12  mb-4">
@@ -155,12 +153,10 @@
 
 <script>
 import {
-    reactive,
     ref,
     onBeforeMount,
     onMounted,
     AgGridTable,
-    // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';
 import Inputmask from 'inputmask';
@@ -392,12 +388,14 @@ export default {
             }
         };
 
-        const openModal = async () => {
+        let openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
         };
 
-        const closeModal = async () => {
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
 
         let onMedicationChanged = async () => {
@@ -490,4 +488,3 @@ export default {
 
 };
 </script>
-

@@ -1,6 +1,5 @@
-<!-- ReviewCarePlanModal.vue -->
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 	<div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -82,9 +81,7 @@
 
 <script>
 import {
-    reactive,
     ref,
-    onBeforeMount,
     onMounted,
     AgGridTable
     // Add other common imports if needed
@@ -110,10 +107,12 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
+            document.body.classList.add('modal-open');
             this.medicationTime = document.getElementById('page_landing_times').value;
         },
         closeModal() {
             this.isOpen = false;
+            document.body.classList.remove('modal-open');
         },
     },
     setup(props) {

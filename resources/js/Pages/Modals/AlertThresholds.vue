@@ -1,6 +1,5 @@
-<!-- Modal.vue -->
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
@@ -81,13 +80,15 @@ export default {
         const changeTab = (index) => {
             activeTab.value = index;
         };
-
-        const openModal = () => {
+        
+        let openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
         };
 
-        const closeModal = () => {
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
         let componentConstProps = ref({
             patientId: props.patientId,

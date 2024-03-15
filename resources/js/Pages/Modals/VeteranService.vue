@@ -1,6 +1,4 @@
-<!-- AlertThresholds.vue -->
-<template>
-  
+<template>  
   <div v-if="isOpen" class="modal fade show" >
   <div class="modal-dialog ">
       <div class="modal-content">
@@ -26,9 +24,7 @@
 <script>
 import {
     ref,
-    onBeforeMount,
     onMounted,
-    // Add other common imports if needed
 } from '../commonImports';
 import axios from 'axios';
 export default {
@@ -45,9 +41,11 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
+            document.body.classList.add('modal-open');
         },
         closeModal() {
             this.isOpen = false;
+            document.body.classList.remove('modal-open');
         },
     },
     
