@@ -8,9 +8,9 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
+                    <div class="alert alert-success col-md-10 ml-2" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
-                        <strong>data saved successfully! </strong><span id="text"></span>
+                        <strong>Data saved successfully!   </strong><span id="text"></span>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
