@@ -1,7 +1,5 @@
-<!-- ModalForm.vue -->
 <template>
-    
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 	<div class="modal-dialog modal-xl" style="padding-top:10px; ">
         <div class="modal-content">
             <div class="modal-header">
@@ -47,7 +45,6 @@
 import {
     ref,
     onBeforeMount,
-    onMounted
 } from '../commonImports';
 import Vitals from './VitalsHealthDataModals/Vitals.vue';
 import Labs from './VitalsHealthDataModals/Labs.vue';
@@ -83,11 +80,14 @@ export default {
 
         let openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
         };
 
         let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
+
         let VitalsHealthDataStageId = ref(0);
 
         let componentVitalsHealthDataProps = ref({

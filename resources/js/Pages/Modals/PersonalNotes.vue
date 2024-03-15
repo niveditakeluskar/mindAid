@@ -1,6 +1,4 @@
-<!-- AlertThresholds.vue -->
 <template>
-    
     <div v-if="isOpen" class="modal fade show"  >
 	<div class="modal-dialog ">
         <div class="modal-content">
@@ -75,14 +73,15 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const openModal = () => {
-            console.log('Open personal modal called');
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             personalnotesTime.value = document.getElementById('page_landing_times').value;
             timerStatus.value = document.getElementById('timer_runing_status').value;
         };
-
-        const closeModal = () => {
+        
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
         
         let submitPersonalNotesForm = async () => {
@@ -115,7 +114,7 @@ export default {
         onMounted(async () => {
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
-                personal_notes_data.value = props.personal_notes_data.static.personal_notes ?? null;
+                personal_notes_data.value = props.personal_notes_data?.static?.personal_notes;
             } catch (error) {
                 console.error('Error on page load:', error);
             }

@@ -33,41 +33,18 @@ export default {
       moduleId: Number,
       componentId: Number,
   },
-  data() {
-		return {
-		
-		};
-	},
-    mounted() {
-		
-	},
-    
-  setup() {
-      const isOpen = ref(false);
-      const veteranService = ref(null);
-      const openModal = () => {
-          console.log('Open modal called');
-          isOpen.value = true;
-      };
+    setup() {
+        const isOpen = ref(false);
+        const veteranService = ref(null);
+        let openModal = () => {
+            isOpen.value = true;
+            document.body.classList.add('modal-open');
+        };
 
-      const closeModal = () => {
-          console.log('Close modal called');
-      isOpen.value = false;
-      };
-
-    //   let getVtservice = async () => {
-    //         try {
-    //             await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-    //             const response = await fetch(`/ccm/veteran-service/76964135/vt`);
-    //             if (!response.ok) {
-    //                 throw new Error('Failed to fetch medication list');
-    //             }
-    //             veteranService.value = response.data; 
-    //             console.log(veteranService.value+"veteranService.value");
-    //         } catch (error) {
-    //             console.error('Error fetching medications list:', error);
-    //         }
-    //     };
+        let closeModal = () => {
+            isOpen.value = false;
+            document.body.classList.remove('modal-open');
+        };
         onMounted(() => {
             // getVtservice();
         });
@@ -81,4 +58,3 @@ export default {
   },
 };
 </script>
-
