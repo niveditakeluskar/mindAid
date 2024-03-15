@@ -1,6 +1,5 @@
-<!-- ReviewCarePlanModal.vue -->
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
@@ -110,9 +109,11 @@ export default {
         openModal() {
             this.isOpen = true;
             this.adddevicetime = document.getElementById('page_landing_times').value;
+            document.body.classList.add('modal-open');
         },
         closeModal() {
             this.isOpen = false;
+            document.body.classList.remove('modal-open');
         },
     },
     setup(props) {
@@ -182,9 +183,11 @@ export default {
                 }
                 const emailData = await response.json();
                 const emailArray = Object.entries(emailData).map(([id, content_title]) => ({ id, content_title }));
-                emailOptions.value = emailArray;
-                selectedEmail.value = emailArray[(emailArray).length-1].id;
-                textScript(selectedEmail.value);
+                if (emailArray.length > 0) { // Check if emailArray is not empty
+                    emailOptions.value = emailArray;
+                    selectedEmail.value = emailArray[emailArray.length - 1].id;
+                    textScript(selectedEmail.value);
+                }
             } catch (error) {
                 console.error('Error fetching email list:', error);
             }
@@ -328,4 +331,3 @@ export default {
 
 };
 </script>
-

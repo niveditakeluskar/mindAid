@@ -1,6 +1,4 @@
-<!-- AlertThresholds.vue -->
 <template>
-    
     <div v-if="isOpen" class="modal fade show"  >
 	<div class="modal-dialog ">
         <div class="modal-content">
@@ -10,9 +8,9 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
+                    <div class="alert alert-success col-md-10 ml-2" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
-                        <strong>data saved successfully! </strong><span id="text"></span>
+                        <strong>Data saved successfully!   </strong><span id="text"></span>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
@@ -75,14 +73,15 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const openModal = () => {
-            console.log('Open personal modal called');
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             personalnotesTime.value = document.getElementById('page_landing_times').value;
             timerStatus.value = document.getElementById('timer_runing_status').value;
         };
-
-        const closeModal = () => {
+        
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
         
         let submitPersonalNotesForm = async () => {
@@ -99,6 +98,7 @@ export default {
                     document.getElementById("personal_notes_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
+                        closeModal();
                         personalnotesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
@@ -109,13 +109,12 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            closeModal();
         }
 
         onMounted(async () => {
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
-                personal_notes_data.value = props.personal_notes_data.static.personal_notes;
+                personal_notes_data.value = props.personal_notes_data?.static?.personal_notes;
             } catch (error) {
                 console.error('Error on page load:', error);
             }

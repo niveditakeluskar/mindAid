@@ -504,9 +504,14 @@ export default {
 	width:95%;
 	max-width: 95%;
 }
-	
-
-
-
+.goal-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.model-open{
+  padding-right: 17px;
+  overflow: hidden;
+}
 </style>
-

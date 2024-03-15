@@ -1,5 +1,5 @@
 <template>    
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog ">
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
             <div class="modal-content">
@@ -69,19 +69,19 @@
                                         <input name="activedeactivefromdate" id="fromdate" type="date">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivefromdate" style="display: block;">{{ formErrors.activedeactivefromdate[0] }}</div>
                                     </div>
-                                    <div class="col-md-6 form-group mb-3" id="deceasedfromdate">
+                                    <div class="col-md-4 form-group mb-3" id="deceasedfromdate">
                                         <label for="date" id="from_date">Date of Deceased <span class="error">*</span></label>
                                         <input name="deceasedfromdate" id="deceasedfromdate" type="date">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.deceasedfromdate" style="display: block;">{{ formErrors.deceasedfromdate[0] }}</div>
                                     </div>
-                                    <div class="col-md-6 form-group mb-3" id="todate">
+                                    <div class="col-md-4 form-group mb-3" id="todate">
                                         <label for="date">To Date <span class="error">*</span></label>
-                                        <input name="activedeactivetodate" id="todate" type="date">
+                                        <input name="activedeactivetodate" type="date">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivetodate" style="display: block;">{{ formErrors.activedeactivetodate[0] }}</div>
                                     </div>
                                     <div class="col-md-8 form-group mb-3" id="deactivation_drpdwn_div">
-                                        <label for="deactivation_drpdwn" class="col-md-5">Reason for Deactivation</label>
-                                        <select id="practices" class="custom-select show-tick select2 col-md-7" name="deactivation_drpdwn">
+                                        <label for="deactivation_drpdwn">Reason for Deactivation</label>
+                                        <select id="practices" class="custom-select show-tick select2" name="deactivation_drpdwn">
                                             <option value="">Select Deactivation Reasons</option>
                                             <option v-for="Deactivation in Deactivations" :key="Deactivation.id" :value="Deactivation.id">
                                             {{ Deactivation.reasons }}
@@ -123,13 +123,13 @@
             moduleId: Number,
             componentId: Number,
             PatientWorkList:{
-        type: Function,
-        required: true,
-        },
-        PatientBasicInfoTab:{
-        type: Function,
-        required: true,
-        },
+                type: Function,
+                required: true,
+            },
+            PatientBasicInfoTab:{
+                type: Function,
+                required: true,
+            },
         }, 
         setup(props) {
             const Deactivations = ref([]);
@@ -139,6 +139,7 @@
             const time = ref('');
             const openModal = async () => {
                 isOpen.value = true;
+                document.body.classList.add('modal-open');
                 fetchActiveDeactiveReasons();
                 const element = document.getElementById('page_landing_times');
                 if (!element || element.value === null) {
@@ -154,6 +155,7 @@
             let selectPatientId = ref('');
             const closeModal = () => {
                 isOpen.value = false;
+                document.body.classList.remove('modal-open');
                 $("#status").prop("checked", false);
             };
 
