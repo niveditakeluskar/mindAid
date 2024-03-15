@@ -16,8 +16,6 @@ class DiagnosisController extends Controller {
        return view('Diagnosis::diagnosis-list');
     }
 
-   
-
     public function addDiagnosis()  
     {
        return view('Diagnosis::diagnosis-add');
@@ -25,9 +23,9 @@ class DiagnosisController extends Controller {
 
     public function populateDiagnosisData($patientId){
       $patientId = sanitizeVariable($patientId);
-      $diagnosis_data=DB::select("select d.id,d.condition,upper(dc.code) as code,d.status,d.qualified 
+      $diagnosis_data=DB::select("select d.id,d.condition,upper(dc.code) as code,dc.status,dc.qualified 
       from ren_core.diagnosis as d left join ren_core.diagnosis_codes as dc on dc.diagnosis_id=d.id  
-      where d.id='$patientId' and dc.status=1 order by d.created_at desc");        
+      where d.id='$patientId' and dc.status=1 order by dc.created_at desc");    
       $result['main_diagnosis_form'] = $diagnosis_data;
       return $result;
     }
@@ -72,8 +70,7 @@ class DiagnosisController extends Controller {
       and pd.status = 1 
       and  EXTRACT(Month from created_at) = '$month'    
       and EXTRACT(year from created_at) = $year
-      and pd.diagnosis not in (select diagnosis_id from patients.patient_careplan_last_update_n_review where status = 1 and patient_id='$patientId' ))                          
-      
+      and pd.diagnosis not in (select diagnosis_id from patients.patient_careplan_last_update_n_review where status = 1 and patient_id='$patientId' ))                                
       +                
      (select count(distinct pr.diagnosis_id) 
       from patients.patient_careplan_last_update_n_review pr               
@@ -163,7 +160,7 @@ class DiagnosisController extends Controller {
         //$existcode=Diagnosis::where(UPPER(code),$u_code)->where(UPPER(condition),$u_condition)->exists(); 
        $existcondition = DB::select("select * from ren_core.diagnosis d  where  upper(d.condition) = '".$u_condition."'");
        //dd($existcondition); 
-       if($existcondition  == '' || $existcondition == null ){ //dd("if");
+       if($existcondition  == '' || $existcondition == null ){ //dd("if"); for editing the code 
           //$data['created_by']= session()->get('userid');
           $insert_query = Diagnosis::create($data);
           $lastinsertedid=$insert_query->id;
@@ -174,12 +171,12 @@ class DiagnosisController extends Controller {
                 $u_code = strtoupper($code[$i]);
                 $existcode = DB::select("select * from ren_core.diagnosis_codes dc  
                                                   inner join ren_core.diagnosis d on d.id = dc.diagnosis_id  
-                                                  where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."'");
+                                                  where  upper(dc.code) = '".$u_code."' and  upper(d.condition) = '".$u_condition."' "); 
                 if($existcode == '' || $existcode == null) {  
                   $datacode     = array(
                     'code'      => $u_code,
                     'diagnosis_id' => $lastinsertedid,
-                    'status'    =>1,
+                    // 'status'    =>1,
                     'created_by'  => session()->get('userid'),
                     'updated_by'   =>session()->get('userid'),
                     'qualified'  => $qualified     

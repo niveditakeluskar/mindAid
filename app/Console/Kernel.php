@@ -97,7 +97,7 @@ class Kernel extends ConsoleKernel
                         try{
                             // print_r('test:scheduler '.$executionday.' '.$exectiontime);	
                             print_r('scheduler procedure called in kernel '.$executionday.' '.$exectiontime); 
-                            // $schedule->command('test:scheduler',[$id])->monthlyOn($executionday,$exectiontime);
+                            $schedule->command('test:scheduler',[$id])->monthlyOn($executionday,$exectiontime);
                         }
                         catch(\Exception $e){    
                         // \Log::info("exception catched");
@@ -184,23 +184,23 @@ class Kernel extends ConsoleKernel
              
          }
 		
-		// $schedule->command('patient:patientscheduletasks')->monthlyOn('02','05:00'); 
-        // $schedule->command('patient:patientrescheduletasks')->dailyAt('10:15'); 
-	    // $schedule->command('patient:patientmarktaskscompleted')->dailyAt('11:37');
+		$schedule->command('patient:patientscheduletasks')->monthlyOn('02','05:00'); 
+        $schedule->command('patient:patientrescheduletasks')->dailyAt('10:15'); 
+	    $schedule->command('patient:patientmarktaskscompleted')->dailyAt('11:37');
 	   
-        // $schedule->command('test:message')->everyFiveMinutes();
-        // $schedule->command('rpm:obseravtion')->everyFiveMinutes(); 
-        // $schedule->command('rpm:observation')->everyFiveMinutes(); 
-        // $schedule->command('API:UpdateOrder')->everyFiveMinutes();  
-        // //$schedule->command('webhook:alert')->everyFiveMinutes(); 
-        // $schedule->command('webhook:order')->hourly(); 
-        // $schedule->command('rpm:ecgialert')->daily();
-        // $schedule->command('rpm:otheralerts')->daily();  
+        $schedule->command('test:message')->everyFiveMinutes();
+        $schedule->command('rpm:obseravtion')->everyFiveMinutes(); 
+        $schedule->command('rpm:observation')->everyFiveMinutes(); 
+        $schedule->command('API:UpdateOrder')->everyFiveMinutes();  
+        //$schedule->command('webhook:alert')->everyFiveMinutes(); 
+        $schedule->command('webhook:order')->hourly(); 
+        $schedule->command('rpm:ecgialert')->daily();
+        $schedule->command('rpm:otheralerts')->daily();  
 		$schedule->command('patient:careplan')->everyMinute();
-		// $schedule->command('tellihealth:telliHealthRpmObservation')->everyFiveMinutes();
-		// $schedule->command('MFA:message')->everyMinute();
-		// $schedule->command('RPMReadingReminder:noReadings')->dailyAt('19:00');
-		// $schedule->command('miowebhook:miowebhookRpmObservation')->everyMinute();
+		$schedule->command('tellihealth:telliHealthRpmObservation')->everyFiveMinutes();
+		$schedule->command('MFA:message')->everyMinute();
+		$schedule->command('RPMReadingReminder:noReadings')->dailyAt('19:00');
+		$schedule->command('miowebhook:miowebhookRpmObservation')->everyMinute();
 		//$schedule->command('patient:generatescore')->monthlyOn(1,'08:00'); --//3.00 am CST and utc ka 8 am
     }
 

@@ -15,9 +15,8 @@
 	</div>
 </div>
 	
-  <div class="card-footer">
-                <div class="mc-footer">
-                 
+<div class="card-footer">
+<div class="mc-footer">                 
 <div class="row">
 	<!-- <div class="col-6 text-left form-group"><a href="http://awvprod.d-insights.global" class="btn btn-primary">Cancel</a></div>  -->
 	<div class="col-12 text-right form-group mb-4">
