@@ -1,5 +1,6 @@
 <?php
 use RCare\Org\OrgPackages\Practices\src\Models\Practices;
+use RCare\Org\OrgPackages\Practices\src\Models\PracticesGroup;
 use Illuminate\Support\Facades\Cache;
 
 /*
@@ -33,6 +34,11 @@ Route::prefix('org')->group(function () {
            /*  Cache::put($cacheKey, $practices, $minutes = 60); */ // Cache for 60 minutes
             return response()->json($practices);
         });
+
+        Route::get('/practicesgroup', function () {
+           $PracticesGroup = PracticesGroup::activeGrpPractices(); 
+           return response()->json($PracticesGroup);
+       });
 
         Route::post("/subtypeProviders", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@getsubProviders")->name("subtypeProviders");
         Route::get("/org-practices-list", "RCare\Org\OrgPackages\Practices\src\Http\Controllers\PracticesController@PracticeList")->name("org_practices_list");
