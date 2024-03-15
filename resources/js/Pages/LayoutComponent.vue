@@ -3,7 +3,7 @@
     <!-- Header component -->
     <Header />
     <slot :moduleId="moduleId" />
-      <LogoutConfirmationModal ref="LogoutConfirmationModal" />
+    <LogoutConfirmationModal ref="logoutConfirmationModalRef" />
     <!-- Footer component -->
     <Footer />
   </div>
@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       moduleId: null,
+      idleTime:0,
     };
   },
   async mounted() {
@@ -35,8 +36,10 @@ export default {
         patientId = str[5].split('#')[0];
       }
       const moduleId = await this.getPageModuleID();
+      localStorage.setItem("idleTime", 0); //reset on mount
       this.initializeScripts(moduleId, patientId);
-      setInterval(this.checkTimeInterval.bind(this), 1000);
+      // setInterval(this.checkTimeInterval.bind(this), 1000);
+      setInterval(() => this.checkTimeInterval(), 1000);
     } catch (error) {
       console.error('Error fetching moduleID:', error);
     }
@@ -44,7 +47,6 @@ export default {
   methods: {
     async getPageModuleID() {
       try {
-        /*    var url = encodeURIComponent(window.location.href); */
         const response = await axios.get('/get_module_id');
         return response.data.moduleID;
 
@@ -147,28 +149,27 @@ export default {
       });
     },
     openLogoutConfirmationModal() {
-      this.$refs.LogoutConfirmationModal.openModal();
+      this.$refs.logoutConfirmationModalRef.openModal();
     },
-    checkTimeInterval() {
-      // This function is defined as a method within the Vue component
-      var showPopupTime = localStorage.getItem("showPopupTime");
-      var sessionTimeoutInSeconds = localStorage.getItem("sessionTimeoutInSeconds");
-      var systemDate = localStorage.getItem("systemDate");
+    async checkTimeInterval() {
+      var showPopupTime = parseInt(localStorage.getItem("showPopupTime"));
+      var sessionTimeoutInSeconds = parseInt(localStorage.getItem("sessionTimeoutInSeconds"));
+      var systemDate = new Date(localStorage.getItem("systemDate"));
       var currentDate = new Date();
-      var res = Math.abs(Date.parse(currentDate) - Date.parse(systemDate)) / 1000;
+      var res = Math.abs(currentDate - systemDate) / 1000;
       var idleTime = parseInt(localStorage.getItem("idleTime")) + (res % 60);
-      if (idleTime >= showPopupTime) {
+      idleTime = Math.floor(idleTime);
+      console.log("checkTimeInterval called", idleTime);
+      if (idleTime >= showPopupTime && idleTime < sessionTimeoutInSeconds) {
         this.openLogoutConfirmationModal();
-        if (idleTime >= sessionTimeoutInSeconds) {
-          window.location.href = '/logout';
-          window.location.reload();
-          // window.location.href = '/rcare-login';
-          // window.location.reload();
-        }
+      } else if (idleTime >= sessionTimeoutInSeconds) {
+        await axios.get('/logout');
+        window.location.reload();
       }
       localStorage.setItem("idleTime", idleTime);
       localStorage.setItem("systemDate", currentDate);
     },
+
   },
 };
 </script>

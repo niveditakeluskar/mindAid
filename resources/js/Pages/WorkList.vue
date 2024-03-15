@@ -514,8 +514,4 @@ export default {
   padding-right: 17px;
   overflow: hidden;
 }
-
-
-
 </style>
-
