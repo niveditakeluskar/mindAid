@@ -159,7 +159,6 @@ export default {
       var res = Math.abs(currentDate - systemDate) / 1000;
       var idleTime = parseInt(localStorage.getItem("idleTime")) + (res % 60);
       idleTime = Math.floor(idleTime);
-      console.log("checkTimeInterval called", idleTime);
       if (idleTime >= showPopupTime && idleTime < sessionTimeoutInSeconds) {
         this.openLogoutConfirmationModal();
       } else if (idleTime >= sessionTimeoutInSeconds) {
