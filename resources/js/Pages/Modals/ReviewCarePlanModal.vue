@@ -152,17 +152,15 @@
 
 
                                                                                     <div>
-                                                                                        <button type="button"
+                                                                                        <button type="button" v-if="showButton_enable_diagnosis_button"
                                                                                             class="btn btn-primary mt-2 ml-3"
                                                                                             id="enable_diagnosis_button"
-                                                                                            onclick="carePlanDevelopment.enableDiagnosisbutton(this)"
-                                                                                            style="display:none">Enable
+                                                                                            @click="() => enableDiagnosisbutton('care_plan_form')">Enable
                                                                                             Editing</button>
-                                                                                        <button type="button"
+                                                                                        <button type="button" v-if="showButton_disable_diagnosis_button"
                                                                                             class="btn btn-primary mt-2 ml-3"
                                                                                             id="disable_diagnosis_button"
-                                                                                            onclick="carePlanDevelopment.disableDiagnosisbutton(this)"
-                                                                                            style="display:none">Disable
+                                                                                            @click="() =>disableDiagnosisbutton('care_plan_form')">Disable
                                                                                             Editing</button>
                                                                                     </div>
 
@@ -181,8 +179,10 @@
                                                                                                 name="symptoms[]"
                                                                                                 type="text"
                                                                                                 autocomplete="off"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialSymptomFilled : false">
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                v-if="showButton_remove"
                                                                                                 @click="removeSymptoms(index)"
                                                                                                 :id="'remove_symptoms_' + index"
                                                                                                 title="Remove Symptoms"></i>
@@ -190,6 +190,7 @@
                                                                                         <div class="invalid-feedback"></div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_symptoms_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionalsymptoms()"
                                                                                             title="Add symptons"></i>
 
@@ -212,14 +213,17 @@
                                                                                                 class="form-control"
                                                                                                 name="goals[]" type="text"
                                                                                                 autocomplete="off"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialGoalFilled : false">
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
-                                                                                                @click="removeGoal(index)"
+                                                                                            v-if="showButton_remove"    
+                                                                                            @click="removeGoal(index)"
                                                                                                 :id="'remove_goal_' + index"
                                                                                                 title="Remove Goal"></i>
                                                                                         </div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_goals_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionalgoals()"
                                                                                             title="Add goals"></i>
                                                                                         <div class="invalid-feedback"></div>
@@ -241,15 +245,18 @@
                                                                                                 class="form-control"
                                                                                                 name="tasks[]" type="text"
                                                                                                 style="height:50px;overflow-y:hidden;"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialTaskFilled : false"></textarea>
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
-                                                                                                @click="removeTasks(index)"
+                                                                                            v-if="showButton_remove"    
+                                                                                            @click="removeTasks(index)"
                                                                                                 :id="'remove_tasks_' + index"
                                                                                                 title="Remove Task"></i>
                                                                                         </div>
                                                                                         <div class="invalid-feedback"></div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_tasks_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionaltasks()"
                                                                                             title="Add task"></i>
                                                                                         <div class="col-md-10 mb-3"
@@ -265,6 +272,7 @@
                                                                                             id="diagnosis_comments"
                                                                                             v-model="comments"
                                                                                             name="comments"
+                                                                                            :disabled="isDisabled"
                                                                                             style="height:50px;overflow-y:hidden;"></textarea>
                                                                                         <div class="invalid-feedback"></div>
                                                                                     </div>
