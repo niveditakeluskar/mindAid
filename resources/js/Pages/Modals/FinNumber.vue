@@ -1,6 +1,5 @@
-<!-- AlertThresholds.vue -->
 <template>
-    <div v-if="isOpen" class="modal fade show" > <!-- margin: 0 auto;-->
+    <div v-if="isOpen" class="modal fade show" >
 	<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
@@ -85,30 +84,15 @@ export default {
 
         const openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             finnumberTime.value = document.getElementById('page_landing_times').value;
             timerStatus.value = document.getElementById('timer_runing_status').value;
         };
 
         const closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
-        
-        // const patComDetails = async () => {
-        //     try {
-        //         const response = await fetch(`/patients/patient-details/${props.patientId}/${props.moduleId}/patient-details`);
-        //         if (!response.ok) {
-        //             throw new Error(`Failed to fetch Patient details - ${response.status} ${response.statusText}`);
-        //         }
-        //         const data = await response.json();
-        //         debugger;
-        //         finNumber.value = data.patient[0].fin_number;
-                
-        //     } catch (error) {
-        //         console.error('Error fetching Patient details:', error.message); // Log specific error message
-        //         // Handle the error appropriately
-        //     }
-        // }
-
         let submitFinNumberForm = async () => {
             let myForm = document.getElementById('fin_number_form');
             let formData = new FormData(myForm);
@@ -129,10 +113,7 @@ export default {
                         finnumberTime.value = document.getElementById('page_landing_times').value;
                         closeModal();
                     }, 3000);// Close the modal after 3 seconds (3000 milliseconds)
-                    // window.location.reload();
                     formErrors.value = [];
-                    // patComDetails();
-
                 }
             } catch (error) {
                 if (error.response && error.response.status === 422) {
@@ -178,4 +159,3 @@ export default {
     },
 };
 </script>
-

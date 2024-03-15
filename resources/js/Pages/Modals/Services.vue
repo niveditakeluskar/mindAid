@@ -1,6 +1,5 @@
-<!-- ModalForm.vue -->
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 	<div class="modal-dialog modal-xl" style="padding-top:0px;">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,8 +7,8 @@
                 <button type="button" class="close" data-dismiss="modal" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
-                <div class="row mb-4" id="medications">
-                    <div class="col-md-12 mb-4">
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-md-12 mb-4">
@@ -95,11 +94,14 @@ export default {
 
         let openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
         };
 
         let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
+        
         let servicesStageId = ref(0);
 
         let componentServicesProps = ref({

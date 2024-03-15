@@ -1,6 +1,4 @@
-<!-- ResearchStudy.vue -->
-<template>
-    
+<template>    
     <div v-if="isOpen" class="modal fade show" >
 	<div class="modal-dialog ">
         <div class="modal-content">
@@ -75,14 +73,15 @@ export default {
 
         const openModal = () => {
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             researchstudyTime.value = document.getElementById('page_landing_times').value;
             timerStatus.value = document.getElementById('timer_runing_status').value;
         };
 
-        const closeModal = () => {
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
-
         
         let submitResearchStudyForm = async () => {
             let myForm = document.getElementById('part_of_research_study_form');
