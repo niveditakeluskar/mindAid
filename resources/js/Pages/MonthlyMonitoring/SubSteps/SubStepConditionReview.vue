@@ -89,8 +89,17 @@
                         </li>
                     </ul>
                     <input type="hidden" id="hd_deviceid" :value="deviceID">
+                    <div class="row mt-4">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body device_box">
+                                    <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm"  style="background-color:#27a7de;border:none;" id="btnFullScreen">View in full screen</a>
+                                    <div id="container1" style="height: 400px; width: 100%;"></div>
 
-
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row mt-4">
                         <div class="col">
                             <div class="card">
@@ -102,23 +111,10 @@
                             </div>
                         </div>
                         <div>
-                            <button type="button" id="btn_datalist" @click="dataList" class="btn btn-primary">Data
+                            <button type="button" id="btn_datalist" @click="dataList" class="btn btn-primary" style="display: none;">Data
                                 List</button>
                         </div>
-                        <div class="col">
-                            <div class="card">
-
-                                <div class="card-body device_box">
-                                    <div id="container1" style="height: 400px; width: 100%;"></div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div id="hd_tbl">
+                        <div id="hd_tbl" class="col">
                         <hr>
                         <div class="form-row" v-if="toshowTable">
                             <div class="col-md-2 form-group mb-2">
@@ -136,10 +132,16 @@
                                 <button type="button" id="resetbutton" class="btn btn-primary mt-4" style="margin-left: 10px ">Reset</button>
                             </div>
                             <div class="col-md-2 text-right" id="address_btn"></div>
+                            </div>
+                            <ReviewTable :patientId="patientId" :deviceID="deviceID" :fromDate="fromDate" :toDate="toDate"
+                                v-if="toshowTable" />
                         </div>
-                        <ReviewTable :patientId="patientId" :deviceID="deviceID" :fromDate="fromDate" :toDate="toDate"
-                            v-if="toshowTable" />
+                        
                     </div>
+
+
+
+                    
                     <hr>
                     <div class="card">
                         <form name="rpm_review_form" id="rpm_review_form" @submit.prevent="submitRpmReviewForm">
@@ -333,6 +335,7 @@ export default {
                     this.changedevice = true;
 
                     this.getChartOnclick(response.data, "container1", this.deviceID);
+                    this.dataList();
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -486,7 +489,7 @@ export default {
 
             var subtitle1 = "<b>" + label + "</b>" + " - [Min:" + reading_min + " ]/[Max: " + reading_max + "]";
 
-            Highcharts.chart(id, {
+            let chart = Highcharts.chart(id, {
                 chart: {
                     type: 'spline',
                     events: {
@@ -500,6 +503,14 @@ export default {
                     }
                 },
                 xAxis: {
+                    labels: {
+                        rotation: -90,
+                        step: 1,
+                        padding: 0,
+                        style: {
+                            fontSize: '8px'
+                        }
+                    },
                     //type: 'datetime',
                     categories: patientarraydatetime,
                     crosshair: true,  //extra
@@ -567,9 +578,32 @@ export default {
                 }
             });
 
+            let btn = document.getElementById("btnFullScreen")
+
+            btn.addEventListener('click', function () {
+            Highcharts.FullScreen = function (container) {
+                this.init(container.parentNode); // main div of the chart
+            };
+
+            Highcharts.FullScreen.prototype = {
+                init: function (container) {
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen();
+                    } else if (container.mozRequestFullScreen) {
+                        container.mozRequestFullScreen();
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    } else if (container.msRequestFullscreen) {
+                        container.msRequestFullscreen();
+                    }
+                }
+            };
+            chart.fullscreen = new Highcharts.FullScreen(chart.container);
+        })
+
         },
     },
-
+    
 
 
 };
