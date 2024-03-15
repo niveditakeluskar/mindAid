@@ -183,9 +183,11 @@ export default {
                 }
                 const emailData = await response.json();
                 const emailArray = Object.entries(emailData).map(([id, content_title]) => ({ id, content_title }));
-                emailOptions.value = emailArray;
-                selectedEmail.value = emailArray[(emailArray).length-1].id;
-                textScript(selectedEmail.value);
+                if (emailArray.length > 0) { // Check if emailArray is not empty
+                    emailOptions.value = emailArray;
+                    selectedEmail.value = emailArray[emailArray.length - 1].id;
+                    textScript(selectedEmail.value);
+                }
             } catch (error) {
                 console.error('Error fetching email list:', error);
             }
