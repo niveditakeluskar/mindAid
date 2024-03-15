@@ -1,6 +1,5 @@
-<!-- ReviewCarePlanModal.vue -->
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }" > <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
@@ -110,9 +109,11 @@ export default {
         openModal() {
             this.isOpen = true;
             this.adddevicetime = document.getElementById('page_landing_times').value;
+            document.body.classList.add('modal-open');
         },
         closeModal() {
             this.isOpen = false;
+            document.body.classList.remove('modal-open');
         },
     },
     setup(props) {
@@ -328,4 +329,3 @@ export default {
 
 };
 </script>
-

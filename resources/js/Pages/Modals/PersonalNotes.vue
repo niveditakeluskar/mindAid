@@ -1,6 +1,4 @@
-<!-- AlertThresholds.vue -->
 <template>
-    
     <div v-if="isOpen" class="modal fade show"  >
 	<div class="modal-dialog ">
         <div class="modal-content">
@@ -75,14 +73,15 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const openModal = () => {
-            console.log('Open personal modal called');
             isOpen.value = true;
+            document.body.classList.add('modal-open');
             personalnotesTime.value = document.getElementById('page_landing_times').value;
             timerStatus.value = document.getElementById('timer_runing_status').value;
         };
-
-        const closeModal = () => {
+        
+        let closeModal = () => {
             isOpen.value = false;
+            document.body.classList.remove('modal-open');
         };
         
         let submitPersonalNotesForm = async () => {
