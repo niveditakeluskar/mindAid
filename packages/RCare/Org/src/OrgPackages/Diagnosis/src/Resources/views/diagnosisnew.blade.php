@@ -23,7 +23,7 @@
 	</div>
 	<div class="col-md-10  form-group mb-3"> 
 		<div class="form-check form-switch">
-			<label class="switch">Qualified for billing<span class="error">*</span>
+			<label class="switch">Qualified for billing<span class="error">*</span><span class="toggle_value"></span>
 				<input type=checkbox  class="checkbox checkbox-primary qualified" id="qualified" name="qualified">
   				<span class="slider round"></span>
 				<div class="invalid-feedback"></div>

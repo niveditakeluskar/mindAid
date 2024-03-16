@@ -925,106 +925,6 @@ $start = microtime(true);
 
 
 
-    public function addCarePlanAge()
-    {
-        $query =    "select 
-                    cc.patient_id, 
-                    cc.diagnosis_count,
-                    cc.review_age_green, 
-                    cc.review_age_yellow,
-                    cc.update_age_years,
-                    CASE
-                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) THEN 'red'
-                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)   THEN 'red'
-                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'green'
-                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )   THEN 'yellow'  
-                    ELSE null
-                    end AS result,
-                    CASE
-                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
-                    Aleast one Care Plan not reviewed for more than 6 months or
-                    Aleast one Care Plan not updated for more than a year'	
-
-                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
-                    Aleast one Care Plan not reviewed for more than 6 months or
-                    Aleast one Care Plan not updated for more than a year'
-                                                            				
-                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'All the Care Plans have been reviewed within 6 months'
-
-                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )  THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
-                    ELSE null
-                    end AS resulttitle
-                    from 
-                    (SELECT
-                    patient_id, 
-                    count(diagnosis_id)::float as diagnosis_count,
-                    case when
-                        sum( 
-                                ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
-                                date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
-                                (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float /100 )::float
-                                )::float)
-                            )
-                    < 6 then 0 else 1 end
-                         as review_age_green,      
-                    case when
-                        sum( 
-                            
-                            ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
-                            date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
-                            (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float /100 )::float
-                            )::float)
-                        )  
-                    < 6 then 0 else 1 end
-                         as review_age_yellow, 
-      
-                    case when
-                        sum( 
-                        
-                            ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float *12 + 
-                            date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float +
-                            (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float /100 )::float
-                            )::float)
-                        )
-                        < 12 then 0 else 1 end 
-                         as update_age_years 
-                        
-                    FROM patients.patient_careplan_last_update_n_review         
-                        
-                    WHERE patient_careplan_last_update_n_review.status = 1 
-                    
-                    group by patient_id) cc";
-
-        // dd($query);   
-        $data = DB::select($query);
-
-
-
-
-
-        foreach ($data as $d) {
-            $mydata = array(
-                'patient_id' => $d->patient_id,
-                'diagnosis_id_count' => $d->diagnosis_count,
-                'review_age_green' => $d->review_age_green,
-                'review_age_yellow' => $d->review_age_yellow,
-                'update_age_years' => $d->update_age_years,
-                'iconcolor' => $d->result,
-                'icontitle' => $d->resulttitle,
-                'created_by' => 1,
-                'updated_by' => 1,
-                'status' => 1
-            );
-
-            $check = PatientCareplanAge::where('patient_id', $d->patient_id)->exists();
-            if ($check) {
-                PatientCareplanAge::where('patient_id', $d->patient_id)->update($mydata);
-            } else {
-                PatientCareplanAge::create($mydata);
-            }
-        }
-    }
-
     // public function addCarePlanAge()
     // {
     //     $query =    "select 
@@ -1116,6 +1016,101 @@ $start = microtime(true);
     //         }
     //     }
     // }
+
+    public function addCarePlanAge()
+    {
+        $query =    "select 
+                    cc.patient_id, 
+                    cc.diagnosis_count,
+                    cc.review_age_green, 
+                    cc.review_age_yellow,
+                    cc.update_age_years,
+                    CASE
+                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) THEN 'red'
+                    when (cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)   THEN 'red'
+                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'green'
+                    when (cc.review_age_green > 0 and cc.review_age_yellow > 0 )   THEN 'yellow'  
+                    ELSE null
+                    end AS result,
+                    CASE
+                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) 
+                    THEN 'All the Care Plans not reviewed for more than 6 months or 
+                    Aleast one Care Plan not reviewed for more than 6 months or
+                    Aleast one Care Plan not updated for more than a year'	
+
+                    when (cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  
+                    THEN 'All the Care Plans not reviewed for more than 6 months or
+                    Aleast one Care Plan not reviewed for more than 6 months or
+                    Aleast one Care Plan not updated for more than a year'
+                                                            				
+                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  
+                    THEN 'All the Care Plans have been reviewed within 6 months'
+
+                    when (cc.review_age_green > 0 and cc.review_age_yellow > 0 )  
+                    THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
+                    ELSE null 
+                    end AS resulttitle
+                    from 
+                    (SELECT
+                    patient_id, 
+                    count(diagnosis_id)::float as diagnosis_count, 
+                    sum( case when
+                            ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
+                            date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
+                            (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float /100 )::float
+                            )::float)
+                            < 6 then 0 else 1 end
+                    ) as review_age_green,      
+                    sum( case when
+                        ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
+                        date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
+                        (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float /100 )::float
+                        )::float)
+                        < 6 then 0 else 1 end  
+                    ) as review_age_yellow, 
+                    sum( case when
+                        ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float *12 + 
+                        date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float +
+                        (date_part ('day'::text , age(now(), patient_careplan_last_update_n_review.update_date::timestamp with time zone))::float /100 )::float
+                        )::float)
+                            < 12 then 0 else 1 end
+                    ) as update_age_years 
+                        
+                    FROM patients.patient_careplan_last_update_n_review         
+                        
+                    WHERE patient_careplan_last_update_n_review.status = 1 
+                    
+                    group by patient_id) cc";
+
+        // dd($query);   
+        $data = DB::select($query);
+
+
+
+
+
+        foreach ($data as $d) {
+            $mydata = array(
+                'patient_id' => $d->patient_id,
+                'diagnosis_id_count' => $d->diagnosis_count,
+                'review_age_green' => $d->review_age_green,
+                'review_age_yellow' => $d->review_age_yellow,
+                'update_age_years' => $d->update_age_years,
+                'iconcolor' => $d->result,
+                'icontitle' => $d->resulttitle,
+                'created_by' => 1,
+                'updated_by' => 1,
+                'status' => 1
+            );
+
+            $check = PatientCareplanAge::where('patient_id', $d->patient_id)->exists();
+            if ($check) {
+                PatientCareplanAge::where('patient_id', $d->patient_id)->update($mydata);
+            } else {
+                PatientCareplanAge::create($mydata);
+            }
+        }
+    }
 
     /*************************************************************ashvini arumugam changes***********************/
     public function reschdule_tasks_sp()
