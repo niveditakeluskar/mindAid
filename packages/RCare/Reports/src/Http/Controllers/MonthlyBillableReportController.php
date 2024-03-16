@@ -529,7 +529,7 @@ class MonthlyBillableReportController extends Controller
         $qualified_array = array();
         $nonqualified_array = array();
 
-        dd($splitcode);
+       // dd($splitcode);
         for ($j = 0; $j < $total_diag; $j++) // change 11 to 0 ashwini changes
         {
 
