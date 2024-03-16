@@ -363,6 +363,7 @@ class EnrollmentTrackingReportController extends Controller
   $finalheader=array();
   $maxcount=0;
   $codedata; 
+//  dd($data);  
 
   for($i=0;$i<count($data);$i++)
   {
@@ -373,11 +374,10 @@ class EnrollmentTrackingReportController extends Controller
     $headername="header".$i;
     
 
-    if (array_key_exists("practice_name",$data[$i])){ 
-    $practicegroupid=$data[$i]->id;
-    $name = $data[$i]->practice_name; 
-  
-
+    if (property_exists($data[$i], "practice_name")) {
+      //dd($data[$i]);  
+      $practicegroupid=$data[$i]->id;
+      $name = $data[$i]->practice_name; 
     }else{
      $practiceid=$data[$i]->id;
      $name = $data[$i]->name;
@@ -422,7 +422,7 @@ class EnrollmentTrackingReportController extends Controller
       
       
         // $practiceid = 1;
-        if (array_key_exists("practice_name",$data[$i])){ 
+        if (property_exists($data[$i], "practice_name")) {
             if($practicegroupid == 0){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
               inner join patients.patient_services ps on ps.patient_id = pp.patient_id
@@ -480,7 +480,7 @@ class EnrollmentTrackingReportController extends Controller
       $tdt2 = $todate1 ." "."23:59:59";   
  
       // $practiceid = 1;
-      if (array_key_exists("practice_name",$data[$i])){ 
+      if (property_exists($data[$i], "practice_name")) {
         if($practicegroupid == 0){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
           inner join patients.patient_services ps on ps.patient_id = pp.patient_id
