@@ -1984,7 +1984,544 @@ class CarePlanDevelopmentController extends Controller
         }
     }
 
+    public function savePatientdiagnosisData(PatientsDiagnosisRequest $request){    
+    
+        // $hidden_id          = sanitizeVariable($request->diagnosis_id); // 4th aug 2022
+        $hidden_id          = sanitizeVariable($request->diagnosis); // 4th aug 2022
+        $patient_id         = sanitizeVariable($request->patient_id);
+        $code               = sanitizeVariable($request->code);
+        $goals              = sanitizeVariable($request->goals);
+        $condition          = sanitizeVariable($request->diagnosis);
+        $condition_name     = sanitizeVariable($request->condition);
+        $support            = sanitizeVariable($request->support);
+        $comments           = sanitizeVariable($request->comments);
+        $symptoms           = sanitizeVariable($request->symptoms);
+        $tasks              = sanitizeVariable($request->tasks);
+        $tab_name           = sanitizeVariable($request->tab_name); 
+        $new_code           = sanitizeVariable($request->new_code); 
+        $start_time         = sanitizeVariable($request->start_time);
+        $end_time           = sanitizeVariable($request->end_time);
+        $module_id          = sanitizeVariable($request->module_id);
+        $component_id       = sanitizeVariable($request->component_id);
+        $stage_id           = sanitizeVariable($request->stage_id);
+        $step_id            = sanitizeVariable($request->step_id);
+        $billable           = sanitizeVariable($request->billable);
+        $form_name          = sanitizeVariable($request->form_name);
+        $createdby          = session()->get('userid');
+        $hiddenenablebutton = sanitizeVariable($request->hiddenenablebutton);
+        $editdiagnoid       = sanitizeVariable($request->editdiagnoid);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        // dd($editdiagnoid);
+        
+    
+    
+    
+    
+        $is_update_and_review_data = 0;
+        if($billable == 0 || $billable == 1){
+            $billable = $billable ;
+        }else{
+            $billable = 1;
+        }
+        // DB::beginTransaction();
+        // try {
+            if($code=='0' && $code!=null) {
+                $code = $new_code; 
+            } else {
+                $code = sanitizeVariable($request->code);
+            }
+            $diagnosisData  = array(
+                'code'      => $code,
+                'condition' => $condition_name,
+                'goals'     => json_encode($goals),
+                'symptoms'  => json_encode($symptoms),
+                'tasks'     => json_encode($tasks),
+                'support'   => $support,
+                'comments'  => $comments,
+                'patient_id'=> $patient_id,
+                'uid'       => $patient_id,
+                'diagnosis' => $condition,
+            );
 
+            if($editdiagnoid!='' && ($hiddenenablebutton == 0 && ($hiddenenablebutton!=null || $hiddenenablebutton!=''))){ 
+                $check_exist_diagnosis_data_widout_currentdate  = PatientDiagnosis::where('patient_id', $patient_id)
+                                                                ->where('diagnosis', $condition)
+                                                                // ->where('created_by',session()->get('userid')) 
+                                                                ->where('code',$code)
+                                                                ->where('id',$editdiagnoid)
+                                                                ->where('status',1)
+                                                                ->orderBy('created_at', 'desc')
+                                                                ->skip(0)->take(1)
+                                                                ->get();
+            // dd($check_exist_diagnosis_data_widout_currentdate[0]->goals);
+                $is_update_and_review_data = 0;
+                $diagnosisData  = array(
+                    'code'      => $code,
+                    'condition' => $check_exist_diagnosis_data_widout_currentdate[0]->condition,
+                    'goals'     => $check_exist_diagnosis_data_widout_currentdate[0]->goals,
+                    'symptoms'  => $check_exist_diagnosis_data_widout_currentdate[0]->symptoms,
+                    'tasks'     => $check_exist_diagnosis_data_widout_currentdate[0]->tasks,
+                    'comments'  => $comments,
+                    'patient_id'=> $patient_id,
+                    'uid'       => $patient_id,
+                    'diagnosis' => $check_exist_diagnosis_data_widout_currentdate[0]->diagnosis,
+                );
+                $action= 'reviewed';
+
+            }else if($hiddenenablebutton == 1){
+                $diagnosisData  = array(
+                    'code'      => $code,
+                    'condition' => $condition_name,
+                    'goals'     => json_encode($goals),
+                    'symptoms'  => json_encode($symptoms),
+                    'tasks'     => json_encode($tasks),
+                    'support'   => $support,
+                    'comments'  => $comments,
+                    'patient_id'=> $patient_id,
+                    'uid'       => $patient_id,
+                    'diagnosis' => $condition,
+                );
+                $is_update_and_review_data = 1;
+                $action= 'modified';
+
+            }
+            else{
+                $diagnosisData  = array(
+                    'code'      => $code,
+                    'condition' => $condition_name,
+                    'goals'     => json_encode($goals),
+                    'symptoms'  => json_encode($symptoms),
+                    'tasks'     => json_encode($tasks),
+                    'support'   => $support,
+                    'comments'  => $comments,
+                    'patient_id'=> $patient_id,
+                    'uid'       => $patient_id,
+                    'diagnosis' => $condition,
+                );
+                $is_update_and_review_data = null;
+                $action= 'created';
+            }
+            
+            if($tab_name=='1') {
+                $diagnosisData['review'] = 1;  
+            }
+            //record time
+            $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            
+            
+            if(!empty($code)){ 
+                $check_code  = DiagnosisCode::where('diagnosis_id', $condition)->where('code', $code)->exists();
+                if($check_code == false){
+                    $create_code = array(
+                                        'diagnosis_id' => $condition,
+                                        'code' => $code,
+                                        'status' => 1
+                                    ); 
+                     $create_code['created_by'] = session()->get('userid');
+                     $create_code['updated_by'] = session()->get('userid');
+                    $creatediagnosis = DiagnosisCode::create($create_code);
+                }
+                
+    
+                $check_exist_code  = PatientDiagnosis::where('patient_id', $patient_id)
+                                    ->where('diagnosis', $condition)
+                                    ->where('created_by',session()->get('userid')) 
+                                    ->where('code',$code)
+                                    ->where('status',1)
+                                    ->whereDate('created_at', '=', Carbon::today()->toDateString())
+                                    ->exists();
+                                    
+    
+                $check_exist_diagnosis_data  = PatientDiagnosis::where('patient_id', $patient_id)
+                                                ->where('diagnosis', $condition)
+                                                // ->where('created_by',session()->get('userid')) 
+                                                ->where('code',$code)
+                                                ->where('status',1)
+                                                ->whereDate('created_at', '=', Carbon::today()->toDateString())
+                                                ->get();
+    
+                
+                if($hidden_id!='' && isset($hidden_id)){  
+                    // dd("if");
+    
+                   // 4th aug 2022 changed variable name to check
+                 $check = PatientDiagnosis::where('diagnosis',$hidden_id)->where('patient_id', $patient_id)->where('status',1)->exists();
+                 $checkforcurrentdate = PatientDiagnosis::where('diagnosis',$hidden_id)->where('patient_id', $patient_id)
+                 ->whereDate('created_at', '=', Carbon::today()->toDateString())->where('status',1)->exists();
+                    // dd($checkforcurrentdate);
+
+                    if($check == true &&  $checkforcurrentdate == true ){
+                    //    dd("if inside");
+                        //this loop is for previous month or current month update and review..                   
+                        // dd("check if");
+                        $diagnosisData['updated_by'] = session()->get('userid');
+                        $diagnosisData['comments'] = $comments;
+                        
+                        //place this $check_exist_diagnosis_data_widout_currentdate before $update_query to compare array of symptons,goals,tasks
+                        // dd($hiddenenablebutton);
+                    //   dd($editdiagnoid);
+                        
+
+                        // dd($action);
+                        // dd($editdiagnoid);  
+
+                             /******************************************added by me on 19th sept********************************/ 
+                             $update_query = PatientDiagnosis::where('diagnosis',$hidden_id)->where('patient_id', $patient_id)
+                                            ->where('status',1)
+                                            // ->whereDate('created_at', '=', Carbon::today()->toDateString())
+                                            ->where('id',$editdiagnoid) //added for updating only particular diagnosis on 7th september 2022--mail from juliet It created duplicates of my previous Diabetes entries, kept the previous entries, and overwrote all their dates and times to today
+                                            ->update($diagnosisData);
+
+
+                            $latestrecord = PatientDiagnosis::where('diagnosis',$hidden_id)
+                                                ->where('patient_id', $patient_id)
+                                                ->where('status',1)
+                                                // ->whereDate('created_at', '=', Carbon::today()->toDateString())   
+                                                ->where('id',$editdiagnoid) //added for updating only particular diagnosis on 7th september 2022--mail from juliet It created duplicates of my previous Diabetes entries, kept the previous entries, and overwrote all their dates and times to today
+                                                ->orderBy('created_at', 'desc')
+                                                ->skip(0)->take(1)->get();
+
+
+                            $patient_diagnosis_id = $latestrecord[0]->id;
+                            $new_diagnosis_id = $latestrecord[0]->diagnosis;  
+                            
+                            /******************************************added by me on 19th sept********************************/ 
+                        
+   
+                        
+                     
+                        if(  ($action=='reviewed') && ($is_update_and_review_data==0) ){ 
+                            
+                            // dd("if review");
+   
+                            $action='reviewed';
+                            $c=CarePlanUpdateLogs::where('diagnosis_id', $new_diagnosis_id )
+                                ->where('patient_diagnosis_id',$patient_diagnosis_id)
+                                ->where('patient_id', $patient_id)
+                                ->where('status',1)
+                                ->orderBy('created_at', 'desc')
+                                ->skip(0)->take(1)->get();
+    
+                                
+    
+                                if(count($c)>0){
+                                    $update_date = $c[0]->update_date;  
+                                }else{
+                                  
+                                   
+                                    $update_date =  $latestrecord[0]->updated_at;
+                                    $update_datetime_arr = explode(" ",$update_date);
+                                    $update_date_array = explode("-",$update_datetime_arr[0]);
+                                    $update_date = $update_date_array[2] . "-" . $update_date_array[0] . "-" .$update_date_array[1] . " " .$update_datetime_arr[1]; 
+                                   
+                                }
+    
+                               
+                              
+    
+                            $review_date = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                           
+                            
+                            $careplanlogsdata = array(
+                                'patient_id'=>$patient_id,          
+                                'diagnosis_id' =>$new_diagnosis_id, 
+                                'patient_diagnosis_id'=>$patient_diagnosis_id,                                               
+                                'created_by'=>$createdby,
+                                'updated_by'=>$createdby,
+                                'status'=>1
+                            );
+    
+    
+                        }else {
+                           
+                        // dd("else modified");
+                        $action= 'modified';
+                        $update_date =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();; // Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();               
+                        $review_date =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();// Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                                
+                        }
+                       
+    
+                        $careplanid  = $patient_diagnosis_id; // 4th aug 2022
+                        $careplanlogsdata = array(
+                            'patient_id'=>$patient_id, 
+                            'diagnosis_id'=> $new_diagnosis_id,                                 
+                            'patient_diagnosis_id' =>$careplanid,                  
+                            'created_by'=>$createdby,
+                            'updated_by'=>$createdby,
+                            'update_date'=>$update_date,
+                            'review_date'=> $review_date,
+                            'action'=> $action,
+                            'status'=>1
+                        );
+                        // dd($careplanlogsdata);
+                        $insert_careplanlog = CarePlanUpdateLogs::create($careplanlogsdata);
+                        $diag_id= $new_diagnosis_id;
+    
+    
+                    }else{
+                       
+                        // dd("check else");
+                      
+    
+                        $diagnosisData['created_by']= session()->get('userid');
+                        $diagnosisData['updated_by']= session()->get('userid');
+                        $insert_query = PatientDiagnosis::create($diagnosisData);
+                        $update_date  =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();//Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                        $review_date  =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                        $careplanlogsdata = array(
+                            'patient_id'=>$patient_id,  
+                            'diagnosis_id'=>$insert_query->diagnosis,
+                            'patient_diagnosis_id' =>$insert_query->id,                  
+                            'created_by'=>$createdby,
+                            'updated_by'=>$createdby,
+                            'update_date'=>$update_date,
+                            'review_date'=>$review_date,
+                            'action'=>'created',
+                            'status'=>1   
+                        );
+                        //dd($careplanlogsdata);
+                        $insert_careplanlog = CarePlanUpdateLogs::create($careplanlogsdata);
+                        $diag_id = $insert_query->diagnosis;
+                    }
+    
+                }else if($check_exist_code == true && $hidden_id==''){
+                    // dd(" first else if");      
+                   
+    
+                    $diagnosisData['updated_by']= session()->get('userid');
+               
+    
+                    $update_query = PatientDiagnosis::where('patient_id', $patient_id)
+                                    ->where('status',1)
+                                    ->where('diagnosis', $condition)
+                                    ->where('code', $code)->whereDate('updated_at', '=', Carbon::today()->toDateString())
+                                    ->update($diagnosisData);
+                                    
+    
+                    $latestrecord = PatientDiagnosis::where('patient_id', $patient_id)
+                                    ->where('diagnosis', $condition)
+                                    ->where('code', $code)
+                                    ->where('status',1)
+                                    ->whereDate('updated_at', '=', Carbon::today()->toDateString())
+                                    ->orderBy('created_at', 'desc')
+                                    ->skip(0)->take(1)->get();
+    
+                    $patient_diagnosis_id = $latestrecord[0]->id; 
+                    $new_diagnosis_id = $latestrecord[0]->diagnosis;
+    
+                    if( $hiddenenablebutton == 0 ){ 
+                  
+                        $is_update_and_review_data = 0;
+                        $action= 'reviewed';
+                        $c=CarePlanUpdateLogs::where('patient_diagnosis_id', $patient_diagnosis_id)->where('diagnosis_id',$new_diagnosis_id)
+                            ->where('status',1) 
+                            ->where('patient_id', $patient_id)
+                            ->orderBy('created_at', 'desc')
+                            ->skip(0)->take(1)->get();
+    
+                            if(count($c)>0){
+                                $update_date = $c[0]->update_date;
+                            }else{
+                                $update_date =  $latestrecord[0]->updated_at;
+                              
+                                $update_datetime_arr = explode(" ",$update_date);
+                                $update_date_array = explode("-",$update_datetime_arr[0]);
+                                $update_date = $update_date_array[2] . "-" . $update_date_array[0] . "-" .$update_date_array[1] . " " .$update_datetime_arr[1]; 
+                            }
+                        $review_date  =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                        $careplanlogsdata = array(
+                            'patient_id'=>$patient_id,          
+                            'patient_diagnosis_id' =>$patient_diagnosis_id,
+                            'diagnosis_id'=>$new_diagnosis_id,             
+                            'created_by'=>$createdby,
+                            'updated_by'=>$createdby,
+                            'status'=>1
+                        );
+                    }else{
+                    
+                        $is_update_and_review_data = 1;
+                        $action= 'modified';
+                        $update_date =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();               
+                        $review_date =   Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                    }
+                    $careplanlogsdata = array(
+                        'patient_id'=>$patient_id,          
+                        'diagnosis_id'=>$new_diagnosis_id,
+                        'patient_diagnosis_id' => $patient_diagnosis_id,               
+                        'created_by'=>$createdby,
+                        'updated_by'=>$createdby,
+                        'update_date'=>$update_date,
+                        'review_date'=> $review_date,
+                        'action'=> $action,
+                        'status'=>1
+                    );     
+    
+                   
+                    //dd($careplanlogsdata);
+                    $insert_careplanlog = CarePlanUpdateLogs::create($careplanlogsdata);
+                    $diag_id = $new_diagnosis_id;
+    
+                }else if($check_exist_code == true){
+                    // dd(" second else if");
+    
+    
+                    $diagnosisData['updated_by']= session()->get('userid'); 
+                    $update_query = PatientDiagnosis::where('patient_id', $patient_id)->where('code', $code)->where('diagnosis', $condition)->whereDate('updated_at', '=', Carbon::today()->toDateString())->update($diagnosisData);
+                    $latestrecord = PatientDiagnosis::where('patient_id', $patient_id)
+                                    ->where('code', $code)
+                                    ->where('diagnosis', $condition)
+                                    ->where('status',1) 
+                                    ->whereDate('updated_at', '=', Carbon::today()->toDateString())
+                                    ->orderBy('created_at', 'desc')
+                                    ->skip(0)->take(1)->get();
+    
+                    $patient_diagnosis_id = $latestrecord[0]->id;
+                    $new_diagnosis_id = $latestrecord[0]->diagnosis;
+    
+    
+
+    
+    
+                    if( $hiddenenablebutton == 0 ){ 
+                        $is_update_and_review_data = 0;
+                        $action= 'reviewed';
+                        $c=CarePlanUpdateLogs::where('diagnosis_id', $new_diagnosis_id)
+                            ->where('patient_diagnosis_id',$patient_diagnosis_id)
+                            ->where('patient_id', $patient_id)
+                            ->where('status',1)  
+                            ->orderBy('created_at', 'desc')
+                            ->skip(0)->take(1)->get();
+                            if(count($c)>0){
+                                $update_date = $c[0]->update_date;
+                            }else{
+                                $update_date =  $latestrecord[0]->updated_at;
+                               
+                                $update_datetime_arr = explode(" ",$update_date);
+                                $update_date_array = explode("-",$update_datetime_arr[0]);
+                                $update_date = $update_date_array[2] . "-" . $update_date_array[0] . "-" .$update_date_array[1] . " " .$update_datetime_arr[1]; 
+                            }
+                          $review_date = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();    //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now();
+                          $careplanlogsdata = array(
+                            'patient_id'=>$patient_id,          
+                            'patient_diagnosis_id' =>$patient_diagnosis_id, 
+                            'diagnosis_id'=>$new_diagnosis_id,               
+                            'created_by'=>$createdby,
+                            'updated_by'=>$createdby,
+                            'status'=>1
+                        );
+                    }else{
+                        $is_update_and_review_data = 1;
+                        $action= 'modified';
+                        $update_date =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s');//Carbon::now();               
+                        $review_date =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s');//Carbon::now();
+                    }
+                    $careplanlogsdata = array(
+                        'patient_id'=>$patient_id,          
+                        'diagnosis_id' =>$new_diagnosis_id,
+                        'patient_diagnosis_id'=>$patient_diagnosis_id,               
+                        'created_by'=>$createdby,
+                        'updated_by'=>$createdby,
+                        'update_date'=>$update_date,
+                        'review_date'=> $review_date,
+                        'action'=> $action,
+                        'status'=>1
+                    );
+                    $insert_careplanlog = CarePlanUpdateLogs::create($careplanlogsdata);
+                    $diag_id = $new_diagnosis_id;
+    
+                }else{
+                    // dd("last else");
+                    $diagnosisData['updated_by']= session()->get('userid');
+                    $diagnosisData['created_by']= session()->get('userid');
+                    $insert_query = PatientDiagnosis::create($diagnosisData);
+                    $update_date  =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s');//Carbon::now();
+                    $review_date  =  Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'), config('app.timezone'))->setTimezone(Session::get('timezone'));  //Carbon::now()->format('Y-m-d H:i:s'); //Carbon::now(); //Carbon::now()->format('Y-m-d H:i:s');//Carbon::now();
+                    $careplanlogsdata = array(
+                        'patient_id'=>$patient_id,                    
+                        'patient_diagnosis_id'=>$insert_query->id ,
+                        'diagnosis_id'=>$insert_query->diagnosis,
+                        'action'=>'created',
+                        'created_by'=>$createdby,
+                        'updated_by'=>$createdby,
+                        'update_date'=>$update_date,
+                        'review_date'=>$review_date,
+                        'status'=>1
+                    );
+    
+                  
+                    $diag_id = $insert_query->diagnosis;
+                    $insert_careplanlog = CarePlanUpdateLogs::create($careplanlogsdata);  
+                }        
+                $mydata = CarePlanUpdateLogs::where('patient_id',$patient_id)
+                            ->where('status',1)  
+                            ->orderBy('created_at', 'desc')
+                            ->skip(0)->take(1)->get();
+    
+                if(count($mydata)>0){
+    
+                    
+                    $finaldata = array(
+                        'patient_id'=>$patient_id,                    
+                        'diagnosis_id' =>$mydata[0]->diagnosis_id, 
+                        'created_by'=>$createdby,
+                        'updated_by'=>$createdby,
+                        'update_date'=>$mydata[0]->update_date,
+                        'review_date'=>$mydata[0]->review_date,
+                        'status'=>1
+                    );
+                    $diag_id = $mydata[0]->diagnosis_id;
+                }
+                $checkexsits = PatientCareplanLastUpdateandReview::where('patient_id',$patient_id)->where('diagnosis_id',$diag_id)->where('status',1)->exists(); 
+                
+                // dd($finaldata);    
+    
+    
+                if($checkexsits == true){
+                    $insert_finaldata =  PatientCareplanLastUpdateandReview::where('patient_id',$patient_id)->where('diagnosis_id',$diag_id)->where('status',1)->update( $finaldata);
+                }else{
+                    $insert_finaldata =  PatientCareplanLastUpdateandReview::create( $finaldata);  
+                }
+    
+                
+            }  
+            $last_sequence = CallWrap::where('patient_id',$patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->max('sequence'); //->where('created_at', CallWrap::max('created_at'))
+            $new_sequence = $last_sequence + 1;
+            $topic_name = $condition_name . " specific general notes";
+            $condition_data = array(  
+                'uid'                 => $patient_id,
+                // 'record_date'         => Carbon::now()->format('Y-m-d H:i:s'),
+                'record_date'         => Carbon::now(),
+                'topic'               => $topic_name,
+                'notes'               => $comments,
+                'emr_entry_completed' => null,
+                'created_by'          => session()->get('userid') ,
+                'patient_id'          => $patient_id,
+                'template_type'       => ''  
+            );
+            $checkTopicExist = CallWrap::where('patient_id', $patient_id)->where('topic', $topic_name)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+            
+            if($checkTopicExist == true) {
+                CallWrap::where('patient_id', $patient_id)->where('topic', $topic_name)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->update($condition_data);
+            } else {
+                $condition_data['sequence'] = $new_sequence;
+                CallWrap::create($condition_data);
+            }      
+            $this->patientDataStatus($patient_id,$module_id,$component_id,$stage_id,$step_id);     
+            return response(['form_start_time' =>$form_save_time]); 
+        //     DB::commit();
+        // } catch(\Exception $ex) {
+        //     DB::rollBack();
+        //     // return $ex;
+        //     return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        // }
+    }   
+    
+
+
+
+    /*
     public function savePatientdiagnosisData(PatientsDiagnosisRequest $request)
     {
 
@@ -2015,11 +2552,7 @@ class CarePlanDevelopmentController extends Controller
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($editdiagnoid);
-
-
-
-
-
+        // dd($request); 
         $is_update_and_review_data = 0;
         if ($billable == 0 || $billable == 1) {
             $billable = $billable;
@@ -2050,7 +2583,6 @@ class CarePlanDevelopmentController extends Controller
         }
         //record time
         $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
-
 
         if (!empty($code)) {
             $check_code  = DiagnosisCode::where('diagnosis_id', $condition)->where('code', $code)->exists();
@@ -2085,7 +2617,7 @@ class CarePlanDevelopmentController extends Controller
 
 
             if ($hidden_id != '' && isset($hidden_id)) {
-                // dd("if");
+                //dd("if");
 
                 // 4th aug 2022 changed variable name to check
                 $check = PatientDiagnosis::where('diagnosis', $hidden_id)->where('patient_id', $patient_id)->where('status', 1)->exists();
@@ -2096,10 +2628,8 @@ class CarePlanDevelopmentController extends Controller
                     //    dd("if inside");
                     //this loop is for previous month or current month update and review..                   
                     // dd("check if");
-
-
                     $diagnosisData['updated_by'] = session()->get('userid');
-
+                    $diagnosisData['comments'] = $comments;
                     $check_exist_diagnosis_data_widout_currentdate  = PatientDiagnosis::where('patient_id', $patient_id)
                         ->where('diagnosis', $condition)
                         // ->where('created_by',session()->get('userid')) 
@@ -2128,7 +2658,7 @@ class CarePlanDevelopmentController extends Controller
                     // dd($action);
                     // dd($editdiagnoid);  
 
-                    /******************************************added by me on 19th sept********************************/
+                    /******************************************added by me on 19th sept********************************
                     $update_query = PatientDiagnosis::where('diagnosis', $hidden_id)->where('patient_id', $patient_id)
                         ->where('status', 1)
                         // ->whereDate('created_at', '=', Carbon::today()->toDateString())
@@ -2148,7 +2678,7 @@ class CarePlanDevelopmentController extends Controller
                     $patient_diagnosis_id = $latestrecord[0]->id;
                     $new_diagnosis_id = $latestrecord[0]->diagnosis;
 
-                    /******************************************added by me on 19th sept********************************/
+                    /******************************************added by me on 19th sept********************************
 
 
 
@@ -2219,7 +2749,7 @@ class CarePlanDevelopmentController extends Controller
                     $diag_id = $new_diagnosis_id;
                 } else {
 
-                    // dd("check else");
+                    dd("check else");
 
                     $diagnosisData['created_by'] = session()->get('userid');
                     $diagnosisData['updated_by'] = session()->get('userid');
@@ -2467,7 +2997,7 @@ class CarePlanDevelopmentController extends Controller
         //     // return $ex;
         //     return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
         // }
-    }
+    }*/
 
 
 
