@@ -529,18 +529,20 @@ class CcmController extends Controller
         $patientLabDetails   = [];
         $labInc = 0;
         foreach ($patient_lab1 as $key => $value) {
-            $lab_test_id = $value['lab_test_id'];
-            $date = strtotime($value['lab_date']);
-            $parameter_id = !empty($value['labs_parameters'][0]['id']) ? $value['labs_parameters'][0]['id'] : 0;
-            $parameter = !empty($value['labs_parameters'][0]['parameter']) ? $value['labs_parameters'][0]['parameter'] : 0;
-            $patientLabDetails[$date][$lab_test_id]['date'] =  $value['date'];
-            $patientLabDetails[$date][$lab_test_id]['lab_date'] =  $value['lab_date'];
-            $patientLabDetails[$date][$lab_test_id]['lab_date_exist'] =  $value['lab_date_exist'];
-            $patientLabDetails[$date][$lab_test_id]['notes'] =  $value['notes'];
-            $patientLabDetails[$date][$lab_test_id]['lab_name'] =  $value['lab_test']['description'];
-            $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['reading'] =  $value['reading'];
-            $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['high_val'] =  $value['high_val'];
-            $labInc++;
+            if (!empty($value['labs_parameters'][0]['id'])) {
+                $lab_test_id = $value['lab_test_id'];
+                $date = strtotime($value['lab_date']);
+                $parameter_id = !empty($value['labs_parameters'][0]['id']) ? $value['labs_parameters'][0]['id'] : 0;
+                $parameter = !empty($value['labs_parameters'][0]['parameter']) ? $value['labs_parameters'][0]['parameter'] : 0;
+                $patientLabDetails[$date][$lab_test_id]['date'] =  $value['date'];
+                $patientLabDetails[$date][$lab_test_id]['lab_date'] =  $value['lab_date'];
+                $patientLabDetails[$date][$lab_test_id]['lab_date_exist'] =  $value['lab_date_exist'];
+                $patientLabDetails[$date][$lab_test_id]['notes'] =  $value['notes'];
+                $patientLabDetails[$date][$lab_test_id]['lab_name'] =  $value['lab_test']['description'];
+                $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['reading'] =  $value['reading'];
+                $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['high_val'] =  $value['high_val'];
+                $labInc++;
+            }
         }
         $patient_enroll_date = PatientServices::latest_module($uid, $module_id);
         $patient_services    = PatientHealthServices::where("patient_id", $uid)
