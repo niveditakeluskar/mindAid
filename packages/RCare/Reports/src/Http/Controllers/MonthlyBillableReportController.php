@@ -75,7 +75,7 @@ if($practices!="" && $practices !='null'){
 $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select( $query );
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -138,7 +138,7 @@ if($practices!="" && $practices !='null'){
 
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select( $query );
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -193,7 +193,7 @@ if($practices!="" && $practices !='null'){
 $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
 
 
-$data = DB::select( DB::raw($query) );
+$data = DB::select( $query) ;
       return Datatables::of($data) 
       ->addIndexColumn()            
       ->make(true);
@@ -300,18 +300,18 @@ public function getPatientData(Request $request)
                                    $querytotalbillablepatients .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
                                    
                                    
-    $querytotalbillablepatientscount=DB::select( DB::raw($querytotalbillablepatients));  
+    $querytotalbillablepatientscount=DB::select( $querytotalbillablepatients);  
 
-    $querytotalbillablepatientsrpmcount=DB::select( DB::raw($querytotalbillablepatientsrpm)); 
+    $querytotalbillablepatientsrpmcount=DB::select( $querytotalbillablepatientsrpm); 
                                  
 
 
     $queryEnrolledActiveCcm ="select * from patients.sp_enrolled_in_ccm_active_detailscount()";    
-    $totalActiveCCMPatient =DB::select( DB::raw($queryEnrolledActiveCcm) );
+    $totalActiveCCMPatient =DB::select( $queryEnrolledActiveCcm) ;
 
 
     $queryEnrolledActiveRpm ="select * from patients.sp_enrolled_in_rpm_active_detailscount()";
-    $totalActiveRPMPatient =DB::select( DB::raw($queryEnrolledActiveRpm) );
+    $totalActiveRPMPatient =DB::select( $queryEnrolledActiveRpm) ;
 
      $data=array( 'Totalpatient'=>$totalPatient, 
                   'TotalbillablePatient'=>$querytotalbillablepatientscount,
@@ -416,13 +416,13 @@ public function MonthlyBilllingReportPatientsSearch(Request $request)
        
        
        ";
-       $data = DB::select( DB::raw($query) );
+       $data = DB::select( $query) ;
       //  dd($query);
       //  dd($data);
       
             
        $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
-       $diagnosis = DB::select( DB::raw($diagnosis) );
+       $diagnosis = DB::select( $diagnosis) ;
       //  dd($diagnosis);  
 
       
