@@ -529,7 +529,7 @@ class MonthlyBillableReportController extends Controller
         $qualified_array = array();
         $nonqualified_array = array();
 
-
+        dd($splitcode);
         for ($j = 0; $j < $total_diag; $j++) // change 11 to 0 ashwini changes
         {
 
@@ -796,7 +796,7 @@ class MonthlyBillableReportController extends Controller
       $year = date('Y', strtotime($monthly));
       $month = date('m', strtotime($monthly));
 
-    $query = "select * from billing.sp_monthly_billing_report_py sp where months = ".$m." and years = ".$year." ";
+    $query = "select * from billing.sp_monthly_billing_report_py where month = ".$m." and year = ".$year." ";
 
     if($practices!="" && $practices !='null'){
       $query .= " and practicesid =".$practices;
