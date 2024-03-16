@@ -1,7 +1,7 @@
 <template>
-    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
+    <div class="alert alert-success col-md-10 ml-2" :style="{ display: showAlert ? 'block' : 'none' }">
         <button type="button" class="close" data-dismiss="alert">x</button>
-        <strong>data saved successfully! </strong><span id="text"></span>
+        <strong>Data saved successfully! </strong><span id="text"></span>
     </div>
     <div class=""> <!-- small-modal -->
       <!-- Content of the tab goes here -->
@@ -18,99 +18,99 @@
                 <!-- systolic -->  
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="systolichigh" id="systolichigh" :value="patient_systolichigh">
+                    <input type="text" class="form-control" name="systolichigh" id="systolichigh" v-model="patient_systolichigh" :value="patient_systolichigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="systoliclow" id="systoliclow" :value="patient_systoliclow">
+                    <input type="text" class="form-control" name="systoliclow" id="systoliclow" v-model="patient_systoliclow" :value="patient_systoliclow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- diastolic -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Diastolic High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="diastolichigh" id="diastolichigh" :value="patient_diastolichigh">
+                    <input type="text" class="form-control" name="diastolichigh" id="diastolichigh" v-model="patient_diastolichigh" :value="patient_diastolichigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Diastolic Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="diastoliclow" id="diastoliclow" :value="patient_diastoliclow">
+                    <input type="text" class="form-control" name="diastoliclow" id="diastoliclow" v-model="patient_diastoliclow" :value="patient_diastoliclow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Heart -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Heart Rate High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="bpmhigh" id="bpmhigh" :value="patient_bpmhigh">
+                    <input type="text" class="form-control" name="bpmhigh" id="bpmhigh" v-model="patient_bpmhigh" :value="patient_bpmhigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Heart Rate Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="bpmlow" id="bpmlow" :value="patient_bpmlow">
+                    <input type="text" class="form-control" name="bpmlow" id="bpmlow" v-model="patient_bpmlow" :value="patient_bpmlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Oxygen -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Oxygen Saturatio High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="oxsathigh" id="oxsathigh" :value="patient_oxsathigh">
+                    <input type="text" class="form-control" name="oxsathigh" id="oxsathigh" v-model="patient_oxsathigh" :value="patient_oxsathigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Oxygen Saturatio Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="oxsatlow" id="oxsatlow" :value="patient_oxsatlow">
+                    <input type="text" class="form-control" name="oxsatlow" id="oxsatlow" v-model="patient_oxsatlow" :value="patient_oxsatlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Glucose -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Glucose High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="glucosehigh" id="glucosehigh" :value="patient_glucosehigh">
+                    <input type="text" class="form-control" name="glucosehigh" id="glucosehigh" v-model="patient_glucosehigh" :value="patient_glucosehigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Glucose Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="glucoselow" id="glucoselow" :value="patient_glucoselow">
+                    <input type="text" class="form-control" name="glucoselow" id="glucoselow" v-model="patient_glucoselow" :value="patient_glucoselow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Temperature -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Temperature High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="temperaturehigh" id="temperaturehigh" :value="patient_temperaturehigh">
+                    <input type="text" class="form-control" name="temperaturehigh" id="temperaturehigh" v-model="patient_temperaturehigh" :value="patient_temperaturehigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Temperature Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="temperaturelow" id="temperaturelow" :value="patient_temperaturelow">
+                    <input type="text" class="form-control" name="temperaturelow" id="temperaturelow" v-model="patient_temperaturelow" :value="patient_temperaturelow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Weight -->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Weight High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="weighthigh" id="weighthigh" :value="patient_weighthigh">
+                    <input type="text" class="form-control" name="weighthigh" id="weighthigh" v-model="patient_weighthigh" :value="patient_weighthigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Weight Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="weightlow" id="weightlow" :value="patient_weightlow">
+                    <input type="text" class="form-control" name="weightlow" id="weightlow" v-model="patient_weightlow" :value="patient_weightlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Spirometer  FEV-->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-FEV High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="spirometerfevhigh" id="spirometerfevhigh" :value="patient_spirometerfevhigh">
+                    <input type="text" class="form-control" name="spirometerfevhigh" id="spirometerfevhigh" v-model="patient_spirometerfevhigh" :value="patient_spirometerfevhigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-FEV Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="spirometerfevlow" id="spirometerfevlow" :value="patient_spirometerfevlow">
+                    <input type="text" class="form-control" name="spirometerfevlow" id="spirometerfevlow" v-model="patient_spirometerfevlow" :value="patient_spirometerfevlow">
                 </div>
             <!-- </div>
             <div class="row"> -->
                 <!-- Spirometer  PEF-->
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-PEF High <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="spirometerpefhigh" id="spirometerpefhigh" :value="patient_spirometerpefhigh">
+                    <input type="text" class="form-control" name="spirometerpefhigh" id="spirometerpefhigh" v-model="patient_spirometerpefhigh" :value="patient_spirometerpefhigh">
                 </div>
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Spirometer-PEF Low <!-- <span style="color:red">*</span> --></label>
-                    <input type="text" class="form-control" name="spirometerpeflow" id="spirometerpeflow" :value="patient_spirometerpeflow">
+                    <input type="text" class="form-control" name="spirometerpeflow" id="spirometerpeflow"  v-model="patient_spirometerpeflow" :value="patient_spirometerpeflow">
                 </div>
             </div>
             <!-- <div class="modal-footer"> -->
@@ -191,6 +191,10 @@ export default {
                 formErrors.value = {};
                 const response = await axios.post('/patients/patient-threshold', formData);
                 if (response && response.status == 200) {
+                    // Scroll the modal up
+                    let modalElement = document.querySelector('.modal');
+                    modalElement.scrollTop = 0;
+                    window.scrollTo(0, 0);
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
@@ -208,6 +212,7 @@ export default {
                 }
             }
             // this.closeModal();
+            
         }
     
         onMounted(async () => {

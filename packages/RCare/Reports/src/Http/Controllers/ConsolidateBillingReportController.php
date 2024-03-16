@@ -184,13 +184,13 @@ class ConsolidateBillingReportController extends Controller
                       $query .= " where sp.billingcode != 'null'";
                     }
                    // dd($query);
-                    $data = DB::select( DB::raw($query) );
+                    $data = DB::select( $query);
                          
                         //  dd($data);
                         
                 
                     $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
-                    $diagnosis = DB::select( DB::raw($diagnosis) );
+                    $diagnosis = DB::select( $diagnosis) ;
                     //  dd($diagnosis);  
     
           

@@ -8,9 +8,9 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
+                    <div class="alert alert-success col-md-10 ml-2" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
-                        <strong>data saved successfully! </strong><span id="text"></span>
+                        <strong>Data saved successfully!   </strong><span id="text"></span>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
@@ -98,6 +98,7 @@ export default {
                     document.getElementById("personal_notes_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
+                        closeModal();
                         personalnotesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
@@ -108,13 +109,12 @@ export default {
                     console.error('Error submitting form:', error);
                 }
             }
-            closeModal();
         }
 
         onMounted(async () => {
             try {
                 personalnotesTime.value = document.getElementById('page_landing_times').value;
-                personal_notes_data.value = props.personal_notes_data.static.personal_notes;
+                personal_notes_data.value = props.personal_notes_data?.static?.personal_notes;
             } catch (error) {
                 console.error('Error on page load:', error);
             }

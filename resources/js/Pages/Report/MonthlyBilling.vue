@@ -144,11 +144,14 @@ export default {
     const callstatus = ref('');
     const isLoading = ref(false);
     const onlycode = true;
-    const patientsmodules = ref('2')
+    const patientsmodules = ref('3')
     let c_month = (new Date().getMonth() + 1).toString().padStart(2, "0");
     let c_year = new Date().getFullYear();
     const frommonth = c_year + '-' + c_month;
- 
+    for (var inc = 0; inc < 18; inc++) {
+      test.push({ headerName: 'Diagnosis Condition ' + inc, field: 'condition' + inc });
+    }
+    
     let columnDefs = ref([
       {
         headerName: 'Sr. No.',
@@ -273,21 +276,49 @@ export default {
         },
       },
       {
-        headerName: 'CPD Status', field: '',
+        headerName: 'CPD Status', field: 'finalize_cpd',
         cellRenderer: function (params) {
-          return 'yes';
+          let finalize_cpd = params.data.finalize_cpd;
+          if (finalize_cpd == 1) {
+            finalize_cpd = 'Yes';
+          }
+          if (finalize_cpd == 0) {
+            finalize_cpd = 'No';
+          }
+          return finalize_cpd;
         },
       },
 
-        { headerName: 'Billable', field: '' },
-      { headerName: 'Qualifying Conditions', field: 'finalize_cpd' },
-   
-      { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
+        { headerName: 'Billable', field: '',
+          cellRenderer: function (params) {
+            let qualified = params.data.qualified;
+            let unit = params.data.unit;
+            if (unit != '' && qualified >= 2) {
+              return 'yes';
+            }else{
+              return 'no';
+            }
+            
+          },
+        },
+      { headerName: 'Qualifying Conditions', field: '' },
+      { headerName: 'Practices', field: 'pracpracticename' },
 
+      { headerName: 'Total Time Spent', field: 'ptrtotaltime' },
+      {
+        headerName: 'Diagnosis Condition',
+        children: test
+      },
 
     ]);
 
+
     const fetchFilters = async () => {
+      isLoading.value = true;
+      fetchData();
+    }
+
+    const fetchData = async () => {
       try {
        
         let selectedGroupids = selectedGroupid.value;
@@ -295,10 +326,7 @@ export default {
         let selectedProviders = selectedProvider.value;
         let activedeactivestatuse = activedeactivestatus.value;
         let callstatuse = callstatus.value;
-      
         let m = $("#from_month").val();
-
-   
         if (selectedGroupid.value == '') {
           selectedGroupids = 'null';
         }
@@ -314,15 +342,33 @@ export default {
         if (callstatus.value == '') {
           callstatuse = 'null';
         }
-       
-   
-
         const response = await fetch('/reports/monthlybilling-searh-data/' + selectedGroupids + '/' + selectedPractices + '/' + selectedProviders + '/' +patientsmodules.value+ '/' + m + '/' + activedeactivestatuse + '/' + callstatuse );
         const data = await response.json();
         passRowData.value = data.data;
 
-        isLoading.value = false;
+        passRowData.value.forEach((value, index) => {
 
+          for (var i = 0; i < 18; i++) {
+            let label = "condition" + '' + i;
+            if (value.pdcode != null && value.pdcode != 'null') {
+              //console.log(index);
+              passRowData.value[index]['pcode'] = value.pdcode.replaceAll("|", ",");
+              var streetaddress = new Array();
+              var pdcode = passRowData.value[index]['pcode'];
+              streetaddress = pdcode.split(',')
+              if (typeof streetaddress[i] === 'undefined') {
+                passRowData.value[index][label] = '';
+              }
+              else {
+                passRowData.value[index][label] = streetaddress[i];
+              }
+            } else {
+              passRowData.value[index][label] = '';
+            }
+          }
+        });
+
+        isLoading.value = false;
       } catch (error) {
         console.error('Error fetching user filters:', error);
       }
@@ -371,11 +417,12 @@ export default {
       fetchPracticegroup();
       fetchPractices(null);
       fetchProvider(null);
-      fetchFilters();
+      fetchData();
     });
 
 
     return {
+      fetchData,
       columnDefs,
       passRowData,
       fetchFilters,

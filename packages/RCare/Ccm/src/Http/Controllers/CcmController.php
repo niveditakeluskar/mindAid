@@ -529,18 +529,20 @@ class CcmController extends Controller
         $patientLabDetails   = [];
         $labInc = 0;
         foreach ($patient_lab1 as $key => $value) {
-            $lab_test_id = $value['lab_test_id'];
-            $date = strtotime($value['lab_date']);
-            $parameter_id = !empty($value['labs_parameters'][0]['id']) ? $value['labs_parameters'][0]['id'] : 0;
-            $parameter = !empty($value['labs_parameters'][0]['parameter']) ? $value['labs_parameters'][0]['parameter'] : 0;
-            $patientLabDetails[$date][$lab_test_id]['date'] =  $value['date'];
-            $patientLabDetails[$date][$lab_test_id]['lab_date'] =  $value['lab_date'];
-            $patientLabDetails[$date][$lab_test_id]['lab_date_exist'] =  $value['lab_date_exist'];
-            $patientLabDetails[$date][$lab_test_id]['notes'] =  $value['notes'];
-            $patientLabDetails[$date][$lab_test_id]['lab_name'] =  $value['lab_test']['description'];
-            $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['reading'] =  $value['reading'];
-            $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['high_val'] =  $value['high_val'];
-            $labInc++;
+            if (!empty($value['labs_parameters'][0]['id'])) {
+                $lab_test_id = $value['lab_test_id'];
+                $date = strtotime($value['lab_date']);
+                $parameter_id = !empty($value['labs_parameters'][0]['id']) ? $value['labs_parameters'][0]['id'] : 0;
+                $parameter = !empty($value['labs_parameters'][0]['parameter']) ? $value['labs_parameters'][0]['parameter'] : 0;
+                $patientLabDetails[$date][$lab_test_id]['date'] =  $value['date'];
+                $patientLabDetails[$date][$lab_test_id]['lab_date'] =  $value['lab_date'];
+                $patientLabDetails[$date][$lab_test_id]['lab_date_exist'] =  $value['lab_date_exist'];
+                $patientLabDetails[$date][$lab_test_id]['notes'] =  $value['notes'];
+                $patientLabDetails[$date][$lab_test_id]['lab_name'] =  $value['lab_test']['description'];
+                $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['reading'] =  $value['reading'];
+                $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['high_val'] =  $value['high_val'];
+                $labInc++;
+            }
         }
         $patient_enroll_date = PatientServices::latest_module($uid, $module_id);
         $patient_services    = PatientHealthServices::where("patient_id", $uid)
@@ -903,6 +905,42 @@ class CcmController extends Controller
         if ((PatientServices::where('patient_id', $patient_id)->where('module_id', 3)->where('status', 1)->exists() && PatientServices::where('patient_id', $patient_id)->where('module_id', 2)->where('status', 1)->exists()) || $module_id == 2) {
             $ccmrpm = 1;
         }
+        // Check if this month’s data exists for PatientDiagnosis; If not, copy from last month
+        $check_exist_code = CommonFunctionController::checkPatientDiagnosisDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        //Check if this month’s data exists for Medication; If not, copy from last month
+        $check_exist_medication = CommonFunctionController::checkPatientMedicationDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        //Check if this month’s data exists for PatientAllergy; If not, copy from last month
+        $allergyTypes = array("food", "drug", "enviromental", "insect", "latex", "petrelated", "other");
+        foreach ($allergyTypes as $key => $allergyType) {
+            $check_exist_allergy = CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, $allergyType);
+        }
+
+        //Check if this month’s data exists for PatientVitalsData; If not, copy from last month
+        $check_exist_patient_vital = CommonFunctionController::checkPatientVitalsDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        //Check if this month’s data exists for PatientLabRecs; If not, copy from last month
+        $check_exist_patient_labs  = CommonFunctionController::checkPatientLabRecsDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        //Check if this month’s data exists for PatientImaging; If not, copy from last month
+        $check_exist_patient_labs  = CommonFunctionController::checkPatientImagingDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        //Check if this month’s data exists for PatientHealthData; If not, copy from last month
+        $check_exist_patient_labs  = CommonFunctionController::checkPatientHealthDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+
+        for ($i = 1; $i <= 7; $i++) {
+            //Check if this month’s data exists for PatientHealthServices; If not, copy from last month  
+            $check_exist_patient_labs  = CommonFunctionController::checkPatientHealthServicesDataExistForCurrentMonthOrCopyFromLastMonthBasedOnHealthServicesType($patient_id, $i);
+        }
+
+        $checkdrugexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'drug');
+        $checkfoodexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'food');
+        $checkenvironmentexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'enviromental');
+        $checkinsectexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'insect');
+        $checklatexexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'latex');
+        $checkpetxexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'petrelated');
+        $checkotherxexist =  CommonFunctionController::checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'other');
 
         return Inertia::render('MonthlyMonitoring/PatientDetails', [
             'patientId' => $patient_id,
