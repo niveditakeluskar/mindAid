@@ -258,7 +258,7 @@
 			<button type="button" :id="`${sectionName}_code-diagnosis-modal`" class="btn btn-primary reviewcareplanbutton" data-toggle="modal" data-target="#myModal" target="diagnosis-codes" @click="openReviewCarePlanModalModal" :disabled="(timerStatus == 1) === true ">Review Care Plan</button>
 			<ReviewCarePlanModal ref="ReviewCarePlanModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" />
 			<mark data-toggle="tooltip" title="Assess clinical relevance and ICD10 code" class="reviewcareplanbuttoncount"
-				:id="`${sectionName}_reviewcareplanbuttoncount`"></mark>
+				:id="`${sectionName}_reviewcareplanbuttoncount`">{{ reviewcareplanbuttoncount }}</mark>
 
 			<div class="form- mt-3 mb-4">
 				<div class="col-md-12 forms-element">
@@ -278,6 +278,7 @@
 import {
 	ref,
 } from '../../commonImports';
+import axios from 'axios';
 import MedicationModalForm from '../../Modals/Medication.vue';
 import AllergiesModalForm from '../../Modals/Allergies.vue';
 import ReviewCarePlanModal from '../../Modals/ReviewCarePlanModal.vue';
@@ -322,7 +323,8 @@ export default {
 			data_present_in_emrYesNO: '',
 			currentMonth: new Date().getMonth(),
 			this_month: 0,
-			timerStatus:null,
+			timerStatus: null,
+			reviewcareplanbuttoncount: 0,
 		};
 	},
 	mounted() {
@@ -344,7 +346,8 @@ export default {
 		const timerStatusElement = document.getElementById('timer_runing_status');
                if (timerStatusElement !== null) {
                   this.timerStatus = timerStatusElement.value;
-               }
+			   }
+		this.getDistinctDiagnosisCountForBubble(this.patientId);
 	},
 	computed: {
 		isDecemberOrJanuary() {
@@ -432,12 +435,9 @@ export default {
 			}
 		},
 		openModal() {
-			// Access the modal component through a ref
-			// console.log("openMModel called");
 			this.$refs.MedicationModalFormRef.openModal();
 		},
 		openAllergiesModal() {
-			// console.log("openAllergiesModal called");
 			this.$refs.allergiesModalForm.openModal();
 		},
 		openServicesModal() {
@@ -445,6 +445,14 @@ export default {
 		},
 		openVitalsHealthDataModalForm() {
 			this.$refs.vitalsHealthDataModalForm.openModal();
+		},
+		async getDistinctDiagnosisCountForBubble(patientId) {
+			try {
+				let response = await axios.get(`/org/ajax/diagnosis/${patientId}/patientdiagnosiscountforbubble`);
+				this.reviewcareplanbuttoncount = response?.data[0]?.count;
+			} catch (error) {
+				console.error('Error fetching distinct diagnosis count for bubble:', error);
+			}
 		},
 	},
 	setup(props){

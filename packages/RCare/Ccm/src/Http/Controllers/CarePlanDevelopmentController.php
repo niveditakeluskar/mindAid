@@ -1171,8 +1171,6 @@ class CarePlanDevelopmentController extends Controller
         $currentmonth     = date('m');
         $currentyear      = date("Y");
         $addtnl = [];
-
-
         //dd($data);
         foreach ($data as $d) {
             $condition = $d->condition;

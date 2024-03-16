@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" :class="{ 'show': isOpen }"> <!-- :style="{ display: isOpen ? 'block' : 'none' }"> -->
+    <div class="modal fade" :class="{ 'show': isOpen }">
         <div class="modal-dialog modal-xl" style="padding-top:10px;  ">
             <div class="modal-content">
                 <div class="modal-header">
@@ -153,16 +153,16 @@
 
                                                                                     <div>
                                                                                         <button type="button"
+                                                                                            v-if="showButton_enable_diagnosis_button"
                                                                                             class="btn btn-primary mt-2 ml-3"
                                                                                             id="enable_diagnosis_button"
-                                                                                            onclick="carePlanDevelopment.enableDiagnosisbutton(this)"
-                                                                                            style="display:none">Enable
+                                                                                            @click="() => enableDiagnosisbutton('care_plan_form')">Enable
                                                                                             Editing</button>
                                                                                         <button type="button"
+                                                                                            v-if="showButton_disable_diagnosis_button"
                                                                                             class="btn btn-primary mt-2 ml-3"
                                                                                             id="disable_diagnosis_button"
-                                                                                            onclick="carePlanDevelopment.disableDiagnosisbutton(this)"
-                                                                                            style="display:none">Disable
+                                                                                            @click="() => disableDiagnosisbutton('care_plan_form')">Disable
                                                                                             Editing</button>
                                                                                     </div>
 
@@ -181,8 +181,10 @@
                                                                                                 name="symptoms[]"
                                                                                                 type="text"
                                                                                                 autocomplete="off"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialSymptomFilled : false">
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                v-if="showButton_remove"
                                                                                                 @click="removeSymptoms(index)"
                                                                                                 :id="'remove_symptoms_' + index"
                                                                                                 title="Remove Symptoms"></i>
@@ -190,6 +192,7 @@
                                                                                         <div class="invalid-feedback"></div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_symptoms_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionalsymptoms()"
                                                                                             title="Add symptons"></i>
 
@@ -212,14 +215,17 @@
                                                                                                 class="form-control"
                                                                                                 name="goals[]" type="text"
                                                                                                 autocomplete="off"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialGoalFilled : false">
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                v-if="showButton_remove"
                                                                                                 @click="removeGoal(index)"
                                                                                                 :id="'remove_goal_' + index"
                                                                                                 title="Remove Goal"></i>
                                                                                         </div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_goals_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionalgoals()"
                                                                                             title="Add goals"></i>
                                                                                         <div class="invalid-feedback"></div>
@@ -241,8 +247,10 @@
                                                                                                 class="form-control"
                                                                                                 name="tasks[]" type="text"
                                                                                                 style="height:50px;overflow-y:hidden;"
+                                                                                                :disabled="isDisabled"
                                                                                                 :required="index === 0 ? !isInitialTaskFilled : false"></textarea>
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
+                                                                                                v-if="showButton_remove"
                                                                                                 @click="removeTasks(index)"
                                                                                                 :id="'remove_tasks_' + index"
                                                                                                 title="Remove Task"></i>
@@ -250,6 +258,7 @@
                                                                                         <div class="invalid-feedback"></div>
                                                                                         <i class="plus-icons i-Add"
                                                                                             id="append_tasks_icons"
+                                                                                            v-if="showButton_add"
                                                                                             @click="additionaltasks()"
                                                                                             title="Add task"></i>
                                                                                         <div class="col-md-10 mb-3"
@@ -265,6 +274,7 @@
                                                                                             id="diagnosis_comments"
                                                                                             v-model="comments"
                                                                                             name="comments"
+                                                                                            :disabled="isDisabled"
                                                                                             style="height:50px;overflow-y:hidden;"></textarea>
                                                                                         <div class="invalid-feedback"></div>
                                                                                     </div>
@@ -365,21 +375,26 @@ export default {
     setup(props) {
         const startTimeInput = ref(null);
         const isSaveButtonDisabled = ref(true);
+        const isDisabled = ref(false);
+        const showButton_enable_diagnosis_button = ref(false);
+        const showButton_disable_diagnosis_button = ref(false);
+        const showButton_remove = ref(true);
+        const showButton_add = ref(true);
         const selectedDiagnosisId = ref('');
         const comments = ref('');
         const formErrors = ref({});
         const showSuccessAlert = ref(false);
         const isLoading = ref(false);
-        const goals = ref([]); 
-        const tasks = ref([]); 
-        const symptoms = ref([]); 
+        const goals = ref([]);
+        const tasks = ref([]);
+        const symptoms = ref([]);
         const isInitialGoalFilled = ref(false);
         const isInitialTaskFilled = ref(false);
         const isInitialSymptomFilled = ref(false);
-        const goalsText = ref(''); 
+        const goalsText = ref('');
         const selectedDiagnosis = ref('');
         const selectedCode = ref('');
-        const passRowData = ref([]); 
+        const passRowData = ref([]);
         const loading = ref(false);
         let diagnosisOptions = ref([]);
         let codeOptions = ref([]);
@@ -456,8 +471,10 @@ export default {
                     link.classList.add('ActiveDeactiveClass');
                     link.style.cursor = 'pointer';
 
-                    link.addEventListener('click', (event) => {
+                    link.addEventListener('click', (event, formName) => {
                         if (event.target === editIcon) {
+                            showButton_enable_diagnosis_button.value = true;
+                            showButton_disable_diagnosis_button.value = true;
                             editPatientDignosis(data.id, event.target);
                         } else if (event.target === deleteIcon) {
                             deletePatientDignosis(data.id, event.target);
@@ -476,8 +493,11 @@ export default {
         let stepID = ref(0);
 
         const editPatientDignosis = async (id) => {
+            isDisabled.value = true;
             clearGoals();
             fetchCode();
+            showButton_add.value = false;
+            showButton_remove.value = false;
             isLoading.value = true;
             try {
                 selectedEditDiagnosId.value = id;
@@ -510,6 +530,21 @@ export default {
             }
         };
 
+        const enableDiagnosisbutton = (formName) => {
+            showButton_add.value = true;
+            showButton_remove.value = true;
+            $("form[name='" + formName + "'] #hiddenenablebutton").val(1);
+            isDisabled.value = false;
+        }
+
+        const disableDiagnosisbutton = (formName) => {
+            showButton_add.value = false;
+            showButton_remove.value = false;
+            const edit_id = $("form[name='" + formName + "'] #editdiagnoid").val();
+            $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
+            isDisabled.value = true;
+            editPatientDignosis(edit_id);
+        }
         const deletePatientDignosis = async (id) => {
             const module_id = props.moduleId;
             const component_id = props.componentId;
@@ -606,6 +641,11 @@ export default {
                         additionalsymptoms();
                         additionaltasks();
                         isSaveButtonDisabled.value = false;
+                        showButton_enable_diagnosis_button.value = false;
+                        showButton_disable_diagnosis_button.value = false;
+                        isDisabled.value = false;
+                        // showButton_add.value = true;
+                        // showButton_remove.value = true; 
                     });
                     selectedCode.value = '';
                     selectedDiagnosis.value = '';
@@ -889,6 +929,11 @@ export default {
             isOpen,
             getCodeData,
             isSaveButtonDisabled,
+            showButton_enable_diagnosis_button,
+            showButton_disable_diagnosis_button,
+            showButton_remove,
+            showButton_add,
+            isDisabled,
             selectedDiagnosisId,
             comments,
             selectedCode,
@@ -929,6 +974,8 @@ export default {
             showSuccessAlert,
             selectedEditDiagnosId,
             editPatientDignosis,
+            enableDiagnosisbutton,
+            disableDiagnosisbutton,
             selectedcondition,
             startTimeInput,
         };
