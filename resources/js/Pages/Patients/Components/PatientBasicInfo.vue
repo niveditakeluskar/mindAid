@@ -164,7 +164,7 @@
                                         <span v-for="service in patientenrolledServices" :key="service">
                                             <span v-if="service.trim() === 'RPM'">
                                                 <!-- Display "btn" if service is "RPM" -->
-                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
+                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="add-patient-devices" @click="add_devicesfunction">Devices</a>
                                                 <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
                                             </span>
                                         </span>
