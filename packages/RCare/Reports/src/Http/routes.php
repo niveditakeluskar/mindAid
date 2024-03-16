@@ -366,7 +366,7 @@ Route::get('/time-logs-report', function(){
             return view('Reports::caremanager-performance-report.caremanager-performance');
         })->name('CareManager.performance.Report');
         
-        Route::get('/care-manager-performance-report/search/{caremanagerid}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\CareManagerPerformanceController@CaremanagerPerformanceReportSearch')->name('caramanager.performance.report.search');
+        Route::get('/care-manager-performance-report/search/{caremanagerid}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CareManagerPerformanceController@CaremanagerPerformanceReportSearch')->name('caramanager.performance.report.search');
 
         Route::get('/export-file', function(){
             return view('Reports::additional-activity-report.exportdata');
