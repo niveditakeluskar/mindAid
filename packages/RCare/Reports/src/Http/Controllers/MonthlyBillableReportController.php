@@ -29,7 +29,7 @@ public function PatientMonthlyBillingReport(Request $request)
       $month = date('m', strtotime($monthly));
       
       $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
-      $diagnosis = DB::select( DB::raw($diagnosis) );    
+      $diagnosis = DB::select( $diagnosis) ;    
       //dd($diagnosis);
       return view('Reports::monthly-biling-report.patients-monthly-billing-report');
       
