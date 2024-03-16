@@ -1027,29 +1027,33 @@ $start = microtime(true);
                     cc.update_age_years,
                     CASE
                     when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) THEN 'red'
-                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)   THEN 'red'
+                    when (cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)   THEN 'red'
                     when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'green'
-                    when ( cc.review_age_green > 0 and cc.review_age_yellow > 0 )   THEN 'yellow'  
+                    when (cc.review_age_green > 0 and cc.review_age_yellow > 0 )   THEN 'yellow'  
                     ELSE null
                     end AS result,
                     CASE
-                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
+                    when ((cc.diagnosis_count = cc.review_age_green) and (cc.review_age_green = 0 )) or (cc.update_age_years >= 1) 
+                    THEN 'All the Care Plans not reviewed for more than 6 months or 
                     Aleast one Care Plan not reviewed for more than 6 months or
                     Aleast one Care Plan not updated for more than a year'	
 
-                    when ( cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  THEN 'All the Care Plans not reviewed for more than 6 months or
+                    when (cc.review_age_yellow > 1 ) or (cc.update_age_years >= 1)  
+                    THEN 'All the Care Plans not reviewed for more than 6 months or
                     Aleast one Care Plan not reviewed for more than 6 months or
                     Aleast one Care Plan not updated for more than a year'
                                                             				
-                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  THEN 'All the Care Plans have been reviewed within 6 months'
+                    when (cc.review_age_green = 0 and cc.review_age_yellow = 0 )  
+                    THEN 'All the Care Plans have been reviewed within 6 months'
 
-                    when ( cc.review_age_green > 0) and (cc.review_age_yellow = 0 )  THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
-                    ELSE null
+                    when (cc.review_age_green > 0 and cc.review_age_yellow > 0 )  
+                    THEN 'Aleast one Care Plan not reviewed for more than 6 months'  
+                    ELSE null 
                     end AS resulttitle
                     from 
                     (SELECT
                     patient_id, 
-                    count(diagnosis_id)::float as diagnosis_count,
+                    count(diagnosis_id)::float as diagnosis_count, 
                     sum( case when
                             ((date_part ('year'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float *12 + 
                             date_part ('month'::text , age(now(), patient_careplan_last_update_n_review.review_date::timestamp with time zone))::float +
