@@ -120,12 +120,12 @@
                             <div class="col-md-2 form-group mb-2">
                                 <label for="date">From Date</label>
                                 <input id="fromdate" min="1901-01-01" max="2999-12-31" class="form-control" name="date"
-                                    type="date" :value="fromDate" autocomplete="off">
+                                    type="date" :value="fromDate" @input="fromDate = $event.target.value" autocomplete="off">
                             </div>
                             <div class="col-md-2 form-group mb-3">
                                 <label for="date">To Date</label>
                                 <input id="todate" min="1901-01-01" max="2999-12-31" class="form-control" name="date"
-                                    type="date" :value="toDate" autocomplete="off">
+                                    type="date" :value="toDate" @input="toDate = $event.target.value" autocomplete="off">
                             </div>
                             <div>
                                 <button type="button" id="searchbutton" class="btn btn-primary mt-4" @click="SerchReviewData">Search</button>
@@ -324,6 +324,7 @@ export default {
         },
 
         async ajexChart() {
+            //this.changedevice = false
             this.toshowTable = false
             var substr = $("#calender").find(".fc-toolbar-title").html();
             this.selectedMonthYear = substr;
@@ -337,7 +338,7 @@ export default {
                     this.getChartOnclick(response.data, "container1", this.deviceID);
                     this.dataList();
                 })
-                .catch(error => {
+                .catch(error => {   
                     console.error('Error fetching data:', error);
                 });
         },
@@ -415,8 +416,8 @@ export default {
 
         async SerchReviewData(){
             this.toshowTable = false;
-            this.fromDate = $("#fromdate").val();
-            this.toDate = $("#todate").val();
+            //this.fromDate = $("#fromdate").val();
+            //this.toDate = $("#todate").val();
             let tab = 'observationsbp';
             await axios.get(`/rpm/patient-alert-history-list-device-link/${this.patientId}/${tab}/${this.fromDate}/${this.toDate}`)
                 .then(response => {
