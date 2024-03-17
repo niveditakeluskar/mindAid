@@ -11,6 +11,7 @@
 		<div class="row mb-4">
 			<div class="col-md-12  mb-4">
 				<form action="{{ route('ajax.patient.registration')}}" method="post" enctype="multipart/form-data" name ="patient_registration_form"  id="patient_registration_form">
+						@csrf
 					<div class="card mb-4">
 						<div class="card-header mb-3">
 							<div class="row">
