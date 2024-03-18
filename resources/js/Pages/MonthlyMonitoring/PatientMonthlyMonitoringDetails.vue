@@ -103,7 +103,7 @@ export default {
       });
 
       const handleFormSubmission = () => {
-         const nextTabIndex = activeCallTabs.value + 1;
+         const nextTabIndex = activeTab.value + 1;
          changeTab(nextTabIndex);
       };
 

@@ -63,7 +63,7 @@ export default {
    components: {
       PreparationForm
    },
-    setup(props) {
+    setup(props, {emit}) {
       const isLoading = ref(false);
       let preparationTime = ref();
       let timerStatus = ref();
@@ -97,6 +97,7 @@ export default {
                 setTimeout(function () {
 						$('#preparationAlert').html('');
                 }, 3000);
+                emit('form-submitted');
                }
                 isLoading.value = false;
                 clearValidationErrors();
@@ -141,6 +142,7 @@ export default {
                       $('#preparationAlert').html('');
                   }, 3000);
                   formErrors.value = {};
+                  emit('form-submitted');
                }
                 isLoading.value = false;
 
