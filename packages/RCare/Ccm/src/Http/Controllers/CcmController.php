@@ -4358,8 +4358,15 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $PatientDevices = PatientDevices::where('patient_id', $uid)->where('status', 1)->latest()->first();
         $nin = array();
 
+        $usnumber ="";
         $assigncm = UserPatients::where('patient_id', $uid)->where('status', 1)->get();
-        $usnumber = Users::where('id', $assigncm[0]->user_id)->get();
+        if(isset($assigncm[0]->user_id)){
+            $unumber = Users::where('id', $assigncm[0]->user_id)->get();
+            if(isset($unumber[0]->number)){
+                $usnumber = $unumber[0]->number;
+            }
+            
+        }
 
         if (isset($PatientDevices->vital_devices)) {
             $dv = $PatientDevices->vital_devices;
@@ -4391,7 +4398,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $replace_secondary = str_replace("[secondary_contact_number]", $patient[0]->home_number, $data_emr);
         $replace_devicelist = str_replace("[device_list]", $device, $replace_secondary);
         $replace_final = str_replace("[devicecode]", $devicecode, $replace_devicelist);
-        $replace_usnumber = str_replace("[phone_number]", $usnumber[0]->number, $replace_final);
+        $replace_usnumber = str_replace("[phone_number]", $usnumber, $replace_final);
         $scripts['finaldata'] = $replace_usnumber;
         return $scripts;
     }
