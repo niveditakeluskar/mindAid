@@ -18,7 +18,7 @@
                     <input type="hidden" name="step_id" :value="vitalsStepId">
                     <input type="hidden" name="form_name" value="number_tracking_vitals_form">
                     <input type="hidden" name="billable" value="1">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="vitalsTime" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"  />
                     <div class="col-md-4 form-group mb-3">
                         <label for="height">Height (in)<!-- <span class="error">*</span> --> :</label>
                         <input type="text" name="height" id="height" class="form-control" v-model="height" @blur="calculateBMI" />
@@ -223,7 +223,9 @@ export default {
                     document.getElementById("number_tracking_vitals_form").reset();
                     setTimeout(() => {
                         showVitalsAlert.value = false;
-                        vitalsTime.value = document.getElementById('page_landing_times').value;
+                        //vitalsTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                     // Handle the response here
                     formErrors.value = [];
@@ -262,7 +264,9 @@ export default {
 
         onMounted(async () => {
             try {
-                vitalsTime.value = document.getElementById('page_landing_times').value;
+                //vitalsTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);

@@ -20,7 +20,7 @@
                     <input type="hidden" name="id">
                     <input type="hidden" name="worklist" id="worklist">
                     <input type="hidden" name="patientid" id="patientid">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12 form-group mb-3">
@@ -145,11 +145,13 @@
                 if (!element || element.value === null) {
                     const landingTime = await fetchLandingTime();
                     if (landingTime) {
-                        time.value = landingTime;
+                        //time.value = landingTime;
+                        $(".timearr").val(landingTime);
                     }
 					
                 } else {
-                    time.value = element.value;
+                    //time.value = element.value;
+                    $(".timearr").val(element.value);
                 }
             };
             let selectPatientId = ref('');
@@ -309,10 +311,12 @@
                                 props.PatientBasicInfoTab();
                             }
                         $(".form_start_time").val(response.data.form_start_time);
-                        time.value = response.data.form_start_time;
+                        //time.value = response.data.form_start_time;
                         $('#patientalertdiv').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                         document.getElementById("active_deactive_form").reset();
                         setTimeout(function () {
+                            var time = document.getElementById('page_landing_times').value;
+                            $(".timearr").val(time);
                             $('#patientalertdiv').html('');
                         }, 3000);
                     }

@@ -1923,7 +1923,6 @@ class CarePlanDevelopmentController extends Controller
                 $practice_id        = $new_practice_id->id;
             }
             if ($provider_id == '0') {
-                dd('sdsads');
                 $insert_provider_id = array(
                     'name'        => $provider_name,
                     'practice_id' => $practice_id,

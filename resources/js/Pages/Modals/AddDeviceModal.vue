@@ -17,7 +17,7 @@
                         <input type="hidden" name="component_id" :value="componentId" />
                         <input type="hidden" name="id">
                         <input type="hidden" name="mail_content" id="mail_content" :value="mail_content">
-                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="adddevicetime">
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                      
                         <input type="hidden" name="stage_id" v-model="emailStageId" />
                         <div class="alert alert-success" id="device-alert" v-if="showSuccessAlert">
@@ -108,7 +108,9 @@ export default {
     methods: {
         openModal() {
             this.isOpen = true;
-            this.adddevicetime = document.getElementById('page_landing_times').value;
+            //this.adddevicetime = document.getElementById('page_landing_times').value;
+            var time = document.getElementById('page_landing_times').value;
+            $(".timearr").val(time);
             document.body.classList.add('modal-open');
         },
         closeModal() {
@@ -154,7 +156,9 @@ export default {
                     document.getElementById("patient_add_device_form").reset();
                    setTimeout(() => {
                         showSuccessAlert.value = false;
-                        adddevicetime.value = document.getElementById('page_landing_times').value;
+                        //adddevicetime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000); 
                 }
                 isLoading.value = false;
@@ -291,7 +295,9 @@ export default {
             fetchEmail();
             getStageID();
             try {
-                adddevicetime.value = document.getElementById('page_landing_times').value;
+                //adddevicetime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
             } catch (error) {
                 console.error('Error on page load:', error);
             } 

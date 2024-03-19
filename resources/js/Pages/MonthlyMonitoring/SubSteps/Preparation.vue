@@ -21,7 +21,8 @@
                   <input type="hidden" name="stage_id" :value="stageid">
                   <input type="hidden" name="step_id" value="0">
                   <input type="hidden" name="_token" :value="csrfToken" />
-                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="preparationTime">
+                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
+                  <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="preparationTime"-->
                   <PreparationForm :sectionName="sectionName" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :formErrors="formErrors"/>
                   <!-- @checkConditionRequirnments="checkConditionRequirnments"/> -->
                </div>
@@ -72,7 +73,9 @@ export default {
       onMounted(async () => {
          // this.$emit('checkConditionRequirnments');
             try {
-                preparationTime.value = document.getElementById('page_landing_times').value;
+                //preparationTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                const timerStatusElement = document.getElementById('timer_runing_status');
                if (timerStatusElement !== null) {
                   timerStatus.value = timerStatusElement.value;
@@ -138,7 +141,7 @@ export default {
                   $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
                   updateTimer(props.patientId, '1', props.moduleId);
                   $(".form_start_time").val(response.data.form_start_time);
-                  preparationTime.value = document.getElementById('page_landing_times').value;
+                  //preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
                       $('#preparationAlert').html('');
                         formErrors.value = {};

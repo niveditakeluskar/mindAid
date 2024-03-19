@@ -18,7 +18,8 @@
                <input type="hidden" name="call_not_text_message">
                <input type="hidden" name="billable" value="1">
                <input type="hidden" name="hourtime" id="hourtime">
-               <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+               <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time"-->
+               <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                <div class="card">
                   <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
                      <button type="button" class="close" data-dismiss="alert">x</button>
@@ -180,7 +181,9 @@ export default {
    mounted() {
       //this.fetchCallAnswerContentScript();
       //this.fetchCallNotAnswerContentScript();
-      this.time = document.getElementById('page_landing_times').value;
+      //this.time = document.getElementById('page_landing_times').value;
+      var time = document.getElementById('page_landing_times').value;
+      $(".timearr").val(time);
       this.timerStatus = document.getElementById('timer_runing_status').value;
       this.getStageID();
    },
@@ -253,6 +256,7 @@ export default {
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/(<([^>]+)>)/ig, '');
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/&nbsp;/g, ' ');
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/&amp;/g, '&');
+               this.callStarttime = document.getElementById('page_landing_times').value;
             })
             .catch(error => {
                console.error('Error fetching data:', error);
@@ -265,12 +269,14 @@ export default {
                this.callNotScript = this.callNotScript.replace(/(<([^>]+)>)/ig, '');
                this.callNotScript = this.callNotScript.replace(/&nbsp;/g, ' ');
                this.callNotScript = this.callNotScript.replace(/&amp;/g, '&');
+               this.callStarttime = document.getElementById('page_landing_times').value;
             })
             .catch(error => {
                console.error('Error fetching data:', error);
             });
       },
       async submitCallForm(){
+            
             let myForm = document.getElementById('callstatus_form'); 
             let formData = new FormData(myForm);
             this.renderComponent = false;
@@ -291,7 +297,9 @@ export default {
                      const previousMonths = await axios.get(`/ccm/previous-month-status/${this.patientId}/${this.moduleId}/${month}/${year}/previousstatus`);
                      $("#previousMonthData").html(previousMonths.data);
 					setTimeout(() => {
-                  this.time = document.getElementById('page_landing_times').value;
+                  //this.time = document.getElementById('page_landing_times').value;
+                  var time = document.getElementById('page_landing_times').value;
+                  $(".timearr").val(time);
 						this.showAlert = false;
                }, 3000);
                this.$emit('form-submitted');

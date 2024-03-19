@@ -19,7 +19,7 @@
                   <input type="hidden" name="form_name" :value="`${sectionName}_preparation_followup_form`" />
                   <input type="hidden" name="stage_id" :value="conditionReviewStageID">
                   <input type="hidden" name="step_id" value="0">
-                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="preparationTime">
+                  <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                   <div class="col-md-12 forms-element">
                      <span class="mr-3 mb-4"><b>Call preparation completed?</b></span>
                      <div class="mr-3 d-inline-flex align-self-center"> 
@@ -97,12 +97,14 @@ export default {
                $('#conditionpreparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Condition Review Completed! </strong> </div>');
                updateTimer(props.patientId, '1', props.moduleId);
                $(".form_start_time").val(response.data.form_start_time);
-               preparationTime.value = document.getElementById('page_landing_times').value;
+               //preparationTime.value = document.getElementById('page_landing_times').value;
                setTimeout(function () {
+                  var time = document.getElementById('page_landing_times').value;
+                  $(".timearr").val(time);
 						$('#conditionpreparationAlert').html('');
                 }, 3000);
                }
-              isLoading.value = false;
+            isLoading.value = false;
             emit('form-submitted');
          } catch (error) {
             if (error.response && error.response.status === 422) {
@@ -138,7 +140,9 @@ export default {
 
       onMounted(async () => {
          try {
-            preparationTime.value = document.getElementById('page_landing_times').value;
+            //preparationTime.value = document.getElementById('page_landing_times').value;
+            var time = document.getElementById('page_landing_times').value;
+            $(".timearr").val(time);
             timerStatus.value = document.getElementById('timer_runing_status').value;
          } catch (error) {
             console.error('Error on page load:', error);
