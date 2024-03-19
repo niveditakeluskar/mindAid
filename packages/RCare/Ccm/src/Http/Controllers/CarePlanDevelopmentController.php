@@ -8,7 +8,7 @@ use RCare\System\Http\Controllers\CommonFunctionController;
 use RCare\Ccm\Models\CallPreparation;
 use RCare\Ccm\Models\CallStatus;
 use RCare\Ccm\Models\CallHipaaVerification;
-use RCare\Ccm\Models\CallHomeServiceVerification;
+use RCare\Ccm\Models\CallHomeServiceVerification; 
 use RCare\Ccm\Models\CallClose;
 use RCare\Ccm\Models\CallWrap;
 use RCare\Ccm\Models\FollowUp;
@@ -1923,6 +1923,7 @@ class CarePlanDevelopmentController extends Controller
                 $practice_id        = $new_practice_id->id;
             }
             if ($provider_id == '0') {
+                dd('sdsads');
                 $insert_provider_id = array(
                     'name'        => $provider_name,
                     'practice_id' => $practice_id,

@@ -203,9 +203,9 @@
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
 							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
-								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" value="1">
+								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" :checked="report_requirnment3" value="1">
 							<span>None</span><span class="error">*</span>
-							<span class="checkmark"></span>
+							<span class="checkmark"></span> 
 						</label>
 					</div>
 				</div>

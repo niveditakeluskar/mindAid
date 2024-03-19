@@ -103,7 +103,7 @@ export default {
       });
 
       const handleFormSubmission = () => {
-         const nextTabIndex = activeCallTabs.value + 1;
+         const nextTabIndex = activeTab.value + 1;
          changeTab(nextTabIndex);
       };
 
@@ -167,7 +167,7 @@ export default {
    top: 2px;
    left: 7px;
    border-radius: 100%;
-   z-index: 2;
+   z-index: 2; 
    text-align: center;
 }
 

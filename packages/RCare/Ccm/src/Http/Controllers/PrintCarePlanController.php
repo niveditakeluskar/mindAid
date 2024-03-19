@@ -243,7 +243,6 @@ class PrintCarePlanController extends Controller
                                             AND pm.status = 1
                                             group by pm.med_id) 
                                         order by rm.description asc");
-                                        // dd($PatientMedication1);
 
         $last_time_spend        = CommonFunctionController::getCcmNetTime($uid, $module_id);
 
