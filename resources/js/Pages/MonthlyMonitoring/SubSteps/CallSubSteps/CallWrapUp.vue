@@ -328,6 +328,7 @@ export default {
                         //callWrapUpTime.value = document.getElementById('page_landing_times').value;
                         var time = document.getElementById('page_landing_times').value;
                         $(".timearr").val(time);
+                        $('div.active').next(".tm-section").click();
                     }, 3000);
                     formErrors.value = [];
                     additionalErrors.value = false;
