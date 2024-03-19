@@ -115,7 +115,7 @@
             </div>
             <!-- <div class="modal-footer"> -->
                 <!-- if ($role == 3 || $role == 2 || $role == 5)  -->
-                    <button type="button" class="btn btn-primary float-right mb-4" @click="submit_patient_threshold_form()">Submit</button>
+                    <button type="button" class="btn btn-primary float-right mb-4" @click="submit_patient_threshold_form()" :disabled="(timerStatus == 1) === true ">Submit</button>
             <!-- </div> -->
         </form>
     </div>
@@ -179,6 +179,7 @@ export default {
         let patient_spirometerfevlow= ref(null); 
         let patient_spirometerpefhigh= ref(null); 
         let patient_spirometerpeflow= ref(null);
+        let timerStatus = ref();
         const showAlert = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
@@ -219,7 +220,7 @@ export default {
     
         onMounted(async () => {
             try {
-                //alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                timerStatus.value = document.getElementById('timer_runing_status').value;
                 var time = document.getElementById('page_landing_times').value;
                 $(".timearr").val(time);
                 patient_systolichigh.value = props.patient_systolichigh;
@@ -279,6 +280,7 @@ export default {
             patient_spirometerfevlow, 
             patient_spirometerpefhigh, 
             patient_spirometerpeflow,
+            timerStatus
         };
     },
 };
