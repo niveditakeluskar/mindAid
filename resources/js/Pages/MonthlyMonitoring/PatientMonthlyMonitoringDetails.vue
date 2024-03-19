@@ -167,7 +167,7 @@ export default {
    top: 2px;
    left: 7px;
    border-radius: 100%;
-   z-index: 2;
+   z-index: 2; 
    text-align: center;
 }
 

@@ -19,8 +19,7 @@
                     <input type="hidden" name="stage_id" :value="deviceStageId" />
                     <input type="hidden" name="form_name" value="devices_form">
                     <input type="hidden" name="idd" id="idd" v-model="selectedEditDeviceId">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
-                        :value="medicationTime" v-model="medicationTime">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time">
                     <div class="row">
                         <div id="devices_success"></div>
                         <div class="col-md-12 form-group">
@@ -108,7 +107,9 @@ export default {
         openModal() {
             this.isOpen = true;
             document.body.classList.add('modal-open');
-            this.medicationTime = document.getElementById('page_landing_times').value;
+            //this.medicationTime = document.getElementById('page_landing_times').value;
+            var time = document.getElementById('page_landing_times').value;
+            $(".timearr").val(time);
         },
         closeModal() {
             this.isOpen = false;
@@ -422,7 +423,9 @@ export default {
             fetchPartnerDeviceId();
             fetchDeviceList();
             try {
-                medicationTime.value = document.getElementById('page_landing_times').value;
+                //medicationTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
             } catch (error) {
                 console.error('Error on page load:', error);
             }

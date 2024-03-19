@@ -41,7 +41,7 @@
                                                         <input type="hidden" name="step_id" :value="stepID">
                                                         <input type="hidden" name="form_name" value="medications_form">
                                                         <input type="hidden" name="billable" value="1">
-                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="medicationTime">
+                                                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                                                         <div class="col-md-6 form-group mb-3 med_id">
                                                             <label for="medication_med_id">Select Medication<span class='error'>*</span></label> 
                                                             <select name="med_id" class="custom-select show-tick select2" id="medication_med_id" v-model="selectedMedication" @change="onMedicationChanged()">
@@ -286,7 +286,9 @@ export default {
                     medication_id.value = null;
                     setTimeout(() => {
                         showAlert.value = false;
-                        medicationTime.value = document.getElementById('page_landing_times').value;
+                        //.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 }
             } catch (error) {
@@ -336,7 +338,9 @@ export default {
                         await fetchPatientMedicationList();
                         setTimeout(() => {
                             // showMedicalSuppliesAlert.value = false;
-                            medicationTime.value = document.getElementById('page_landing_times').value;
+                            //medicationTime.value = document.getElementById('page_landing_times').value;
+                            var time = document.getElementById('page_landing_times').value;
+                            $(".timearr").val(time);
                         }, 3000);
                     }
                 } catch (error) {
@@ -391,6 +395,8 @@ export default {
         let openModal = () => {
             isOpen.value = true;
             document.body.classList.add('modal-open');
+            var time = document.getElementById('page_landing_times').value;
+            $(".timearr").val(time);
         };
 
         let closeModal = () => {
@@ -441,7 +447,9 @@ export default {
 
         onMounted(async () => {
             try {
-                medicationTime.value = document.getElementById('page_landing_times').value;
+                //medicationTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 exposeDeleteMedication();
                 exposeEditMedication();
                 Inputmask({ mask: '(999) 999-9999' }).mask('#pharmacy_phone_no');

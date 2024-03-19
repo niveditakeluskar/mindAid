@@ -19,7 +19,7 @@
                     <input type="hidden" name="form_name" value="followup_task_edit_notes" />
                     <input type="hidden" name="stage_id" :value="stageId" />
                     <input type="hidden" name="id" id="hiden_idhiden_id" :value="followupEditId"/>
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="followupTime">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                     <p><b>Task : </b><span id="task_notes">{{ task_notes }}</span></p>
                     <p><b>Category : </b><span id="category">{{ category }}</span> </p>
                     <p><input type="date" name="task_date" id="task_date_val" :value="task_date"/> </p>
@@ -80,7 +80,9 @@ export default {
         const openModal = (param1, param2) => {
             isOpen.value = true;
             document.body.classList.add('modal-open');
-            followupTime.value = document.getElementById('page_landing_times').value;
+            //followupTime.value = document.getElementById('page_landing_times').value;
+            var time = document.getElementById('page_landing_times').value;
+            $(".timearr").val(time);
             if ($.isNumeric(param1) == true) {
                 let patientId = param2;
                 axios({
@@ -117,7 +119,9 @@ export default {
 
         onMounted(async () => {
 			try {
-				followupTime.value = document.getElementById('page_landing_times').value;
+				//followupTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 console.log(followupTime,"time followup");
 			} catch (error) {
 				console.error('Error on page load:', error);
@@ -144,8 +148,10 @@ export default {
 			            $('.badge').html($('#count_todo').val());
 					updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-					followupTime.value = response.data.form_start_time;
+					//followupTime.value = response.data.form_start_time;
 					setTimeout(function () {
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                       $('#followUpAlert').html('');
                                     }, 2000);
                 }

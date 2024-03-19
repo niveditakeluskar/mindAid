@@ -345,7 +345,7 @@ export default {
 
     const handleChange = async () => {
       if (selectedOption.value === '4') {
-        timeValue.value = '';
+        timeValue.value = '00:00:00';
       } else {
         timeValue.value = '00:20:00'; 
       }

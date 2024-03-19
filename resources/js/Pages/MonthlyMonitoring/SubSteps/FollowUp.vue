@@ -17,7 +17,8 @@
 						<input type="hidden" name="module_id" :value="`${moduleId}`" />
 						<input type="hidden" name="component_id" :value="`${componentId}`" />
 						<input type="hidden" name="stage_id" v-model="followupStageId" :value="followupStageId" />
-						<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+						<!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time"-->
+						<input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
 						<input type="hidden" name="step_id" v-model="step_id" value="0">
 						<input type="hidden" name="form_name" id="form_name" value="followup_form">
 						<div id='error-msg'></div>
@@ -373,6 +374,7 @@ export default {
 					fetchFollowupMasterTaskList();
 					var year = (new Date).getFullYear();
                		var month = (new Date).getMonth() + 1
+					$(".form_start_time").val(response.data.form_start_time);
 					$('#followUpPageAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
 					updateTimer(props.patientId, '1', props.moduleId);
 					const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
@@ -380,9 +382,10 @@ export default {
                      $('.badge').html($('#count_todo').val());
                      const previousMonths = await axios.get(`/ccm/previous-month-status/${props.patientId}/${props.moduleId}/${month}/${year}/previousstatus`);
                      $("#previousMonthData").html(previousMonths.data);
-					$(".form_start_time").val(response.data.form_start_time);
-					time.value = response.data.form_start_time;
+				
 					setTimeout(function () {
+						var time = document.getElementById('page_landing_times').value;
+                		$(".timearr").val(time);
 						$('#followUpPageAlert').html('');
 					}, 3000);
 				}
@@ -443,12 +446,16 @@ export default {
 					})
 					.then(responseData => {
 						document.getElementById('followUpPageAlert').innerHTML = '<div class="alert alert-success"> Data Saved Successfully </div>';
+						
+						//document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
+						updateTimer(props.patientId, '1', props.moduleId);
+						$(".form_start_time").val(responseData.form_start_time);
 						setTimeout(() => {
 							document.getElementById('followUpPageAlert').innerHTML = '';
+							var time = document.getElementById('page_landing_times').value;
+                			$(".timearr").val(time);
 						}, 3000);
-						document.querySelector("form[name='followup_form'] .form_start_time").value = responseData.form_start_time;
-						updateTimer(props.patientId, '1', props.moduleId);
-						time.value = responseData.form_start_time;
+						//time.value = responseData.form_start_time;
 						updateToDo();
 					})
 					.catch(error => {
@@ -479,7 +486,9 @@ export default {
 				fetchFollowupMasterTask();
 				fetchFollowupMasterTaskList();
 				getStageID();
-				time.value = document.getElementById('page_landing_times').value;
+				//time.value = document.getElementById('page_landing_times').value;
+				var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
 				timerStatus.value = document.getElementById('timer_runing_status').value;
 			} catch (error) {
 				console.error('Error on page load:', error);
