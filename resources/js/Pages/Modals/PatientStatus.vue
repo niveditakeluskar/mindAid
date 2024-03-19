@@ -25,7 +25,7 @@
                         <div class="row">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="module">Module</label>
-                                <select name="modules" id="enrolledservice_modules" class="custom-select show-tick enrolledservice_modules"></select>
+                                <select name="modules" id="enrolledservice_modules" @change="handleModuleChange" class="custom-select show-tick enrolledservice_modules"></select>
                                 <div class="invalid-feedback"  v-if="formErrors.modules" style="display: block;">{{ formErrors.modules[0] }}</div>
                             </div>
                             <div class="col-md-12">
@@ -213,6 +213,70 @@
                 }
             };
 
+            const handleModuleChange = () =>{
+                var available_moduleId = $("#enrolledservice_modules").val();
+                
+                var selmoduleId;
+                const patIdModule = $("#patientStatId").val();
+                if (available_moduleId !== undefined) {
+                        selmoduleId = available_moduleId;
+                    } else {
+                        const baseUrl = window.location.origin;
+                        const sPageURL = window.location.pathname;
+                        const parts = sPageURL.split("/");
+                        var selmodule_name= parts[parts.length - 3];
+                        if(selmodule_name=='ccm'){
+                            selmoduleId = 3;
+                        }
+                        if(selmodule_name=='rpm'){
+                            selmoduleId = 2;
+                        }
+                    }
+                    var statusValue; 
+                    axios({
+                        method: "GET",
+                        url: `/patients/patient-module/${patIdModule}/patient-module`,
+                    }).then(function (response) {
+                        const enr = response.data;
+                        enr.forEach(function(item) {
+                            if (item.module_id == selmoduleId) { 
+                                statusValue = item.status;
+                            }
+                        });
+                        
+                        $("#status").prop("checked", false);
+                    if (statusValue == 0) {
+                        $("form[name='active_deactive_form'] #role1").show();
+                        $("form[name='active_deactive_form'] #role0").hide();
+                        $("form[name='active_deactive_form'] #role2").show();
+                        $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 1) {
+                    $("form[name='active_deactive_form'] #role1").hide();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").show();
+                    $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 2) {
+                    $("form[name='active_deactive_form'] #role1").show();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").hide();
+                    $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 3) {
+                    $("form[name='active_deactive_form'] #role1").show();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").show();
+                    $("form[name='active_deactive_form'] #role3").hide();
+                    } 
+                    }).catch(function (error) {
+                        console.error(error, error.response);
+                    });
+
+         
+         
+                }
+
             const callExternalFunctionWithParams = (param1, param2) => {
                 if ($.isNumeric(param1) == true) {
                     const patientId = param1;
@@ -351,6 +415,7 @@
                 Deactivations,
                 isLoading,
                 formErrors,
+                handleModuleChange
             };
         },
     };
