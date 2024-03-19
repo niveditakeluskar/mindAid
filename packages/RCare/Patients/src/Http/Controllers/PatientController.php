@@ -2095,13 +2095,6 @@ class PatientController extends Controller
     public function practicePatientsNew($practice)
     {
 
-        // Check if the data is cached
-      /*   $cacheKey = 'practice_patients_' . $practice;
-        if (Cache::has($cacheKey)) {
-            //return Cache::get($cacheKey);
-            return response()->json(Cache::get($cacheKey));
-        } */
-
         $cid = session()->get('userid');
         $usersDetails = Users::where('id', $cid)->first();
         $roleid = $usersDetails->role;
@@ -2132,10 +2125,6 @@ class PatientController extends Controller
         }
 
         $patients = $query->get();
-
-        // Cache the result
-/*         Cache::put($cacheKey, $patients, now()->addHours(36));
- */
         return response()->json($patients);
     }
 
