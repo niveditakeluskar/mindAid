@@ -22,7 +22,7 @@
                     <input type="hidden" name="allergy_type" value="enviromental">
                     <input type="hidden" name="hid" class="hid" value='1'>
                     <input type="hidden" name="id" id="allergies_id"> 
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="enviromentalallergiesTime">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                     
 					<input type="hidden" name="noallergymsg" id="noallergymsg" value="No Known Enviromental Allergies">   
                     
@@ -231,7 +231,9 @@ export default {
                     $(form).find(':input').prop('disabled', false);
                     setTimeout(() => {
                         showenviromentalAlert.value = false;
-                        enviromentalallergiesTime.value = document.getElementById('page_landing_times').value;
+                        //enviromentalallergiesTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 // Handle the response here
                 formErrors.value = [];
@@ -287,7 +289,9 @@ export default {
                     document.getElementById("allergy_enviromental_form").reset();
                     setTimeout(() => {
                         // showDMEAlert.value = false;
-                        enviromentalallergiesTime.value = document.getElementById('page_landing_times').value;
+                        //enviromentalallergiesTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -337,7 +341,9 @@ export default {
 
         onMounted(async () => {
             try {
-                enviromentalallergiesTime.value = document.getElementById('page_landing_times').value; 
+                //enviromentalallergiesTime.value = document.getElementById('page_landing_times').value; 
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 exposeDeleteAllergies();
                 exposeEditAllergiess();
             

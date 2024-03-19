@@ -21,7 +21,7 @@
                     <input type="hidden" name="step_id" :value="labsStepId" />
                     <input type="hidden" name="form_name" value="number_tracking_labs_form" />
                     <input type="hidden" name="billable" value="1" />
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="labsTime" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"  />
                     <input type="hidden" name="editform" id="editform" :value="editform" />
                     <input type="hidden" name="olddate" id="olddate" :value="olddate" />
                     <input type="hidden" name="oldlab" id="oldlab" :value="oldlab" />
@@ -193,7 +193,9 @@ export default {
                     labdateexist.value = null;
                     setTimeout(() => {
                         showLabsAlert.value = false;
-                        labsTime.value = document.getElementById('page_landing_times').value;
+                        //labsTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                     // Handle the response here
                     formErrors.value = [];
@@ -294,7 +296,9 @@ export default {
                     document.getElementById("service_dme_form").reset();
                     setTimeout(() => {
                         // showDMEAlert.value = false;
-                        labsTime.value = document.getElementById('page_landing_times').value;
+                        //labsTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -395,7 +399,9 @@ export default {
 
         onMounted(async () => {
             try {
-                labsTime.value = document.getElementById('page_landing_times').value;
+                //labsTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 exposeDeleteLab();
                 exposeEditLab();
             } catch (error) {
