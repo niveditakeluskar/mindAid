@@ -232,7 +232,7 @@ class PrintCarePlanController extends Controller
         //                                             ->where('patient_id', $uid)
         //                                             ->get();
 
-        $PatientMedication1     = "select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
+        $PatientMedication1     = DB::select("select med_id,pm1.id,pm1.description,purpose,strength,duration,dosage,frequency,route,pharmacy_name,pharmacy_phone_no,
                                         rm.description as name,pm1.updated_at as date
                                         from patients.patient_medication pm1 
                                         left join ren_core.medication rm on rm.id = pm1.med_id 
@@ -242,7 +242,7 @@ class PrintCarePlanController extends Controller
                                             AND pm.created_at >= date_trunc('month', current_date) 
                                             AND pm.status = 1
                                             group by pm.med_id) 
-                                        order by rm.description asc";
+                                        order by rm.description asc");
 
         $last_time_spend        = CommonFunctionController::getCcmNetTime($uid, $module_id);
 
