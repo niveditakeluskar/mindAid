@@ -188,22 +188,22 @@
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_health`" class="checkbox checkbox-primary mr-3">
-							<input type="checkbox" name="report_requirnment4"
-								:id="`${sectionName}_report_requirnment_health`" v-model="report_requirnment4" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment4" value="1">
+							<input type="checkbox" name="report_requirnment3"
+								:id="`${sectionName}_report_requirnment_health`" v-model="report_requirnment3" class="RRclass"
+								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment3" value="1">
 							<span>Health Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_new_vitals`" class="checkbox checkbox-primary mr-3">
-							<input type="checkbox" name="report_requirnment5"
-								:id="`${sectionName}_report_requirnment_new_vitals`" v-model="report_requirnment5" class="RRclass"
-								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment5" value="1">
+							<input type="checkbox" name="report_requirnment4"
+								:id="`${sectionName}_report_requirnment_new_vitals`" v-model="report_requirnment4" class="RRclass"
+								formControlName="checkbox" @change="checkReportRequirnments()" :checked="report_requirnment4" value="1">
 							<span>Vitals Data</span>
 							<span class="checkmark"></span>
 						</label>
 						<label :for="`${sectionName}_report_requirnment_none`" class="checkbox checkbox-primary mr-3">
-							<input type="checkbox" name="report_requirnment3" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment3"
-								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" :checked="report_requirnment3" value="1">
+							<input type="checkbox" name="report_requirnment5" :id="`${sectionName}_report_requirnment_none`" v-model="report_requirnment5"
+								 class="RRclass" formControlName="checkbox" @click="noneReportRequirements()" :checked="report_requirnment5" value="1">
 							<span>None</span><span class="error">*</span>
 							<span class="checkmark"></span> 
 						</label>
@@ -212,7 +212,7 @@
 				<div class="invalid-feedback"  v-if="formErrors && formErrors.report_requirnment1" style="display: block;">{{ formErrors.report_requirnment1[0] }}</div>
 				
 			</div>
-			<div v-if="report_requirnment1 == 1 || report_requirnment2 == 1 || report_requirnment4 == 1 || report_requirnment5 == 1"
+			<div v-if="report_requirnment1 == 1 || report_requirnment2 == 1 || report_requirnment3 == 1 || report_requirnment4 == 1"
 			 :id="`${sectionName}_requirnment`" class="rep_req_note mb-4">
 				<div class="col-md-12 forms-element" id='report_requirnment_notes'>
 					<label :for="`${sectionName}_vitalsHealth-modal`"
@@ -309,6 +309,7 @@ export default {
 
 			report_requirnment1:'',
 			report_requirnment2:'',
+			report_requirnment3:'',
 			report_requirnment4:'',
 			report_requirnment5:'',
 
@@ -367,20 +368,20 @@ export default {
 		},
 		checkConditionRequirnments() {
 		    this.conditionRequirnment4 = 0;
-			if (this.conditionRequirnment1 === 1 || this.conditionRequirnment2 === 1 || this.conditionRequirnment3 === 1) {
+			if (this.conditionRequirnment1 == 1 || this.conditionRequirnment2 == 1 || this.conditionRequirnment3 == 1) {
 				this.conditionRequirnment4 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
 		noneReportRequirements() {
 			this.report_requirnment1 = 0;
 			this.report_requirnment2 = 0;
+			this.report_requirnment3 = 0;
 			this.report_requirnment4 = 0;
-			this.report_requirnment5 = 0;
-		},
+		}, 
 		checkReportRequirnments() {
-			this.report_requirnment3 = 0; 
-			if (this.report_requirnment1 === 1 || this.report_requirnment2 === 1 || this.report_requirnment4 === 1 || this.report_requirnment5 === 1) {
-				this.report_requirnment3 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
+			this.report_requirnment5 = 0;
+			if (this.report_requirnment1 == 1 || this.report_requirnment2 == 1 || this.report_requirnment3 == 1 || this.report_requirnment4 == 1) {
+				this.report_requirnment5 = 0; // Uncheck conditionRequirnment4 if any other checkbox is checked
 			}
 		},
 		async populateFuntion(patientId){ 
@@ -415,8 +416,8 @@ export default {
 					
 					this.report_requirnment1 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment1;
 					this.report_requirnment2 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment2;
-					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment4;
 					this.report_requirnment3 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment3;
+					this.report_requirnment4 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment4;
 					this.report_requirnment5 = this.patientPrepSaveDetails.populateCallPreparation.static.report_requirnment5;
 					
 					this.anything_else = this.patientPrepSaveDetails.populateCallPreparation.static.anything_else;

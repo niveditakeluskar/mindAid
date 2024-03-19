@@ -1203,7 +1203,6 @@ class PatientController extends Controller
                         AND patient_id = '" . $patient_id . "'
                         AND status = 1 
                         group by diagnosis 
-                        
                         ");
 
         $chronicCondition = empty($Condition) ? '' : $Condition;
