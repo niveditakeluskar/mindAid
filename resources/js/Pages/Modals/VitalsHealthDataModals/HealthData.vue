@@ -19,7 +19,7 @@
                     <input type="hidden" name="step_id" :value="healthdataStepId">
                     <input type="hidden" name="form_name" value="number_tracking_healthdata_form">
                     <input type="hidden" name="billable" value="1">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="healthdataTime" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"  />
                     <div v-for="(item, index) in healthdataItems" :key="index" class="form-row">
                         <div class="col-md-4">
                             <label>Health Data:<span class="error">*</span></label>
@@ -162,7 +162,9 @@ export default {
                     healthdataItems.value = [{ health_data: '', health_date: '' }];
                     setTimeout(() => {
                         showImagingAlert.value = false;
-                        healthdataTime.value = document.getElementById('page_landing_times').value;
+                        //healthdataTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                     formErrors.value = [];
                 }
@@ -211,7 +213,9 @@ export default {
 
         onMounted(async () => {
             try {
-                healthdataTime.value = document.getElementById('page_landing_times').value;
+                //healthdataTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 // getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);

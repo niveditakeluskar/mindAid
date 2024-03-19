@@ -14,7 +14,7 @@
                 <input type="hidden" name="id">
                 <input type="hidden" name="form_name" value="patient_threshold_form">
                 <input type="hidden" id="timer_runing_status" value="0"> 
-                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="alertThresholdTime">
+                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                 <!-- systolic -->  
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic High <!-- <span style="color:red">*</span> --></label>
@@ -201,7 +201,9 @@ export default {
                     document.getElementById("patient_threshold_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
-                        alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
+                        //alertThresholdTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
             } catch (error) {
@@ -217,7 +219,9 @@ export default {
     
         onMounted(async () => {
             try {
-                alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                //alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 patient_systolichigh.value = props.patient_systolichigh;
                 patient_systoliclow.value = props.patient_systoliclow;
                 patient_diastolichigh.value = props.patient_diastolichigh; 

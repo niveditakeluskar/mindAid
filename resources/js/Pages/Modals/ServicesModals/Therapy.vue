@@ -22,7 +22,7 @@
         		    <input type="hidden" name="hid" class="hid" value='4'>
                     <input type="hidden" name="id" id="service_id">
                     <input type="hidden" name="billable" value="1">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="TherapyServicesTime" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"  />
                     <TherapyForm :formErrors="formErrors" />
                 </div>
                 <div class="card-footer">
@@ -158,7 +158,9 @@ export default {
                     document.getElementById("service_therapy_form").reset();
                     setTimeout(() => {
                         showTherapyAlert.value = false;
-                        TherapyServicesTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
+                        //TherapyServicesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 // Handle the response here
                 formErrors.value = [];
@@ -206,7 +208,9 @@ export default {
                     document.getElementById("service_therapy_form").reset();
                     setTimeout(() => {
                         // showTherapyAlert.value = false;
-                        TherapyServicesTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
+                        //TherapyServicesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -267,7 +271,9 @@ export default {
 
         onMounted(async () => {
             try {
-                TherapyServicesTime.value = document.getElementById('page_landing_times').value;
+                //TherapyServicesTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                 exposeDeleteServices();
                 exposeEditServices();
             } catch (error) {

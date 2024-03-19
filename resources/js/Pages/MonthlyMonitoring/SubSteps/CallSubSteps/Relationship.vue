@@ -10,7 +10,8 @@
                     <input type="hidden" name="component_id" :value="componentId"/>
                     <input type="hidden" name="hid_stage_id" />
                     <input type="hidden" name="form_name" value="relationship_form">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time">
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
+                    <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="time"-->
                     <div class="alert alert-success" :style="{ display: showAlert ? 'block' : 'none' }">
                         <button type="button" class="close" data-dismiss="alert">x</button>
                         <strong> Relationship data saved successfully! </strong><span id="text"></span>
@@ -54,7 +55,9 @@ export default {
     },
     mounted() {
         this.fetchData();
-        this.time = document.getElementById('page_landing_times').value;
+        //this.time = document.getElementById('page_landing_times').value;
+        var time = document.getElementById('page_landing_times').value;
+        $(".timearr").val(time);
         this.timerStatus = document.getElementById('timer_runing_status').value;
     },
     methods: {
@@ -79,7 +82,9 @@ export default {
                     updateTimer(this.patientId, 1, this.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
 					setTimeout(() => {
-                        this.time = document.getElementById('page_landing_times').value;
+                       // this.time = document.getElementById('page_landing_times').value;
+                       var time = document.getElementById('page_landing_times').value;
+                       $(".timearr").val(time);
 						this.showAlert = false;
 					}, 3000);
                     this.$emit('form-submitted');
