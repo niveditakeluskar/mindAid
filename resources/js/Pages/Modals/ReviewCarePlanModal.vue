@@ -75,7 +75,7 @@
                                                                                 <input type="hidden"
                                                                                     name="timearr[form_start_time]"
                                                                                     class="timearr form_start_time"
-                                                                                    :value="reviewCarePlanTimer">
+                                                                                    >
                                                                                 <div class="row col-md-12">
                                                                                     <div class="col-md-6"><label>Condition
                                                                                             <span
@@ -414,7 +414,8 @@ export default {
             additionaltasks();
             const reviewCaretimerElement = document.getElementById('page_landing_times').value;
             if (reviewCaretimerElement !== null) {
-                reviewCarePlanTimer.value = reviewCaretimerElement;
+                //reviewCarePlanTimer.value = reviewCaretimerElement;
+                $(".timearr").val(reviewCaretimerElement);
             }
         };
 
@@ -658,8 +659,10 @@ export default {
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
-                    reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
+                    //reviewCarePlanTimer.value = document.getElementById('page_landing_times').value;
                     setTimeout(() => {
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                         $('#reviewCareAlert').html('');
                     }, 3000);
                 }

@@ -19,7 +19,7 @@
                     <input type="hidden" name="step_id" :value="imagingStepId">
                     <input type="hidden" name="form_name" value="number_tracking_imaging_form">
                     <input type="hidden" name="billable" value="1">
-                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="imagingTime" />
+                    <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" />
                     <div v-for="(item, index) in imagingItems" :key="index" class="form-row">
                         <input type="hidden" class="imaging_id" id="imaging_id">
                         <div class="col-md-4">
@@ -168,7 +168,9 @@ export default {
                     imagingItems.value = [{ imaging: '', imaging_date: '' }];
                     setTimeout(() => {
                         showImagingAlert.value = false;
-                        imagingTime.value = document.getElementById('page_landing_times').value;
+                        //imagingTime.value = document.getElementById('page_landing_times').value;
+                         var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 // Handle the response here
                 formErrors.value = [];
@@ -221,7 +223,9 @@ export default {
 
         onMounted(async () => {
             try {
-                imagingTime.value = document.getElementById('page_landing_times').value;
+                //imagingTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 getStepID(props.stageId);
             } catch (error) {
                 console.error('Error on page load:', error);

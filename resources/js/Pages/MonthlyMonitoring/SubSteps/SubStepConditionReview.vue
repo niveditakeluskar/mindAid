@@ -155,8 +155,7 @@
                             <input type="hidden" name="step_id" :value="reviewNotesStepId">
                             <input type="hidden" name="form_name" id="rpm_review_form" value="rpm_review_form" />
                             <input type="hidden" name="device_id" id="device_id" :value="deviceID" />
-                            <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
-                                :value="time">
+                            <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time">
                             <div id='success'></div>
                             <div class="row justify-content-center">
                                 <div class="col-md-12">
@@ -299,7 +298,9 @@ export default {
 
 
         document.body.appendChild(script);
-        this.time = document.getElementById('page_landing_times').value;
+        //this.time = document.getElementById('page_landing_times').value;
+        var time = document.getElementById('page_landing_times').value;
+        $(".timearr").val(time);
         this.timerStatus = document.getElementById('timer_runing_status').value;
         this.setdata(30);
         this.getStageID();
@@ -387,7 +388,9 @@ export default {
                     updateTimer(this.patientId, 1, this.moduleId);
                     $('.form_start_time').val(response.data.form_start_time);
                     setTimeout(() => {
-                        this.time = document.getElementById('page_landing_times').value;
+                        //this.time = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                         this.showAlert = false;
                     }, 3000);
                 }
