@@ -41,7 +41,7 @@
                                 <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
                                 <input type="hidden" name="stage_id" value="{{$stage_id}}" />
                                 <input type="hidden" name="step_id" value="{{$step_id}}">
-                                <input type="hidden" name="form_name" value="care_plan_form">
+                                <input type="hidden" name="form_name" value="care_plan_form"> 
                                 <input type="hidden" name="diagnosis_id" id="diagnosis_id">
                                 <input type="hidden" name="hiddenenablebutton" id="hiddenenablebutton" />
                                 <input type="hidden" name="editdiagnoid" id="editdiagnoid" >   

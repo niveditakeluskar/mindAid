@@ -65,8 +65,8 @@
                                                                                     v-model="selectedDiagnosisId">
                                                                                 <input type="hidden"
                                                                                     name="hiddenenablebutton"
-                                                                                    id="hiddenenablebutton">
-                                                                                <input type="hidden" name="editdiagnoid"
+                                                                                    id="hiddenenablebutton"> 
+                                                                                <input type="hidden" name="editdiagnoid" id="editdiagnoid"
                                                                                     v-model="selectedEditDiagnosId">
                                                                                 <input type="hidden" id="cpd_finalize"
                                                                                     value="1">
@@ -216,7 +216,7 @@
                                                                                                 name="goals[]" type="text"
                                                                                                 autocomplete="off"
                                                                                                 :disabled="isDisabled"
-                                                                                                :required="index === 0 ? !isInitialGoalFilled : false">
+                                                                                                :required="index === 0 ? !isInitialGoalFilled : false" >
                                                                                             <i class="col-md-1 remove-icons i-Remove float-right mb-3"
                                                                                                 v-if="showButton_remove"
                                                                                                 @click="removeGoal(index)"
@@ -274,7 +274,6 @@
                                                                                             id="diagnosis_comments"
                                                                                             v-model="comments"
                                                                                             name="comments"
-                                                                                            :disabled="isDisabled"
                                                                                             style="height:50px;overflow-y:hidden;"></textarea>
                                                                                         <div class="invalid-feedback"></div>
                                                                                     </div>
@@ -473,8 +472,6 @@ export default {
 
                     link.addEventListener('click', (event, formName) => {
                         if (event.target === editIcon) {
-                            showButton_enable_diagnosis_button.value = true;
-                            showButton_disable_diagnosis_button.value = true;
                             editPatientDignosis(data.id, event.target);
                         } else if (event.target === deleteIcon) {
                             deletePatientDignosis(data.id, event.target);
@@ -493,12 +490,16 @@ export default {
         let stepID = ref(0);
 
         const editPatientDignosis = async (id) => {
-            isDisabled.value = true;
             clearGoals();
             fetchCode();
+            showButton_enable_diagnosis_button.value = true;
+            showButton_disable_diagnosis_button.value = true;
             showButton_add.value = false;
             showButton_remove.value = false;
             isLoading.value = true;
+            // isDisabled.value = true;
+            const formName = 'care_plan_form';
+            $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
             try {
                 selectedEditDiagnosId.value = id;
                 const response = await fetch(`/ccm/diagnosis-select/${id}/${props.patientId}`);
@@ -524,27 +525,28 @@ export default {
                 }
                 isLoading.value = false;
                 isSaveButtonDisabled.value = false;
+                isDisabled.value = true;
             } catch (error) {
                 console.error('Error fetching CPD list:', error);
                 isLoading.value = false;
             }
         };
 
-        const enableDiagnosisbutton = (formName) => {
+        const enableDiagnosisbutton = async (formName) => {
             showButton_add.value = true;
             showButton_remove.value = true;
             $("form[name='" + formName + "'] #hiddenenablebutton").val(1);
             isDisabled.value = false;
         }
-
-        const disableDiagnosisbutton = (formName) => {
-            showButton_add.value = false;
-            showButton_remove.value = false;
-            const edit_id = $("form[name='" + formName + "'] #editdiagnoid").val();
+        const disableDiagnosisbutton = async (formName) => {
+            // showButton_add.value = false;
+            // showButton_remove.value = false;
+            // const id = $("form[name='" + formName + "'] #editdiagnoid").val();
+            const edit_id =$("form[name='" + formName + "'] #editdiagnoid").val();
             $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
-            isDisabled.value = true;
             editPatientDignosis(edit_id);
         }
+
         const deletePatientDignosis = async (id) => {
             const module_id = props.moduleId;
             const component_id = props.componentId;
@@ -628,6 +630,11 @@ export default {
         };
 
         const submitCarePlanForm = async () => {
+            showButton_enable_diagnosis_button.value = false;
+            showButton_disable_diagnosis_button.value = false;
+            showButton_add.value = true;
+            showButton_remove.value = true;
+            isDisabled.value = false;
             isLoading.value = true;
             let myForm = document.getElementById('care_plan_form');
             let formData = new FormData(myForm);
@@ -639,17 +646,13 @@ export default {
                     nextTick(() => {
                         additionalgoals();
                         additionalsymptoms();
-                        additionaltasks();
+                        additionaltasks(); 
                         isSaveButtonDisabled.value = false;
-                        showButton_enable_diagnosis_button.value = false;
-                        showButton_disable_diagnosis_button.value = false;
-                        isDisabled.value = false;
-                        // showButton_add.value = true;
-                        // showButton_remove.value = true; 
                     });
                     selectedCode.value = '';
                     selectedDiagnosis.value = '';
                     comments.value = '';
+                    selectedEditDiagnosId.value =' ';
                     $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("care_plan_form").reset();
                     fetchCarePlanFormList();
@@ -776,34 +779,40 @@ export default {
                 if (response.data > 0) {
                     // Your code for when count is greater than 0
                     $("form[name='" + formName + "'] #hiddenenablebutton").val(0);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", true);
-                    $("form[name='" + formName + "'] #goals_0").prop("disabled", true);
-                    $("form[name='" + formName + "'] #tasks_0").prop("disabled", true);
-                    $("form[name='" + formName + "']  .symptoms ").prop("disabled", true);
-                    $("form[name='" + formName + "']  .goals ").prop("disabled", true);
-                    $("form[name='" + formName + "']  .tasks  ").prop("disabled", true);
-                    $("form[name='" + formName + "']  #append_symptoms_icons  ").hide();
-                    $("form[name='" + formName + "']  #append_goals_icons  ").hide();
-                    $("form[name='" + formName + "']  #append_tasks_icons  ").hide();
-                    $("form[name='" + formName + "']  .removegoals  ").hide();
-                    $("form[name='" + formName + "']  .removesymptoms  ").hide();
-                    $("form[name='" + formName + "']  .removetasks  ").hide();
+                    isDisabled.value = true;
+                    showButton_add.value = false;
+                    showButton_remove.value = false;
+                    // $("form[name='" + formName + "'] #symptoms_0").prop("disabled", true);
+                    // $("form[name='" + formName + "'] #goals_0").prop("disabled", true);
+                    // $("form[name='" + formName + "'] #tasks_0").prop("disabled", true);
+                    // $("form[name='" + formName + "']  .symptoms ").prop("disabled", true);
+                    // $("form[name='" + formName + "']  .goals ").prop("disabled", true);
+                    // $("form[name='" + formName + "']  .tasks  ").prop("disabled", true);
+                    // $("form[name='" + formName + "']  #append_symptoms_icons  ").hide();
+                    // $("form[name='" + formName + "']  #append_goals_icons  ").hide();
+                    // $("form[name='" + formName + "']  #append_tasks_icons  ").hide();
+                    // $("form[name='" + formName + "']  .removegoals  ").hide();
+                    // $("form[name='" + formName + "']  .removesymptoms  ").hide();
+                    // $("form[name='" + formName + "']  .removetasks  ").hide();
                 } else {
                     // Your code for when count is 0
                     $("form[name='" + formName + "'] #hiddenenablebutton").val(1);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #goals_0").prop("disabled", false);
-                    $("form[name='" + formName + "'] #tasks_0").prop("disabled", false);
-                    $("form[name='" + formName + "']  .symptoms ").prop("disabled", false);
-                    $("form[name='" + formName + "']  .goals ").prop("disabled", false);
-                    $("form[name='" + formName + "']  .tasks  ").prop("disabled", false);
-                    $("form[name='" + formName + "']  #append_symptoms_icons  ").show();
-                    $("form[name='" + formName + "']  #append_goals_icons  ").show();
-                    $("form[name='" + formName + "']  #append_tasks_icons  ").show();
-                    $("form[name='" + formName + "']  .removegoals  ").show();
-                    $("form[name='" + formName + "']  .removesymptoms  ").show();
-                    $("form[name='" + formName + "']  .removetasks  ").show();
+                    isDisabled.value = false;
+                    showButton_add.value = true;
+                    showButton_remove.value = true;
+                    // $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
+                    // $("form[name='" + formName + "'] #symptoms_0").prop("disabled", false);
+                    // $("form[name='" + formName + "'] #goals_0").prop("disabled", false);
+                    // $("form[name='" + formName + "'] #tasks_0").prop("disabled", false);
+                    // $("form[name='" + formName + "']  .symptoms ").prop("disabled", false);
+                    // $("form[name='" + formName + "']  .goals ").prop("disabled", false);
+                    // $("form[name='" + formName + "']  .tasks  ").prop("disabled", false);
+                    // $("form[name='" + formName + "']  #append_symptoms_icons  ").show();
+                    // $("form[name='" + formName + "']  #append_goals_icons  ").show();
+                    // $("form[name='" + formName + "']  #append_tasks_icons  ").show();
+                    // $("form[name='" + formName + "']  .removegoals  ").show();
+                    // $("form[name='" + formName + "']  .removesymptoms  ").show();
+                    // $("form[name='" + formName + "']  .removetasks  ").show();
                 }
             }).catch(error => {
                 console.error(error, error.response);
@@ -828,9 +837,11 @@ export default {
             goals.value = [];
             tasks.value = [];
             symptoms.value = [];
+            comments.value ='';
+            selectedCode.value ='';
         };
 
-        watchEffect(() => {
+        watchEffect(() => { 
             goals.value = goals.value.filter((goal) => goal.trim() !== '');
             symptoms.value = symptoms.value.filter((symptom) => symptom.trim() !== '');
             tasks.value = tasks.value.filter((task) => task.trim() !== '');

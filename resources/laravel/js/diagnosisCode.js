@@ -16,17 +16,23 @@ var populateForm = function (data, url) {
 		data,
 		function (result) {
 			console.log(result);
-			for (var key in result) {
+			for (var key in result) { 
 				form.dynamicFormPopulate(key, result[key]);
 
 				console.log(result[key].length + "count");
 				$('#id').val(result[key][0].id);
 				$('#condition').val(result[key][0].condition);
 				if (result[key][0].qualified == 1) {
-					//alert('here');
-					$('#qualified-yes').click();
-				} else if (result[key][0].qualified == 0) {
-					$('#qualified-no').click();
+						console.log("Was Checked");
+						//do stuffs
+						$("input[name=qualified").attr('checked', true);
+						$("#toggle_value").text('Yes');
+				}
+				if (result[key][0].qualified == 0){
+						console.log("Was Not Checked");
+						//do stuffs
+						$("input[name=qualified").attr('checked', false);
+						$("#toggle_value").text('No');
 				}
 				for (var i = 0; i < result[key].length; i++) {
 					//console.log(result[key][i].code+"test");
