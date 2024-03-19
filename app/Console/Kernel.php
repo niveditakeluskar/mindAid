@@ -47,7 +47,11 @@ class Kernel extends ConsoleKernel
     ];
 	*/
 	
-	
+	protected $routeMiddleware = [
+        'jwt.verify' => RCare\System\src\Http\Middleware\JwtMiddleware::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+    ];
 
      
     protected function schedule(Schedule $schedule)  

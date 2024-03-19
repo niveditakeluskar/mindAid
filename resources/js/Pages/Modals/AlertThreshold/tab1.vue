@@ -191,6 +191,10 @@ export default {
                 formErrors.value = {};
                 const response = await axios.post('/patients/patient-threshold', formData);
                 if (response && response.status == 200) {
+                    // Scroll the modal up
+                    let modalElement = document.querySelector('.modal');
+                    modalElement.scrollTop = 0;
+                    window.scrollTo(0, 0);
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
@@ -208,6 +212,7 @@ export default {
                 }
             }
             // this.closeModal();
+            
         }
     
         onMounted(async () => {
