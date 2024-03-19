@@ -78,7 +78,7 @@ export default {
    components: {
       PreparationForm
    },
-   setup(props) {
+   setup(props,{emit}) {
       const sectionName = 'research_follow_up';
       let preparationTime = ref();
       let timerStatus = ref();
@@ -103,7 +103,7 @@ export default {
                 }, 3000);
                }
             isLoading.value = false;
-            this.$emit('form-submitted');
+            emit('form-submitted');
          } catch (error) {
             if (error.response && error.response.status === 422) {
                formErrors.value = error.response.data.errors;
