@@ -178,7 +178,7 @@ class DeviceDataReportController extends Controller
        pef_value
         from patients.devivedatareport($patientid, timestamp '".$dt1."',timestamp '".$dt2."')";  */
 
-       $query="select distinct x.effdatetime,x.patient_id,bp.alert_status as bp_alert_status,bp.systolic_qty, bp.diastolic_qty,hr.alert_status as hr_alert_status, hr.resting_heartrate, wt.alert_status as wt_alert_status,wt.weight,ox.alert_status as ox_alert_status, ox.oxy_qty,temp.alert_status as temp_alert_status, temp.bodytemp,glc.alert_status as glc_alert_status, glc.value,spt.alert_status as spt_alert_status, spt.fev_value,spt.pef_value  from 
+       $query="select distinct x.effdatetime,x.patient_id,bp.alert_status as bp_alert_status,bp.systolic_qty, bp.diastolic_qty,hr.alert_status as hr_alert_status, bp.resting_heartrate, wt.alert_status as wt_alert_status,wt.weight,ox.alert_status as ox_alert_status, ox.oxy_qty,temp.alert_status as temp_alert_status, temp.bodytemp,glc.alert_status as glc_alert_status, glc.value,spt.alert_status as spt_alert_status, spt.fev_value,spt.pef_value  from 
        ((select distinct effdatetime,patient_id from rpm.observations_heartrate where effdatetime between '$fdt' and '$tdt' and patient_id=$patientid) 
          UNION 
         (select distinct effdatetime,patient_id from rpm.observations_oxymeter where effdatetime between '$fdt' and '$tdt' and patient_id=$patientid )
