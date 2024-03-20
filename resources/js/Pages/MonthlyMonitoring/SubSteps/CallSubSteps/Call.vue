@@ -256,6 +256,7 @@ export default {
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/(<([^>]+)>)/ig, '');
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/&nbsp;/g, ' ');
                this.selectedCallAnswerdContentScript = this.selectedCallAnswerdContentScript.replace(/&amp;/g, '&');
+               this.callStarttime = document.getElementById('page_landing_times').value;
             })
             .catch(error => {
                console.error('Error fetching data:', error);
@@ -268,12 +269,14 @@ export default {
                this.callNotScript = this.callNotScript.replace(/(<([^>]+)>)/ig, '');
                this.callNotScript = this.callNotScript.replace(/&nbsp;/g, ' ');
                this.callNotScript = this.callNotScript.replace(/&amp;/g, '&');
+               this.callStarttime = document.getElementById('page_landing_times').value;
             })
             .catch(error => {
                console.error('Error fetching data:', error);
             });
       },
       async submitCallForm(){
+            
             let myForm = document.getElementById('callstatus_form'); 
             let formData = new FormData(myForm);
             this.renderComponent = false;

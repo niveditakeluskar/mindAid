@@ -1203,7 +1203,6 @@ class PatientController extends Controller
                         AND patient_id = '" . $patient_id . "'
                         AND status = 1 
                         group by diagnosis 
-                        
                         ");
 
         $chronicCondition = empty($Condition) ? '' : $Condition;
@@ -2095,8 +2094,6 @@ class PatientController extends Controller
     public function practicePatientsNew($practice)
     {
 
-        
-
         $cid = session()->get('userid');
         $usersDetails = Users::where('id', $cid)->first();
         $roleid = $usersDetails->role;
@@ -2127,8 +2124,6 @@ class PatientController extends Controller
         }
 
         $patients = $query->get();
-
-        
         return response()->json($patients);
     }
 
