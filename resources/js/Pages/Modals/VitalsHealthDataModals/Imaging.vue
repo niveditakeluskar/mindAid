@@ -161,7 +161,7 @@ export default {
                 const saveImagineResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
                     showImagingAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
-                    $(".form_start_time").val(saveImagineResponse.form_start_time);
+                    $(".form_start_time").val(saveImagineResponse.data.form_start_time);
                     await fetchPatientImagingList();
                     // imagingItems.value = [];
                     document.getElementById("number_tracking_imaging_form").reset();
