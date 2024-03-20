@@ -14,7 +14,7 @@
                 <input type="hidden" name="id">
                 <input type="hidden" name="form_name" value="patient_threshold_form">
                 <input type="hidden" id="timer_runing_status" value="0"> 
-                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" :value="alertThresholdTime">
+                <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
                 <!-- systolic -->  
                 <div class="col-md-6 form-group mb-3 ">
                     <label for="practicename">Systolic High <!-- <span style="color:red">*</span> --></label>
@@ -115,7 +115,7 @@
             </div>
             <!-- <div class="modal-footer"> -->
                 <!-- if ($role == 3 || $role == 2 || $role == 5)  -->
-                    <button type="button" class="btn btn-primary float-right mb-4" @click="submit_patient_threshold_form()">Submit</button>
+                    <button type="button" class="btn btn-primary float-right mb-4" @click="submit_patient_threshold_form()" :disabled="(timerStatus == 1) === true ">Submit</button>
             <!-- </div> -->
         </form>
     </div>
@@ -179,6 +179,7 @@ export default {
         let patient_spirometerfevlow= ref(null); 
         let patient_spirometerpefhigh= ref(null); 
         let patient_spirometerpeflow= ref(null);
+        let timerStatus = ref();
         const showAlert = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
@@ -201,7 +202,9 @@ export default {
                     document.getElementById("patient_threshold_form").reset();
                     setTimeout(() => {
                         showAlert.value = false;
-                        alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
+                        //alertThresholdTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
             } catch (error) {
@@ -217,7 +220,9 @@ export default {
     
         onMounted(async () => {
             try {
-                alertThresholdTime.value = document.getElementById('page_landing_times').value;
+                timerStatus.value = document.getElementById('timer_runing_status').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
                 patient_systolichigh.value = props.patient_systolichigh;
                 patient_systoliclow.value = props.patient_systoliclow;
                 patient_diastolichigh.value = props.patient_diastolichigh; 
@@ -275,6 +280,7 @@ export default {
             patient_spirometerfevlow, 
             patient_spirometerpefhigh, 
             patient_spirometerpeflow,
+            timerStatus
         };
     },
 };

@@ -45,8 +45,9 @@
                         <input type="hidden" name="step_id" :value="callWrapUpStepId">
                         <input type="hidden" name="form_name" value="callwrapup_form">
                         <input type="hidden" name="billable" value="1">
-                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
-                            :value="callWrapUpTime" />
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
+                            <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
+                            :value="callWrapUpTime"/-->
                         <div class="row ml-3">
                             <div class="col-md-12 form-group">
                                 <div class=" forms-element">
@@ -326,7 +327,10 @@ export default {
                     document.getElementById("callwrapup_form").reset();
                     setTimeout(() => {
                         showCallWrapUpAlert.value = false;
-                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        //callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
+                        $('div.active').next(".tm-section").click();
                     }, 3000);
                     formErrors.value = [];
                     additionalErrors.value = false;
@@ -372,7 +376,9 @@ export default {
                     await fetchCallWrapUpList();
                     setTimeout(() => {
                         // showDMEAlert.value = false;
-                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        //callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                 } catch (error) {
                     console.error('Error deletting record:', error);
@@ -545,7 +551,9 @@ export default {
                     await fetchCallWrapUpList();
                     setTimeout(() => {
                         showCallWrapUpAlert.value = false;
-                        callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        //callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                        var time = document.getElementById('page_landing_times').value;
+                        $(".timearr").val(time);
                     }, 3000);
                     formErrors.value = [];
                     additionalErrors.value = false;
@@ -587,7 +595,9 @@ export default {
                 getStageID();
                 populateFunction();
                 groupActivitiesByType();
-                callWrapUpTime.value = document.getElementById('page_landing_times').value;
+                var time = document.getElementById('page_landing_times').value;
+                $(".timearr").val(time);
+                //callWrapUpTime.value = document.getElementById('page_landing_times').value;
                 timerStatus.value = document.getElementById('timer_runing_status').value;
             } catch (error) {
                 console.error('Error on page load:', error);

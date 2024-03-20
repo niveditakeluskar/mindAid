@@ -866,7 +866,7 @@ $start = microtime(true);
         $module_id = ($module == 'null') ? 'null' : $module;
 
         $query = $this->constructQueryBasedOnRole($p, $pt, $totime, $timeoption, $status, $cid, $module_id, $roleid, $month, $year, $configTZ, $userTZ);
-
+       
         // Execute the query
         return DB::select($query);
     }
