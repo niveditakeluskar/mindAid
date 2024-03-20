@@ -32,7 +32,7 @@
                         </div>
                         <div class="row m-1">
                             <div class="col-12">
-                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs" />
+                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs" :gridOptions="{ onCellValueChanged: onCellValueChanged }" />
                             </div>
                         </div>
                         <input type="hidden" name="uid" :value="patientId" />
@@ -226,17 +226,19 @@ export default {
         const emr_monthly_summary = ref([]);
         const emr_monthly_summary_completed = ref([]);
         let selectedReport = ref('');
+
         const callWrapColumnDefs = ref([
             {
                 headerName: 'Seq.',
                 valueGetter: 'node.rowIndex + 1',
                 width: 20,
+                editable: false
             },
-            { headerName: 'Topic', field: 'topic', filter: true },
-            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true },
-            { headerName: 'Action Taken', field: 'action_taken', width: 60 },
+            { headerName: 'Topic', field: 'topic', filter: true, editable: false  },
+            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50  },
+            { headerName: 'Action Taken', field: 'action_taken', width: 60, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50  },
             {
-                headerName: 'Action', field: 'action', width: 20,
+                headerName: 'Action', field: 'action', width: 20, editable: false,
                 cellRenderer: function (params) {
                     const row = params.data;
                     return row.action;
@@ -557,6 +559,27 @@ export default {
             }
         };
 
+        const onCellValueChanged = async (params) => {
+            console.log("params", params);
+
+            try {
+                const { node, colDef, newValue } = params;
+                const { field } = colDef;
+                const rowData = node.data;
+
+                if (field === 'notes') {
+                    // Make an HTTP request to save the updated notes data to the database
+                    const response = await axios.post('/save-notes', { id: rowData.id, notes: newValue });
+
+                    // Handle the response as needed
+                    console.log('Notes saved successfully:', response.data);
+                }
+            } catch (error) {
+                console.error('Error saving notes data:', error);
+            }
+        };
+
+
         onMounted(async () => {
             try {
                 fetchCallWrapUpList();
@@ -596,6 +619,7 @@ export default {
             emr_monthly_summary,
             emr_monthly_summary_completed,
             timerStatus,
+            onCellValueChanged,
         };
     }
 }
