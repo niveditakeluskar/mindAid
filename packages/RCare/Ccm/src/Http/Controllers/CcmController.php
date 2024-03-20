@@ -1306,7 +1306,7 @@ class CcmController extends Controller
         //     "
         //  )  );
 
-        $data  = DB::select("(select id as \"DT_RowId\", id, topic, ct.notes , sequence , sub_sequence, question_sequence, question_sub_sequence
+        $data  = DB::select("(select id as \"DT_RowId\", id,action_taken, topic, ct.notes , sequence , sub_sequence, question_sequence, question_sub_sequence
 from ccm.ccm_topics ct
 where patient_id = '" . $id . "'  and status = 1
 and EXTRACT(Month from record_date) = '" . $month . "' AND EXTRACT(YEAR from record_date) = '" . $year . "'  and id in (select max(id)
@@ -3936,6 +3936,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         }
         $data['updated_by']    = session()->get('userid');
         $data['id']            = $row_id;
+
         $update_data           = CallWrap::where("patient_id", $patient_id)->where("id", $row_id)->update($data);
         $data1['id']           = $callwrapdata[0]->id;
         $data1['action_taken'] = $callwrapdata[0]->action_taken;
@@ -3944,6 +3945,35 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $data1['DT_RowId']     = $callwrapdata[0]->id;
         $d['data'][0]          = $data1;
         return $d;
+    }
+
+    public function UpdateCallWrapUpInlineNew(Request $request,$id)
+    {
+
+        $patient_id = sanitizeVariable($id);
+        $row_id     = sanitizeVariable($request->rowid);
+        $callwrapdata = CallWrap::where("id", $row_id)->get();
+        $data = array();
+
+        if ($request->action == 'notes') {
+            $notes = sanitizeVariable($request->updatedValue);
+            $data['notes'] = $notes;
+            if ($callwrapdata[0]->topic == "EMR Monthly Summary") { // added by pranali on 27Oct2020
+                $data['emr_monthly_summary'] = $notes;
+            }
+        }
+
+        if ($request->action == 'actionTaken') {
+            $action_taken = sanitizeVariable($request->updatedValue);
+            $data['action_taken'] = $action_taken;
+        }
+
+        $data['updated_by']    = session()->get('userid');
+        $data['id']            = $row_id;    
+
+        $update_data           = CallWrap::where("patient_id", $patient_id)->where("id", $row_id)->update($data);
+
+        return $update_data;
     }
 
     public function SaveText(TextAddRequest $request)

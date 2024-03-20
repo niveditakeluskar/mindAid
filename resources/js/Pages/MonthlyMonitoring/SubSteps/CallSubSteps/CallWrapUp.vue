@@ -236,8 +236,25 @@ export default {
                 editable: false
             },
             { headerName: 'Topic', field: 'topic', filter: true, editable: false  },
-            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50  },
-            { headerName: 'Action Taken', field: 'action_taken', width: 60, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50  },
+            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50,
+            onCellValueChanged: (params) => {
+            const updatedValue = params.newValue; 
+            const rowNode = params.node; 
+            const rowData = rowNode.data; 
+            console.log('Updated value:', updatedValue);
+            console.log('Row data:', rowData);
+            updateFunction(updatedValue, rowData.id,"notes");
+                                             }
+        },
+            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50,
+            onCellValueChanged: (params) => {
+            const updatedValue = params.newValue; 
+            const rowNode = params.node; 
+            const rowData = rowNode.data; 
+            console.log('Updated value:', updatedValue);
+            console.log('Row data:', rowData);
+            updateFunction(updatedValue, rowData.id,"actionTaken");
+                                             } },
             {
                 headerName: 'Action', field: 'action', width: 20, editable: false,
                 cellRenderer: function (params) {
@@ -246,6 +263,25 @@ export default {
                 },
             },
         ]);
+
+        const updateFunction = async (paramUpdatedValue, paramId,actionz) => {
+            try {
+                loading.value = true;
+                axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                  // Make sure to replace 'your_api_endpoint' with your actual API endpoint
+        const response = await axios.post(`/ccm/monthly-monitoring-update-callwrap-up-new/${props.patientId}`, {
+            updatedValue: paramUpdatedValue,
+            rowid: paramId,
+            action: actionz
+        });
+        console.log('Response:', response.data);
+            fetchCallWrapUpList();
+                loading.value = false;
+            } catch (error) {
+                console.error('Error fetching call wrap up list:', error);
+                loading.value = false;
+            }
+        }
 
         const fetchCallWrapUpList = async () => {
             try {
@@ -605,6 +641,7 @@ export default {
         });
 
         return {
+            updateFunction,
             loading,
             callWrapColumnDefs,
             callWrapRowData,
