@@ -236,7 +236,8 @@ export default {
                 editable: false
             },
             { headerName: 'Topic', field: 'topic', filter: true, editable: false  },
-            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50,
+            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,  rows: 10, cols: 50,
+            cellEditorParams: { maxLength: 5000 },
             onCellValueChanged: (params) => {
             const updatedValue = params.newValue; 
             const rowNode = params.node; 
@@ -246,7 +247,8 @@ export default {
             updateFunction(updatedValue, rowData.id,"notes");
                                              }
         },
-            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, maxLength: 1000, rows: 10, cols: 50,
+            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 20, cols: 70,
+            cellEditorParams: { maxLength: 5000 },
             onCellValueChanged: (params) => {
             const updatedValue = params.newValue; 
             const rowNode = params.node; 
