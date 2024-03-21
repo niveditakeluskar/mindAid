@@ -585,11 +585,11 @@ if (session()->get('darkmode') == '1' || $activemode == '1') {
                                     $uid  = session()->get('userid');
                                     $role = session()->get('role');
                                     //echo $role;
-                                    if ($role == 3 || $role == 2 || $role == 5) {
+                                    //if ($role == 3 || $role == 2 || $role == 5) {
                                     ?>
                                         <button type="button" class="btn btn-primary float-right submit-patient-threshold">Submit</button>
                                         <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
-                                    <?php } ?>
+                                    <?php// } ?>
                                 </div>
                             </form>
                         </div>
