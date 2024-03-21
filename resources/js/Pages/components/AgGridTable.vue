@@ -21,7 +21,7 @@
         <ag-grid-vue class="ag-theme-quartz-dark" :gridOptions="gridOptions" :defaultColDef="defaultColDef"
             :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady" :suppressExcelExport="true"
             :paginationPageSizeSelector="paginationPageSizeSelector" :paginationPageSize="paginationPageSize" :headerHeight="headerHeight"
-            :popupParent="popupParent"></ag-grid-vue>
+            :popupParent="popupParent" :stopEditingWhenCellsLoseFocus="true"></ag-grid-vue>
 
     </div>
 </template>

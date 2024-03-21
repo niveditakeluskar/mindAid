@@ -237,7 +237,7 @@ export default {
             },
             { headerName: 'Topic', field: 'topic', filter: true, editable: false  },
             { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,  rows: 10, cols: 50,
-            cellEditorParams: { maxLength: 5000 },
+            cellEditorParams: { maxLength: 5000, },
             onCellValueChanged: (params) => {
             const updatedValue = params.newValue; 
             const rowNode = params.node; 
@@ -247,8 +247,8 @@ export default {
             updateFunction(updatedValue, rowData.id,"notes");
                                              }
         },
-            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 20, cols: 70,
-            cellEditorParams: { maxLength: 5000 },
+            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 10, cols: 50,
+             cellEditorParams: { maxLength: 5000 },
             onCellValueChanged: (params) => {
             const updatedValue = params.newValue; 
             const rowNode = params.node; 
@@ -270,7 +270,6 @@ export default {
             try {
                 loading.value = true;
                 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                  // Make sure to replace 'your_api_endpoint' with your actual API endpoint
         const response = await axios.post(`/ccm/monthly-monitoring-update-callwrap-up-new/${props.patientId}`, {
             updatedValue: paramUpdatedValue,
             rowid: paramId,
@@ -673,9 +672,3 @@ export default {
     }
 }
 </script>
-
-
-
-
-
-
