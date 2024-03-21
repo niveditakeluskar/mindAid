@@ -81,6 +81,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/monthly-monitoring-followup-inertia', 'RCare\Ccm\Http\Controllers\CcmController@SaveFollowUpInertia')->name('monthly.monitoring.followup.inertia');
         Route::post('/monthly-monitoring-text', 'RCare\Ccm\Http\Controllers\CcmController@SaveText')->name('monthly.monitoring.text');
         Route::post('/monthly-monitoring-update-callwrap-up/{id}', 'RCare\Ccm\Http\Controllers\CcmController@UpdateCallWrapUpInline')->name('update.call.wrap.up.inline');
+        Route::post('/monthly-monitoring-update-callwrap-up-new/{id}', 'RCare\Ccm\Http\Controllers\CcmController@UpdateCallWrapUpInlineNew');
         Route::get('/get-call-scripts-by-id/{id}/{uid}/call-script', 'RCare\Ccm\Http\Controllers\CcmController@getCallScriptsById')->name('get.call.scripts.by.id');
         Route::post('/saveGeneralQuestion', 'RCare\Ccm\Http\Controllers\CcmController@generalQuestion')->name('saveGeneralQuestion');
         Route::post('/saveEmrSummary', 'RCare\Ccm\Http\Controllers\CcmController@emrSummary')->name('saveEmrSummary');
