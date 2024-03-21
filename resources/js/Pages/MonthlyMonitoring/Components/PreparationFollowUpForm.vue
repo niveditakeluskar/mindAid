@@ -297,7 +297,7 @@ export default {
 		AllergiesModalForm,
 		ServicesModalForm,
 		vitalsHealthDataModalForm,
-		ReviewCarePlanModal
+		ReviewCarePlanModal 
 	},
 	data() {
 		return {

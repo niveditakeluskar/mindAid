@@ -21,11 +21,11 @@
         <ag-grid-vue class="ag-theme-quartz-dark" :gridOptions="gridOptions" :defaultColDef="defaultColDef"
             :columnDefs="columnDefs" :rowData="rowData" @grid-ready="onGridReady" :suppressExcelExport="true"
             :paginationPageSizeSelector="paginationPageSizeSelector" :paginationPageSize="paginationPageSize" :headerHeight="headerHeight"
-            :popupParent="popupParent"></ag-grid-vue>
+            :popupParent="popupParent" :stopEditingWhenCellsLoseFocus="true"></ag-grid-vue>
 
     </div>
 </template>
-  
+
 <script>
 import { AgGridVue } from 'ag-grid-vue3';
 import { onBeforeMount, reactive, ref, onMounted, computed, watch } from 'vue';
@@ -53,14 +53,12 @@ export default {
         const gridColumnApi = ref(null);
         const headerHeight = ref(null);
 
-
         onBeforeMount(() => {
             headerHeight.value = 70;
             if (!props.popupParent) {
                 props.popupParent = document.body;
             }
         });
-
 
         const onBtnExport = () => {
             const fileName = 'Renova Healthcare'; // Replace 'custom_filename' with your desired file name
@@ -181,9 +179,6 @@ export default {
             // Handle other cases
             return data ? data.toString() : '';
         };
-
-
-
 
         function exportAsPDF() {
             const doc = new jsPDF();
@@ -397,4 +392,3 @@ export default {
     /* Adjust margin between the export icons */
 }
 </style>
-  

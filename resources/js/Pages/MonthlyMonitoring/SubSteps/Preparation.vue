@@ -87,20 +87,21 @@ export default {
 
       const callPreparationDraft = async()=> {
             try {
-               isLoading.value = true;
+                isLoading.value = true;
                 let myForm = document.getElementById('call_preparation_preparation_followup_form');
-            let formData = new FormData(myForm);
-            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+                let formData = new FormData(myForm);
+                axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
                 const response = await axios.post('/ccm/monthly-monitoring-call-preparation-form-draft', formData);
-                if (response && response.status == 200) {
+               if (response && response.status == 200) {
                   $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Draft Saved Successfully! </strong> </div>');
                   updateTimer(props.patientId, '1', props.moduleId);
                   $(".form_start_time").val(response.data.form_start_time);
-                  //preparationTime.value = document.getElementById('page_landing_times').value;
-                setTimeout(function () {
-						$('#preparationAlert').html('');
-                }, 3000);
-                emit('form-submitted');
+                  preparationTime.value = document.getElementById('page_landing_times').value;
+                  setTimeout(function () {
+                      $('#preparationAlert').html('');
+                        formErrors.value = {};
+                        emit('form-submitted');
+                  }, 3000);
                }
                 isLoading.value = false;
                 clearValidationErrors();
@@ -143,9 +144,9 @@ export default {
                   //preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
                       $('#preparationAlert').html('');
+                        formErrors.value = {};
+                        emit('form-submitted');
                   }, 3000);
-                  formErrors.value = {};
-                  emit('form-submitted');
                }
                 isLoading.value = false;
 
