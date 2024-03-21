@@ -165,7 +165,7 @@ export default {
 	data() {
 
 	},
-	setup(props) {
+	setup(props, {emit}) {
 		let time = ref(null);
 		let timerStatus = ref();
 		const FollowupModalRef = ref();
@@ -387,6 +387,7 @@ export default {
 						var time = document.getElementById('page_landing_times').value;
                 		$(".timearr").val(time);
 						$('#followUpPageAlert').html('');
+						emit('form-submitted');
 					}, 3000);
 				}
 			} catch (error) {
