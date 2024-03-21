@@ -1,5 +1,6 @@
 <template>
 	<div class="">
+		<loading-spinner :isLoading="isLoading"></loading-spinner>
 		<div class="row" style="margin-bottom:5px;">
 			<div class="col-lg-12 mb-3">
 				<select name="top_stage_code_for_questionnaire" class="custom-select show-tick select2" v-model="selectedQuestionnaire" v-on:change="fetchMonthlyQuestion">
@@ -48,6 +49,7 @@ export default {
 			stage_id: null,
 			step :null,
 			timerStatus: null,
+			isLoading: false,
 		};
 	},
 	mounted() {
@@ -83,9 +85,11 @@ export default {
 		},
 
 		async fetchMonthlyQuestion(){
+			this.isLoading = true;
 			await axios.get(`/ccm/get-stepquestion/${this.moduleId}/${this.patientId}/${this.selectedQuestionnaire}/${this.componentId}/question_list`)
 				.then(response => {
 					this.decisionTree = response.data;
+					this.isLoading = false;
 					this.start_time = document.getElementById('page_landing_times').value;
 					this.timerStatus = document.getElementById('timer_runing_status').value;
 					this.savedGeneralQuestion();

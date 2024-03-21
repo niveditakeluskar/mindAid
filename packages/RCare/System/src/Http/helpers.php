@@ -1654,12 +1654,13 @@
                                             }
                                             $scoreid = $score[$k];
                                             $onclick = "onclick=add_score($scoreid,'$step_name_trimmed','$radioinc','radio')";
-                                            if (array_key_exists($questionTitle, $patient_questionnaire)) {
-                                                if ($questionExist && $patient_questionnaire[$questionTitle] == $labels) {
-                                                    $score_value = $scoreid;
-                                                }
-                                                $radioex = 1;
+                                           
+                                        }
+                                        if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                                            if ($questionExist && $patient_questionnaire[$questionTitle] == $labels) {
+                                                $score_value = $scoreid;
                                             }
+                                            $radioex = 1;
                                         }
                                         $rdid = $questionTitle . '_' . $labels . '_' . json_decode($questionnaire->id);
                                         $content = $content . '<label class="radio radio-primary col-md-4 float-left" for="' . $rdid . '">
