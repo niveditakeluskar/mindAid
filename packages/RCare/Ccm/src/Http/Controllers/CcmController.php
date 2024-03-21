@@ -789,7 +789,8 @@ class CcmController extends Controller
         $callp = CallPreparation::latest($patientId) ? CallPreparation::latest($patientId)->population() : "";
         $hippa = (CallHipaaVerification::latest($patientId) ? CallHipaaVerification::latest($patientId)->population() : "");
         // $callWrapUp = (CallWrap::latest($patientId) ? CallWrap::latest($patientId)->population() : "");
-
+        $callclose = callclose::latest($patientId) ? callclose::latest($patientId)->population() : ""; 
+        // dd($callclose);
         if (CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists()) {
             // dd(CallWrap::where('patient_id', $patientId)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists());
             $EmrMonthlySummary = EmrMonthlySummary::where('patient_id', $patientId)
@@ -868,6 +869,7 @@ class CcmController extends Controller
 
         $result['populateCallPreparation'] = $callp;
         $result['populateHippa'] = $hippa;
+        $result['populateCallClose'] = $callclose;
         // $result['callwrapup_form'] = $callWrapUp;
 
         return $result;
