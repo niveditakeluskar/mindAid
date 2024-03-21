@@ -950,21 +950,23 @@
             var addGraphHight = 0;
             var interval = setInterval(function() {
                 clearInterval(interval);
-                promises.forEach(function(img, index) {
-                    var remain_page_hight = pageHeight - [(z * 20) + 170 + addGraphHight + k * 140];
-                    if (yDocPos > remain_page_hight) {
-                        doc.addPage();
-                        yDocPos = 40;
-                        k = 0;
-                        z = 0;
-                    } else {
-                        if (index == 0) {
-                            yDocPos = (z * 20) + 170 + k * 140;
-                            addGraphHight += 440;
-                        } else {
-                            yDocPos += 440;
-                        }
-                    }
+                // promises.forEach(function(img, index) {
+                //     var remain_page_hight = pageHeight - [(z * 20) + 170 + addGraphHight + k * 140];
+                //     if (yDocPos > remain_page_hight) {
+                //         doc.addPage();
+                //         yDocPos = 40;
+                //         k = 0;
+                //         z = 0;
+                //     } else {
+                //         if (index == 0) {
+                //             yDocPos = (z * 20) + 170 + k * 140;
+                //             addGraphHight += 440;
+                //         } else {
+                //             yDocPos += 440;
+                //         }
+                //     }
+                    doc.addPage(); // added new code
+                    yDocPos += 220; // added new code
                     var top = yDocPos - 20;
                     doc.setDrawColor(0);
                     doc.setFillColor(242, 244, 244);
