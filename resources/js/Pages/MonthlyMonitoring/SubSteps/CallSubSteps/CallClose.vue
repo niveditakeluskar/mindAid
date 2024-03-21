@@ -16,12 +16,12 @@
 							<br>
 							<div class="forms-element d-inline-flex"> 
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query1" value="1" v-model="query1">
+									<input type="radio" name="query1" value="1" v-model="query1" :checked="query1=='1'">
 									<span>Yes</span>
 									<span class="checkmark"></span>
 								</label>
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query1" value="0" v-model="query1">
+									<input type="radio" name="query1" value="0" v-model="query1" :checked="query1=='0'">
 									<span>No</span>
 									<span class="checkmark"></span>
 								</label>
@@ -30,7 +30,7 @@
 							<div v-if="query1==1">
 								<label class="mr-3 col-lg-12">Monthly Notes:
 									<textarea class="forms-element form-control" name="q1_notes" id="q1_notes" v-model="q1_notes"></textarea>
-								</label>
+								</label> 
 								<div class="invalid-feedback"></div>
 							</div>
 						</div>
@@ -39,12 +39,12 @@
 							<br>
 							<div class="forms-element d-inline-flex">
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query2" value="1" id="newquery2_yes" v-model="query2">
+									<input type="radio" name="query2" value="1" id="newquery2_yes" v-model="query2" :checked="query2=='1'">
 									<span>Yes</span>
 									<span class="checkmark"></span>
 								</label> 
 								<label class="radio radio-primary mr-3">
-									<input type="radio" name="query2" value="0" id="newquery2_no" v-model="query2">
+									<input type="radio" name="query2" value="0" id="newquery2_no" v-model="query2" :checked="query2=='0'">
 									<span>No</span>
 									<span class="checkmark"></span>
 								</label>
@@ -53,7 +53,7 @@
 							<div v-if="query2 == 1 || query2 == 0" id="next_month_call_div" class="nextcall">
 								<div class="mr-3 d-inline-flex align-self-center">
 									<label class="forms-element mr-3">Select Date:<span class="error">*</span>
-										<input type="date" name="q2_datetime" v-model="q2_datetime" id="next_month_call_date" class="forms-element form-control" />
+										<input type="date" name="q2_datetime" v-model="nextMonthCallDate" id="next_month_call_date" class="forms-element form-control" />
 										<div class="invalid-feedback" v-if="formErrors.q2_datetime" style="display: block;">{{ formErrors.q2_datetime[0] }}</div>
 									</label>
 									<label class="forms-element mr-3" >Select Time:<span class="error">*</span>
@@ -65,7 +65,7 @@
 									<label style="width: 100%;">Monthly Notes:
 										<textarea class="forms-element form-control" name="q2_notes" v-model="q2_notes"></textarea>
 									</label>
-									<div class="invalid-feedback"></div>
+									<div class="invalid-feedback"></div> 
 								</div>
 								<div>
 									<hr />
@@ -107,6 +107,10 @@ export default {
 			formErrors: {},
 			showAlert: false,
 			timerStatus:null,
+			q1_notes:null,
+			q2_notes:null,
+			nextMonthCallDate:null,
+			q2_time:null,
 		};
 	},
 	components: {
@@ -115,6 +119,7 @@ export default {
 	mounted() {
 		this.getCallCloseStageID();
 		this.timerStatus = document.getElementById('timer_runing_status').value;
+		this.populateFuntion();
 	},
 	methods: {
 		async getCallCloseStageID() {
@@ -126,6 +131,32 @@ export default {
 				throw new Error('Failed to fetch stageID');
 			}
 		},
+		async populateFuntion(){ 
+			try{
+				const response = await fetch(`/ccm/populate-monthly-monitoring-data/${this.patientId}`);
+				if(!response.ok){  
+						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+				}
+				const data = await response.json();
+				this.patientPrepSaveDetails = data;
+				if(this.patientPrepSaveDetails.populateCallClose!=''){
+					this.query1 = this.patientPrepSaveDetails.populateCallClose.static.query1;
+					this.q1_notes = this.patientPrepSaveDetails.populateCallClose.static.q1_notes;
+					this.query2 = this.patientPrepSaveDetails.populateCallClose.static.query2;
+					this.q2_time = this.patientPrepSaveDetails.populateCallClose.static.q2_time
+					this.q2_notes = this.patientPrepSaveDetails.populateCallClose.static.q2_notes;
+					const q2_datetime =this.patientPrepSaveDetails.populateCallClose.static.q2_datetime;
+					const date = new Date(q2_datetime);
+					// Format the date as "yyyy-mm-dd" (required by <input type="date">)
+					const formattedDate = date.toISOString().slice(0, 10);
+					// Update the data property
+					this.nextMonthCallDate = formattedDate;
+					console.log(this.nextMonthCallDate+"call close q2_datetime");
+				}
+			}catch(error){
+				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
+			}
+	    },
 		async submitCallCloseForm() {
 			const formData = {
 				uid: this.patientId,
