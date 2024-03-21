@@ -321,7 +321,10 @@ export default {
     border: var(--ag-borders);
 }
 
-
+.ag-popup-editor .ag-large-text,
+.ag-autocomplete-list-popup {
+  background-color:  rgb(208, 206, 206);
+}
 
 .loading-spinner {
     display: flex;
@@ -391,4 +394,6 @@ export default {
     margin-right: 5px;
     /* Adjust margin between the export icons */
 }
+
+
 </style>
