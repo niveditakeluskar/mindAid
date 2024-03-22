@@ -448,7 +448,7 @@ export default {
                 consent_to_text.value = data.consent_to_text;
                 military_status.value = data.military_status;
                 if (data.PatientAddress) {
-                    patientAddress.value = `${data.PatientAddress.add_1}, ${data.PatientAddress.add_2}, ${data.PatientAddress.city}, ${data.PatientAddress.state}, ${data.PatientAddress.zipcode}`;
+                    patientAddress.value = `${data.PatientAddress.add_1 ? data.PatientAddress.add_1 + ', ' : ''}${data.PatientAddress.add_2 ? data.PatientAddress.add_2 + ', ' : ''}${data.PatientAddress.city ? data.PatientAddress.city + ', ' : ''}${data.PatientAddress.state ? data.PatientAddress.state + ', ' : ''}${data.PatientAddress.zipcode ?? ''}`;
                 } else {
                     // Handle the case when PatientAddress is null
                     patientAddress.value = '';
