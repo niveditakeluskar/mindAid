@@ -53,7 +53,7 @@
 							<div v-if="query2 == 1 || query2 == 0" id="next_month_call_div" class="nextcall">
 								<div class="mr-3 d-inline-flex align-self-center">
 									<label class="forms-element mr-3">Select Date:<span class="error">*</span>
-										<input v-if="q2_datetime" type="date" name="q2_datetime" v-model="q2_datetime" 
+										<input type="date" name="q2_datetime" v-model="q2_datetime" 
 										id="next_month_call_date" class="forms-element form-control" />
 										<div class="invalid-feedback" v-if="formErrors.q2_datetime" style="display: block;">{{ formErrors.q2_datetime[0] }}</div>
 									</label>
