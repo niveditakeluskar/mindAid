@@ -1,4 +1,4 @@
-<template>    
+<template>
     <div class="modal fade" :class="{ 'show': isOpen }" >
 		<div class="modal-dialog ">
         <form name="active_deactive_form" id="active_deactive_form" @submit.prevent="submitPatientForm">
@@ -25,7 +25,7 @@
                         <div class="row">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="module">Module</label>
-                                <select name="modules" id="enrolledservice_modules" class="custom-select show-tick enrolledservice_modules"></select>
+                                <select name="modules" id="enrolledservice_modules" @change="handleModuleChange" class="custom-select show-tick enrolledservice_modules"></select>
                                 <div class="invalid-feedback"  v-if="formErrors.modules" style="display: block;">{{ formErrors.modules[0] }}</div>
                             </div>
                             <div class="col-md-12">
@@ -64,22 +64,22 @@
                             </div>
                             <div class="col-md-12" id="date_value">
                                 <div class="form-group row">
-                                    <div class="col-md-4 form-group mb-3" id="fromdate">
+                                    <div class="col-md-6 form-group" id="fromdate">
                                         <label for="date" id="from_date">From Date <span class="error">*</span></label>
-                                        <input name="activedeactivefromdate" id="fromdate" type="date">
+                                        <input name="activedeactivefromdate" id="fromdate" type="date" class="form-control">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivefromdate" style="display: block;">{{ formErrors.activedeactivefromdate[0] }}</div>
                                     </div>
-                                    <div class="col-md-4 form-group mb-3" id="deceasedfromdate">
+                                    <div class="col-md-6 form-group" id="deceasedfromdate">
                                         <label for="date" id="from_date">Date of Deceased <span class="error">*</span></label>
-                                        <input name="deceasedfromdate" id="deceasedfromdate" type="date">
+                                        <input name="deceasedfromdate" id="deceasedfromdate" type="date" class="form-control">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.deceasedfromdate" style="display: block;">{{ formErrors.deceasedfromdate[0] }}</div>
                                     </div>
-                                    <div class="col-md-4 form-group mb-3" id="todate">
+                                    <div class="col-md-6 form-group" id="todate">
                                         <label for="date">To Date <span class="error">*</span></label>
-                                        <input name="activedeactivetodate" type="date">
+                                        <input name="activedeactivetodate" type="date" class="form-control">
                                         <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivetodate" style="display: block;">{{ formErrors.activedeactivetodate[0] }}</div>
                                     </div>
-                                    <div class="col-md-8 form-group mb-3" id="deactivation_drpdwn_div">
+                                    <div class="col-md-6 form-group" id="deactivation_drpdwn_div">
                                         <label for="deactivation_drpdwn">Reason for Deactivation</label>
                                         <select id="practices" class="custom-select show-tick select2" name="deactivation_drpdwn">
                                             <option value="">Select Deactivation Reasons</option>
@@ -130,8 +130,9 @@
                 type: Function,
                 required: true,
             },
-        }, 
-        setup(props) {
+        },
+    setup(props) {
+            const statusId = ref('');
             const Deactivations = ref([]);
             const isOpen = ref(false);
             const isLoading = ref(false);
@@ -148,7 +149,6 @@
                         //time.value = landingTime;
                         $(".timearr").val(landingTime);
                     }
-					
                 } else {
                     //time.value = element.value;
                     $(".timearr").val(element.value);
@@ -187,33 +187,103 @@
             };
 
             const showReasonOptions = (param3) => {
+
                 $("form[name='active_deactive_form'] #date_value").show();
                 if (param3 == 1) {
+                    statusId.value = 1;
                     $("form[name='active_deactive_form'] #fromdate").hide();
                     $("form[name='active_deactive_form'] #deceasedfromdate").hide();
                     $("form[name='active_deactive_form'] #todate").hide();
                     $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
                 } else if (param3 == 0) {
+                    statusId.value = 0;
                     $("form[name='active_deactive_form'] #fromdate").show();
                     $("form[name='active_deactive_form'] #deceasedfromdate").hide();
                     $("form[name='active_deactive_form'] #todate").show();
                     $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
                 } else if (param3 == 2) {
+                    statusId.value = 2;
                     $("form[name='active_deactive_form'] #fromdate").show();
                     $("form[name='active_deactive_form'] #deceasedfromdate").hide();
                     $("form[name='active_deactive_form'] #todate").hide();
                     $("form[name='active_deactive_form'] #deactivation_drpdwn_div").show();
                 } else if (param3 == 3) {
+                    statusId.value = 3;
                     $("form[name='active_deactive_form'] #fromdate").hide();
                     $("form[name='active_deactive_form'] #deceasedfromdate").show();
                     $("form[name='active_deactive_form'] #todate").hide();
                     $("form[name='active_deactive_form'] #deactivation_drpdwn_div").hide();
                 } else {
+                    statusId.value = '';
                     $("#status").prop("checked", false);
                     $("form[name='active_deactive_form'] #date_value").hide();
                     alert("Invalid Request");
                 }
             };
+
+            const handleModuleChange = () =>{
+                var available_moduleId = $("#enrolledservice_modules").val();
+                
+                var selmoduleId;
+                const patIdModule = $("#patientStatId").val();
+                if (available_moduleId !== undefined) {
+                        selmoduleId = available_moduleId;
+                    } else {
+                        const baseUrl = window.location.origin;
+                        const sPageURL = window.location.pathname;
+                        const parts = sPageURL.split("/");
+                        var selmodule_name= parts[parts.length - 3];
+                        if(selmodule_name=='ccm'){
+                            selmoduleId = 3;
+                        }
+                        if(selmodule_name=='rpm'){
+                            selmoduleId = 2;
+                        }
+                    }
+                    var statusValue; 
+                    axios({
+                        method: "GET",
+                        url: `/patients/patient-module/${patIdModule}/patient-module`,
+                    }).then(function (response) {
+                        const enr = response.data;
+                        enr.forEach(function(item) {
+                            if (item.module_id == selmoduleId) { 
+                                statusValue = item.status;
+                            }
+                        });
+                        
+                        $("#status").prop("checked", false);
+                    if (statusValue == 0) {
+                        $("form[name='active_deactive_form'] #role1").show();
+                        $("form[name='active_deactive_form'] #role0").hide();
+                        $("form[name='active_deactive_form'] #role2").show();
+                        $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 1) {
+                    $("form[name='active_deactive_form'] #role1").hide();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").show();
+                    $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 2) {
+                    $("form[name='active_deactive_form'] #role1").show();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").hide();
+                    $("form[name='active_deactive_form'] #role3").show();
+                    }
+                    if (statusValue == 3) {
+                    $("form[name='active_deactive_form'] #role1").show();
+                    $("form[name='active_deactive_form'] #role0").show();
+                    $("form[name='active_deactive_form'] #role2").show();
+                    $("form[name='active_deactive_form'] #role3").hide();
+                    } 
+                    }).catch(function (error) {
+                        console.error(error, error.response);
+                    });
+
+         
+         
+                }
 
             const callExternalFunctionWithParams = (param1, param2) => {
                 if ($.isNumeric(param1) == true) {
@@ -300,7 +370,7 @@
                     if (response && response.status == 200) {
                         if (typeof props.PatientWorkList=== 'function') {
                             props.PatientWorkList();
-                            }       
+                            }
                         const currentUrl = window.location.href;
                         const urlParts = currentUrl.split("/");
                         const id = urlParts[urlParts.length - 1];
@@ -312,7 +382,17 @@
                             }
                         $(".form_start_time").val(response.data.form_start_time);
                         //time.value = response.data.form_start_time;
-                        $('#patientalertdiv').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+                        var successMsg = "";
+                        if (statusId.value == 0) {
+                            successMsg = "Patient Suspended Successfully!";
+                        } else if (statusId.value == 1) {
+                            successMsg = "Patient Activated Successfully!";
+                        } else if (statusId.value == 2) {
+                            successMsg = "Patient Deactivated Successfully!";
+                        } else if (statusId.value == 3) {
+                            successMsg = "Patient marked as Deceased Successfully!";
+                        }
+                        $('#patientalertdiv').html('<div class="alert alert-success"><strong>'+successMsg+'</strong></div>');
                         document.getElementById("active_deactive_form").reset();
                         setTimeout(function () {
                             var time = document.getElementById('page_landing_times').value;
@@ -338,7 +418,7 @@
                         setTimeout(function () {
                             $('#patientalertdiv').html('');
                         }, 3000);
-                    } 
+                    }
                 }
             };
             return {
@@ -355,6 +435,7 @@
                 Deactivations,
                 isLoading,
                 formErrors,
+                handleModuleChange
             };
         },
     };

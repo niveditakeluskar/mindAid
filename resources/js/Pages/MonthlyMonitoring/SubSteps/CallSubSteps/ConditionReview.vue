@@ -94,7 +94,7 @@ export default {
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
             const response = await axios.post('/ccm/monthly-monitoring-call-preparation-form', formData);
             if (response && response.status == 200) {
-                $('#conditionpreparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
+               $('#conditionpreparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Condition Review Completed! </strong> </div>');
                updateTimer(props.patientId, '1', props.moduleId);
                $(".form_start_time").val(response.data.form_start_time);
                //preparationTime.value = document.getElementById('page_landing_times').value;
