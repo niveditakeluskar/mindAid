@@ -26,9 +26,9 @@ class CallwrapAddRequest extends FormRequest
         return validationRules(
             True,
             [
-                'notes'                          => 'nullable|min:3|text_comments_slash',
+                //'notes'                          => 'nullable|min:3|text_comments_slash',
                 'emr_monthly_summary_date.*'     => 'required|before_or_equal:today',
-                'emr_monthly_summary.*'          => 'nullable|min:3|regex:/^[a-zA-Z0-9- . , ]*$/|required_with:emr_monthly_summary_date|text_comments_slash'
+               // 'emr_monthly_summary.*'          => 'nullable|min:3|regex:/^[a-zA-Z0-9- . , ]*$/|required_with:emr_monthly_summary_date|text_comments_slash'
 
                 // 'emr_monthly_summary.*'          => 'nullable|min:3|regex:/^[a-zA-Z0-9- . , ]*$/',
                 // 'notes'                          => 'nullable|min:3|text_comments_slash',
