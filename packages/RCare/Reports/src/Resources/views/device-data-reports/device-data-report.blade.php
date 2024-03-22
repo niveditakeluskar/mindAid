@@ -64,6 +64,7 @@
 <div class="col hide-graph" id="bp" style="display:none">
     <div class="card">
         <div class="card-body device_box">
+            <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" id="btnFullScreen">View in full screen</a>
             <div id="bpcontainer" style="height: 400px; width: 100%;"></div>
         </div>
     </div>
@@ -122,7 +123,7 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
 <script src="{{asset('assets/js/jspdf.min.js')}}"></script>
-<script src="{{asset('assets/js/jspdf.plugin.autotable.js')}}"></script>
+<script type="text/javascript" src="{{asset('assets/js/jspdf.plugin.autotable.js')}}"></script>
 <script src="{{asset(mix('assets/js/laravel/commonHighchart.js'))}}"></script>
 <script type="text/javascript">
     var getDeviceDataList = function(devices = null, patient_id = null, month = null) {
@@ -764,7 +765,7 @@
     function vitaltable(devices, practice_id, patient, fromdate) {
         $('#appendtable').empty();
         $('#appendtable').append(' <table id="Activities-list_1" class="display table table-striped table-bordered" style="width:100%" ><thead id="vitaltableheader1"></thead><tbody id="vitalstablebody1"></tbody> </table>');
-        $('#appendtable').append('<table id="Activities-list_2" class="display table table-striped table-bordered" style="width:100%;display:none" ><thead id="vitaltableheader2"></thead><tbody id="vitalstablebody2"></tbody> </table>');
+        $('#appendtable').append('<table id="Activities-list_2" class="display table table-striped table-bordered" style="width:100%; display:none" ><thead id="vitaltableheader2"></thead><tbody id="vitalstablebody2"></tbody> </table>');
         var i = 1;
         var flag = 0;
         var myArr = devices.split(",");
@@ -807,7 +808,6 @@
         $('#vitaltableheader2').html(head);
         getDeviceDataList(devices, patient, fromdate);
     }
-
     $('#btn').click(function() {
         var chk_practices = $('#practices').val();
         if (window.location.href.indexOf('device-data-report/') > 0) {
@@ -881,11 +881,11 @@
                 doc.text(10, 116, 'Data from : ' + get_m_month + "-01-" + get_m_year + " to " + get_m_month + "-" + last_dt + '-' + get_m_year);
             }
 
-            var z = 0;
+            // var z = 0;
             var toppdf = 117;
             var tblcolumn = 0;
             var data = tableToJson($('#Activities-list_2').get(0));
-            z = data.length;
+            // z = data.length;
             doc.autoTable({
                 theme: 'grid',
                 html: '#Activities-list_2',
@@ -952,25 +952,29 @@
             var interval = setInterval(function() {
                 clearInterval(interval);
                 promises.forEach(function(img, index) {
-                    var remain_page_hight = pageHeight - [(z * 20) + 170 + addGraphHight + k * 140];
-                    if (yDocPos > remain_page_hight) {
-                        doc.addPage();
-                        yDocPos = 40;
-                        k = 0;
-                        z = 0;
-                    } else {
-                        if (index == 0) {
-                            yDocPos = (z * 20) + 170 + k * 140;
-                            addGraphHight += 440;
-                        } else {
-                            yDocPos += 440;
-                        }
-                    }
+                    // var remain_page_hight = pageHeight - [(z * 20) + 170 + addGraphHight + k * 140];
+                    // if (yDocPos > remain_page_hight) {
+                    //     alert('if');
+                    //     doc.addPage();
+                    //     yDocPos = 40;
+                    //     k = 0;
+                    //     z = 0;
+                    // } else {
+                    //     if (index == 0) {
+                    //         alert('else -if');
+                    //         yDocPos = (z * 20) + 170 + k * 140;
+                    //         addGraphHight += 440;
+                    //     } else {
+                    //         alert('else-else');
+                    //         yDocPos += 440;
+                    //     } 
+                    // }
+                    doc.addPage(); //added when above code cmnt
+                    yDocPos += 120; //added when above code cmnt
                     var top = yDocPos - 20;
                     doc.setDrawColor(0);
                     doc.setFillColor(242, 244, 244);
                     doc.rect(10, top, 575, 340, 'F');
-
                     doc.addImage(img, 'PNG', 25, yDocPos, 540, 300);
                     k++;
                 });
