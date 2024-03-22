@@ -1,4 +1,5 @@
 <template>
+	 <loading-spinner :isLoading="isLoading"></loading-spinner>
 <div class="row">
 	<div class="col-lg-12 mb-3">
 		<!-- 	<div class="mb-3" ><b>Call Wrap up</b></div> -->
@@ -64,6 +65,7 @@ export default {
 			formErrors: {},
 			showAlert: false,
 			timerStatus: null,
+			isLoading:false,
 		};
 	},
 	mounted() {
@@ -96,6 +98,7 @@ export default {
 			}
 	    },
 		async submitVerificationForm() {
+			this.isLoading = true;
 			const formData = {
 				uid: this.patientId,
 				patient_id: this.patientId,
@@ -132,12 +135,14 @@ export default {
 					this.$emit('form-submitted');
 				}
 			} catch (error) {
+				this.isLoading = false;
 				if (error.response && error.response.status === 422) {
 					this.formErrors = error.response.data.errors;
 				} else {
 					console.error('Error submitting form:', error);
 				}
 			}
+			this.isLoading = false;
 		},
 	},
 }

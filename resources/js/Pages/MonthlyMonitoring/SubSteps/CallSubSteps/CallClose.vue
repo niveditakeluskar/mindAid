@@ -1,4 +1,5 @@
 <template>
+	 <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="row">
 		<div id="success"></div>
 		<div class="col-lg-12 mb-4">
@@ -111,6 +112,7 @@ export default {
 			q2_notes:null,
 			nextMonthCallDate:null,
 			q2_time:null,
+			isLoading:false,
 		};
 	},
 	components: {
@@ -158,6 +160,7 @@ export default {
 			}
 	    },
 		async submitCallCloseForm() {
+			this.isLoading = true;
 			const formData = {
 				uid: this.patientId,
 				patient_id: this.patientId,
@@ -216,6 +219,7 @@ export default {
 				const response = await axios.post('/ccm/monthly-monitoring-call-callclose', formData);
 				if (response && response.status == 200) {
 					this.showAlert = true;
+					this.isLoading = false;
 					var year = (new Date).getFullYear();
                		var month = (new Date).getMonth() + 1
 					updateTimer(this.patientId, 1, this.moduleId);
@@ -230,7 +234,9 @@ export default {
 					}, 3000);
 					this.$emit('form-submitted');
 				}
+				this.isLoading = false;
 			} catch (error) {
+				this.isLoading = false;
 				if (error.response && error.response.status === 422) {
 					this.formErrors = error.response.data.errors;
 				} else {

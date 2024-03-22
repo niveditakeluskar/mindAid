@@ -1,5 +1,6 @@
 <template>
    <div class="tsf-step-content">
+      <loading-spinner :isLoading="isLoading"></loading-spinner>
       <div class="row">
          <div class="col-lg-12 mb-3">
             <form id="callstatus_form" name="callstatus_form" @submit.prevent="submitCallForm"> 
@@ -171,6 +172,7 @@ export default {
          showAlert: false,
          renderComponent : true,
          timerStatus:null,
+         isLoading:false,
       };
    },
    components: {
@@ -276,7 +278,7 @@ export default {
             });
       },
       async submitCallForm(){
-            
+            this.isLoading = true;
             let myForm = document.getElementById('callstatus_form'); 
             let formData = new FormData(myForm);
             this.renderComponent = false;
@@ -287,6 +289,8 @@ export default {
 				if (response && response.status == 200) {
                this.renderComponent = true;
 					this.showAlert = true;
+               window.scrollTo(0,0);
+               this.isLoading = false;
                var year = (new Date).getFullYear();
                var month = (new Date).getMonth() + 1
                     updateTimer(this.patientId, 1, this.moduleId);
@@ -305,12 +309,14 @@ export default {
                this.$emit('form-submitted');
 				}
 			} catch (error) {
+            this.isLoading = false;
 				if (error.response && error.response.status === 422) {
 					this.formErrors = error.response.data.errors;
 				} else {
 					console.error('Error submitting form:', error);
 				}
 			}
+         this.isLoading = false;
       },
    },
 };
