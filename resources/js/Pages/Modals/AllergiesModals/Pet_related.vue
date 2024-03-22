@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="pet_related" role="tabpanel" aria-labelledby="pet-related-allergies-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Pet-Related Data</h4></div>
             <form id="allergy_pet_related_form" name="allergy_pet_related_form" @submit.prevent="submitAllergiesForm">
@@ -152,6 +153,7 @@ export default {
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
         const maxBlocksInCache = ref(null);
+        let isLoading = ref(false);
         let PetRelatedAllergiescolumnDefs = ref([
                 {
                     headerName: 'Sr. No.',
@@ -212,6 +214,7 @@ export default {
         
         const submitAllergiesForm = async () => {
             formErrors.value = {};
+            isLoading.value = true;
             let myForm = document.getElementById('allergy_pet_related_form');
             let formData = new FormData(myForm);
             let formDataObject = {};
@@ -223,6 +226,7 @@ export default {
                 const saveAllergiesResponse = await saveAllergies(formDataObject);
                 console.log("in PetRelated saveAllergiesResponse", saveAllergiesResponse);
                     showPetRelatedAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     await fetchPatientPetRelatedList();
@@ -241,6 +245,7 @@ export default {
                 formErrors.value = [];
             
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                     setTimeout(function () {
@@ -366,7 +371,7 @@ export default {
             fetchPatientPetRelatedList,
             deleteAllergies,
             editAllergy,
-
+            isLoading
         };
     }
 };

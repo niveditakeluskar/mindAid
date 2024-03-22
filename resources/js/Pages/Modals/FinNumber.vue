@@ -1,5 +1,6 @@
 <template>
     <div v-if="isOpen" class="modal fade show" >
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
@@ -81,6 +82,7 @@ export default {
         const showAlert = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
+        let isLoading = ref(false);
 
         const openModal = () => {
             isOpen.value = true;
@@ -94,6 +96,7 @@ export default {
             document.body.classList.remove('modal-open');
         };
         let submitFinNumberForm = async () => {
+            isLoading.value = true;
             let myForm = document.getElementById('fin_number_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -103,6 +106,7 @@ export default {
                 if (response && response.status == 200) {
                     showAlert.value = true;
                     updateTimer(props.patientId, '1', props.moduleId);
+                    isLoading.value = false;
                     if(typeof props.patientFinNumberTab === 'function'){
                         props.patientFinNumberTab();
                     } 
@@ -115,7 +119,9 @@ export default {
                     }, 3000);// Close the modal after 3 seconds (3000 milliseconds)
                     formErrors.value = [];
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                     setTimeout(function () {
@@ -155,6 +161,7 @@ export default {
             finNumber,
             submitFinNumberForm,
             timerStatus,
+            isLoading,
         };
     },
 };
