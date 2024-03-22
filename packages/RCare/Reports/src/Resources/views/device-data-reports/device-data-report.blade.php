@@ -213,7 +213,7 @@
                                 if (full['hr_alert_status'] == 1) {
                                     return "<span style='color:red'>" + hr + '<i class="i-Danger" style="color:red"></i>' + "<span>";
                                 } else {
-                                    return ;
+                                    return hr;
                                 }
                             }
                         },
