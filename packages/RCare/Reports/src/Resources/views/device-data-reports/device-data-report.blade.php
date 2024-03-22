@@ -142,6 +142,7 @@
         }];
 
         for (i = 0; i < myArr.length; i++) {
+			flag2 = 0;
             if (myArr[i] == 1) {
                 columns.push({
                     data: null,
@@ -206,13 +207,13 @@
                         mRender: function(data, type, full, meta) {
                             hr = full['resting_heartrate'];
                             if (full['resting_heartrate'] == null) {
-                                hr = '';
+                                hr = 'abc';
                             }
                             if (data != '' && data != 'NULL' && data != undefined) {
                                 if (full['hr_alert_status'] == 1) {
                                     return "<span style='color:red'>" + hr + '<i class="i-Danger" style="color:red"></i>' + "<span>";
                                 } else {
-                                    return hr;
+                                    return 'heart rate';
                                 }
                             }
                         },
