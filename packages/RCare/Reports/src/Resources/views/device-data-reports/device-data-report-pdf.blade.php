@@ -10,7 +10,7 @@
  <div class="breadcrusmb">
      <div class="row">
          <div class="col-md-11">
-             <h4 class="card-title mb-3">Device Data Report</h4>
+             <h4 class="card-title mb-3">Device Data Report print</h4>
          </div>
      </div>
      <!-- ss -->

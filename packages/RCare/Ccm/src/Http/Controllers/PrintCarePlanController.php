@@ -351,7 +351,9 @@ class PrintCarePlanController extends Controller
             $patientLabDetails[$date][$lab_test_id]['lab_date'] =  $value['lab_date'];
             $patientLabDetails[$date][$lab_test_id]['lab_date_exist'] =  $value['lab_date_exist'];
             $patientLabDetails[$date][$lab_test_id]['notes'] =  $value['notes'];
-            $patientLabDetails[$date][$lab_test_id]['lab_name'] =  $value['lab_test']['description'];
+
+            $patientLabDetails[$date][$lab_test_id]['lab_name'] =  "";
+
             $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['reading'] =  $value['reading'];
             $patientLabDetails[$date][$lab_test_id]['lab_details'][$parameter]['high_val'] =  $value['high_val'];
             $labInc++;
