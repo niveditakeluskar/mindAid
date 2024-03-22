@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="healthdata" role="tabpanel" aria-labelledby="healthdata-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Health Data</h4></div>
             <form id="number_tracking_healthdata_form" name="number_tracking_healthdata_form" @submit.prevent="submitHealthDataForm">
@@ -95,6 +96,7 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const healthdataRowData = ref([]);
+        let isLoading = ref(false);
         let healthdataItems = ref([
             {
                 health_data: '',
@@ -142,6 +144,7 @@ export default {
 
         let submitHealthDataForm = async () => {
             formErrors.value = {};
+            isLoading.value = true;
             let myForm = document.getElementById('number_tracking_healthdata_form');
             let formData = new FormData(myForm);
             let formDataObject = {};
@@ -154,6 +157,7 @@ export default {
                 const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-healthdata', formData);
                 if (saveServicesResponse && saveServicesResponse.status == 200) {
                     showImagingAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.data.form_start_time);
                     await fetchPatientHealthDataList();
@@ -168,7 +172,9 @@ export default {
                     }, 3000);
                     formErrors.value = [];
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -240,6 +246,7 @@ export default {
             addImagingItem,
             removeImagingItem,
             submitHealthDataForm,
+            isLoading
         };
     }
 };

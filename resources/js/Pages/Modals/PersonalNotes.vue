@@ -1,5 +1,6 @@
 <template>
     <div v-if="isOpen" class="modal fade show"  >
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
@@ -70,6 +71,7 @@ export default {
         let personal_notes_data = ref(null);
         const isOpen = ref(false); 
         const showAlert = ref(false);
+        let isLoading = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
         const openModal = () => {
@@ -85,6 +87,7 @@ export default {
         };
         
         let submitPersonalNotesForm = async () => {
+            isLoading.value = true;
             let myForm = document.getElementById('personal_notes_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -93,6 +96,7 @@ export default {
                 const response = await axios.post('/patients/patient-personal-notes', formData);
                 if (response && response.status == 200) {
                     showAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("personal_notes_form").reset();
@@ -102,7 +106,9 @@ export default {
                         personalnotesTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -135,6 +141,7 @@ export default {
             submitPersonalNotesForm,
             personal_notes_data,
             timerStatus,
+            isLoading
         };
     },
 };

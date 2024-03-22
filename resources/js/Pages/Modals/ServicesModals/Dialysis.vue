@@ -1,5 +1,6 @@
 <template>
     <div class="tab-pane fade show active" id="dialysis-services" role="tabpanel" aria-labelledby="dialysis-services-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Dialysis</h4></div>
             <form id="service_dialysis_form" name="service_dialysis_form" @submit.prevent="submitSrvicesForm">
@@ -76,7 +77,7 @@ export default {
         let DialysisServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-       
+        let isLoading = ref(false);
         const dialysisServiceRowData = ref([]);
         const columnDefs = ref([
                 {
@@ -135,6 +136,7 @@ export default {
         };
 
         const submitSrvicesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('service_dialysis_form');
             let formData = new FormData(myForm);
@@ -146,6 +148,7 @@ export default {
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showDialysisAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientDialysisServiceList();
@@ -159,6 +162,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                 } else {
@@ -289,6 +293,7 @@ export default {
             fetchPatientDialysisServiceList,
             deleteServices,
             editService,
+            isLoading
         };
     }
 };

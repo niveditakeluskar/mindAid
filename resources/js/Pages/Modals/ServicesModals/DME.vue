@@ -1,5 +1,6 @@
 <template>
     <div class="tab-pane fade show active" id="dme" role="tabpanel" aria-labelledby="dme-services-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>DME</h4></div>
             <form id="service_dme_form" name="service_dme_form" @submit.prevent="submitSrvicesForm">
@@ -75,7 +76,7 @@ export default {
         let DMEServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        
+        let isLoading = ref(false);
         const dmeServiceRowData = ref([]);
       
         const columnDefs = ref( [
@@ -132,6 +133,7 @@ export default {
         };
 
         const submitSrvicesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('service_dme_form');
             let formData = new FormData(myForm);
@@ -143,6 +145,7 @@ export default {
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showDMEAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientDMEServiceList();
@@ -156,6 +159,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                 } else {
@@ -274,6 +278,7 @@ export default {
             fetchPatientDMEServiceList,
             deleteServices,
             editService,
+            isLoading
         };
     }
 };

@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="other" role="tabpanel" aria-labelledby="other-allergies-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Other</h4></div>
             <form id="allergy_other_allergy_form" name="allergy_other_allergy_form" @submit.prevent="submitAllergiesForm">
@@ -148,7 +149,7 @@ export default {
         let formErrors = ref([]);
         const loading = ref(false);
         const otherAllergiesRowData = ref( [] );
-      
+        let isLoading = ref(false);
         let otherAllergiescolumnDefs = ref([
                 {
                     headerName: 'Sr. No.',
@@ -207,6 +208,7 @@ export default {
         
         
         const submitAllergiesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('allergy_other_allergy_form');
             let formData = new FormData(myForm);
@@ -219,6 +221,7 @@ export default {
                 const saveAllergiesResponse = await saveAllergies(formDataObject);
                 console.log("in durg saveAllergiesResponse", saveAllergiesResponse);
                     showOtherAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     await fetchPatientOtherList();
@@ -237,6 +240,7 @@ export default {
                 formErrors.value = [];
             
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                     setTimeout(function () {
@@ -362,7 +366,7 @@ export default {
             fetchPatientOtherList,
             deleteAllergies,
             editAllergy,
-
+            isLoading
         };
     }
 };

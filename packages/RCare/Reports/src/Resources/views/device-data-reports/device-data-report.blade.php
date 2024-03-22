@@ -142,6 +142,7 @@
         }];
 
         for (i = 0; i < myArr.length; i++) {
+			flag2 = 0;
             if (myArr[i] == 1) {
                 columns.push({
                     data: null,
