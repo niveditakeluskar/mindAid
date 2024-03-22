@@ -1,4 +1,5 @@
 <template>
+     <loading-spinner :isLoading="isLoading"></loading-spinner>
     <div class="card">
         <form id="relationship_form" name="relationship_form" @submit.prevent="submitRelationshipForm"> 
                 <div class="card-body">
@@ -51,6 +52,7 @@ export default {
 			showAlert: false,
             time:null,
             timerStatus:null,
+            isLoading:false,
         };
     },
     mounted() {
@@ -71,6 +73,7 @@ export default {
                 });
         },
         async submitRelationshipForm(){
+            this.isLoading = true;
             let myForm = document.getElementById('relationship_form'); 
             let formData = new FormData(myForm);
           axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -90,12 +93,14 @@ export default {
                     this.$emit('form-submitted');
 				}
 			} catch (error) {
+                this.isLoading = false;
 				if (error.response && error.response.status === 422) {
 					this.formErrors = error.response.data.errors;
 				} else {
 					console.error('Error submitting form:', error);
 				}
 			}
+            this.isLoading = false;
         },
     },
 

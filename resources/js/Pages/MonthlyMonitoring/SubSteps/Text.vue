@@ -1,4 +1,5 @@
 <template>
+     <loading-spinner :isLoading="isLoading"></loading-spinner>
     <div class="row">
         <div class="col-lg-12 mb-3">
             <form id="text_form" name="text_form"  @submit.prevent="submitTextForm">
@@ -54,6 +55,7 @@ export default {
          stageId:null,
          showAlert: false,
          timerStatus: null,
+         isLoading:false,
       };
     },
     components: {
@@ -78,6 +80,7 @@ export default {
 			}
 		},
         async submitTextForm(){
+            this.isLoading = true;
             let myForm = document.getElementById('text_form'); 
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -99,12 +102,14 @@ export default {
 					}, 3000);
 				}
 			} catch (error) {
+                this.isLoading = false;
 				if (error.response && error.response.status === 422) {
 					this.formErrors = error.response.data.errors;
 				} else {
 					console.error('Error submitting form:', error);
 				}
 			}
+            this.isLoading = false;
       },
     }
 };
