@@ -656,6 +656,7 @@ export default {
                     selectedEditDiagnosId.value =' ';
                     $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("care_plan_form").reset();
+                    isLoading.value = false;
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);

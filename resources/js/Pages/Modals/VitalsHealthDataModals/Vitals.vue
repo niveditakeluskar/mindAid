@@ -1,5 +1,6 @@
 <template>
     <div class="tab-pane fade show active" id="vitals" role="tabpanel" aria-labelledby="vitals-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Vitals Data</h4></div>
             <form id="number_tracking_vitals_form" name="number_tracking_vitals_form" @submit.prevent="submiVitalsHealthDataForm">
@@ -156,6 +157,7 @@ export default {
         const bmi = ref(null);
         const loading = ref(false);
         const vitalsRowData = ref([]);
+        let isLoading = ref(false);
         let columnDefs = ref([
                 {
                     headerName: 'Sr. No.',
@@ -204,6 +206,7 @@ export default {
         };
 
         let submiVitalsHealthDataForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_vitals_form');
             let formData = new FormData(myForm);
@@ -217,6 +220,7 @@ export default {
                 const saveServicesResponse = await axios.post('/ccm/care-plan-development-numbertracking-vitals', formData);
                 if (saveServicesResponse && saveServicesResponse.status === 200) {
                     showVitalsAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.data.form_start_time);
                     await fetchPatientVitalsList();
@@ -230,7 +234,9 @@ export default {
                     // Handle the response here
                     formErrors.value = [];
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -300,6 +306,7 @@ export default {
             height,
             weight,
             bmi,
+            isLoading,
         };
     }
 };

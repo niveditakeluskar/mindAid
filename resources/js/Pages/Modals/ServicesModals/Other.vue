@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="other-health" role="tabpanel" aria-labelledby="other-services-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Other</h4></div>
             <form id="service_other_health_form" name="service_other_health_form" @submit.prevent="submitServicesForm">
@@ -79,6 +80,7 @@ export default {
         let otherServicesStepId = ref(0);
         let OtherServicesTime = ref(null);
         let formErrors = ref([]);
+        let isLoading = ref(false);
         const loading = ref(false);
         const loadingCellRenderer = ref(null);
         const loadingCellRendererParams = ref(null);
@@ -141,6 +143,7 @@ export default {
         };
 
         const submitServicesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('service_other_health_form');
             let formData = new FormData(myForm);
@@ -152,6 +155,7 @@ export default {
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showOtherAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientOtherServiceList();
@@ -165,6 +169,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                 } else {
@@ -282,6 +287,7 @@ export default {
             fetchPatientOtherServiceList,
             deleteServices,
             editService,
+            isLoading
         };
     }
 };

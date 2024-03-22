@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="insect" role="tabpanel" aria-labelledby="insect-allergies-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Insect</h4></div>
             <form id="allergy_insect_form" name="allergy_insect_form" @submit.prevent="submitAllergiesForm">
@@ -148,7 +149,7 @@ export default {
         let insectallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-        
+        let isLoading = ref(false);
         const insectAllergiesRowData = ref([]);
        
         let insectAllergiescolumnDefs = ref( [
@@ -209,6 +210,7 @@ export default {
         
         
         let submitAllergiesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('allergy_insect_form');
             let formData = new FormData(myForm);
@@ -221,6 +223,7 @@ export default {
                 const saveAllergiesResponse = await saveAllergies(formDataObject);
                 console.log("in insect saveAllergiesResponse", saveAllergiesResponse);
                     showinsectAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     await fetchPatientinsectList();
@@ -239,6 +242,7 @@ export default {
                 formErrors.value = [];
             
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                     setTimeout(function () {
@@ -365,7 +369,7 @@ export default {
             fetchPatientinsectList,
             deleteAllergies,
             editAllergy,
-
+            isLoading
         };
     }
 };
