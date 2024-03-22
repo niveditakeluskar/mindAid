@@ -1,4 +1,5 @@
 <template>
+    <loading-spinner :isLoading="isLoading"></loading-spinner>
 <form :id="`${sectionName}_preparation_followup_form`" :name="`${sectionName}_preparation_followup_form`"  @submit.prevent="submitResearchFollowForm"> 
    <div class="row call mb-4 ">
       <!-- start Solid Bar -->
@@ -84,7 +85,7 @@ export default {
       let timerStatus = ref();
       const isLoading = ref(false);
       let formErrors = ref();
-      let conditionReviewStageID  = ref(0);
+      let conditionReviewStageID  = ref(0); 
 
       const submitResearchFollowForm = async () => {
          isLoading.value = true;
@@ -96,6 +97,8 @@ export default {
             if (response && response.status == 200) {
                $('#conditionpreparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Condition Review Completed! </strong> </div>');
                updateTimer(props.patientId, '1', props.moduleId);
+               isLoading.value = false;
+               window.scrollTo(0,0);
                $(".form_start_time").val(response.data.form_start_time);
                //preparationTime.value = document.getElementById('page_landing_times').value;
                setTimeout(function () {
@@ -104,7 +107,6 @@ export default {
 						$('#conditionpreparationAlert').html('');
                 }, 3000);
                }
-            isLoading.value = false;
             emit('form-submitted');
          } catch (error) {
             if (error.response && error.response.status === 422) {
@@ -122,6 +124,7 @@ export default {
             }
             isLoading.value = false;
          }
+         isLoading.value = false;
       };
 
       let getConditionReviewStageID = async () => {

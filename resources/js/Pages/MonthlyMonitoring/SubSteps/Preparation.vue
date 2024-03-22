@@ -95,6 +95,7 @@ export default {
                if (response && response.status == 200) {
                   $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Draft Saved Successfully! </strong> </div>');
                   updateTimer(props.patientId, '1', props.moduleId);
+                  window.scrollTo(0,0);
                   $(".form_start_time").val(response.data.form_start_time);
                   preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
@@ -140,6 +141,7 @@ export default {
                if (response && response.status == 200) {
                   $('#preparationAlert').html('<div class="alert alert-success" id="success-alert"><strong>Call Preparation Completed! </strong> </div>');
                   updateTimer(props.patientId, '1', props.moduleId);
+                  window.scrollTo(0,0);
                   $(".form_start_time").val(response.data.form_start_time);
                   //preparationTime.value = document.getElementById('page_landing_times').value;
                   setTimeout(function () {
