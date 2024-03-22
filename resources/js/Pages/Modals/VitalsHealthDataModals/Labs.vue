@@ -15,8 +15,6 @@
                     <input type="hidden" name="end_time" value="00:00:00" />
                     <input type="hidden" name="module_id" :value="moduleId" />
                     <input type="hidden" name="component_id" :value="componentId" />
-                    <input type="hidden" name="module_name" :value="module_name" />
-                    <input type="hidden" name="component_name" id="component_name" :value="component_name" />
                     <input type="hidden" name="stage_id" :value="stageId" />
                     <input type="hidden" name="step_id" :value="labsStepId" />
                     <input type="hidden" name="form_name" value="number_tracking_labs_form" />
@@ -31,6 +29,7 @@
                             <label>Labs<span class="error">*</span> :</label><br>
                             <select name="lab[]" class="custom-select show-tick select2 col-md-10" id="lab" @change="onLabchange" v-model="selectedLabs">
                                 <option value="">Select Lab</option>
+                                <option :key="0" :value="0">Other</option>
                                 <option v-for="lab in labs" :key="lab.id" :value="lab.id">
                                     {{ lab.description }}
                                 </option>
@@ -105,8 +104,6 @@ export default {
         const editform = ref('');
         const olddate = ref('');
         const oldlab = ref('');
-        const module_name = ref('');
-        const component_name = ref('');
         const labdateexist = ref('');
         const labsRowData = ref([]);
        
@@ -146,8 +143,10 @@ export default {
             try {
                 loading.value = true;
                 // await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulating a 2-second delay
-                const component_name = document.getElementById('component_name').value; 
-                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}/${component_name}`);
+                const sPageURL = window.location.pathname;
+                const parts = sPageURL.split("/");
+                const mm = parts[parts.length - 2];
+                const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}?mm=${mm}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
                 }
@@ -390,11 +389,6 @@ export default {
         onBeforeMount(async () => {
             await fetchLabs();
             await fetchPatientLabsList();
-            const pathname = window.location.pathname;
-            const segments = pathname.split('/');
-            segments.shift();
-            module_name.value = segments[0];
-            component_name.value = segments[1];
         });
 
         onMounted(async () => {
@@ -431,8 +425,6 @@ export default {
             olddate,
             oldlab,
             labdateexist,
-            module_name,
-            component_name,
         };
     }
 };
