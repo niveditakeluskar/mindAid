@@ -1,5 +1,6 @@
 <template>
     <div class="modal fade" :class="{ 'show': isOpen }" >
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
 	<div class="modal-dialog modal-xl">
         <div class="modal-content" style="padding-top:0px; margin:0px;">
             <div class="modal-header">
@@ -174,6 +175,7 @@ export default {
         const passRowData = ref([]); // Initialize rowData as an empty array
         const loading = ref(false);
         let isOpen = ref(false);
+        let isLoading = ref(false);
         const module_name = ref('');
         const component_name = ref('');
         let formErrors = ref([]);
@@ -259,6 +261,7 @@ export default {
         };
 
         let submitMedicationForm = async () => {
+            isLoading.value = true;
             let myForm = document.getElementById('medications_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -267,6 +270,7 @@ export default {
                 const response = await axios.post('/ccm/care-plan-development-medications', formData);
                 if (response && response.status == 200) {
                     showAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
                     await fetchPatientMedicationList();
@@ -291,7 +295,9 @@ export default {
                         $(".timearr").val(time);
                     }, 3000);
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -491,6 +497,7 @@ export default {
             onMedicationChanged,
             module_name,
             component_name,
+            isLoading,
         };
     }
 

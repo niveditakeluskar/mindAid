@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="enviromental" role="tabpanel" aria-labelledby="enviromental-allergies-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Enviromental</h4></div>
             <form id="allergy_enviromental_form" name="allergy_enviromental_form" @submit.prevent="submitAllergiesForm">
@@ -147,7 +148,7 @@ export default {
         let enviromentalallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-       
+        let isLoading = ref(false);
         const enviromentalAllergiesRowData = ref([]);
        
         let enviromentalAllergiescolumnDefs = ref([
@@ -209,6 +210,7 @@ export default {
         
         
         let submitAllergiesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('allergy_enviromental_form');
             let formData = new FormData(myForm);
@@ -221,6 +223,7 @@ export default {
                 const saveAllergiesResponse = await saveAllergies(formDataObject);
                 console.log("in enviromental saveAllergiesResponse", saveAllergiesResponse);
                     showenviromentalAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     // this.fetchPatientMedicationList();
@@ -239,6 +242,7 @@ export default {
                 formErrors.value = [];
             
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                     setTimeout(function () {
@@ -366,7 +370,7 @@ export default {
             fetchPatientEnviromentalList,
             deleteAllergies,
             editAllergy,
-
+            isLoading
         };
     }
 };

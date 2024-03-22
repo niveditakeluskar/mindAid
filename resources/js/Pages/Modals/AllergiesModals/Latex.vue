@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="latex" role="tabpanel" aria-labelledby="latex-allergies-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Latex</h4></div>
             <form id="allergy_latex_form" name="allergy_latex_form" @submit.prevent="submitAllergiesForm">
@@ -149,7 +150,7 @@ export default {
         let latexallergiesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-       
+        let isLoading = ref(false);
         const latexAllergiesRowData = ref([]);
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
@@ -213,6 +214,7 @@ export default {
         
         
         let submitAllergiesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('allergy_latex_form');
             let formData = new FormData(myForm);
@@ -225,6 +227,7 @@ export default {
                 const saveAllergiesResponse = await saveAllergies(formDataObject);
                 console.log("in latex saveAllergiesResponse", saveAllergiesResponse);
                     showLatexAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveAllergiesResponse.form_start_time);
                     await fetchPatientlatexList();
@@ -243,6 +246,7 @@ export default {
                 formErrors.value = [];
             
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                     setTimeout(function () {
@@ -369,7 +373,7 @@ export default {
             fetchPatientlatexList,
             deleteAllergies,
             editAllergy,
-
+            isLoading
         };
     }
 };

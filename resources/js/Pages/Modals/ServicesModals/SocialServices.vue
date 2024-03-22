@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="social-services" role="tabpanel" aria-labelledby="social-services-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Social Services</h4></div>
             <form id="service_social_form" name="service_social_form" @submit.prevent="submitSrvicesForm">
@@ -80,7 +81,7 @@ export default {
         let SocialServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-       
+        let isLoading = ref(false);
         const socialServiceRowData = ref([]);
        
         const columnDefs = ref([
@@ -141,6 +142,7 @@ export default {
         };
 
         const submitSrvicesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('service_social_form');
             let formData = new FormData(myForm);
@@ -152,6 +154,7 @@ export default {
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showSocialServicesAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientSocialServiceList();
@@ -165,6 +168,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                 } else {
@@ -293,6 +297,7 @@ export default {
             fetchPatientSocialServiceList,
             deleteServices,
             editService,
+            isLoading
         };
     }
 };
