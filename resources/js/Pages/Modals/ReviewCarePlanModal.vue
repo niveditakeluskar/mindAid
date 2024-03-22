@@ -29,7 +29,7 @@
                                                                 <div class="tab-pane fade show active" id="diagnosis"
                                                                     role="tabpanel" aria-labelledby="diagnosis-icon-pill">
                                                                     <div class=" mb-4">
-                                                                        <div id="reviewCareAlert"></div>
+                                                                        <div class="reviewCareAlert"></div>
                                                                         <form id="care_plan_form" name="care_plan_form"
                                                                             @submit.prevent="submitCarePlanForm">
 
@@ -296,7 +296,7 @@
 
 
                                                                         </form>
-                                                                        <div id="reviewCareAlert"></div>
+                                                                        <div class="reviewCareAlert" ></div>
 
                                                                     </div>
                                                                 </div>
@@ -595,12 +595,12 @@ export default {
                         additionaltasks();
                         isSaveButtonDisabled.value = false;
                     });
-                    $('#reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
+                    $('.reviewCareAlert').html('<div class="alert alert-success">Deleted Successfully</div>');
                     fetchCarePlanFormList();
                     updateTimer(props.patientId, '1', props.moduleId);
                     document.querySelector('.form_start_time').value = responseData.form_start_time;
                     setTimeout(() => {
-                        $('#reviewCareAlert').html('');
+                        $('.reviewCareAlert').html('');
                     }, 3000);
                 } catch (error) {
                     console.error('Error deleting care plan:', error.message);
@@ -654,7 +654,7 @@ export default {
                     selectedDiagnosis.value = '';
                     comments.value = '';
                     selectedEditDiagnosId.value =' ';
-                    $('#reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
+                    $('.reviewCareAlert').html('<div class="alert alert-success"> Data Saved Successfully </div>');
                     document.getElementById("care_plan_form").reset();
                     isLoading.value = false;
                     fetchCarePlanFormList();
@@ -664,7 +664,7 @@ export default {
                     setTimeout(() => {
                         var time = document.getElementById('page_landing_times').value;
                         $(".timearr").val(time);
-                        $('#reviewCareAlert').html('');
+                        $('.reviewCareAlert').html('');
                     }, 3000);
                 }
                 isLoading.value = false;
