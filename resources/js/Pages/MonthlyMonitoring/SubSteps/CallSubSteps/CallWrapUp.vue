@@ -1,4 +1,5 @@
 <template>
+    <loading-spinner :isLoading="isLoading"></loading-spinner>
     <div class="row">
         <div class="col-lg-12 mb-3">
             <form id="callwrapup_form" name="callwrapup_form" @submit.prevent="submitCallWrapUpFormData">
@@ -227,6 +228,7 @@ export default {
         const emr_monthly_summary = ref([]);
         const emr_monthly_summary_completed = ref([]);
         let selectedReport = ref('');
+        let isLoading =  ref(false);
 
         const callWrapColumnDefs = ref([
             {
@@ -307,6 +309,7 @@ export default {
         };
 
         const submitCallWrapUpFormData = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             additionalErrors.value = false;
             additionalErrorsMsg.value = null;
@@ -319,6 +322,7 @@ export default {
 
                 if (!additionalServicesSelected) {
                     additionalErrors.value = true;
+                    isLoading.value = false;
                     additionalErrorsMsg.value = 'Please choose at least one additional service';
                     return;
                 }
@@ -343,6 +347,7 @@ export default {
                 });
 
                 if (!isValid) {
+                    isLoading.value = false;
                     return;
                 }
             }
@@ -352,6 +357,8 @@ export default {
                 if (saveCallWrapUpFormResponse && saveCallWrapUpFormResponse.status == 200) {
                     $(".form_start_time").val(saveCallWrapUpFormResponse.data.form_start_time);
                     showCallWrapUpAlert.value = true;
+                    isLoading.value = false;
+                    window.scrollTo(0,0);
                     updateTimer(props.patientId, '1', props.moduleId);
                     var year = (new Date).getFullYear();
                		var month = (new Date).getMonth() + 1
@@ -381,7 +388,9 @@ export default {
                     populateFunction();
                     this.$emit('form-submitted');
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -668,6 +677,7 @@ export default {
             emr_monthly_summary_completed,
             timerStatus,
             onCellValueChanged,
+            isLoading
         };
     }
 }

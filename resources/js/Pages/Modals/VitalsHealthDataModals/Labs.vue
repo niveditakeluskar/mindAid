@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="labs" role="tabpanel" aria-labelledby="labs-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Labs</h4></div>
             <form id="number_tracking_labs_form" name="number_tracking_labs_form" @submit.prevent="submiLabsHealthDataForm">
@@ -106,7 +107,7 @@ export default {
         const oldlab = ref('');
         const labdateexist = ref('');
         const labsRowData = ref([]);
-       
+       let isLoading = ref(false);
         const columnDefs = ref( [
                 {
                     headerName: 'Sr. No.',
@@ -160,6 +161,7 @@ export default {
         };
 
         const submiLabsHealthDataForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_labs_form');
             let formData = new FormData(myForm);
@@ -179,6 +181,7 @@ export default {
                 const saveLabResponse = await axios.post('/ccm/care-plan-development-numbertracking-labs', formData);
                 if (saveLabResponse && saveLabResponse.status === 200) {
                     showLabsAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveLabResponse.data.form_start_time);
                     await fetchPatientLabsList();
@@ -199,7 +202,9 @@ export default {
                     // Handle the response here
                     formErrors.value = [];
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                         for (const field in formErrors.value) {

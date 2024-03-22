@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="medical-supplies-services" role="tabpanel" aria-labelledby="medical-supplies-services-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Medical Supplies</h4></div>
             <form id="service_medical_supplies_form" name="service_medical_supplies_form" @submit.prevent="submitSrvicesForm">
@@ -80,7 +81,7 @@ export default {
         let MedicalSuppliesServicesTime = ref(null);
         let formErrors = ref([]);
         const loading = ref(false);
-       
+        let isLoading = ref(false);
         const medicalSuppliesServiceRowData = ref([]);
         const rowModelType = ref(null);
         const cacheBlockSize = ref(null);
@@ -140,6 +141,7 @@ export default {
         };
 
         const submitSrvicesForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('service_medical_supplies_form');
             let formData = new FormData(myForm);
@@ -151,6 +153,7 @@ export default {
             try {
                 const saveServicesResponse = await saveServices(formDataObject);
                     showMedicalSuppliesAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveServicesResponse.form_start_time);
                     await fetchPatientMedicalSuppliesServiceList();
@@ -164,6 +167,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.status && error.status === 422) {
                     formErrors.value = error.responseJSON.errors;
                 } else {
@@ -282,6 +286,7 @@ export default {
             fetchPatientMedicalSuppliesServiceList,
             deleteServices,
             editService,
+            isLoading
         };
     }
 };

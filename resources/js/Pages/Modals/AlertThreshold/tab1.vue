@@ -1,4 +1,5 @@
 <template>
+    <loading-spinner :isLoading="isLoading"></loading-spinner>
     <div class="alert alert-success col-md-10 ml-2" :style="{ display: showAlert ? 'block' : 'none' }">
         <button type="button" class="close" data-dismiss="alert">x</button>
         <strong>Data saved successfully! </strong><span id="text"></span>
@@ -183,8 +184,10 @@ export default {
         const showAlert = ref(false);
         let formErrors = ref([]);
         const loading = ref(false);
+        let isLoading = ref(false);
 
         let submit_patient_threshold_form = async () => {
+            isLoading.value = true;
             let myForm = document.getElementById('patient_threshold_form');
             let formData = new FormData(myForm);
             axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
@@ -197,6 +200,7 @@ export default {
                     modalElement.scrollTop = 0;
                     window.scrollTo(0, 0);
                     showAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(response.data.form_start_time);
                     document.getElementById("patient_threshold_form").reset();
@@ -207,7 +211,9 @@ export default {
                         //alertThresholdTime.value = document.getElementById('page_landing_times').value;
                     }, 3000);
                 }
+                isLoading.value = false;
             } catch (error) {
+                isLoading.value = false;
                 if (error.response && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -280,7 +286,8 @@ export default {
             patient_spirometerfevlow, 
             patient_spirometerpefhigh, 
             patient_spirometerpeflow,
-            timerStatus
+            timerStatus,
+            isLoading
         };
     },
 };

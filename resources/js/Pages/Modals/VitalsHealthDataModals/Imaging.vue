@@ -1,6 +1,7 @@
 <!-- ModalForm.vue -->
 <template>
     <div class="tab-pane fade show active" id="imaging" role="tabpanel" aria-labelledby="imaging-icon-pill">
+        <loading-spinner :isLoading="isLoading"></loading-spinner>
         <div class="card">  
             <div class="card-header"><h4>Imaging</h4></div>
             <form id="number_tracking_imaging_form" name="number_tracking_imaging_form" @submit.prevent="submiImagingHealthDataForm">
@@ -96,6 +97,7 @@ export default {
         let imagingTime = ref(null);
         let imaging = ref([]);
         let formErrors = ref([]);
+        let isLoading = ref(false);
         const loading = ref(false);
         const imagingRowData = ref([]);
         let imagingItems = ref([
@@ -148,6 +150,7 @@ export default {
         };
 
         let submiImagingHealthDataForm = async () => {
+            isLoading.value = true;
             formErrors.value = {};
             let myForm = document.getElementById('number_tracking_imaging_form');
             let formData = new FormData(myForm);
@@ -160,6 +163,7 @@ export default {
             try {
                 const saveImagineResponse = await axios.post('/ccm/care-plan-development-numbertracking-imaging', formData);
                     showImagingAlert.value = true;
+                    isLoading.value = false;
                     updateTimer(props.patientId, '1', props.moduleId);
                     $(".form_start_time").val(saveImagineResponse.data.form_start_time);
                     await fetchPatientImagingList();
@@ -175,6 +179,7 @@ export default {
                 // Handle the response here
                 formErrors.value = [];
             } catch (error) {
+                isLoading.value = false;
                 if (error.response.status && error.response.status === 422) {
                     formErrors.value = error.response.data.errors;
                 } else {
@@ -247,6 +252,7 @@ export default {
             imagingItems,
             addImagingItem,
             removeImagingItem,
+            isLoading
         };
     }
 };
