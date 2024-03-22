@@ -2576,8 +2576,9 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
 
 
     public function  SaveCallClose(CallCloseAddRequest $request)
-    { //dd($request);
-        $next_month_date     = sanitizeVariable($request->q2_datetime);
+    { 
+        // dd($request);
+        // $next_month_date     = sanitizeVariable($request->q2_datetime);
         $start_time          = sanitizeVariable($request->start_time);
         $end_time            = sanitizeVariable($request->end_time);
         $patient_id          = sanitizeVariable($request->patient_id);
@@ -2639,6 +2640,7 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                 'component_id' => $component_id,
                 'patient_id'   => $patient_id,
             );
+            // dd($data);
             //record time
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $request->patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             if (isset($q2_datetime) && ($q2_datetime != "")) {

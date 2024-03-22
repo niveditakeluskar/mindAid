@@ -53,7 +53,8 @@
 							<div v-if="query2 == 1 || query2 == 0" id="next_month_call_div" class="nextcall">
 								<div class="mr-3 d-inline-flex align-self-center">
 									<label class="forms-element mr-3">Select Date:<span class="error">*</span>
-										<input type="date" name="q2_datetime" v-model="nextMonthCallDate" id="next_month_call_date" class="forms-element form-control" />
+										<input v-if="q2_datetime" type="date" name="q2_datetime" v-model="q2_datetime" 
+										id="next_month_call_date" class="forms-element form-control" />
 										<div class="invalid-feedback" v-if="formErrors.q2_datetime" style="display: block;">{{ formErrors.q2_datetime[0] }}</div>
 									</label>
 									<label class="forms-element mr-3" >Select Time:<span class="error">*</span>
@@ -109,7 +110,7 @@ export default {
 			timerStatus:null,
 			q1_notes:null,
 			q2_notes:null,
-			nextMonthCallDate:null,
+			q2_datetime:null,
 			q2_time:null,
 		};
 	},
@@ -119,7 +120,7 @@ export default {
 	mounted() {
 		this.getCallCloseStageID();
 		this.timerStatus = document.getElementById('timer_runing_status').value;
-		this.populateFuntion();
+		this.populateFunction();
 	},
 	methods: {
 		async getCallCloseStageID() {
@@ -131,32 +132,34 @@ export default {
 				throw new Error('Failed to fetch stageID');
 			}
 		},
-		async populateFuntion(){ 
-			try{
+		
+		async populateFunction() {
+			try {
 				const response = await fetch(`/ccm/populate-monthly-monitoring-data/${this.patientId}`);
-				if(!response.ok){  
-						throw new Error(`Failed to fetch Patient Preaparation - ${response.status} ${response.statusText}`);
+				if (!response.ok) {
+					throw new Error(`Failed to fetch Patient Preparation - ${response.status} ${response.statusText}`);
 				}
 				const data = await response.json();
 				this.patientPrepSaveDetails = data;
-				if(this.patientPrepSaveDetails.populateCallClose!=''){
+				const form = document.getElementById('call_close_form');
+				if (this.patientPrepSaveDetails.populateCallClose !== '') {
 					this.query1 = this.patientPrepSaveDetails.populateCallClose.static.query1;
 					this.q1_notes = this.patientPrepSaveDetails.populateCallClose.static.q1_notes;
 					this.query2 = this.patientPrepSaveDetails.populateCallClose.static.query2;
-					this.q2_time = this.patientPrepSaveDetails.populateCallClose.static.q2_time
+					this.q2_time = this.patientPrepSaveDetails.populateCallClose.static.q2_time;
 					this.q2_notes = this.patientPrepSaveDetails.populateCallClose.static.q2_notes;
-					const q2_datetime =this.patientPrepSaveDetails.populateCallClose.static.q2_datetime;
-					const date = new Date(q2_datetime);
-					// Format the date as "yyyy-mm-dd" (required by <input type="date">)
-					const formattedDate = date.toISOString().slice(0, 10);
-					// Update the data property
-					this.nextMonthCallDate = formattedDate;
-					console.log(this.nextMonthCallDate+"call close q2_datetime");
-				}
-			}catch(error){
-				console.error('Error fetching Patient Preaparation:', error.message); // Log specific error message
+					// this.q2_datetime = this.patientPrepSaveDetails.populateCallClose.static.q2_datetime;
+					const query_datetime = this.patientPrepSaveDetails.populateCallClose.static.q2_datetime;
+					// const formattedEndDate = query_datetime.toISOString().split('T')[0];
+					this.q2_datetime = moment(query_datetime, 'MM-DD-YYYY').format('YYYY-MM-DD');
+					console.log(this.q2_datetime, "call close q2_datetime");				
+					}
+			} catch (error) {
+				console.error('Error fetching Patient Preparation:', error.message);
 			}
-	    },
+		},
+
+
 		async submitCallCloseForm() {
 			const formData = {
 				uid: this.patientId,
