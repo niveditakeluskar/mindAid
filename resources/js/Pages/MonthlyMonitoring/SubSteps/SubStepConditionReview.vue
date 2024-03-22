@@ -1,4 +1,5 @@
 <template>
+     <loading-spinner :isLoading="isLoading"></loading-spinner>
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
@@ -289,6 +290,7 @@ export default {
             toDate: null,
             notes: null,
             timerStatus:null,
+            isLoading:false,
         };
     },
     mounted() {
@@ -375,6 +377,7 @@ export default {
         },
 
         async submitRpmReviewForm() {
+            this.isLoading = true;
             let myForm = document.getElementById('rpm_review_form');
             let formData = new FormData(myForm);
             this.renderComponent = false;
@@ -385,6 +388,7 @@ export default {
                 if (response && response.status == 200) {
                     this.renderComponent = true;
                     this.showAlert = true;
+                    this.isLoading = false;
                     updateTimer(this.patientId, 1, this.moduleId);
                     $('.form_start_time').val(response.data.form_start_time);
                     setTimeout(() => {
@@ -392,9 +396,11 @@ export default {
                         var time = document.getElementById('page_landing_times').value;
                         $(".timearr").val(time);
                         this.showAlert = false;
+                        this.$emit('form-submitted');
                     }, 3000);
                 }
             } catch (error) {
+                this.isLoading = false;
                 if (error.response && error.response.status === 422) {
                     this.formErrors = error.response.data.errors;
                 } else {
