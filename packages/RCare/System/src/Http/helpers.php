@@ -1968,8 +1968,25 @@
                 }
             }
         }
+        
         echo '<div class="form-row"><div class="col-md-12 form-group card-title">Patient Relationship Building</div></div>';
-        echo '<div id="patient_build"></div>';
+        $patientqut = RCare\Patients\Models\PatientQuestionnaire::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        $patientsRelationBuildingQuestionnaire =  RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('template_id', 0)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        $patient_building_template_exists = 0;
+        $patient_building_questionnaire = array();
+        if(isset($patientsRelationBuildingQuestionnaire->template) && $patientsRelationBuildingQuestionnaire->template != ""){
+            $patient_building_questionnaire = json_decode($patientsRelationBuildingQuestionnaire->template, true);  
+        }
+        echo '<div id="patient_build">';
+        if($patientqut != '') {
+            $pq =  json_decode($patientqut->questionnaire);
+            if (array_key_exists($pq, $patient_building_questionnaire)){
+                $patient_building_template_exists = 1;
+            }
+            echo '<strong><spam id="patient-relationship-building">'.$pq.'</spam></strong>';
+            echo '<textarea class="form-control col-md-8" name="patient_relationship_building'.'[question]['.$pq.']" >'.($patient_building_template_exists ? $patient_building_questionnaire[$pq] : '').'</textarea>';
+        }
+        echo '</div>';
 
 
         echo $content;
