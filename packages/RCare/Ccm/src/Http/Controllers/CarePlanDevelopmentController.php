@@ -89,8 +89,9 @@ class CarePlanDevelopmentController extends Controller
         $year      = date("Y");
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);
         $dateE = Carbon::now()->endOfMonth();
-        $editSerFunction = ($mm === 'monthly-monitoring' ? 'editlabsformnew' : 'carePlanDevelopment.editlabsformnew');
-        $deleteSerFunction = ($mm === 'monthly-monitoring' ? 'deleteLabs' : 'carePlanDevelopment.deleteLabs');
+        $mm = $request->query('mm');
+        $editFunction = ($mm === 'monthly-monitoring' ? 'editlabsformnew' : 'carePlanDevelopment.editlabsformnew');
+        $deleteFunction = ($mm === 'monthly-monitoring' ? 'deleteLabs' : 'carePlanDevelopment.deleteLabs');
     
         $qry       = "select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,plr.lab_date, (case when rlt.description='COVID-19' then STRING_AGG (
                       plr.reading,
@@ -118,10 +119,11 @@ class CarePlanDevelopmentController extends Controller
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle ="tooltip" onclick="' . $editSerFunction . '("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") ><i class=" i-Pen-4" style="color: #2cb8ea;"></i></a>';
-                    $btn = $btn . '<i id="labdelid" class="i-Close" onclick="' . $editSerFunction . '("' . date('m-d-Y', strtotime($row->lab_date)) . '","' . $row->patient_id . '","' . $row->lab_test_id . '","' . $row->labdateexist . '") title="Delete Labs" style="color: red;cursor: pointer;"></i>';
-                    return $btn;
+            ->addColumn('action', function ($row) use ($editFunction, $deleteFunction) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" onclick="' . $editFunction . '('."'" . date('m-d-Y', strtotime($row->lab_date)) . '\', \'' . $row->patient_id . '\', \'' . $row->lab_test_id . '\', \'' . $row->labdateexist . '\')"><i class="i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                $btn .= '<i id="labdelid" class="i-Close" onclick="' . $deleteFunction . '('."'" . date('m-d-Y', strtotime($row->lab_date)) . '\', \'' . $row->patient_id . '\', \'' . $row->lab_test_id . '\', \'' . $row->labdateexist . '\')" title="Delete Labs" style="color: red; cursor: pointer;"></i>';
+
+                return $btn;
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -503,7 +505,7 @@ class CarePlanDevelopmentController extends Controller
     {
         $id               = sanitizeVariable($Request->route('id'));
         $servicetype      = sanitizeVariable($Request->route('servicetype'));
-        $lastMonthService = "";
+        $lastMonthService = ""; 
         $mm = $Request->query('mm');
         $editSerFunction = ($mm === 'monthly-monitoring' ? 'editService' : 'carePlanDevelopment.editService');
         $deleteSerFunction = ($mm === 'monthly-monitoring' ? 'deleteServices' : 'carePlanDevelopment.deleteServices');

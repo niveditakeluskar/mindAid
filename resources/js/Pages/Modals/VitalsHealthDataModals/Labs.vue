@@ -44,7 +44,7 @@
                             <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.0`]" style="display: block;">{{ formErrors[`labdate.0`][0] }}</div>
                         </div>
                     </div>
-                    <div v-html="labParams" class="form-row"></div>
+                    <div v-html="labParams"  class="form-row"></div>
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
@@ -99,7 +99,7 @@ export default {
         const labs = ref([]);
         const labParams = ref('');
         const formErrors = ref([]);
-        const selectedLabs = ref('');
+        const selectedLabs = ref(''); 
         const labDate = ref('');
         const loading = ref(false);
         const editform = ref('');
@@ -150,7 +150,7 @@ export default {
                 const response = await fetch(`/ccm/care-plan-development-labs-labslist/${props.patientId}?mm=${mm}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch labs list');
-                }
+                } 
                 loading.value = false;
                 const data = await response.json();
                 labsRowData.value = data.data;
@@ -188,7 +188,7 @@ export default {
                     document.getElementById("number_tracking_labs_form").reset();
                     selectedLabs.value = null;
                     labDate.value = null;
-                    labParams.value = null;
+                    labParams.value = ''; //null
                     editform.value = null;
                     olddate.value = null;
                     oldlab.value = null;
@@ -343,12 +343,17 @@ export default {
             let params = '';
             let labNotes = '';
             labParams.forEach((value) => {
-                params += `<div class='col-md-6 mb-3'>`;
-                params += `<label>${value.parameter} <span class='error'>*</span></label>`;
-                params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
-                params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
+                if(value.parameter === null){
+                    params += `<div class='col-md-6 mb-3'>`; 
+                    // params += `<label>${value.parameter} <span class='error'>*</span></label>`;
+                    params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
+                    params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
+                }else if (value.parameter === 'COVID-19') {
+                    params += `<div class='col-md-6 mb-3'>`;
+                    params += `<label>${value.parameter} <span class='error'>*</span></label>`;
+                    params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
+                    params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
 
-                if (value.parameter === 'COVID-19') {
                     params += `<div class='form-row'><div class='col-md-5'>`;
                     params += `<select class='forms-element form-control mr-1 pl-3' name='reading[${lab}][]'>`;
                     params += `<option value=''>Select Reading</option>`;
@@ -356,6 +361,11 @@ export default {
                     params += `<option value='negative' ${value.reading === 'negative' ? 'selected' : ''}>Negative</option></select>`;
                     params += `<div class='invalid-feedback'></div></div>`;
                 } else {
+                    params += `<div class='col-md-6 mb-3'>`;
+                    params += `<label>${value.parameter} <span class='error'>*</span></label>`;
+                    params += `<input type='hidden' name='lab_test_id[${lab}][]'  value='${value.lab_test_id}'>`;
+                    params += `<input type='hidden' name='lab_params_id[${lab}][]' value='${value.lab_test_parameter_id}'>`;
+
                     params += `<div class='form-row'><div class='col-md-5'>`;
                     params += `<select class='forms-element form-control mr-1 pl-3 labreadingclass' name='reading[${lab}][]'>`;
                     params += `<option value=''>Select Reading</option>`;
