@@ -352,9 +352,9 @@ class PatientController extends Controller
         $military_status = isset($patient_demographics) ? $patient_demographics->military_status : '';
         $PatientAddress = PatientAddress::where('patient_id', $uid)->latest()->first();
         $consent_to_text = $patient[0]->consent_to_text;
-        // dd($PatientAddress);
+        // dd(is_null($PatientAddress->add_2));
         $add_1 = empty($PatientAddress) ? '' : $PatientAddress->add_1;
-        $add_2 = empty($PatientAddress) ? '' : $PatientAddress->add_2;
+        $add_2 = (empty($PatientAddress) or is_null($PatientAddress->add_2) )? '' : $PatientAddress->add_2;		
         $city = empty($PatientAddress) ? '' : $PatientAddress->city;
         $state = empty($PatientAddress) ? '' : $PatientAddress->state;
         $zipcode = empty($PatientAddress) ? '' : $PatientAddress->zipcode;
