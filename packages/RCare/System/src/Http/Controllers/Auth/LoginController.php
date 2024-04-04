@@ -136,6 +136,7 @@ class LoginController extends Controller
         $role_details = RolesTypes::userRoleType($roleId);   
         $role_type = $role_details[0]->role_type;
         $timezone    =   !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
+        $base_url_data = URL::to('/');
         $base_url = strtolower(URL::to('/').'/rcare-login');  
         if(sanitizeVariable($request->input('page_name')=='login')){
             $request->validate([
@@ -212,10 +213,10 @@ class LoginController extends Controller
                         $data = array( 
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
-                           'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  => $base_url.'/rcare-login'
+                           'url'   =>  $base_url_data.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
+                           'link'  => $base_url_data.'/rcare-login'
                     );
-                    // try{
+                    try{
 
                         $data['message'] = 'Hi '. $data["name"];
                        
@@ -234,12 +235,12 @@ class LoginController extends Controller
                         $response['url']='';
                         $response['message']='Your Password Reset Request is Accepted, Please check your email.';
                         
-                    // }catch(\Exception $e){
+                    }catch(\Exception $e){
                         // dd($e); 
                         $response['success']='n';
                         $response['message_id'] ='';
                         $response['message']='Sorry we are unable to sent an email, try again';
-                    // }
+                    }
                     Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,'otp_date'=>Carbon::now()]);
                 // Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,]);
                 return response(['sucsses'=>1,'message'=>$response['message']]);
