@@ -16,8 +16,7 @@
     </style>
 </head>
 <body>
-    <h4>{{ $mailData['title'] }}</h4>
-
+    <h4>{{ $mailData['title'] }}</h4> 
     <h5>{{ $mailData['body'] }}</h5>
     <p>{{ $mailData['message']}}</p>
     <a href="{{ $mailData['button_url'] }}" class="button">{{ $mailData['button_text'] }}</a>
