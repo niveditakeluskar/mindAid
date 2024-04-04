@@ -213,11 +213,17 @@ class LoginController extends Controller
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
                            'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  =>  $base_url.'/rcare-login'
+                           'link'  =>  $base_url
                     );
                     try{
 
                         $data['message'] = 'Hi '. $data["name"];
+
+                                                
+                        $htmlContent = 
+                        '<p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below.</p>' .
+                        '<p><a class="button" href="' . $data["button_url"] . '">' . $data["button_text"] . '</a></p>' .
+                        '<p><a href="' . $data["link"] . '">Team Renova</a></p>';
                        
                         $mailData = [
                             'title' => 'RCARE Password Reset',
@@ -338,6 +344,8 @@ class LoginController extends Controller
                             'title' => 'RCARE Multifactor Authentication Code',
                             'body' => $data['message'],
                             'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                            'button_text' => '',
+                            'button_url' => '',
                             'link' => 'Team Renova'
                         ];
                 
@@ -424,6 +432,8 @@ class LoginController extends Controller
                             'title' => 'RCARE Multifactor Authentication Code',
                             'body' => $data['message'],
                             'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                            'button_text' => '',
+                            'button_url' => '',
                             'link' => 'Team Renova'
                         ];
                 
