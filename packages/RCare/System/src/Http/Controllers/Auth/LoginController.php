@@ -136,6 +136,7 @@ class LoginController extends Controller
         $role_details = RolesTypes::userRoleType($roleId);   
         $role_type = $role_details[0]->role_type;
         $timezone    =   !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
+        $base_url_data = URL::to('/');
         $base_url = strtolower(URL::to('/').'/rcare-login');  
         if(sanitizeVariable($request->input('page_name')=='login')){
             $request->validate([
@@ -212,8 +213,8 @@ class LoginController extends Controller
                         $data = array( 
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
-                           'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  => $base_url.'/rcare-login'
+                           'url'   =>  $base_url_data.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
+                           'link'  => $base_url_data.'/rcare-login'
                     );
                     try{
 
