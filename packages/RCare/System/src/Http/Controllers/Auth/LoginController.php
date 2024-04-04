@@ -36,6 +36,7 @@ use Illuminate\Support\Str;
 use URL;
 //use Illuminate\Support\Facades\Auth;
 use RCare\System\Models\MfaTextingLog;
+use App\Mail\DemoMail;
 
  $a=0;
 class LoginController extends Controller
@@ -421,18 +422,17 @@ class LoginController extends Controller
                     );
                         
                     try{
-                        $body['message'] = '<h5>Hi  ' . $data["name"].', </h5> 
-                        <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
-                        <a>Team Renova</a>';
-                        Mail::send([], $data, function ($message) use($data) {
-                            $message->to($data['email'], $data['name'] )
-                            ->subject('RCARE Multifactor Authentication Code') 
-                            ->setBody($body['message'],'text/html'); // for HTML rich messages
-                        });
-                        if (Mail::failures()) {
-                            $response['email_otp']='n';
-                            $response['message_id'] ='';
-                        } else{
+                        $data['message'] = 'Hi '. $data["name"];
+                       
+                        $mailData = [
+                            'title' => 'RCARE Multifactor Authentication Code',
+                            'body' => $data['message'],
+                            'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                            'link' => 'Team Renova'
+                        ];
+                
+                        Mail::to($data['email'])->send(new DemoMail($mailData));
+
                             $type = 'MFA';
                             $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
                             <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
@@ -445,7 +445,7 @@ class LoginController extends Controller
                             $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
                             $response['email_otp']='y';
                             $response['message_id'] = $sid;
-                        }
+                       
                     }catch(\Exception $e){ 
                         // dd($e); 
                         $response['email_otp']='n';
