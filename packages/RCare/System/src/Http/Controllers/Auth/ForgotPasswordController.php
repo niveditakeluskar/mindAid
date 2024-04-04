@@ -127,8 +127,8 @@ class ForgotPasswordController extends Controller
                     'title' => 'RCARE Multifactor Authentication Code',
                     'body' => $data['message'],
                     'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
-                    'button_text' => 'Reset Password',
-                    'button_url' => $data["url"],
+                    'button_text' => '',
+                    'button_url' => '',
                     'link' => 'Team Renova'
                 ];
             
