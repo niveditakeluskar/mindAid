@@ -213,17 +213,11 @@ class LoginController extends Controller
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
                            'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  =>  $base_url
+                           'link'  => $base_url.'/rcare-login'
                     );
-                    try{
+                    // try{
 
                         $data['message'] = 'Hi '. $data["name"];
-
-                                                
-                        $htmlContent = 
-                        '<p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below.</p>' .
-                        '<p><a class="button" href="' . $data["button_url"] . '">' . $data["button_text"] . '</a></p>' .
-                        '<p><a href="' . $data["link"] . '">Team Renova</a></p>';
                        
                         $mailData = [
                             'title' => 'RCARE Password Reset',
@@ -231,7 +225,7 @@ class LoginController extends Controller
                             'message' => 'A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. ',
                             'button_text' => 'Reset Password',
                             'button_url' => $data["url"],
-                            'link' => ''.$data["link"].' Team Renova'
+                            'link' => 'Team Renova'
                         ];
                 
                         Mail::to($data['email'])->send(new DemoMail($mailData));
@@ -240,12 +234,12 @@ class LoginController extends Controller
                         $response['url']='';
                         $response['message']='Your Password Reset Request is Accepted, Please check your email.';
                         
-                    }catch(\Exception $e){
+                    // }catch(\Exception $e){
                         // dd($e); 
                         $response['success']='n';
                         $response['message_id'] ='';
                         $response['message']='Sorry we are unable to sent an email, try again';
-                    }
+                    // }
                     Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,'otp_date'=>Carbon::now()]);
                 // Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,]);
                 return response(['sucsses'=>1,'message'=>$response['message']]);
