@@ -266,8 +266,6 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post("/delete-allergies", "RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deleteAllergies")->name("delete.allergies");
 
         Route::get('/care-plan-development-labs-labslist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getLabData')->name('care.plan.development.labs.labslist');
-        Route::get('/care-plan-development-labs-labslist/{patientid}/{component_name}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getLabData')->name('care.plan.development.labs.labslist');
-
 
         Route::get('/care-plan-development-imaging-imaginglist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getImagingData')->name('care.plan.development.imaging.imaginglist');
 

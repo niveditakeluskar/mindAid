@@ -817,23 +817,23 @@ function devicedetails(rowid) {
     $('#devicedetailsmodel').modal('show');  
     getdevicecode(rowid); 
 
-    var partner_id = document.getElementById("partner_id");
-    var defaultValue = "3"; 
-    for (var i = 0; i < partner_id.options.length; i++) {
-        if (partner_id.options[i].value === defaultValue) {
-            partner_id.selectedIndex = i;
-            break;
-        }
-    }
+    // var partner_id = document.getElementById("partner_id");
+    // var defaultValue = "3"; 
+    // for (var i = 0; i < partner_id.options.length; i++) {
+    //     if (partner_id.options[i].value === defaultValue) {
+    //         partner_id.selectedIndex = i;
+    //         break;
+    //     }
+    // }
 
-    var partner_devices_id = document.getElementById("partner_devices_id");
-    var defaultValue1 = "17"; 
-    for (var i = 0; i < partner_devices_id.options.length; i++) {
-        if (partner_devices_id.options[i].value === defaultValue1) {
-            partner_devices_id.selectedIndex = i;
-            break;
-        }
-    }
+    // var partner_devices_id = document.getElementById("partner_devices_id");
+    // var defaultValue1 = "17"; 
+    // for (var i = 0; i < partner_devices_id.options.length; i++) {
+    //     if (partner_devices_id.options[i].value === defaultValue1) {
+    //         partner_devices_id.selectedIndex = i;
+    //         break;
+    //     }
+    // }
 }
 
 
