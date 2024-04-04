@@ -213,17 +213,11 @@ class LoginController extends Controller
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
                            'url'   =>  $base_url.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  =>  $base_url
+                           'link'  => $base_url.'/rcare-login'
                     );
                     try{
 
                         $data['message'] = 'Hi '. $data["name"];
-
-                                                
-                        $htmlContent = 
-                        '<p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below.</p>' .
-                        '<p><a class="button" href="' . $data["button_url"] . '">' . $data["button_text"] . '</a></p>' .
-                        '<p><a href="' . $data["link"] . '">Team Renova</a></p>';
                        
                         $mailData = [
                             'title' => 'RCARE Password Reset',
@@ -231,7 +225,7 @@ class LoginController extends Controller
                             'message' => 'A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. ',
                             'button_text' => 'Reset Password',
                             'button_url' => $data["url"],
-                            'link' => ''.$data["link"].' Team Renova'
+                            'link' => 'Team Renova'
                         ];
                 
                         Mail::to($data['email'])->send(new DemoMail($mailData));
