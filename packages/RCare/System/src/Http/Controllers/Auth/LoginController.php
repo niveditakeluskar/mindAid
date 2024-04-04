@@ -216,26 +216,24 @@ class LoginController extends Controller
                            'link'  =>  $base_url.'/rcare-login'
                     );
                     try{
-                        Mail::send([], $data, function ($message) use($data) {
-                            $message->to($data['email'], $data['name'])
-                            ->subject('RCARE Password Reset')
-                            ->setBody('<h5>Hi  ' . $data["name"].', </h5>
-                            <p>A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. </p>
-                            <p> <a class="button" href ='.$data["url"].'>Reset Password</a></p>
-                            <!-- Callout Panel -->
-                            <a href='.$data["link"].' Team Renova</a>',  
-                            'text/html'); // for HTML rich messages
-                        });
-                        $response['message']=''; 
-                        if (Mail::failures()) {
-                            $response['success']='n';
-                            $response['url']='password_reset';
-                            $response['message']='Sorry we are unable to sent an email, try again';
-                        } else{
-                            $response['success']='y';
-                            $response['url']='';
-                            $response['message']='Your Password Reset Request is Accepted, Please check your email.';
-                        }
+
+                        $data['message'] = 'Hi '. $data["name"];
+                       
+                        $mailData = [
+                            'title' => 'RCARE Password Reset',
+                            'body' => $data['message'],
+                            'message' => 'A password request has been requested for this account. If you did not request a password reset, it is encouraged that you change your password in order to prevent any malicious attacks on your account. Otherwise, proceed by clicking the link below. ',
+                            'button_text' => 'Reset Password',
+                            'button_url' => $data["url"],
+                            'link' => ''.$data["link"].' Team Renova'
+                        ];
+                
+                        Mail::to($data['email'])->send(new DemoMail($mailData));
+                        
+                        $response['success']='y';
+                        $response['url']='';
+                        $response['message']='Your Password Reset Request is Accepted, Please check your email.';
+                        
                     }catch(\Exception $e){
                         // dd($e); 
                         $response['success']='n';
@@ -333,42 +331,40 @@ class LoginController extends Controller
                         'otp' =>$emailID->otp_code, 
                         'link'=> $base_url.'/rcare-login'
                     );
-                    try{
-                        Mail::send([], $data, function ($message) use($data) {
-                            $message->to($data['email'], $data['name'] )
-                            ->subject('RCARE Multifactor Authentication Code') 
-                            ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
-                                <p>Multifactor authentication login code is '.$data["otp"].' from RCARE "</p> 
-                                <a>Team Renova</a>',  
-                            'text/html'); // for HTML rich messages
-                        });
-                        if (Mail::failures()) {
-                            $response['success']='n';
-                            $response['url']='';//password_reset
-                            $response['message']='We are currently not able to deliver the email, kindly use text for authentication method';
-                        } else{
-                            $type = 'MFA';
-                            $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
-                            <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
-                            <a>Team Renova</a>';
-                            $content = strip_tags($email_msg);
-                            $sent_type = 'email'; 
-                            $sent_to = $email;
-                            $message_id ='';
-                            $msg_status='';
-                            $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
-                            $response['success']='y';
-                            $response['url']='';
-                            $response['message']='OTP has been sent on your email, Please check your email';
-                            $response['message_id'] = ''; 
-                        }
-                    }catch(\Exception $e){
-                        // dd($e); 
+                    // try{
+                        $data['message'] = 'Hi '. $data["name"];
+                       
+                        $mailData = [
+                            'title' => 'RCARE Multifactor Authentication Code',
+                            'body' => $data['message'],
+                            'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                            'link' => 'Team Renova'
+                        ];
+                
+                        Mail::to($data['email'])->send(new DemoMail($mailData));
+
+                        $type = 'MFA';
+                        $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
+                        <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
+                        <a>Team Renova</a>';
+                        $content = strip_tags($email_msg);
+                        $sent_type = 'email'; 
+                        $sent_to = $email;
+                        $message_id ='';
+                        $msg_status='';
+                        $this->setTextingLog($id,$type,$sent_type,$content,$sent_to,$message_id,$msg_status);
+                        $response['success']='y';
+                        $response['url']='';
+                        $response['message']='OTP has been sent on your email, Please check your email';
                         $response['message_id'] = ''; 
-                        $response['success']='n';
-                        $response['url']='';//password_reset
-                        $response['message']='We are currently not able to deliver the email, kindly use only text for authentication method';
-                    }
+                    
+                    // }catch(\Exception $e){
+                    //     // dd($e); 
+                    //     $response['message_id'] = ''; 
+                    //     $response['success']='n';
+                    //     $response['url']='';//password_reset
+                    //     $response['message']='We are currently not able to deliver the email, kindly use only text for authentication method';
+                    // }
                     // Users::where('id',$id)->update(['otp_date'=>Carbon::now()]); 
                  return array(['mob'=>'/'.$emailID->email,'userid_otp'=>$id,'sucsses'=>$response['success'],
                  'msg'=>$response['message'],'message_id'=>$response['message_id']
