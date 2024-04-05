@@ -112,7 +112,7 @@
                             <div class="col-lg-12 text-center">
                             <button type="button" id="opt_save" class="btn btn-primary">Submit</button>
                             <button type="button" id="back_login" class="btn btn-primary">Back</button>
-                            <a class="btn btn-link" id="resend_otp" href="">Resend Code?</a>
+                            <a class="btn btn-link" id="resend_otp" href="#">Resend Code?</a>
                             </div>
                         </div>    
                     </div>
@@ -179,7 +179,8 @@
         $("#back_login").click(function(event){
             var base_url = "<?php echo url('').'/'; ?>";
             event.preventDefault();
-            var url = "rcare-login";
+            // var url = "rcare-login";
+            var url ="password_requestform";
             $('#hd_otp').hide();
             $('#hd_login').show();
             window.location.href=base_url+''+url;
