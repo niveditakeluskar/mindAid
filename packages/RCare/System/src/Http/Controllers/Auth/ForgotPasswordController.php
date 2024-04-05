@@ -26,6 +26,7 @@ use RCare\RCareAdmin\AdminPackages\Users\src\Models\User;
 use RCare\Org\OrgPackages\Users\src\Models\Users;
 use URL;
 use RCare\System\Models\MfaTextingLog;
+use App\Mail\MailPHP;
 
 class ForgotPasswordController extends Controller
 {
@@ -119,23 +120,24 @@ class ForgotPasswordController extends Controller
                     'otp' =>$emailID->otp_code, 
                     'link'=> $base_url.'/rcare-login'
                 );
-                Mail::send([], $data, function ($message) use($data) {
-                    $message->to($data['email'], $data['name'] )
-                    ->subject('RCARE Multifactor Authentication Code')
-                    ->setBody('<h5>Hi  ' . $data["name"].', </h5> 
-                         <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
-                        <a>Team Renova</a>',  
-                    'text/html'); // for HTML rich messages
-                });
-                if (Mail::failures()) {
-                    $response['success']='n';
-                    $response['url']='password_reset';
-                    $response['message']='Sorry we are unable to sent an email, try again';
-                } else{
-                    $response['success']='y';
-                    $response['url']='';
-                    $response['message']='OTP has sent on your email, Please check your email';
-                }
+                
+                $data['message'] = 'Hi '. $data["name"];
+                       
+                $mailData = [
+                    'title' => 'RCARE Multifactor Authentication Code',
+                    'body' => $data['message'],
+                    'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                    'button_text' => '',
+                    'button_url' => '',
+                    'link' => 'Team Renova'
+                ];
+            
+                Mail::to($data['email'])->send(new MailPHP($mailData));
+
+                $response['success']='y';
+                $response['url']='';
+                $response['message']='OTP has sent on your email, Please check your email';
+                
                 $type = 'MFA';
                 $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
                 <p>Multifactor authentication forget password code is '.$data["otp"].' from RCARE "</p> 
