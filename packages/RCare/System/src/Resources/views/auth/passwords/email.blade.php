@@ -179,7 +179,8 @@
         $("#back_login").click(function(event){
             var base_url = "<?php echo url('').'/'; ?>";
             event.preventDefault();
-            var url = "rcare-login";
+            // var url = "rcare-login";
+            var url ="password_requestform";
             $('#hd_otp').hide();
             $('#hd_login').show();
             window.location.href=base_url+''+url;
@@ -281,6 +282,30 @@
                     }
                 })
             }
+        });
+
+        $("#resend_otp").click(function(event){ 
+            event.preventDefault();
+            var userid=$('#userid').val();
+            $.ajax({
+                    type: "POST",
+                    url: "/login-otp/resend",
+                    data:$('#2faotp').serialize(),
+                    success: function(response) {
+                        // $("#otp_danger").show(0).delay(3000).hide(0);
+                        // $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                        if(response[0].sucsses=='n'){  
+                                $("#otp_danger").show();
+                                $("#otp_success").hide();
+                                $("#otp_danger").html(response[0].msg);//.show(0).delay(3000).hide(0);
+                        }else{ 
+                                $("#otp_success").show();
+                                $("#otp_danger").hide(); 
+                                $("#otp_success").html("Multifactor Authentication code has been Re-sent");
+                                // $("#otp_success").html(response[0].msg);    
+                        }
+                    }
+                }); 
         });
 
     </script>
