@@ -36,7 +36,7 @@ use Illuminate\Support\Str;
 use URL;
 //use Illuminate\Support\Facades\Auth;
 use RCare\System\Models\MfaTextingLog;
-use App\Mail\DemoMail;
+use App\Mail\MailPHP;
 
  $a=0;
 class LoginController extends Controller
@@ -229,7 +229,7 @@ class LoginController extends Controller
                             'link' => 'Team Renova'
                         ];
                 
-                        Mail::to($data['email'])->send(new DemoMail($mailData));
+                        Mail::to($data['email'])->send(new MailPHP($mailData));
                         
                         $response['success']='y';
                         $response['url']='';
@@ -344,7 +344,7 @@ class LoginController extends Controller
                             'link' => 'Team Renova'
                         ];
                 
-                        Mail::to($data['email'])->send(new DemoMail($mailData));
+                        Mail::to($data['email'])->send(new MailPHP($mailData));
 
                         $type = 'MFA';
                         $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 
@@ -432,7 +432,7 @@ class LoginController extends Controller
                             'link' => 'Team Renova'
                         ];
                 
-                        Mail::to($data['email'])->send(new DemoMail($mailData));
+                        Mail::to($data['email'])->send(new MailPHP($mailData));
 
                             $type = 'MFA';
                             $email_msg  = '<h5>Hi  ' . $data["name"].', </h5> 

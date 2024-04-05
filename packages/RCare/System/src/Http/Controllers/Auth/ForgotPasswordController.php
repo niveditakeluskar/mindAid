@@ -26,7 +26,7 @@ use RCare\RCareAdmin\AdminPackages\Users\src\Models\User;
 use RCare\Org\OrgPackages\Users\src\Models\Users;
 use URL;
 use RCare\System\Models\MfaTextingLog;
-use App\Mail\DemoMail;
+use App\Mail\MailPHP;
 
 class ForgotPasswordController extends Controller
 {
@@ -132,7 +132,7 @@ class ForgotPasswordController extends Controller
                     'link' => 'Team Renova'
                 ];
             
-                Mail::to($data['email'])->send(new DemoMail($mailData));
+                Mail::to($data['email'])->send(new MailPHP($mailData));
 
                 $response['success']='y';
                 $response['url']='';
