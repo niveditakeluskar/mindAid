@@ -126,7 +126,7 @@ class ForgotPasswordController extends Controller
                 $mailData = [
                     'title' => 'RCARE Multifactor Authentication Code',
                     'body' => $data['message'],
-                    'message' => 'Multifactor authentication login code is '.$data["otp"].' from RCARE.',
+                    'message' => 'Multifactor authentication forget password code is '.$data["otp"].' from RCARE.',
                     'button_text' => '',
                     'button_url' => '',
                     'link' => 'Team Renova'
