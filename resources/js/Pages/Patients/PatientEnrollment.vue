@@ -14,11 +14,10 @@
       <div class="col-md-12 mb-4">
         <div class="card text-left">
           <div class="card-body">
-            <div class="alert alert-success" id="success-alert"
-                                                :style="{ display: showAlert ? 'block' : 'none' }">
-                                                <button type="button" class="close" data-dismiss="alert">x</button>
-                                                <strong>Patient Register successfully! </strong><span id="text"></span>
-                                            </div>
+            <div class="alert alert-success" id="success-alert" :style="{ display: showAlert ? 'block' : 'none' }">
+              <button type="button" class="close" data-dismiss="alert">x</button>
+              <strong>Patient Register successfully! </strong><span id="text"></span>
+            </div>
             <div class="form-group">
               <select name="patient_list" class="custom-select show-tick" v-model="selectList"
                 @change="patientRegisterUpdate" v-if="toShowList">
@@ -130,8 +129,8 @@
                           name="preferred_contact" type="radio" autocomplete="off" class="form-control">
                       </label>
                     </div>
-                    <input id="mob" name="mob" type="text"
-                      v-model="phonenumber" autocomplete="off" class="form-control" >
+                    <input id="mob" name="mob" type="text" v-model="phonenumber" autocomplete="off"
+                      class="form-control">
                   </div>
                   <div class="form-row invalid-feedback" v-if="formErrors.mob" style="display: block;">{{
       formErrors.mob[0] }}</div>
@@ -243,15 +242,21 @@ export default {
     });
 
     watch(selectedPractice, (newPracticeId) => {
-      fetchPCP(newPracticeId);
+      if (newPracticeId != '') {
+        fetchPCP(newPracticeId);
+      }
     });
 
     watch(selectedPracticePatient, (newPatientID) => {
-      fetchPatients(newPatientID)
+      if (newPatientID != '') {
+        fetchPatients(newPatientID)
+      }
     });
 
     watch(selectedPatient, (newPatientID) => {
-      getPatientDetails(newPatientID);
+      if (newPatientID != '') {
+        getPatientDetails(newPatientID);
+      }
     });
 
     const fetchPractices = async () => {
@@ -325,7 +330,7 @@ export default {
           isLoading.value = false;
           setTimeout(() => {
             showAlert.value = false;
-            selectList.value  = '';
+            selectList.value = '';
             step1.value = false;
             practicePatientFilter.value = false;
             myForm.reset();
@@ -368,15 +373,15 @@ export default {
 
     const handleStepEvent = (status) => {
       if (status == 0) {
-      selectList.value  = '';
-      firstname.value = '';
-      lastname.value = '';
-      middlename.value = '';
-      dateofbirth.value = '';
-      phonenumber.value = '';
-      selectedPractice.value = '';
-      selectedPCP.value = '';
-      emrnumber.value = '';
+        selectList.value = '';
+        firstname.value = '';
+        lastname.value = '';
+        middlename.value = '';
+        dateofbirth.value = '';
+        phonenumber.value = '';
+        selectedPractice.value = '';
+        selectedPCP.value = '';
+        emrnumber.value = '';
         step1.value = false;
         toShowList.value = true;
         step2.value = false;
@@ -407,18 +412,20 @@ export default {
       selectedPractice.value = '';
       selectedPCP.value = '';
       emrnumber.value = '';
+      selectedPracticePatient.value = '';
+      selectedPatient.value = '';
       if (selectList.value == 0) {
         practicePatientFilter.value = false;
         step1.value = true;
         setTimeout(() => {
           Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
         }, 3000);
-          
+
       } else {
         step1.value = false;
         practicePatientFilter.value = true;
       }
-     
+
     }
 
     const fetchPatients = async (practiceId) => {
@@ -447,8 +454,8 @@ export default {
     const getPatientDetails = async (id) => {
       step1.value = true;
       setTimeout(() => {
-          Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
-        }, 3000);
+        Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
+      }, 3000);
       await axios.get(`/patients/getDetails/${id}`)
         .then(response => {
           const data = response.data;
