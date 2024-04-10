@@ -55,7 +55,7 @@ class DomainFeatures extends Model
     {
         $url = url('/');
         // return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->first();  
-        return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->where('url', 'like', '%' . $url . '%')->first();  
+        return self::select('session_timeout', 'logoutpoptime','url')->where('url', 'like', '%' . $url . '%')->first();  
     }
 
 }
