@@ -31,6 +31,7 @@ use RCare\Patients\Http\Requests\CallFinalisedChecklistRequest;
 use RCare\Patients\Models\PatientActiveDeactiveHistory;
 use RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use DataTables;
 use Carbon\Carbon;
 use RCare\Org\OrgPackages\Users\src\Models\Users;     
@@ -66,6 +67,15 @@ class PatientEnrollmentController extends Controller
             ->make(true);
         }
         return view('Patients::patient-enrollment.patient-list');
+    }
+
+    public function patientRegEnroll(Request $request) {
+        $module_id    = getPageModuleName();
+        $submodule_id = getPageSubModuleName();
+        return Inertia::render('Patients/PatientEnrollment', [
+            'moduleId' => $module_id,
+            'componentId' => $submodule_id,
+        ]);
     }
 
     public function listPatientEnrollmentPatientsSearch(Request $request) {

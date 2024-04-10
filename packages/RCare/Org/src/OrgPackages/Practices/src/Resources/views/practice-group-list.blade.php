@@ -27,6 +27,7 @@
                           <th>Sr No.</th>
                           <th>{{config('global.practice_group')}}</th>     
                           <th>Enable Messaging</th> 
+                          <th>Quality Metrics</th>
                           <th>Threshold</th> 
                           <th>Last Modified By</th>
                           <th>Last Modified On</th>                 
@@ -64,7 +65,18 @@
               					<label>
               						<yes-no name="assign_message" label-no="No" label-yes="Yes">Enable Text</yes-no>
               					</label>
-              				</div>               
+              				</div>             
+                            <div class="col-md-12 form-group mb-3"> 
+                            <label >Quality Metrics</label><br>
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-primary btn-toggle ">
+                                        <input type="radio" name="quality_metrics" id="option1" value="1" autocomplete="off" > Yes
+                                    </label>
+                                    <label class="btn btn-outline-primary btn-toggle">
+                                        <input type="radio" name="quality_metrics" id="option2" value="0" autocomplete="off"> No
+                                    </label>
+                                </div>
+              				</div>   
                         </div>
                     </div>
                 </div>

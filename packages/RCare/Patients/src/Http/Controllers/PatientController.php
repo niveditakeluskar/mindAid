@@ -47,12 +47,18 @@ use RCare\Patients\Models\PatientContactTime;
 use RCare\Patients\Models\PatientTimeRecords;
 use RCare\Patients\Models\PatientIdEditHistory;
 use RCare\Patients\Models\PatientActiveDeactiveHistory;
+use RCare\Patients\Models\CountryCode;
+use RCare\Patients\Models\ContentTemplateUsageHistory;
+use RCare\Patients\Models\PatientEnrollment;
 use RCare\Patients\Http\Requests\PatientPersonalNotesAddRequest;
 use RCare\Patients\Http\Requests\PatientResearchstudyAddRequest;
 //use RCare\Patients\Http\Requests\PatientThresholdAddRequest;
 use RCare\Org\OrgPackages\Practices\src\Models\PracticeThreshold;
 use RCare\Org\OrgPackages\Practices\src\Models\OrgThreshold;
 use RCare\Patients\Http\Requests\PatientAddRequest;
+use RCare\Patients\Http\Requests\PatientEnrollAddRequest;
+use RCare\Patients\Http\Requests\PatientEnrollUpdateRequest;
+use RCare\Patients\Http\Requests\PatientEnrollScript;
 use RCare\Patients\Http\Requests\PatientEditRequest;
 use RCare\Patients\Http\Requests\PatientProfileImage;
 use RCare\Patients\Http\Requests\ActiveDeactiveAddRequest;
@@ -64,6 +70,7 @@ use RCare\API\Http\Controllers\ECGAPIController;
 use RCare\API\Models\ApiException;
 use RCare\Org\OrgPackages\Practices\src\Models\Document;
 use RCare\Patients\Models\PatientCareplanLastUpdateandReview;
+use RCare\Ccm\Models\CallWrap;
 use Session;
 use Hash;
 use Validator, Redirect, Response;
@@ -1152,6 +1159,636 @@ class PatientController extends Controller
             ->make(true);
     }
 
+    public function updatePatient(PatientEnrollUpdateRequest $request){
+        $patient_id = sanitizeVariable($request->patient_id);
+        $practice = sanitizeVariable($request->practices);
+        $pcp =  sanitizeVariable($request->pcp);
+        $fname =  sanitizeVariable($request->fname);
+        $lname =  sanitizeVariable($request->lname);
+        $mname =  sanitizeVariable($request->mname);
+        $dob =  sanitizeVariable($request->dob);
+        $mob =  sanitizeVariable($request->mob);
+        $gender = sanitizeVariable($request->gender);
+        $marital_status = sanitizeVariable($request->marital_status);
+        $country_code = sanitizeVariable($request->country_code);
+        $primary_cell_phone = sanitizeVariable($request->primary_cell_phone);
+        $consent_to_text = sanitizeVariable($request->consent_to_text);
+        $city = sanitizeVariable($request->city);
+        $state = sanitizeVariable($request->state);
+        $zipcode = sanitizeVariable($request->zipcode);
+        $military_status = sanitizeVariable($request->military_status);
+       // $monthly_notes = sanitizeVariable($request->call_monthly_notes);
+
+        if ($military_status == '0') {
+            $vtemplate = sanitizeVariable(json_encode($request->question['question']));
+        } else {
+            $vtemplate = null;
+        }
+
+        $patient_data = array(
+
+            'fname'                      => $fname,
+            'mname'                      => $mname,
+            'lname'                      => $lname,
+            'dob'                       => $dob,
+            'mob'                        => $mob,
+            'org_id'                     => session()->get('org_id'),
+            'created_by'                 => session()->get('userid'),
+            'country_code'               => $country_code,
+            'primary_cell_phone'         => $primary_cell_phone,
+            'consent_to_text'            => $consent_to_text
+        );
+
+        // print_r($patient_data);
+        $check_data = Patients::where('id', $request->patient_id)->where('fname', $fname)->where('lname', $lname)->where('mname', $mname)->where('dob', $dob)->exists();
+
+        // dd($check_data);
+        if ($check_data == false) {
+            $check_data = Patients::where('id', $request->patient_id)->select('fname', 'lname', 'mname', 'dob')->first();
+
+            $new_record = array(
+                'patient_id' => $request->patient_id,
+                'fname'      => $check_data->fname,
+                'lname'      => $check_data->lname,
+                'mname'      => $check_data->mname,
+                'dob'        => $check_data->dob,
+                'created_by' => session()->get('userid'),
+                'updated_by' => session()->get('userid')
+            );
+            PatientIdEditHistory::create($new_record);
+            $uid = $request->patient_id;
+            $patient_data['updated_by'] = session()->get('userid');
+            Patients::where('id', $request->patient_id)->update($patient_data);
+        }
+        $uid = $request->patient_id;
+        $patient_data['updated_by'] = session()->get('userid');
+        Patients::where('id', $request->patient_id)->update($patient_data);
+
+        $patient_demographics_data = array(
+            'gender'                     => $gender,
+            'marital_status'             => $marital_status,
+            'education'                  => '',
+            'ethnicity'                  => '',
+            'occupation'                 => '',
+            'height'                     => '',
+            'weight'                     => '',
+            'employer'                   => '',
+            'occupation_description'     => '',
+            'other_contact_name'         => '',
+            'other_contact_relationship' => '',
+            'other_contact_phone_number' => '',
+            'other_contact_email'        => '',
+            'military_status'            => $military_status,
+            'ethnicity_2'                => 0,
+            'template'                   => $vtemplate
+          );
+          $demographics = PatientDemographics::where('patient_id', $request->patient_id)->get();
+          // dd($demographics); 
+          if (count($demographics) > 0) {
+            $patient_demographics_data['updated_by'] = session()->get('userid');
+            PatientDemographics::where('patient_id', $request->patient_id)->update($patient_demographics_data);
+          } else {
+            $patient_demographics_data['created_by'] = session()->get('userid');
+            $patient_demographics_data['patient_id'] = $patient_id;
+            // $patient_demographics = PatientDemographics::createFromRequest($patient_demographics_data);
+            $patient_demographics = PatientDemographics::create($patient_demographics_data);
+          }
+
+          $patient_address_data = array(
+            'add_1'              => '',
+            'add_2'              => '',
+            'state'              => $state,
+            'zipcode'            => $zipcode,
+            'city'               => $city,
+        );
+
+        $patientAddress = PatientAddress::where('patient_id', $patient_id)->get();
+
+        if (count($patientAddress) > 0) {
+            $patient_address_data['updated_by'] = session()->get('userid');
+            PatientAddress::where('patient_id', $request->patient_id)->update($patient_address_data);
+        } else {
+            $patient_address_data['patient_id'] = $patient_id;
+            $patient_address_data['created_by'] = session()->get('userid');
+            // $patient_address = PatientAddress::createFromRequest($patient_address_data);
+            $patient_address = PatientAddress::create($patient_address_data);
+        }
+
+        $patient_physician_data = array(
+            'provider_id'               => $pcp,
+            'provider_type_id'          => 1, // for pcp provider
+            'provider_subtype_id'       => NULL,
+            'practice_id'               => $practice,
+            'address'                   => NULL,
+            'phone_no'                  => '',
+            'last_visit_date'           => NULL,
+            'review'                    => NULL,
+            'provider_name'             => NULL,
+            'is_active'                 => 1
+        );
+        $PatientProvider = PatientProvider::where('patient_id', $patient_id)->where('is_active', 1)->where('provider_type_id', 1)->orderby('id', 'desc')->exists(); //get();
+        // if(count($PatientProvider)>0){
+        if ($PatientProvider == true) {
+            $patient_physician_data['updated_by'] = session()->get('userid');
+            $is_Active['is_active'] = 0;
+            $update_isActive = PatientProvider::where('patient_id', $patient_id)->where('is_active', 1)->where('provider_type_id', 1)->update($patient_physician_data);
+            //$patient_physician_data['patient_id'] = $patient_id;
+            //$patient_physician_data['created_by'] = session()->get('userid');
+           // PatientProvider::create($patient_physician_data);
+        } else {
+            $patient_physician_data['patient_id'] = $patient_id;
+            $patient_physician_data['created_by'] = session()->get('userid');
+            $patient_physician = PatientProvider::create($patient_physician_data);
+        }
+
+
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $stage_id     = 0;
+        $billable     = 1;
+        $form_name    = sanitizeVariable($request->form_name);
+        $step_id      = 0;
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+
+        $sequence     = 4;
+        if ($request->que_step_id) {
+            $question_step = sanitizeVariable($request->que_step_id);
+            //dd($question_step);
+            $steps        = StageCode::where('module_id', $request->qmid)->where('submodule_id', $request->qcid)->where('id', $question_step)->get();
+            foreach ($question_step as $keys => $step) {
+                $step_name             = $steps[0]->description;
+                $step_name = preg_replace('/[^A-Za-z0-9\-]/', '', trim($step_name));
+                $step_name_trimmed     = str_replace(' ', '_', trim($step_name)) . '' . $keys;
+                $step_name_trimmed     = str_replace("/", "_", $step_name_trimmed);
+                $request_step_data     = sanitizeVariable($request->$step_name_trimmed);
+
+                $qtemplate_id           = $request_step_data['template_id'];
+                $template_type         = $request_step_data['template_type_id'];
+                $current_monthly_notes = $request_step_data['current_monthly_notes'];
+                $content_title = $request_step_data['content_title'];
+                if (isset($request_step_data['question'])) {
+                    $data = array(
+                        'contact_via'   => 'questionnaire',
+                        'template_type' => $template_type,
+                        'uid'           => $uid,
+                        'module_id'     => sanitizeVariable($request->qmid),
+                        'component_id'  => sanitizeVariable($request->qcid),
+                        'template_id'   => $qtemplate_id,
+                        'template'      => sanitizeVariable(json_encode($request_step_data['question'])),
+                        'monthly_notes' => $current_monthly_notes,
+                        'stage_id'      => sanitizeVariable($request->qsid),
+                        'stage_code'    => $step,
+                        'created_by'    => session()->get('userid'),
+                        'patient_id'    => $patient_id,
+                        'step_id'       => 0
+                    );
+
+                    $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+                    $new_sub_sequence = $last_sub_sequence + 1;
+                    $score = 0;
+                    $seqindex = 1;
+                    //dd($request_step_data['question']);
+                    foreach ($request_step_data['question'] as $key => $value) {
+                        $checkboxVal = '';
+                        if (is_array($value)) {
+                            foreach ($value as $k  => $v) {
+                                if ($v) {
+                                    $checkboxVal = $checkboxVal . str_replace('_', ' ', $k) . ',';
+                                }
+                            }
+                            $value = substr($checkboxVal, 0, -1);
+                        }
+                        $tp = str_replace('_', ' ', $key);
+
+                        if (str_replace('_', ' ', $key) == "score") {
+                            $tp = $content_title . ' ' . str_replace('_', ' ', $key);
+                            // print_r($tp);
+                            //$tp = $step_name.' '.str_replace('_',' ', $key);
+                            // $score = $score + $value;
+                            $value = $value;
+                        }
+                        $notes = array(
+                            'uid'                 => $uid,
+                            'record_date'         => Carbon::now(),
+                            'topic'               => $tp,
+                            'notes'               => $value,
+                            'created_by'          => session()->get('userid'),
+                            'patient_id'          => $patient_id,
+                            'template_type'       => 'qs' . $qtemplate_id,
+                            'sequence'            => $sequence,
+                            'sub_sequence'        => $new_sub_sequence,
+                            'question_sequence'   => $qtemplate_id,
+                            'question_sub_sequence' => sanitizeVariable($request->qseq[$qtemplate_id][$seqindex])
+                        );
+                        if ($value != "") {
+                            CallWrap::create($notes);
+                        }
+                        $new_sub_sequence++;
+                        $seqindex++;
+                    }
+                    $notes1 = array(
+                        'uid'                 => $uid,
+                        'record_date'         => Carbon::now(),
+                        'topic'               => $content_title . " Notes",
+                        'notes'               => $current_monthly_notes,
+                        'created_by'          => session()->get('userid'),
+                        'patient_id'          => $patient_id,
+                        'template_type'       => 'qs' . $qtemplate_id,
+                        'sequence'            => $sequence,
+                        'sub_sequence'        => $new_sub_sequence
+                    );
+                    if ($current_monthly_notes != '') {
+                        CallWrap::create($notes1);
+                    }
+                    $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
+                }
+            }
+        }
+
+        $record_time = CommonFunctionController::recordTimeSpent($start_time, $end_time, $request->patient_id, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name,  $form_start_time, $form_save_time);
+        return response(['patient_id' => $patient_id]);
+    }
+
+    public function practicePatientsRlist($practice){
+        $query = DB::table('patients.patient')
+            ->select('patients.patient.id', 'patients.patient.fname', 'patients.patient.lname', 'patients.patient.mname', 'patients.patient.dob', 'patients.patient.mob')
+            ->distinct()
+            ->join('patients.patient_providers as pp', 'patients.patient.id', '=', 'pp.patient_id')
+            ->where('pp.provider_type_id', 1)
+            ->where('pp.is_active', 1)
+            ->orderBy('patients.patient.fname')
+            ->where('pp.practice_id', $practice);
+        
+        $patients = $query->get();
+        return response()->json($patients);
+    }
+
+    public function register(PatientEnrollAddRequest $request){
+        $practice = sanitizeVariable($request->practices);
+        $pcp =  sanitizeVariable($request->pcp);
+        $fname =  sanitizeVariable($request->fname);
+        $lname =  sanitizeVariable($request->lname);
+        $mname =  sanitizeVariable($request->mname);
+        $dob =  sanitizeVariable($request->dob);
+        $mob =  sanitizeVariable($request->mob);
+        $emr = sanitizeVariable($request->practice_emr);
+        $data     = DB::select("SELECT patients.generate_patient_uid('" . $fname . "' , '" . $dob . "', '" . $lname . "') AS id");
+        $uid      = $data[0]->id;
+        $patient_id = $uid;
+        DB::beginTransaction();
+        try{
+            $patient_data = array(
+                'fname'                      => $fname,
+                'mname'                      => $mname,
+                'lname'                      => $lname,
+                'uid'                        => $uid,
+                'mob'                        => $mob,
+                'dob'                        => $dob,
+                'org_id'                     => session()->get('org_id'),
+                'status'                     => 1,
+            );
+
+            if(isset($request->patient_id)){
+                $patient_data['id'] = $request->patient_id;
+                $patient_data['updated_by'] = session()->get('userid');
+                Patients::where('id', $request->patient_id)->update($patient_data);
+                $patient_id = $request->patient_id;
+            }else{
+                $patient_data['id'] = $uid;
+                $patient_data['created_by'] = session()->get('userid');
+                $patient    = Patients::createFromRequest($patient_data);
+                $patient_id = $patient->id;
+            }
+            
+            $patient_physician_data = array(
+                'provider_id'               => $pcp,
+                'provider_type_id'          => 1, // for pcp provider
+                'provider_subtype_id'       => NULL,
+                'practice_id'               => $practice,
+                'address'                   => NULL,
+                'phone_no'                  => '',
+                'last_visit_date'           => NULL,
+                'review'                    => NULL,
+                'provider_name'             => NULL,
+                'practice_emr'              => $emr,
+                'is_active'                 => 1
+            );
+            if(PatientProvider::where('patient_id', $patient_id)->where('is_active', 1)->where('provider_type_id', 1)->orderby('id', 'desc')->exists()){
+                $patient_physician_data['updated_by'] = session()->get('userid');
+                $patient_physician = PatientProvider::where('patient_id',$patient_id)->update($patient_physician_data);
+            }else{
+                $patient_physician_data['patient_id'] = $patient_id;
+                $patient_physician_data['created_by'] = session()->get('userid');
+                $patient_physician = PatientProvider::create($patient_physician_data);
+            }
+            
+            DB::commit();
+            return response(['patient_id' =>$patient_id]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return $ex;
+        }
+    }
+
+    public function registerDeactive(PatientEnrollAddRequest $request){
+        $practice = sanitizeVariable($request->practices);
+        $pcp =  sanitizeVariable($request->pcp);
+        $fname =  sanitizeVariable($request->fname);
+        $lname =  sanitizeVariable($request->lname);
+        $mname =  sanitizeVariable($request->mname);
+        $dob =  sanitizeVariable($request->dob);
+        $mob =  sanitizeVariable($request->mob);
+        $emr = sanitizeVariable($request->practice_emr);
+        $data     = DB::select("SELECT patients.generate_patient_uid('" . $fname . "' , '" . $dob . "', '" . $lname . "') AS id");
+        $uid      = $data[0]->id;
+        $patient_id = $uid;
+        DB::beginTransaction();
+        try{
+            $patient_data = array(
+                'fname'                      => $fname,
+                'mname'                      => $mname,
+                'lname'                      => $lname,
+                'uid'                        => $uid,
+                'mob'                        => $mob,
+                'dob'                        => $dob,
+                'org_id'                     => session()->get('org_id'),
+                'status'                     => 2,
+            );
+
+            if(isset($request->patient_id)){
+                $patient_data['id'] = $request->patient_id;
+                $patient_data['updated_by'] = session()->get('userid');
+                Patients::where('id', $request->patient_id)->update($patient_data);
+                $patient_id = $request->patient_id;
+            }else{
+                $patient_data['id'] = $uid;
+                $patient_data['created_by'] = session()->get('userid');
+                $patient    = Patients::createFromRequest($patient_data);
+                $patient_id = $patient->id;
+            }
+
+            $patient_physician_data = array(
+                'provider_id'               => $pcp,
+                'provider_type_id'          => 1, // for pcp provider
+                'provider_subtype_id'       => NULL,
+                'practice_id'               => $practice,
+                'address'                   => NULL,
+                'phone_no'                  => '',
+                'last_visit_date'           => NULL,
+                'review'                    => NULL,
+                'provider_name'             => NULL,
+                'practice_emr'              => $emr,
+                'is_active'                 => 1
+            );
+           
+            if(PatientProvider::where('patient_id', $patient_id)->where('is_active', 1)->where('provider_type_id', 1)->orderby('id', 'desc')->exists()){
+                $patient_physician_data['updated_by'] = session()->get('userid');
+                $patient_physician = PatientProvider::where('patient_id',$patient_id)->update($patient_physician_data);
+            }else{
+                $patient_physician_data['patient_id'] = $patient_id;
+                $patient_physician_data['created_by'] = session()->get('userid');
+                $patient_physician = PatientProvider::create($patient_physician_data);
+            }
+
+            DB::commit();
+            return response(['patient_id' =>$patient_id]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return $ex;
+        }
+    }
+
+    public function getVt($id){
+        $module_id = getPageModuleName();
+        $SID = getFormStageId(getPageModuleName(),9, 'Veteran');
+        $veteranQuestion = QuestionnaireTemplate::where('module_id', $module_id)->where('status', 1)->where('stage_id', $SID)->where('template_type_id', 5)->latest()->first();
+        $patient_demographics = PatientDemographics::where('patient_id', $id)->get();
+        $number = 1;
+		$content = "";
+        if(isset($veteranQuestion['question'])){
+            $patient_questionnaire = array();
+				if(isset($patient_demographics[0]->template)){
+					$patient_questionnaire = json_decode($patient_demographics[0]->template, true);
+					
+				}
+            $content = $content. '<input type="hidden" name="question[question][template_id]" value="'.$veteranQuestion['id'].'" >';
+            $queData = json_decode($veteranQuestion['question']);
+            $questionnaire = $queData->question->q;
+            foreach($questionnaire as $value){
+                $questionTitle = trim($value->questionTitle);
+                $questionExist = 0;
+				if (array_key_exists($questionTitle, $patient_questionnaire)) {
+					$questionExist = 1;
+				}
+                $content = $content. '<div class="mb-4 radioVal" id="general_question11">';	
+				$que_val = trim(preg_replace('/\s+/', ' ',$value->questionTitle)); 
+                $content = $content. '<label for="are-you-in-pain" class="col-md-12">';
+                $content = $content. '<input type="hidden" name="" value="'.$que_val.'">';
+				$content = $content. ''. $value->questionTitle; 
+				$content = $content. '</label>';
+                $content = $content. '<div class=" mb-2 col-md-12">';
+                if (property_exists($value, 'label') && $value->answerFormat == '1') {
+                    
+                    $content = $content. '<select name="question[question]['. $value->questionTitle.']" class="col-md-3 custom-select" >';
+                    $content = $content. '<option value="">Select Option</option>';
+                    foreach($value->label as $labels) {
+                        $content = $content. '<option value="'.$labels.'" >'.$labels.'</option>';
+                    }
+                    $content = $content. '</select><div class="invalid-feedback"></div>';
+                    
+                }
+                elseif($value->answerFormat == '2') {
+                    $content = $content. '<input type="text" name="question[question]['.$value->questionTitle.']" class="form-control col-md-8"  value="'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'" ><div class="invalid-feedback"></div>';
+                }
+                elseif(property_exists($value, 'label') && $value->answerFormat == '3') { 
+                    $content = $content. '<div class="checkRadio forms-element">';
+                    foreach($value->label as $labels){
+                        $content = $content. '<label class="radio radio-primary col-md-4 float-left" for="'.$value->questionTitle.'_'.$labels.'">';
+                        $content = $content.  '<input type="radio" name="question[question]['.$value->questionTitle.']" value="'.$labels.'" formControlName="radio" id="'.$value->questionTitle.'_'.$labels.'" '.($questionExist && $patient_questionnaire[$questionTitle]==$labels ? 'checked': '').' >
+                                                    <span>'.$labels.'</span>
+                                                    <span class="checkmark"></span>
+                                                </label>';
+                    }
+                    $content = $content. '</div><div class="invalid-feedback"></div>';
+                }
+                elseif(property_exists($value, 'label') && $value->answerFormat == '4') {    
+                    $content = $content. '<div class="checkRadio forms-element">';
+                    foreach($value->label as $labels) {
+
+                        $labelArray = str_replace(' ','_', trim($labels));
+                       // echo  $labels;
+                       // echo "<br>";
+                        //print_r($patient_questionnaire[$questionTitle]);
+                        //print_r($patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)]);
+						if($questionExist && isset($patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)])){	
+                            $content = $content. '<label class="checkbox checkbox-primary col-md-4 float-left" for="'.$value->questionTitle.'_'.$labelArray.'">
+                                                    <input class="form-check-input" value="'.$labels.'" type="checkbox" name="question[question]['.$value->questionTitle.']['.$labelArray.']" id="'.$value->questionTitle.'_'.$labelArray.'" '.($questionExist && $patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)]==$labels ? 'checked': '').' >
+                                                    <span>'.$labels.'</span>
+                                                    <span class="checkmark"></span>
+                                                </label>';
+                        }else{
+                        $content = $content. '<label class="checkbox checkbox-primary col-md-4 float-left" for="'.$value->questionTitle.'_'.$labelArray.'">
+                                                    <input class="form-check-input" value="'.$labels.'" type="checkbox" name="question[question]['.$value->questionTitle.']['.$labelArray.']" id="'.$value->questionTitle.'_'.$labelArray.'"  >
+                                                    <span>'.$labels.'</span>
+                                                    <span class="checkmark"></span>
+                                                </label>';
+                        }
+                    }
+                    $content = $content. '</div><div class="invalid-feedback"></div>';
+                } elseif($value->answerFormat == '5') {
+                    $content = $content. '<textarea class="form-control col-md-8" name="question[question]['.$value->questionTitle.']" >'.($questionExist ? $patient_questionnaire[$questionTitle] : '').'</textarea><div class="invalid-feedback"></div>';
+                }
+                $content = $content. '</div>
+							<p class="message" style="color:red"></p>
+						</div>
+						<div id="question"></div>
+						<br>
+						<hr>';
+                $number++; 
+             }
+        }
+        return $content;
+    }
+
+    public function populateDetails($patient_id){
+        $patients = Patients::where('id',$patient_id)->get();
+        $patient_providers = PatientProvider::where('patient_id', $patient_id)->first();
+        $patient_demographics = PatientDemographics::where('patient_id', $patient_id)->latest()->first();
+        $gender = isset($patient_demographics) ? $patient_demographics->gender : '';
+        $military_status = isset($patient_demographics) ? $patient_demographics->military_status : '';
+        $marital_status =  isset($patient_demographics) ? $patient_demographics->marital_status : '';
+        $PatientAddress = PatientAddress::where('patient_id', $patient_id)->latest()->first();
+       
+        $city = empty($PatientAddress) ? '' : $PatientAddress->city;
+        $state = empty($PatientAddress) ? '' : $PatientAddress->state;
+        $zipcode = empty($PatientAddress) ? '' : $PatientAddress->zipcode;
+        return [
+            'patients' => $patients, 
+            'practice_id' => $patient_providers->practice_id,
+            'provider_id' => $patient_providers->provider_id,
+            'emr' => $patient_providers->practice_emr,
+            'gender' => $gender,
+            'military_status' => $military_status,
+            'city' => $city,
+            'state' => $state,
+            'zipcode' => $zipcode,
+            'marital_status' => $marital_status
+        ];
+    }
+
+    public function getState(Request $request){
+        $state = DB::select("select * from ren_core.state order by state_name asc");
+        return response()->json($state);
+    }
+
+    public function getCountryCode(Request $request){
+        $state = DB::select("select * from patients.countries order by countries_name asc");
+        return response()->json($state);
+    }
+
+    public function SaveEnrolledScriptDeactive(PatientEnrollScript $request){
+        $id           = sanitizeVariable($request->patient_id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+       
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $billable     = 0;
+        $form_name    = sanitizeVariable($request->form_name);
+        $step_id      = 0;
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $question =  sanitizeVariable($request->text_msg);
+        $content_title = sanitizeVariable($request->content_title);
+        $contact_via = "Call";
+        $template_id = sanitizeVariable($request->script);
+        $updatepatient = Patients::where('id',$patient_id)->update(['status' => 2]);
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' => $form_save_time]);
+    }
+
+    public function SaveEnrolledScript(PatientEnrollScript $request){
+        $id           = sanitizeVariable($request->patient_id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+       
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $billable     = 1;
+        $form_name    = sanitizeVariable($request->form_name);
+        $step_id      = 0;
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $question =  sanitizeVariable($request->text_msg);
+        $content_title = sanitizeVariable($request->content_title);
+        $contact_via = "Call";
+        $template_id = sanitizeVariable($request->script);
+        $template = array(
+            'content'            => $question, 
+            'content_title'      => $content_title,
+            'phone_no'           => ""
+        );
+
+        $questionnairehistory = array(
+            'contact_via'   => $contact_via,
+            'patient_id'    => $patient_id,
+            'uid'           => $patient_id,
+            'template_id'   => $template_id,
+            'module_id'     => $module_id,
+            'component_id'  => $component_id,
+            'template_type' => 2,
+            'template'      => json_encode($template),
+            'stage_id'      => $stage_id,
+            'created_by'    => session()->get('userid')
+        );
+
+        $insert_content = ContentTemplateUsageHistory::create($questionnairehistory);
+
+        $history_id      = $insert_content->id;
+        $action_template = array('template_id' => $template_id, 'history_id' => $history_id);
+
+        $data = array(
+            // 'practice_id'             => $practice_id, 
+            'patient_id'              => $patient_id,
+            'uid'                     => $patient_id,
+            'action'                  => $contact_via,
+            'enrollment_checklist'    => json_encode($action_template),
+            'module_id'               => $module_id,
+            'component_id'            => $component_id,
+            'stage_id'                => $stage_id,
+            'enrollment_response'     => 3
+            // 'created_by'              => session()->get('userid')
+        );
+
+        $insert_query = PatientEnrollment::create($data);
+
+        $patient_enroll_data = array(
+            'uid'               => $patient_id,
+            'module_id'         =>  3,
+            'date_enrolled'     => Carbon::now(),
+            'patient_id'        => $patient_id,
+            'created_by'        => session()->get('userid'),
+        );
+
+            $check = PatientServices::where('patient_id',$patient_id)->where('module_id',3)->exists();
+            if($check==true){ 
+                $update = PatientServices::where('patient_id',$patient_id)->where('module_id',3)->update($patient_enroll_data);            
+                       
+            }else{
+                $insert = PatientServices::create($patient_enroll_data); 
+            }   
+
+        $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+        return response(['form_start_time' => $form_save_time]);
+    }
+
     public function patientCaretool($patient_id, $module_id)
     {
         $dateS = Carbon::now()->startOfMonth()->subMonth(3);
@@ -2089,7 +2726,7 @@ class PatientController extends Controller
         return response()->json($patients);
     } */
 
-
+   
     //optimized query and cached for 24Hrs
     public function practicePatientsNew($practice)
     {
@@ -3356,13 +3993,13 @@ class PatientController extends Controller
         $dob       = sanitizeVariable($request->dob);
         $data      = DB::select("select patients.generate_patient_uid('" . $fname . "' , '" . $dob . "', '" . $lname . "') as id");
         $patientId = DB::select("select * from patients.patient where id = " . $data[0]->id);
-        $response  = [];
+        //$response  = [];
         if (count($patientId) > 0) {
-            $response['error'] = "Patient with this First Name, Last Name and DOB already exist.";
-            echo json_encode($response);
+           // $response['error'] = "Patient with this First Name, Last Name and DOB already exist.";
+            return response(['error' => "Patient with this First Name, Last Name and DOB already exist."]);
         } else {
-            $response['uid'] = $data[0]->id;
-            echo json_encode($response);
+            //$response['uid'] = $data[0]->id;
+            return response(['uid' => $data[0]->id]);
         }
     }
 
