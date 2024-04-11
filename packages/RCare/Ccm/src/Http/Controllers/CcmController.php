@@ -909,7 +909,10 @@ class CcmController extends Controller
         }
         // Check if this month’s data exists for PatientDiagnosis; If not, copy from last month
         $check_exist_code = CommonFunctionController::checkPatientDiagnosisDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
-
+        // Check if this month’s data exists for PatientEMRSummary; If not, copy from last month
+        $check_exist_code = CommonFunctionController::checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+        // Check if this month’s data exists for PatientCPDCallwrapupNotes; If not, copy from last month
+        $check_exist_code = CommonFunctionController::checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         //Check if this month’s data exists for Medication; If not, copy from last month
         $check_exist_medication = CommonFunctionController::checkPatientMedicationDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
 
