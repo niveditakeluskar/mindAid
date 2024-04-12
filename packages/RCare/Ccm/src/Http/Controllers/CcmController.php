@@ -910,9 +910,9 @@ class CcmController extends Controller
         // Check if this month’s data exists for PatientDiagnosis; If not, copy from last month
         $check_exist_code = CommonFunctionController::checkPatientDiagnosisDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         // Check if this month’s data exists for PatientEMRSummary; If not, copy from last month
-        $check_exist_code = CommonFunctionController::checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+        // $check_exist_code = CommonFunctionController::checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         // Check if this month’s data exists for PatientCPDCallwrapupNotes; If not, copy from last month
-        $check_exist_code = CommonFunctionController::checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+        // $check_exist_code = CommonFunctionController::checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         //Check if this month’s data exists for Medication; If not, copy from last month
         $check_exist_medication = CommonFunctionController::checkPatientMedicationDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
 
@@ -2882,9 +2882,14 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
         $additionalservices9 = '';
         $additionalservices10 = '';
 
-
+        $choose_next_date = date("Y-m-d", strtotime("+1 month"));
+        $next_year = date('Y', strtotime($choose_next_date));
+        $next_month = date('m', strtotime($choose_next_date));
+    // print_r($next_year.'======='.$next_month);die;
+        
         DB::beginTransaction();
         try {
+            $prev_emr_monthly_summary_notes = 'Previous Month EMR Monthly Summary';
             $v = 'Summary notes added on';
             $c = CallWrap::where('patient_id', $patient_id)
                 ->whereMonth('created_at',  date('m'))
@@ -2905,8 +2910,40 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                     'status' => 0,
                     'updated_at' => Carbon::now()
                 ]);
+
+                // $prev_emr_monthly_summary_notes = 'Previous Month EMR Monthly Summary';
             foreach ($emr_monthly_summary as $key => $emr_monthly_summary_notes) {
                 if ($key == 0) {
+                    $check_data_in_next_month = CallWrap::where('patient_id', $patient_id)
+                    ->where('topic', 'Previous Month EMR Monthly Summary')
+                    ->whereMonth('record_date',  $next_month)
+                    ->whereYear('record_date',  $next_year)
+                    ->exists();
+                    
+                    if($check_data_in_next_month == false){
+                        $prev_emr_monthly_summary_data = array(
+                            'uid'                       => $uid,
+                            'record_date'               => date('Y-m-d', strtotime('+1 month')),//Carbon::now(),
+                            'topic'                     => $prev_emr_monthly_summary_notes,
+                            'notes'                     => $emr_monthly_summary_notes,
+                            'emr_entry_completed'       => $emr_entry_completed,
+                            'created_by'                => session()->get('userid'),
+                            'patient_id'                => $patient_id,
+                            'status'                    => 1,
+                            'sequence'                  => $sequence,
+                            'sub_sequence'              => $new_sub_sequence
+                        );
+                        CallWrap::create($prev_emr_monthly_summary_data);
+                    }else{
+                        CallWrap::where('patient_id', $patient_id)
+                        ->whereMonth('record_date',  $next_month)
+                        ->whereYear('record_date',  $next_year)
+                        ->where(function ($query) use ($prev_emr_monthly_summary_notes) {
+                            $query->where('topic', $prev_emr_monthly_summary_notes)->orWhere('topic', 'like', $prev_emr_monthly_summary_notes . '%');
+                        })->update([
+                            'notes' => $emr_monthly_summary_notes,
+                        ]);
+                    }
                     $emr_monthly_summary_data = array(
                         'uid'                       => $uid,
                         'record_date'               => Carbon::now(),
@@ -2917,7 +2954,6 @@ order by sequence , sub_sequence, question_sequence, question_sub_sequence)
                         'patient_id'                => $patient_id,
                         'sequence'                  => $sequence,
                         'sub_sequence'              => $new_sub_sequence
-
                     );
                     $monthlydate =  Carbon::now();
                     $emr_type = 1;

@@ -5356,9 +5356,18 @@ class CarePlanDevelopmentController extends Controller
         $new_sub_sequence    = $last_sub_sequence + 1;
         DB::beginTransaction();
         try {
+            $choose_next_date = date("Y-m-d", strtotime("+1 month"));
+            $next_year = date('Y', strtotime($choose_next_date));
+            $next_month = date('m', strtotime($choose_next_date));
+            $prev_month_topics = 'Previous month care plan developement notes';
+            $check_data_in_next_month = CallWrap::where('patient_id', $patient_id)
+                ->where('topic', 'Previous month care plan developement notes')
+                ->whereMonth('record_date',  $next_month)
+                ->whereYear('record_date',  $next_year)
+                ->exists();
             $callwrapdata = array(
                 'uid'                 => $uid,
-                'record_date'         => date('Y-m-d', strtotime('+1 month')), //Carbon::now(),
+                'record_date'         => Carbon::now(),
                 'topic'               => $topics,
                 'notes'               => $notes,
                 'sequence'            => $sequence,
@@ -5367,8 +5376,37 @@ class CarePlanDevelopmentController extends Controller
                 'created_by'          => session()->get('userid'),
                 'patient_id'          => $patient_id
             );
+
+            $callwrapData_prev =
+            array(
+                'uid'                 => $uid,
+                'record_date'         => date('Y-m-d', strtotime('+1 month')),
+                'topic'               => $prev_month_topics,
+                'notes'               => $notes, 
+                'sequence'            => $sequence,
+                'sub_sequence'        => $new_sub_sequence,
+                'emr_entry_completed' => $emr_entry_completed,
+                'created_by'          => session()->get('userid'),
+                'patient_id'          => $patient_id
+            );
             if (!empty($notes)) {
-                CallWrap::create($callwrapdata);
+                if($check_data_in_next_month == false){ 
+                    CallWrap::create($callwrapData_prev);
+                    CallWrap::create($callwrapdata);
+                }else{
+                    CallWrap::create($callwrapdata);
+                    // CallWrap::create($callwrapData_prev);
+                    CallWrap::where('patient_id', $patient_id)
+                    ->whereMonth('record_date',  $next_month)
+                    ->whereYear('record_date',  $next_year)
+                    ->where(function ($query) use ($prev_month_topics) {
+                        $query->where('topic', $prev_month_topics)->orWhere('topic', 'like', $prev_month_topics . '%');
+                    })->update([
+                        // 'updated_at' => date('Y-m-d', strtotime('+1 month'))
+                        'notes' => $notes
+                    ]);
+
+                }
             }
             //record time
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $uid, $module_id, $component_id, $stage_id, $billable, $uid, $step_id, $form_name, $form_start_time, $form_save_time);

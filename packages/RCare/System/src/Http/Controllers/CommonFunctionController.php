@@ -545,118 +545,118 @@ class CommonFunctionController extends Controller
         }
     }
 
-        //Check if this month’s data exists for Medication; If not, copy from last month
-        public static function checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id)
-        { 
-            $check_exist_emr_summary  = EmrMonthlySummary::where('patient_id', $patient_id)
-            ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-            // echo "=>".$check_exist_emr_summary."<=";print_r($check_exist_emr_summary);die; 
-            // dd($check_exist_emr_summary); 
-            if (isset($check_exist_emr_summary) && ($check_exist_emr_summary == false || $check_exist_emr_summary == null || $check_exist_emr_summary == "")) {
-                // if($check_exist_emr_summary) { 
-                $getMaxDateForPreviousEmrMonthlySummaryData = EmrMonthlySummary::where('patient_id', $patient_id)->where('status', 1)->max('created_at');
-                $month = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->month;
-                $year = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->year;
-                $user_id = session()->get('userid');
-                $current_timestamp = Carbon::now();
+        // //Check if this month’s data exists for EMRSummary; If not, copy from last month
+        // public static function checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id)
+        // { 
+        //     $check_exist_emr_summary  = EmrMonthlySummary::where('patient_id', $patient_id)
+        //     ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+        //     // echo "=>".$check_exist_emr_summary."<=";print_r($check_exist_emr_summary);die; 
+        //     // dd($check_exist_emr_summary); 
+        //     if (isset($check_exist_emr_summary) && ($check_exist_emr_summary == false || $check_exist_emr_summary == null || $check_exist_emr_summary == "")) {
+        //         // if($check_exist_emr_summary) { 
+        //         $getMaxDateForPreviousEmrMonthlySummaryData = EmrMonthlySummary::where('patient_id', $patient_id)->where('status', 1)->max('created_at');
+        //         $month = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->month;
+        //         $year = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->year;
+        //         $user_id = session()->get('userid');
+        //         $current_timestamp = Carbon::now();
                 
-                $lastMonthEmrMonthlySummaryQuery = 'INSERT INTO ccm.ccm_emr_monthly_summary("record_date",
-                "status", 
-                "topic",
-                "notes",
-                "emr_entry_completed",
-                "patient_id",
-                "sequence",
-                "sub_sequence",
-                "emr_type", 
-                "created_by", "created_at", "updated_at" )
-                (SELECT "record_date","status", "topic", "notes", "emr_entry_completed", "patient_id",
-                "sequence",
-                "sub_sequence",
-                "emr_type" ,
-                 \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' 
-                FROM ccm.ccm_emr_monthly_summary WHERE "patient_id" = ' . $patient_id . ' 
-                and EXTRACT(MONTH FROM "created_at") = ' . $month . ' and EXTRACT(year FROM "created_at") = ' . $year . ' )';
-                $executeLastMonthEmrMonthlySummaryQuery = queryEscape($lastMonthEmrMonthlySummaryQuery);
-                // $lastMonthMedication = EmrMonthlySummary::where('patient_id', $patient_id)->whereMonth('created_at', $month)->whereYear('created_at', $year)->get();
-                // if($lastMonthMedication) {
-                //     foreach ($lastMonthMedication as $medData) {
-                //         $insert_medicationData = array(
-                //             'patient_id'           => $patient_id,
-                //             'uid'                  => $patient_id,
-                //             'med_id'               => $medData->med_id,
-                //             'purpose'              => $medData->purpose,
-                //             'description'          => $medData->description,
-                //             'strength'             => $medData->strength,
-                //             'dosage'               => $medData->dosage,
-                //             'frequency'            => $medData->frequency,
-                //             'route'                => $medData->route,
-                //             'duration'             => $medData->duration,
-                //             'drug_reaction'        => $medData->drug_reaction,
-                //             'med_name'             => $medData->med_name,
-                //             'pharmacogenetic_test' => $medData->pharmacogenetic_test,
-                //             'created_by'           => session()->get('userid')
-                //         );
-                //         EmrMonthlySummary::create($insert_medicationData);
-                //     }
-                // }
-            }
-        }
-        //Check if this month’s data exists for PatientCPDCallwrapupNotes; If not, copy from last month
-        public static function checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id)
-        { 
-            $check_exist_cpd_callwrapup_notes  = CallWrap::where('patient_id', $patient_id)
-            ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('topic', 'care plan developement notes')->exists();
-            // echo "=>".$check_exist_cpd_callwrapup_notes."<=";print_r($check_exist_cpd_callwrapup_notes);die; 
-            // dd($check_exist_cpd_callwrapup_notes); 
-            if (isset($check_exist_cpd_callwrapup_notes) && ($check_exist_cpd_callwrapup_notes == false || $check_exist_cpd_callwrapup_notes == null || $check_exist_cpd_callwrapup_notes == "")) {
-                // if($check_exist_cpd_callwrapup_notes) { 
-                $getMaxDateForPreviousEmrMonthlySummaryData = CallWrap::where('patient_id', $patient_id)->where('topic', 'care plan developement notes')->where('status', 1)->max('created_at');
-                $month = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->month;
-                $year = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->year;
-                $user_id = session()->get('userid'); 
-                $current_timestamp = Carbon::now();
+        //         $lastMonthEmrMonthlySummaryQuery = 'INSERT INTO ccm.ccm_emr_monthly_summary("record_date",
+        //         "status", 
+        //         "topic",
+        //         "notes",
+        //         "emr_entry_completed",
+        //         "patient_id",
+        //         "sequence",
+        //         "sub_sequence",
+        //         "emr_type", 
+        //         "created_by", "created_at", "updated_at" )
+        //         (SELECT "record_date","status", "topic", "notes", "emr_entry_completed", "patient_id",
+        //         "sequence",
+        //         "sub_sequence",
+        //         "emr_type" ,
+        //          \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' 
+        //         FROM ccm.ccm_emr_monthly_summary WHERE "patient_id" = ' . $patient_id . ' 
+        //         and EXTRACT(MONTH FROM "created_at") = ' . $month . ' and EXTRACT(year FROM "created_at") = ' . $year . ' )';
+        //         $executeLastMonthEmrMonthlySummaryQuery = queryEscape($lastMonthEmrMonthlySummaryQuery);
+        //         // $lastMonthMedication = EmrMonthlySummary::where('patient_id', $patient_id)->whereMonth('created_at', $month)->whereYear('created_at', $year)->get();
+        //         // if($lastMonthMedication) {
+        //         //     foreach ($lastMonthMedication as $medData) {
+        //         //         $insert_medicationData = array(
+        //         //             'patient_id'           => $patient_id,
+        //         //             'uid'                  => $patient_id,
+        //         //             'med_id'               => $medData->med_id,
+        //         //             'purpose'              => $medData->purpose,
+        //         //             'description'          => $medData->description,
+        //         //             'strength'             => $medData->strength,
+        //         //             'dosage'               => $medData->dosage,
+        //         //             'frequency'            => $medData->frequency,
+        //         //             'route'                => $medData->route,
+        //         //             'duration'             => $medData->duration,
+        //         //             'drug_reaction'        => $medData->drug_reaction,
+        //         //             'med_name'             => $medData->med_name,
+        //         //             'pharmacogenetic_test' => $medData->pharmacogenetic_test,
+        //         //             'created_by'           => session()->get('userid')
+        //         //         );
+        //         //         EmrMonthlySummary::create($insert_medicationData);
+        //         //     }
+        //         // }
+        //     }
+        // }
+        // //Check if this month’s data exists for PatientCPDCallwrapupNotes; If not, copy from last month
+        // public static function checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id)
+        // { 
+        //     $check_exist_cpd_callwrapup_notes  = CallWrap::where('patient_id', $patient_id)
+        //     ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('topic', 'care plan developement notes')->exists();
+        //     // echo "=>".$check_exist_cpd_callwrapup_notes."<=";print_r($check_exist_cpd_callwrapup_notes);die; 
+        //     // dd($check_exist_cpd_callwrapup_notes); 
+        //     if (isset($check_exist_cpd_callwrapup_notes) && ($check_exist_cpd_callwrapup_notes == false || $check_exist_cpd_callwrapup_notes == null || $check_exist_cpd_callwrapup_notes == "")) {
+        //         // if($check_exist_cpd_callwrapup_notes) { 
+        //         $getMaxDateForPreviousEmrMonthlySummaryData = CallWrap::where('patient_id', $patient_id)->where('topic', 'care plan developement notes')->where('status', 1)->max('created_at');
+        //         $month = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->month;
+        //         $year = Carbon::parse($getMaxDateForPreviousEmrMonthlySummaryData)->year;
+        //         $user_id = session()->get('userid'); 
+        //         $current_timestamp = Carbon::now();
                 
-                $lastMonthEmrMonthlySummaryQuery = 'INSERT INTO ccm.ccm_topics("record_date",
-                "status", 
-                "topic",
-                "notes",
-                "emr_entry_completed",
-                "patient_id", 
-                "sequence",
-                "sub_sequence",
-                "created_by", "created_at", "updated_at" )
-                (SELECT "record_date","status", "topic", "notes", "emr_entry_completed", "patient_id",
-                "sequence",
-                "sub_sequence",
-                 \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' 
-                FROM ccm.ccm_topics WHERE "patient_id" = ' . $patient_id . ' 
-                and EXTRACT(MONTH FROM "created_at") = ' . $month . ' and EXTRACT(year FROM "created_at") = ' . $year . ' )';
-                $executeLastMonthEmrMonthlySummaryQuery = queryEscape($lastMonthEmrMonthlySummaryQuery);
-                // $lastMonthMedication = EmrMonthlySummary::where('patient_id', $patient_id)->whereMonth('created_at', $month)->whereYear('created_at', $year)->get();
-                // if($lastMonthMedication) {
-                //     foreach ($lastMonthMedication as $medData) {
-                //         $insert_medicationData = array(
-                //             'patient_id'           => $patient_id,
-                //             'uid'                  => $patient_id,
-                //             'med_id'               => $medData->med_id,
-                //             'purpose'              => $medData->purpose,
-                //             'description'          => $medData->description,
-                //             'strength'             => $medData->strength,
-                //             'dosage'               => $medData->dosage,
-                //             'frequency'            => $medData->frequency,
-                //             'route'                => $medData->route,
-                //             'duration'             => $medData->duration,
-                //             'drug_reaction'        => $medData->drug_reaction,
-                //             'med_name'             => $medData->med_name,
-                //             'pharmacogenetic_test' => $medData->pharmacogenetic_test,
-                //             'created_by'           => session()->get('userid')
-                //         );
-                //         EmrMonthlySummary::create($insert_medicationData);
-                //     }
-                // }
-            }
-        }
+        //         $lastMonthEmrMonthlySummaryQuery = 'INSERT INTO ccm.ccm_topics("record_date",
+        //         "status", 
+        //         "topic",
+        //         "notes",
+        //         "emr_entry_completed",
+        //         "patient_id", 
+        //         "sequence",
+        //         "sub_sequence",
+        //         "created_by", "created_at", "updated_at" )
+        //         (SELECT "record_date","status", "topic", "notes", "emr_entry_completed", "patient_id",
+        //         "sequence",
+        //         "sub_sequence",
+        //          \'' . $user_id . '\', \'' . $current_timestamp . '\', \'' . $current_timestamp . '\' 
+        //         FROM ccm.ccm_topics WHERE "patient_id" = ' . $patient_id . ' 
+        //         and EXTRACT(MONTH FROM "created_at") = ' . $month . ' and EXTRACT(year FROM "created_at") = ' . $year . ' )';
+        //         $executeLastMonthEmrMonthlySummaryQuery = queryEscape($lastMonthEmrMonthlySummaryQuery);
+        //         // $lastMonthMedication = EmrMonthlySummary::where('patient_id', $patient_id)->whereMonth('created_at', $month)->whereYear('created_at', $year)->get();
+        //         // if($lastMonthMedication) {
+        //         //     foreach ($lastMonthMedication as $medData) {
+        //         //         $insert_medicationData = array(
+        //         //             'patient_id'           => $patient_id,
+        //         //             'uid'                  => $patient_id,
+        //         //             'med_id'               => $medData->med_id,
+        //         //             'purpose'              => $medData->purpose,
+        //         //             'description'          => $medData->description,
+        //         //             'strength'             => $medData->strength,
+        //         //             'dosage'               => $medData->dosage,
+        //         //             'frequency'            => $medData->frequency,
+        //         //             'route'                => $medData->route,
+        //         //             'duration'             => $medData->duration,
+        //         //             'drug_reaction'        => $medData->drug_reaction,
+        //         //             'med_name'             => $medData->med_name,
+        //         //             'pharmacogenetic_test' => $medData->pharmacogenetic_test,
+        //         //             'created_by'           => session()->get('userid')
+        //         //         );
+        //         //         EmrMonthlySummary::create($insert_medicationData);
+        //         //     }
+        //         // }
+        //     }
+        // }
     
     //Check if this month’s data exists for Medication; If not, copy from last month
     public static function checkPatientMedicationDataExistForCurrentMonthOrCopyFromLastMonth($patient_id)
@@ -1223,9 +1223,9 @@ class CommonFunctionController extends Controller
         //Check if this month’s data exists for Medication; If not, copy from last month
         $check_exist_medication     = $this->checkPatientMedicationDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         //Check if this month’s data exists for PatientEMRSummary; If not, copy from last month
-        $check_exist_emr_summary     = $this->checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+        // $check_exist_emr_summary     = $this->checkPatientEMRSummaryExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         //Check if this month’s data exists for PatientCPDCallwrapupNotes; If not, copy from last month
-        $check_exist_cpd_callwrapup_notes = $this->checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id);
+        // $check_exist_cpd_callwrapup_notes = $this->checkPatientCPDCallwrapupNotesExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         //Check if this month’s data exists for PatientAllergy; If not, copy from last month
         $check_exist_allergy        =  $this->checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonth($patient_id);
         $checkdrugexist             =  $this->checkPatientAllergyDataExistForCurrentMonthOrCopyFromLastMonthBasedOnAllergyType($patient_id, 'drug');
