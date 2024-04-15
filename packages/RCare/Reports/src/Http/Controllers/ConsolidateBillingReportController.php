@@ -64,7 +64,7 @@ class ConsolidateBillingReportController extends Controller
         $year = date('Y', strtotime($monthly));
         $month = date('m', strtotime($monthly));
   
-      $query = "select * from patients.consolidate_monthly_billing_report_py where months = ".$m." and years = ".$year." ";
+      $query = "select * from etl_reports.consolidate_monthly_billing_report_py where months = ".$m." and years = ".$year." ";
 
       if($practices!="" && $practices !='null'){
         $query .= " and pracid =".$practices;
