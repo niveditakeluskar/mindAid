@@ -17,7 +17,8 @@
                                 </div>
                                 <div class="col-md-3" v-if="moduleId === 2"> <!-- show only for RPM-->
                                     <select name="select_report" class="custom-select show-tick mr-4"
-                                        v-model="selectedReport" @change="onRPMReportChanged()"><!--  id="rpm-report" -->
+                                        v-model="selectedReport"
+                                        @change="onRPMReportChanged()"><!--  id="rpm-report" -->
                                         <option>Select Report</option>
                                         <!-- <option value="1">Summary Report</option> -->
                                         <option value="2">Daily History Report</option>
@@ -33,7 +34,8 @@
                         </div>
                         <div class="row m-1">
                             <div class="col-12">
-                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs" :gridOptions="{ onCellValueChanged: onCellValueChanged }" />
+                                <AgGridTable :rowData="callWrapRowData" :columnDefs="callWrapColumnDefs"
+                                    :gridOptions="{ onCellValueChanged: onCellValueChanged }" />
                             </div>
                         </div>
                         <input type="hidden" name="uid" :value="patientId" />
@@ -46,8 +48,8 @@
                         <input type="hidden" name="step_id" :value="callWrapUpStepId">
                         <input type="hidden" name="form_name" value="callwrapup_form">
                         <input type="hidden" name="billable" value="1">
-                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time" >
-                            <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
+                        <input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time">
+                        <!--input type="hidden" name="timearr[form_start_time]" class="timearr form_start_time"
                             :value="callWrapUpTime"/-->
                         <div class="row ml-3">
                             <div class="col-md-12 form-group">
@@ -57,7 +59,8 @@
                                             id="callwrap_up_emr_monthly_summary" @blur="saveEMRNotes"
                                             v-model="emr_monthly_summary"></textarea>
                                     </label>
-                                    <div class="invalid-feedback" v-if="formErrors && formErrors['emr_monthly_summary.0']"
+                                    <div class="invalid-feedback"
+                                        v-if="formErrors && formErrors['emr_monthly_summary.0']"
                                         style="display: block;">{{ formErrors['emr_monthly_summary.0'][0] }}</div>
                                 </div>
                             </div>
@@ -83,7 +86,7 @@
                                             <div class="invalid-feedback"
                                                 v-if="formErrors && formErrors['emr_monthly_summary_date.' + index]"
                                                 style="display: block;">{{ formErrors['emr_monthly_summary_date.' +
-                                                    index][0] }}</div>
+        index][0] }}</div>
                                         </div>
                                         <div class="col-md-6">
                                             <textarea v-model="notesRow.text" class="form-control emrsummary" cols="90"
@@ -92,10 +95,11 @@
                                             <div class="invalid-feedback"
                                                 v-if="formErrors && formErrors['emr_monthly_summary.' + (index + 1)]"
                                                 style="display: block;">{{ formErrors['emr_monthly_summary.' + (index +
-                                                    1)][0] }}</div>
+        1)][0] }}</div>
                                         </div>
                                         <div class="col-md-1" style="top: 15px;">
-                                            <i @click="deleteNotesRow(index)" type="button" class="removenotes  i-Remove"
+                                            <i @click="deleteNotesRow(index)" type="button"
+                                                class="removenotes  i-Remove"
                                                 style="color: #f44336; font-size: 22px;"></i>
                                         </div>
                                     </div>
@@ -118,17 +122,18 @@
                             <hr style="width:100%">
                             <div class="col-md-12 forms-element">
                                 <div class="row">
-                                    <div class="col-md-12"><b><span style="margin-left: 20px; color: #69aac2;">Additional
+                                    <div class="col-md-12"><b><span
+                                                style="margin-left: 20px; color: #69aac2;">Additional
                                                 Services :</span></b></div>
-                                    <div v-if="groupedData && groupedData.length > 0" v-for="(group, index) in groupedData"
-                                        :key="index" class="col-md-4">
+                                    <div v-if="groupedData && groupedData.length > 0"
+                                        v-for="(group, index) in groupedData" :key="index" class="col-md-4">
                                         <div>
                                             <label :for="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`"
                                                 class="checkbox checkbox-primary mr-3">
                                                 <input type="checkbox" v-model="group.checked"
                                                     :name="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`"
-                                                    :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`" value="true"
-                                                    class="RRclass"
+                                                    :id="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`"
+                                                    value="true" class="RRclass"
                                                     :class="`${group.name.replace(/[\s/]/g, '_').toLowerCase()}`"
                                                     formControlName="checkbox" />
                                                 <span>{{ group.name }}</span>
@@ -228,7 +233,7 @@ export default {
         const emr_monthly_summary = ref([]);
         const emr_monthly_summary_completed = ref([]);
         let selectedReport = ref('');
-        let isLoading =  ref(false);
+        let isLoading = ref(false);
 
         const callWrapColumnDefs = ref([
             {
@@ -237,28 +242,31 @@ export default {
                 width: 20,
                 editable: false
             },
-            { headerName: 'Topic', field: 'topic', filter: true, editable: false  },
-            { headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,  rows: 10, cols: 50,
-            cellEditorParams: { maxLength: 5000, },
-            onCellValueChanged: (params) => {
-            const updatedValue = params.newValue; 
-            const rowNode = params.node; 
-            const rowData = rowNode.data; 
-            console.log('Updated value:', updatedValue);
-            console.log('Row data:', rowData);
-            updateFunction(updatedValue, rowData.id,"notes");
-                                             }
-        },
-            { headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 10, cols: 50,
-             cellEditorParams: { maxLength: 5000 },
-            onCellValueChanged: (params) => {
-            const updatedValue = params.newValue; 
-            const rowNode = params.node; 
-            const rowData = rowNode.data; 
-            console.log('Updated value:', updatedValue);
-            console.log('Row data:', rowData);
-            updateFunction(updatedValue, rowData.id,"actionTaken");
-                                             } },
+            { headerName: 'Topic', field: 'topic', filter: true, editable: false },
+            {
+                headerName: 'Care Manager Notes', field: 'notes', width: 100, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 10, cols: 50,
+                cellEditorParams: { maxLength: 5000, },
+                onCellValueChanged: (params) => {
+                    const updatedValue = params.newValue;
+                    const rowNode = params.node;
+                    const rowData = rowNode.data;
+                    console.log('Updated value:', updatedValue);
+                    console.log('Row data:', rowData);
+                    updateFunction(updatedValue, rowData.id, "notes");
+                }
+            },
+            {
+                headerName: 'Action Taken', field: 'action_taken', width: 60, suppressSizeToFit: true, editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true, rows: 10, cols: 50,
+                cellEditorParams: { maxLength: 5000 },
+                onCellValueChanged: (params) => {
+                    const updatedValue = params.newValue;
+                    const rowNode = params.node;
+                    const rowData = rowNode.data;
+                    console.log('Updated value:', updatedValue);
+                    console.log('Row data:', rowData);
+                    updateFunction(updatedValue, rowData.id, "actionTaken");
+                }
+            },
             {
                 headerName: 'Action', field: 'action', width: 20, editable: false,
                 cellRenderer: function (params) {
@@ -268,17 +276,17 @@ export default {
             },
         ]);
 
-        const updateFunction = async (paramUpdatedValue, paramId,actionz) => {
+        const updateFunction = async (paramUpdatedValue, paramId, actionz) => {
             try {
                 loading.value = true;
                 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const response = await axios.post(`/ccm/monthly-monitoring-update-callwrap-up-new/${props.patientId}`, {
-            updatedValue: paramUpdatedValue,
-            rowid: paramId,
-            action: actionz
-        });
-        console.log('Response:', response.data);
-            fetchCallWrapUpList();
+                const response = await axios.post(`/ccm/monthly-monitoring-update-callwrap-up-new/${props.patientId}`, {
+                    updatedValue: paramUpdatedValue,
+                    rowid: paramId,
+                    action: actionz
+                });
+                console.log('Response:', response.data);
+                fetchCallWrapUpList();
                 loading.value = false;
             } catch (error) {
                 console.error('Error fetching call wrap up list:', error);
@@ -358,15 +366,15 @@ export default {
                     $(".form_start_time").val(saveCallWrapUpFormResponse.data.form_start_time);
                     showCallWrapUpAlert.value = true;
                     isLoading.value = false;
-                    window.scrollTo(0,0);
+                    window.scrollTo(0, 0);
                     updateTimer(props.patientId, '1', props.moduleId);
                     var year = (new Date).getFullYear();
-               		var month = (new Date).getMonth() + 1
+                    var month = (new Date).getMonth() + 1
                     const taskMangeResp = await axios.get(`/task-management/patient-to-do/${props.patientId}/${props.moduleId}/list`);
                     $("#toDoList").html(taskMangeResp.data);
                     $('.badge').html($('#count_todo').val());
                     const previousMonths = await axios.get(`/ccm/previous-month-status/${props.patientId}/${props.moduleId}/${month}/${year}/previousstatus`);
-                     $("#previousMonthData").html(previousMonths.data);
+                    $("#previousMonthData").html(previousMonths.data);
                     await fetchCallWrapUpList();
                     document.getElementById("callwrapup_form").reset();
                     setTimeout(() => {
@@ -584,6 +592,9 @@ export default {
         };
 
         const saveEMRNotes = async () => {
+            if ($(event.relatedTarget).prop('type') === 'submit') {
+                return false;
+            }
             formErrors.value = {};
             let myForm = document.getElementById('callwrapup_form');
             let formData = new FormData(myForm);
