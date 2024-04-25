@@ -502,11 +502,13 @@ class PracticesController extends Controller {
     {
         $practice_name = sanitizeVariable($request->practice_name);
         $assign_message = sanitizeVariable($request->assign_message);
+        $quality_metrics = sanitizeVariable($request->quality_metrics);
         $id = sanitizeVariable($request->id);
         $created_by  = session()->get('userid');
         $data = array(
                     'practice_name' => $practice_name,
-                    'assign_message' => $assign_message
+                    'assign_message' => $assign_message,
+                    'quality_metrics' => $quality_metrics
                 );
         $existpractice_name=PracticesGroup::where('id',$id)->exists();
         if($existpractice_name==true){

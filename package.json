@@ -52,6 +52,7 @@
     "moment-timer": "^1.3.0",
     "pdfmake": "^0.1.60",
     "underscore": "^1.9.1",
+    "vue-router": "^4.3.0",
     "vue-step-wizard": "^0.1.17",
     "watch": "^1.0.2",
     "wkhtmltopdf": "^0.4.0"

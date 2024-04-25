@@ -376,7 +376,7 @@ export default {
         const enrolledServices = ref([]);
         const patientenrolledServices = ref([]);
         const patientDetails = ref(null);
-        const EditPatientUrl = '/patients/registered-patient-edit/' + props.patientId + '/' + props.moduleId + '/' + props.componentId + '/0';
+        const EditPatientUrl = '/patients/patient-enrollment/' + props.patientId;
         var pause_stop_flag = 0;
         var pause_next_stop_flag = 0;
         const showAddPatientDevices = ref(false);

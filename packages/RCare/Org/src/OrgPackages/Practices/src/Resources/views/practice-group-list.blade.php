@@ -27,6 +27,7 @@
                           <th>Sr No.</th>
                           <th>{{config('global.practice_group')}}</th>     
                           <th>Enable Messaging</th> 
+                          <th>Quality Metrics</th>
                           <th>Threshold</th> 
                           <th>Last Modified By</th>
                           <th>Last Modified On</th>                 
@@ -64,22 +65,7 @@
               					<label>
               						<yes-no name="assign_message" label-no="No" label-yes="Yes">Enable Text</yes-no>
               					</label>
-              				</div>                -->
-                            <div class="col-md-3 form-group mb-3"> 
-                                <label for="assign_message" class="control-label">Enable Text</label> <span></span> 
-                                <div class="mr-3 d-inline-flex">    
-                                    <label for="assign_message-yes" class="radio radio-primary mr-3">
-                                        <input type="radio" formcontrolname="radio" name="assign_message" id="assign_message-yes" value="1">
-                                        <span>Yes</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    <label for="assign_message-no" class="radio radio-primary mr-3">
-                                        <input type="radio" formcontrolname="radio" name="assign_message" id="assign_message-no" value="0">
-                                        <span>No</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
+              				</div>             
                             <div class="col-md-12 form-group mb-3"> 
                             <label >Quality Metrics</label><br>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -90,7 +76,7 @@
                                         <input type="radio" name="quality_metrics" id="option2" value="0" autocomplete="off"> No
                                     </label>
                                 </div>
-              				</div>
+              				</div>   
                         </div>
                     </div>
                 </div>

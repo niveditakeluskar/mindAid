@@ -40,7 +40,9 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
 
 
         ////////////////////////--------------- New Enrollment Routs----------------///////////////////////
-        Route::get('/patient-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@listPatientEnrollmentPatients')->name('patient.enrollment.patients');
+        //Route::get('/patient-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@listPatientEnrollmentPatients')->name('patient.enrollment.patients');
+
+       
 
         // Route::get('/patients-assignment-status', 'RCare\Patients\Http\Controllers\PatientController@CareManagerPatients')->name('patients.assignment.status');
         // Route::get('/patients-assignment-status', function(){
@@ -206,6 +208,11 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get("/get-partner_devices", "RCare\Patients\Http\Controllers\PatientWorklistController@partnerDevicesList");
 
+        Route::get('/getLandingTime', function () {
+            $landing_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+            return response(['landing_time' => $landing_time]);
+            //return $landing_time;
+        });
 
         Route::get('/gettime', function () {
             $inputTimeData = Form::input('text', 'hh:mm:ss'); // worklistPractices() fetches practices
@@ -345,6 +352,23 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/patient-relationship-questionnaire/{patient_id}/{module_id}/{sub_module_id}/patient-relationship-questionnaire', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientRelationshipQuestionnaire')->name('patient_relationship_questionnaire');
         // 5Dec2023  by pranali
         Route::get('/patient-fetch-call-history-data/{patient_id}/patient-call-history', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientCallHistoryData')->name('patient_call_history');
+   
+        Route::get('/patient-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
+        Route::get('/patient-enrollment/{patientId}', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
+
+        Route::post('/register','RCare\Patients\Http\Controllers\PatientController@register');
+        Route::post('/registerDeactive','RCare\Patients\Http\Controllers\PatientController@registerDeactive');
+        Route::post('/saveenrolleddata','RCare\Patients\Http\Controllers\PatientController@SaveEnrolledScript');
+        Route::post('/saveenrolleddataDeactive','RCare\Patients\Http\Controllers\PatientController@SaveEnrolledScriptDeactive');
+        Route::get('/state','RCare\Patients\Http\Controllers\PatientController@getState');
+        Route::get('/vetneranQuestion/{id}','RCare\Patients\Http\Controllers\PatientController@getVt');
+        Route::get('/getDetails/{practiceId}','RCare\Patients\Http\Controllers\PatientController@populateDetails');
+        Route::get('/countryCode','RCare\Patients\Http\Controllers\PatientController@getCountryCode');
+        Route::post('/updatePatient','RCare\Patients\Http\Controllers\PatientController@updatePatient');
+        Route::get("/ajax/list/{practice}/patientlist", "RCare\Patients\Http\Controllers\PatientController@practicePatientsRlist")->name("ajax.practice.patient.new");
+        Route::get('/qualityMQuestion/{id}', function (string $id) {
+           return getQm($id);
+        });
     });
 });
 //testunscribed

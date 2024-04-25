@@ -155,6 +155,16 @@ var renderPracticeGrpTable =  function() {
               }    
           },orderable: false
       }, 
+      {data: null,mRender: function(data, type, full, meta){
+              if(full['quality_metrics'] == '1'){
+                  return 'Yes';
+              }else if(full['quality_metrics'] == '0'){
+                 return 'No';
+              } else { 
+                  return ''; 
+              }    
+          },orderable: false
+      }, 
       {data: 'threshold', name: 'threshold'},
       {data: 'users',
           mRender: function(data, type, full, meta){
