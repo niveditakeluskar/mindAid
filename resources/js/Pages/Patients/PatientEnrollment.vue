@@ -430,7 +430,9 @@ export default {
     };
 
     const patientRegisterUpdate = () => {
-      firstname.value = '';
+      
+      if (selectList.value == 0) {
+        firstname.value = '';
       lastname.value = '';
       middlename.value = '';
       dateofbirth.value = '';
@@ -440,7 +442,6 @@ export default {
       emrnumber.value = '';
       selectedPracticePatient.value = '';
       selectedPatient.value = '';
-      if (selectList.value == 0) {
         practicePatientFilter.value = false;
         step1.value = true;
         step3.value = false;
@@ -480,20 +481,10 @@ export default {
     };
 
     const getPatientDetails = async (id) => {
+      
       if (selectList.value != 1) {
         step1.value = true;
-      }
-         /*  patientId.value = "";
-          firstname.value = "";
-          lastname.value = "";
-          middlename.value = "";
-          dateofbirth.value = "";
-          phonenumber.value = "";
-          selectedPractice.value = "";
-          selectedPCP.value = "";
-          emrnumber.value = "";
- */
-      await axios.get(`/patients/getDetails/${id}`)
+        await axios.get(`/patients/getDetails/${id}`)
         .then(response => {
           const data = response.data;
           patientId.value = data.patients[0].id;
@@ -505,11 +496,7 @@ export default {
           selectedPractice.value = data.practice_id;
           selectedPCP.value = data.provider_id;
           emrnumber.value = data.emr;
-          if (selectList.value == 1) {
-        step3.value = true;
-        practicePatientFilter.value = false;
-
-        }
+       
       setTimeout(() => {
         Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
       }, 3000);
@@ -517,6 +504,16 @@ export default {
         .catch(error => {
           console.error('Error fetching data:', error);
         });
+      }
+
+      if (selectList.value == 1) {
+        patientId.value = id;
+        practicePatientFilter.value = false;
+        step3.value = true;
+       
+        }
+
+    
     }
 
     return {

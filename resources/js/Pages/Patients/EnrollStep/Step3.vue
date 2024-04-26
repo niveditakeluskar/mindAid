@@ -352,10 +352,10 @@ export default {
 /* 
          watch(() => props.patientId, (newVal, oldVal) => {
           props.patientId = newVal;
-          getPatientDetails();
+          getPatientDetailsPopulate();
       console.log('patientId changed:',props.patientId, newVal);
     }); */
-        const getPatientDetails = async() => {
+        const getPatientDetailsPopulate = async() => {
             await axios.get(`/patients/getDetails/${props.patientId}`)
 				.then(response => {
 					const data = response.data;
@@ -385,7 +385,7 @@ export default {
         }
 
         onBeforeMount(() => {
-            getPatientDetails();
+            getPatientDetailsPopulate();
             fetchState();
             fetchCountryCode();
             setLandingTime();
@@ -486,7 +486,7 @@ export default {
             fetchState,
             fetchVQ,
             checkMiletry,
-            getPatientDetails,
+            getPatientDetailsPopulate,
             updateRegisterForm,
             fetchCountryCode,
             fetchQualityMetric
