@@ -99,7 +99,7 @@
                                     <span class="last_time_spend" id="btime"></span></label>
                                     <label for="total time" data-toggle="tooltip" title="Non Billable Time" data-original-title="Non Billable Time">
                                      / <span class="non_billabel_last_time_spend" id="nbtime"></span></label>
-                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/registered-patient-edit/{{$patient_id}}/{{$m_id}}/{{$c_id}}/{{$enroll_service}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
+                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/patient-enrollment/{{$patient_id}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
                                     <div class="demo-div" style="margin-bottom:5px;">
                                         @hidden("timer_start",["id"=>"timer_start"])
                                         @hidden("timer_end",["id"=>"timer_end"])
