@@ -182,7 +182,9 @@ class MioDeviceController extends Controller {
     
   
     public function process_mio_webhook_observation(){
-      $getData = MioWebhook::where('status',0)->whereNotNull('device_id')->orderBy('id', 'DESC')->get();
+      $getData = MioWebhook::where('status',0)->where(function($query){
+		  $query->whereNotNull('device_id')->orWhere('content->messageType','=','telemetry');
+	  })->orderBy('id', 'DESC')->get();
       $d = count($getData);
       $i=1;
       foreach($getData as $value)
@@ -196,11 +198,30 @@ class MioDeviceController extends Controller {
         //     $imei = $status['imei'];
         //     $modelNumber = $decodeContent['modelNumber'];
         // }else{
-      
+            $recorddate = '';	
         $id = $value['id'];
-        $time = $decodeContent['ts'];
-        $recorddate = date('Y-m-d H:i:s', $time);   
-        $device_id = $value['device_id'];
+        $time = '';
+        $device_id = "";
+        $Chkdevice_id = $value['device_id'];
+
+		if(!empty($Chkdevice_id)){
+            $device_id = $value['device_id'];
+            $systolic = $decodeContent['sys'];
+            $diastolic = $decodeContent['dia'];
+			$time = $decodeContent['ts'];
+            $pulse = $decodeContent['pul'];
+		}else{
+            $device_id = $decodeContent['deviceId'];
+			$systolic = $decodeContent['data']['sys'];
+			$diastolic = $decodeContent['data']['dia'];
+			$time = $decodeContent['data']['ts'];		
+            $pulse = $decodeContent['data']['pul'];
+ 			
+		}
+
+              if(!empty($time)){
+            $recorddate = date('Y-m-d H:i:s', $time); 
+        }
         // $decodeContent = $datajson['data'];
         // $recorddate = date('Y-m-d H:i:s', ($time)/1000); 
         // $deviceName = $datajson['readingType'];
@@ -221,10 +242,7 @@ class MioDeviceController extends Controller {
             // if($deviceName == 'BloodPressure'){ 
                 $vitaldevice = Devices::where('device_name','Blood Pressure Cuff')->where('status',1)->first();
                 $vitaldeviceid = $vitaldevice->id;
-                $systolic = $decodeContent['sys'];
-                $diastolic = $decodeContent['dia'];
-                // dd( $diastolic);  
-                $pulse = $decodeContent['pul'];
+              
                 // $arrhythmia = $decodeContent['arrhythmia'];
                 $insert_array =array( 
                 'patient_id' =>$patient_id, 
@@ -250,7 +268,7 @@ class MioDeviceController extends Controller {
                 'updated_by'=>'symtech'
                 //  'arrhythmia'=>$arrhythmia, //arrhythmia – Will display 1 if an irregular heartbeat is detected, or 0 if not detected
                 );
-                // dd($insert_array);            
+                      
                 // $check = \DB::select(\DB::raw("select * from  api.tellihealth t
                 // inner join rpm.observations_bp ob
                 // on t.content->>'deviceId'=ob.device_id 
