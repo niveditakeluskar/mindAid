@@ -40,7 +40,8 @@ class PracticesGroup extends Model
         'status',
         'created_by',
         'updated_by',
-        'assign_message'
+        'assign_message',
+        'quality_metrics'
     ];
 
   public static function activeGrpPractices()

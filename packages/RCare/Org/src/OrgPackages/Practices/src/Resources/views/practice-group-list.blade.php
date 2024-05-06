@@ -27,6 +27,7 @@
                           <th>Sr No.</th>
                           <th>{{config('global.practice_group')}}</th>     
                           <th>Enable Messaging</th> 
+                          <th>Quality Metrics</th>
                           <th>Threshold</th> 
                           <th>Last Modified By</th>
                           <th>Last Modified On</th>                 
@@ -80,6 +81,7 @@
                                     </label>
                                 </div>
                             </div>
+              				</div>             
                             <div class="col-md-12 form-group mb-3"> 
                             <label >Quality Metrics</label><br>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -91,6 +93,7 @@
                                     </label>
                                 </div>
               				</div>
+              				</div>   
                         </div>
                     </div>
                 </div>
