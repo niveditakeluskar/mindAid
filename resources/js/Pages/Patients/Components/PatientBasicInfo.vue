@@ -14,7 +14,7 @@
                             <div class="col-md-1">
                                 <img src="@@/assets/images/faces/avatar.png" class='user-image' style="width: 60px;" />
                             </div>
-                            <div class="col-md-11"> 
+                            <div class="col-md-11">
                                 <div class="form-row">
                                     <div class="col-md-2 right-divider">
                                         <div data-toggle="tooltip" data-placement="top" title="Name"
@@ -26,7 +26,8 @@
                                                     :textContent="patientAge"></span> )</span>
                                             <span v-else>'| '</span>
                                         </div>
-                                        <div data-toggle="tooltip" title="DOB" :textContent="patientDob" class="mb-1"></div>
+                                        <div data-toggle="tooltip" title="DOB" :textContent="patientDob" class="mb-1">
+                                        </div>
                                         <div data-toggle="tooltip" id="basix-info-fin_number" title="FIN Number"
                                             data-original-title="Patient FIN Number" class="mb-1 pr-4">
                                             <i class="text-muted i-ID-Card"></i> :
@@ -38,7 +39,8 @@
                                                     :textContent="finNumber"></span>
                                             </a>
                                             <FinNumber ref="finnumberRef" :patientId="patientId" :moduleId="moduleId"
-                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber" :patientFinNumberTab="PatientBasicInfoReload"/>
+                                                :componentId="componentId" :stageid="stageid" :finNumber="finNumber"
+                                                :patientFinNumberTab="PatientBasicInfoReload" />
                                         </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
                                             href="javascript:void(0)" id="show-modal" @click="veteranServicefunction">
@@ -58,30 +60,34 @@
                                                     :textContent="patientMob"></span></b></div>
                                         <div data-toggle="tooltip" id="basix-info-concent-text" title="Consent Text"
                                             data-original-title="Consent Text" class="mb-1 pr-4"><i
-                                                class="text-muted i-Speach-Bubble-Dialog"></i> : <span id="concent_to_text"
-                                                class="patient_concent_to_text"> Consent to text -
+                                                class="text-muted i-Speach-Bubble-Dialog"></i> : <span
+                                                id="concent_to_text" class="patient_concent_to_text"> Consent to text -
                                                 <span v-if="consent_to_text == '0'">NO </span>
                                                 <span v-else-if="consent_to_text == '1'">Yes </span>
                                                 <span v-else>''</span>
                                             </span></div>
-                                        <div data-toggle="tooltip" data-placement="right" title="Address" class="mb-1 pr-4">
+                                        <div data-toggle="tooltip" data-placement="right" title="Address"
+                                            class="mb-1 pr-4">
                                             <i class="text-muted i-Post-Sign"></i>:
                                             <span id="basic-info-address" :textContent="patientAddress"></span>
                                         </div>
                                         <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;"
-                                            href="javascript:void(0)" id="show-modal1" @click="alertThresholdfunction">Alert Thresholds</a>
+                                            href="javascript:void(0)" id="show-modal1"
+                                            @click="alertThresholdfunction">Alert Thresholds</a>
                                         <AlertThresholds ref="alertThresholdsRef" :patientId="patientId"
                                             :moduleId="moduleId" :componentId="componentId" :stageid="stageid"
                                             :patient_systolichigh="patient_systolichigh"
                                             :patient_systoliclow="patient_systoliclow"
                                             :patient_diastolichigh="patient_diastolichigh"
-                                            :patient_diastoliclow="patient_diastoliclow" :patient_bpmhigh="patient_bpmhigh"
-                                            :patient_bpmlow="patient_bpmlow" :patient_oxsathigh="patient_oxsathigh"
-                                            :patient_oxsatlow="patient_oxsatlow" :patient_glucosehigh="patient_glucosehigh"
+                                            :patient_diastoliclow="patient_diastoliclow"
+                                            :patient_bpmhigh="patient_bpmhigh" :patient_bpmlow="patient_bpmlow"
+                                            :patient_oxsathigh="patient_oxsathigh" :patient_oxsatlow="patient_oxsatlow"
+                                            :patient_glucosehigh="patient_glucosehigh"
                                             :patient_glucoselow="patient_glucoselow"
                                             :patient_temperaturehigh="patient_temperaturehigh"
                                             :patient_temperaturelow="patient_temperaturelow"
-                                            :patient_weighthigh="patient_weighthigh" :patient_weightlow="patient_weightlow"
+                                            :patient_weighthigh="patient_weighthigh"
+                                            :patient_weightlow="patient_weightlow"
                                             :patient_spirometerfevhigh="patient_spirometerfevhigh"
                                             :patient_spirometerfevlow="patient_spirometerfevlow"
                                             :patient_spirometerpefhigh="patient_spirometerpefhigh"
@@ -95,33 +101,37 @@
                                         </div>
                                         <div data-toggle="tooltip" data-placement="top" title="Provider"
                                             data-original-title="Patient Provider" class="mb-1">
-                                            <i class="text-muted i-Doctor"></i> :<sapn :textContent="provider_name"> </sapn>
+                                            <i class="text-muted i-Doctor"></i> :<sapn :textContent="provider_name">
+                                            </sapn>
                                         </div>
                                         <div data-toggle="tooltip" data-placement="top" title="EMR"
                                             data-original-title="Patient EMR" class="mb-1">
-                                            <i class="text-muted i-ID-Card"></i> :<sapn :textContent="practice_emr"> </sapn>
+                                            <i class="text-muted i-ID-Card"></i> :<sapn :textContent="practice_emr">
+                                            </sapn>
                                         </div>
                                         <div data-toggle="tooltip" data-placement="top" title="Assign CM"
                                             data-original-title="Assign CM" class="mb-1">
-                                            <i class="text-muted i-Talk-Man"></i> :<sapn :textContent="caremanager_name">
+                                            <i class="text-muted i-Talk-Man"></i> :<sapn
+                                                :textContent="caremanager_name">
                                             </sapn>
                                         </div>
                                     </div>
                                     <div class="col-md-2 right-divider">
                                         <i class="text-muted i-Search-People"></i>
                                         <span data-toggle="tooltip" data-placement="right" title="Enrollment Status"
-                                            data-original-title="Patient Enrollment Status"
-                                            id="PatientStatus" class="mb-1">
-                                        </span> 
+                                            data-original-title="Patient Enrollment Status" id="PatientStatus"
+                                            class="mb-1">
+                                        </span>
                                         <!-- :textContent="patient_module" -->
-                                        <PatientStatus ref="PatientStatusRef" :moduleId="moduleId" :componentId="componentId" :PatientBasicInfoTab="PatientBasicInfoReload"/>
+                                        <PatientStatus ref="PatientStatusRef" :moduleId="moduleId"
+                                            :componentId="componentId" :PatientBasicInfoTab="PatientBasicInfoReload" />
                                         <span patient_enroll_date v-if="patient_module_status == '1'"> Active
                                             <a @click="() => patientServiceStatus('1')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="active">
                                                 <i class="i-Yess i-Yes" id="ideactive" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Activate"></i>
                                             </a>
-                                        </span> 
+                                        </span>
 
                                         <span patient_enroll_date v-if="patient_module_status == '0'"> Suspended
                                             <a @click="() => patientServiceStatus('0')" style="margin-left: 15px;"
@@ -129,8 +139,8 @@
                                                 <i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip"
                                                     data-placement="top" data-original-title="Suspended"></i>
                                             </a>
-                                                From - : <span :textContent="suspended_from_date "></span>
-                                                To - : <span :textContent="suspended_to_date "></span>
+                                            From - : <span :textContent="suspended_from_date"></span>
+                                            To - : <span :textContent="suspended_to_date"></span>
                                         </span>
                                         <span patient_enroll_date v-if="patient_module_status == '2'"> Deactivated
                                             <a @click="() => patientServiceStatus('2')" style="margin-left: 15px;"
@@ -140,7 +150,7 @@
                                             </a>
                                             <span :textContent="suspended_from_date"></span>
                                         </span>
-                                        <span patient_enroll_date v-if="patient_module_status == '3'">  Deceased
+                                        <span patient_enroll_date v-if="patient_module_status == '3'"> Deceased
                                             <a @click="() => patientServiceStatus('3')" style="margin-left: 15px;"
                                                 class="ActiveDeactiveClass" id="deceased">
                                                 <i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip"
@@ -158,21 +168,27 @@
                                             @click="add_devicesfunction">
                                             <i class="plus-icons i-Add" id="adddevice" data-toggle="tooltip"
                                                 data-placement="top" data-original-title="Additional Device"></i></a> -->
-                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId" :moduleId="moduleId"
-                                            :componentId="componentId" :stageid="stageid" />
+                                        <AddDeviceModal ref="AddDeviceModalRef" :patientId="patientId"
+                                            :moduleId="moduleId" :componentId="componentId" :stageid="stageid" />
                                         <br />
-                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId" :componentId="componentId" :stageid="stageid" :patientAddDeviceTab="PatientBasicInfoReload"/>
+                                        <DeviceModal ref="DeviceModalRef" :patientId="patientId" :moduleId="moduleId"
+                                            :componentId="componentId" :stageid="stageid"
+                                            :patientAddDeviceTab="PatientBasicInfoReload" />
                                         <span v-for="service in patientenrolledServices" :key="service">
                                             <span v-if="service.trim() === 'RPM'">
                                                 <!-- Display "btn" if service is "RPM" -->
-                                                <a class="btn btn-info btn-sm" style="background-color:#27a7de;border:none;" href="javascript:void(0)" id="add-patient-devices" @click="add_additional_devicesfunction">Devices</a>
-                                                
+                                                <a class="btn btn-info btn-sm"
+                                                    style="background-color:#27a7de;border:none;"
+                                                    href="javascript:void(0)" id="add-patient-devices"
+                                                    @click="add_additional_devicesfunction">Devices</a>
+
                                             </span>
                                         </span>
                                         <!-- add-patient-devices -->
                                         <div id="newenrolldate">
                                             <span data-toggle="tooltip" data-placement="right" title="Enrolled Date"
-                                                data-original-title="Enrolled Date"><i class="text-muted i-Over-Time"></i> :
+                                                data-original-title="Enrolled Date"><i
+                                                    class="text-muted i-Over-Time"></i> :
                                                 <span :textContent="date_enrolled"></span></span>
                                         </div>
                                         <span data-toggle="tooltip" data-placement="right" title="Device Code"
@@ -185,18 +201,21 @@
                                     <div class="row col-md-3">
                                         <div class="col-md-11 careplan">
                                             <span data-toggle="tooltip" data-placement="right" title="Billable Time"
-                                                data-original-title="Billable Time"><i class="text-muted i-Clock-4"></i> :
+                                                data-original-title="Billable Time"><i class="text-muted i-Clock-4"></i>
+                                                :
                                                 <span class="last_time_spend" :textContent="billable_time">
                                                 </span></span>
                                             <span data-toggle="tooltip" data-placement="right" title="Non Billable Time"
                                                 data-original-title="Non Billable Time"> / <span
-                                                    class="non_billabel_last_time_spend" :textContent="non_billabel_time">
+                                                    class="non_billabel_last_time_spend"
+                                                    :textContent="non_billabel_time">
                                                 </span></span>
                                             <button class="button"
                                                 style="border: 0px none;background: #f7f7f7;outline: none;"><a
-                                                    :href="EditPatientUrl" title="Edit Patient Info" data-toggle="tooltip"
-                                                    data-placement="top" data-original-title="Edit Patient Info"><i
-                                                        class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
+                                                    :href="EditPatientUrl" title="Edit Patient Info"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    data-original-title="Edit Patient Info"><i class=" editform i-Pen-4"
+                                                        style="color: #2cb8ea;"></i></a></button>
                                             <div class="demo-div">
                                                 <div class="stopwatch" id="stopwatch">
                                                     <i class="text-muted i-Timer1"></i> :
@@ -207,7 +226,8 @@
                                                     <label for="Current Running Time" data-toggle="tooltip"
                                                         title="Current Running Time"
                                                         data-original-title="Current Running Time">
-                                                        <span id="time-containers" :textContent="total_time"></span></label>
+                                                        <span id="time-containers"
+                                                            :textContent="total_time"></span></label>
                                                     <button class="button" id="start" data-toggle="tooltip"
                                                         data-placement="top" title="Start Timer"
                                                         data-original-title="Start Timer"
@@ -293,7 +313,7 @@ export default {
         patient_bpmlow: Number,
         patient_oxsathigh: Number,
         patient_oxsatlow: Number,
-        patient_glucosehigh: Number, 
+        patient_glucosehigh: Number,
         patient_glucoselow: Number,
         patient_temperaturehigh: Number,
         patient_temperaturelow: Number,
@@ -369,14 +389,14 @@ export default {
         const patient_spirometerpeflow = ref();
         const billable_time = ref();
         const non_billabel_time = ref();
-        const total_time = ref(); 
+        const total_time = ref();
         const PatientStatusRef = ref();
 
         // const enrolledServices = ref(null);
         const enrolledServices = ref([]);
         const patientenrolledServices = ref([]);
         const patientDetails = ref(null);
-        const EditPatientUrl = '/patients/patient-enrollment/' + props.patientId;
+        const EditPatientUrl = '/patients/patient-reg-enrollment/' + props.patientId;
         var pause_stop_flag = 0;
         var pause_next_stop_flag = 0;
         const showAddPatientDevices = ref(false);
@@ -510,21 +530,21 @@ export default {
                 const countEnrollServices = patientServices.length;
                 const enrollServices = [];
                 const enrolledModule = [];
-                for (let i = 0; i < countEnrollServices; i++) { 
+                for (let i = 0; i < countEnrollServices; i++) {
                     const enrollServicesStatus = patientServices[i].status;
                     let patientEnrollServicesStatus = '';
                     //  console.log(enrollServicesStatus +"enrollServicesStatus");
-                    if(enrollServicesStatus == 1 ){ //'Active';
-                     patientEnrollServicesStatus ='<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
-                    }else if(enrollServicesStatus == 0){ //'Suspended'
-                        patientEnrollServicesStatus ='<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
-                    }else if (enrollServicesStatus == 2){ //'Deactivated'
+                    if (enrollServicesStatus == 1) { //'Active';
+                        patientEnrollServicesStatus = '<i class="i-Yess i-Yes" id="iactive" data-toggle="tooltip" data-placement="top" data-original-title="Activate"></i>';
+                    } else if (enrollServicesStatus == 0) { //'Suspended'
+                        patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
+                    } else if (enrollServicesStatus == 2) { //'Deactivated'
                         patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideactive" data-toggle="tooltip" data-placement="top" data-original-title="Deactivate"></i>';
-                    }else if(enrollServicesStatus == 3){ //'Deceased'
-                        patientEnrollServicesStatus ='<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
+                    } else if (enrollServicesStatus == 3) { //'Deceased'
+                        patientEnrollServicesStatus = '<i class="i-Closee i-Close" id="ideceased" data-toggle="tooltip" data-placement="top" data-original-title="Deceased"></i>';
                     }
 
-                    const module = patientServices[i].module.module +' ';
+                    const module = patientServices[i].module.module + ' ';
                     // console.log(patientServices[i].module.module+"rrrrrr");
                     // if (patientServices[i].module.module.trim().includes('RPM')) {
                     //     $("#add-patient-devices").show();
@@ -570,7 +590,7 @@ export default {
                 $("form").find(":submit").attr("disabled", false);
                 $("form").find(":button").attr("disabled", false);
                 $(".change_status_flag").attr("disabled", false);
-                
+
                 $("#pause").show();
                 $("#stop").show();
                 $("#start").hide();
@@ -622,7 +642,7 @@ export default {
                     $("form").find(":submit").attr("disabled", true);
                     $("form").find(":button").attr("disabled", true);
                     $(".change_status_flag").attr("disabled", true);
-                    
+
                     //$(".last_time_spend").html(response.data.end_time);
                     $('.form_start_time').val(response.data.form_start_time);
                     alert("Timer paused and Time Logged successfully.");
