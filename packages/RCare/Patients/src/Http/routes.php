@@ -353,8 +353,8 @@ Route::middleware(["auth", "web"])->group(function () {
         // 5Dec2023  by pranali
         Route::get('/patient-fetch-call-history-data/{patient_id}/patient-call-history', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientCallHistoryData')->name('patient_call_history');
    
-        Route::get('/patient-reg-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
-        Route::get('/patient-reg-enrollment/{patientId}', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
+        Route::get('/patient-reg-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.reg.enrollment.patients');
+        Route::get('/patient-reg-enrollment/{patientId}', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.reg.enrollment.patients');
 
         Route::post('/register','RCare\Patients\Http\Controllers\PatientController@register');
         Route::post('/registerDeactive','RCare\Patients\Http\Controllers\PatientController@registerDeactive');
