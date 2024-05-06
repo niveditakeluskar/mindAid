@@ -1096,9 +1096,9 @@
                             if (property_exists($value, 'label') && $value->answerFormat == '4') {
                                 foreach ($value->label as $labels) {
                                     if (isset($patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)])) {
-                                        if ($patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)] == 1) {
-                                            echo $labels;
-                                        }
+                                        //if ($patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)] == 1) {
+                                            echo $labels.', ';
+                                        //}
                                     }
                                 }
                             } else {
