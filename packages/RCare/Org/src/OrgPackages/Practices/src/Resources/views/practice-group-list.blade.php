@@ -61,11 +61,7 @@
                                 <label for="practicename">{{config('global.practice_group')}}  <span style="color:red">*</span></label>  
                                 @text("practice_name", ["placeholder" => "Enter ".config('global.practice_group') ]) 
                             </div>  
-                            <!-- <div class="col-md-12 form-group mb-3"> 
-              					<label>
-              						<yes-no name="assign_message" label-no="No" label-yes="Yes">Enable Text</yes-no>
-              					</label>
-              				</div>                -->
+                                        
                             <div class="col-md-3 form-group mb-3"> 
                                 <label for="assign_message" class="control-label">Enable Text</label> <span></span> 
                                 <div class="mr-3 d-inline-flex">    
@@ -81,7 +77,7 @@
                                     </label>
                                 </div>
                             </div>
-              				</div>             
+              				          
                             <div class="col-md-12 form-group mb-3"> 
                             <label >Quality Metrics</label><br>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -95,7 +91,7 @@
               				</div>
               				</div>   
                         </div>
-                    </div>
+                    
                 </div>
                 <div class="card-footer">
                     <div class="mc-footer">
