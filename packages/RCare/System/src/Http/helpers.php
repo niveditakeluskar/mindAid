@@ -1506,6 +1506,27 @@
         return $content;
     }
 
+    function getQm($patient_id){
+        $content = '';
+        $patient_providers = RCare\Patients\Models\PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id', 1)
+            ->where('is_active', 1)->orderby('id', 'desc')->first();
+        if (isset($patient_providers->practice['practice_group'])) {
+            $org = getOrganization($patient_providers->practice['practice_group']);
+            $qa = $org[0]->quality_metrics;
+            if($qa == 1){
+                $module_id = 3;
+                $ccmSubModule = RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',3)->where('status',1)->get('id');
+                $submodule_id = $ccmSubModule[0]->id;
+                $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
+                $stepid = getFormStepId($module_id, $submodule_id, $stage_id, 'Quality Measures');
+                $content = $content . '<input type="hidden" name="qmid" value="' . $module_id . '">';
+                $content = $content . '<input type="hidden" name="qcid" value="' . $submodule_id . '">';
+                $content = $content . '<input type="hidden" name="qsid" value="' . $stage_id . '">';
+                $content = $content. getRelationshipQ($patient_id, $stepid, $module_id, $submodule_id, $stage_id);
+            }
+        }
+        return $content;
+    }
 
     function getRelationshipQ($patient_id, $stepid, $m, $sm, $s)
     {
