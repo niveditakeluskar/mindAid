@@ -21,7 +21,7 @@
                 <div class="col-md-6 form-group mb-6">
                   <label for="practicename">Select Practice<span class="error">*</span></label>
                   <select name="practices" class="custom-select show-tick select2" data-live-search="true"
-                    v-model="selectedPractice" @change="handlePracticeChange">
+                    v-model="selectedPracticeStep" @change="handlePracticeChange">
                     <option value="">Select All Practices</option>
                     <option v-for="practice in practices" :key="practice.id" :value="practice.id">
                       {{ practice.name }}
@@ -258,7 +258,7 @@ export default {
     setup(props, { emit }) {
         const isTimer = ref(false);
         const landingtime = ref('');
-        const selectedPractice = ref('');
+        const selectedPracticeStep = ref('');
         const selectedPCP = ref('');
         let formErrors = ref([]);
         const states = ref([]);
@@ -286,7 +286,7 @@ export default {
         const codes = ref([]);
         const showAlert = ref(false);
 
-        watch(selectedPractice, (newPracticeId) => {
+        watch(selectedPracticeStep, (newPracticeId) => {
           fetchPCP(newPracticeId);
          });
 
@@ -349,8 +349,13 @@ export default {
                 veteran.value = false;
             }
         }
-
-        const getPatientDetails = async() => {
+/* 
+         watch(() => props.patientId, (newVal, oldVal) => {
+          props.patientId = newVal;
+          getPatientDetailsPopulate();
+      console.log('patientId changed:',props.patientId, newVal);
+    }); */
+        const getPatientDetailsPopulate = async() => {
             await axios.get(`/patients/getDetails/${props.patientId}`)
 				.then(response => {
 					const data = response.data;
@@ -359,7 +364,7 @@ export default {
                     mname.value = data.patients[0].mname;
                     dob.value = data.patients[0].dob;
                     mob.value = data.patients[0].mob;
-                    selectedPractice.value = data.practice_id;
+                    selectedPracticeStep.value = data.practice_id;
                     selectedPCP.value = data.provider_id;
                     gender.value = data.gender;
                     selectedVeteran.value = data.military_status;
@@ -380,7 +385,7 @@ export default {
         }
 
         onBeforeMount(() => {
-            getPatientDetails();
+            getPatientDetailsPopulate();
             fetchState();
             fetchCountryCode();
             setLandingTime();
@@ -448,7 +453,7 @@ export default {
 
         return {
             isTimer,
-            selectedPractice,
+            selectedPracticeStep,
             selectedPCP,
             formErrors,
             landingtime,
@@ -481,7 +486,7 @@ export default {
             fetchState,
             fetchVQ,
             checkMiletry,
-            getPatientDetails,
+            getPatientDetailsPopulate,
             updateRegisterForm,
             fetchCountryCode,
             fetchQualityMetric

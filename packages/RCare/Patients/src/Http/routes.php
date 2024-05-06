@@ -354,6 +354,8 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/patient-fetch-call-history-data/{patient_id}/patient-call-history', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientCallHistoryData')->name('patient_call_history');
    
         Route::get('/patient-enrollment/patients', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
+        Route::get('/patient-enrollment/{patientId}', 'RCare\Patients\Http\Controllers\PatientEnrollmentController@patientRegEnroll')->name('patient.enrollment.patients');
+
         Route::post('/register','RCare\Patients\Http\Controllers\PatientController@register');
         Route::post('/registerDeactive','RCare\Patients\Http\Controllers\PatientController@registerDeactive');
         Route::post('/saveenrolleddata','RCare\Patients\Http\Controllers\PatientController@SaveEnrolledScript');

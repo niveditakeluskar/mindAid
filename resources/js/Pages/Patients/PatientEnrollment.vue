@@ -41,7 +41,7 @@
               </div>
               <div class="col-md-6 form-group mb-6">
                 <label for="patientsname">Patient Name</label>
-                <select name="patient" class="custom-select show-tick select2" v-model="selectedPatient">
+                <select name="patient" class="custom-select show-tick select2" v-model="selectedPatient" @change="handlePatientsChange">
                   <option value="" selected>Select Patient</option>
                   <option v-for="patient in patients" :key="patient.id" :value="patient.id">
                     {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
@@ -235,10 +235,22 @@ export default {
     const dateofbirth = ref('');
     const emrnumber = ref('');
 
+
     onMounted(() => {
       document.title = 'Enrollment | Renova Healthcare';
       fetchPractices();
       getStageID();
+      const urlParams = window.location.pathname;
+      const parts = urlParams.split('/');
+      const idFromUrl = parts[parts.length - 1];
+  
+      if (idFromUrl && !isNaN(idFromUrl)) {
+        patientId.value = idFromUrl;
+        getPatientDetails(idFromUrl);
+        selectList.value = 1;
+        step1.value = false;
+        step2.value = false;
+      }
     });
 
     watch(selectedPractice, (newPracticeId) => {
@@ -258,6 +270,8 @@ export default {
         getPatientDetails(newPatientID);
       }
     });
+
+   
 
     const fetchPractices = async () => {
       try {
@@ -297,13 +311,25 @@ export default {
           showAlert.value = true;
           patientId.value = response.data.patient_id;
           isLoading.value = false;
-          setTimeout(() => {
+          if(selectList.value == 1){
+            step3.value = true;
+            showAlert.value = false;
+            step1.value = false;
+            practicePatientFilter.value = false;
+            toShowList.value = false;
+            step2.value = false;
+          }else{
+            setTimeout(() => {
             showAlert.value = false;
             step1.value = false;
             practicePatientFilter.value = false;
             toShowList.value = false;
             step2.value = true;
+            step3.value = false;
+
           }, 3000);
+          }
+        
         }
         isLoading.value = false;
       } catch (error) {
@@ -404,7 +430,9 @@ export default {
     };
 
     const patientRegisterUpdate = () => {
-      firstname.value = '';
+      
+      if (selectList.value == 0) {
+        firstname.value = '';
       lastname.value = '';
       middlename.value = '';
       dateofbirth.value = '';
@@ -414,19 +442,20 @@ export default {
       emrnumber.value = '';
       selectedPracticePatient.value = '';
       selectedPatient.value = '';
-      if (selectList.value == 0) {
         practicePatientFilter.value = false;
         step1.value = true;
+        step3.value = false;
         setTimeout(() => {
           Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
         }, 3000);
 
-      } else {
+      }else{
         step1.value = false;
+        step2.value = false;
         practicePatientFilter.value = true;
       }
 
-    }
+    };
 
     const fetchPatients = async (practiceId) => {
       try {
@@ -452,11 +481,10 @@ export default {
     };
 
     const getPatientDetails = async (id) => {
-      step1.value = true;
-      setTimeout(() => {
-        Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
-      }, 3000);
-      await axios.get(`/patients/getDetails/${id}`)
+      
+      if (selectList.value != 1) {
+        step1.value = true;
+        await axios.get(`/patients/getDetails/${id}`)
         .then(response => {
           const data = response.data;
           patientId.value = data.patients[0].id;
@@ -468,10 +496,24 @@ export default {
           selectedPractice.value = data.practice_id;
           selectedPCP.value = data.provider_id;
           emrnumber.value = data.emr;
+       
+      setTimeout(() => {
+        Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
+      }, 3000);
         })
         .catch(error => {
           console.error('Error fetching data:', error);
         });
+      }
+
+      if (selectList.value == 1) {
+        patientId.value = id;
+        practicePatientFilter.value = false;
+        step3.value = true;
+       
+        }
+
+    
     }
 
     return {
