@@ -228,6 +228,15 @@ class RpmBillingReportController extends Controller
                     $assign_cm = $data[$i]->userfname.' '.$data[$i]->userlname;
                   }
 
+
+                  
+                  if(is_null($data[$i]->device_code)){
+                    $assign_device_code ='';
+                  }else{
+                    $assign_device_code = $data[$i]->device_code;
+                  }
+
+
                   if(is_null($data[$i]->total_reading_days)){
                     $total_reading_days ='';
                   }else{
@@ -308,7 +317,7 @@ class RpmBillingReportController extends Controller
                 //     $unit = $data[$i]->unit;
                $arrydata=array($provider_name,$practiceemr,ucwords(strtolower($data[$i]->pfname)),ucwords(strtolower($data[$i]->plname)),$data[$i]->pfin_number,$pdob,$count_distinct_days,
                 $reading_days,$total_reading_days, 
-                $billing_threshold_days,$reading_exceeds,$dos,$billingcode,$unit,$status,$assign_cm,$dev_traing_date);
+                $billing_threshold_days,$reading_exceeds,$dos,$billingcode,$unit,$status,$assign_cm,$assign_device_code,$dev_traing_date);
                       $qualified_array=array();
                       $nonqualified_array=array();
                        //  for($j=0;$j<$diagnosis[0]->total;$j++) anand
@@ -514,7 +523,7 @@ class RpmBillingReportController extends Controller
             }//end for loop
              
              $dynamicheader=array();
-             $columnheader=array("Provider Name","EMR","First Name","Last Name","Patient Fin Number","DOB","Number of days of readings","Days of the month of readings","Number of unique readings","Billing threshold # days","Billing threshold met","Date of Service","CPT Code","Number of units","Status","Assigned Care Manager","Device Education Date");
+             $columnheader=array("Provider Name","EMR","First Name","Last Name","Patient Fin Number","DOB","Number of days of readings","Days of the month of readings","Number of unique readings","Billing threshold # days","Billing threshold met","Date of Service","CPT Code","Number of units","Status","Assigned Care Manager","Device Code","Device Education Date");
                 for($m=0;$m<count($columnheader);$m++)
              { 
               $dynamicheader[]=array("title"=>$columnheader[$m]);  
@@ -524,7 +533,7 @@ class RpmBillingReportController extends Controller
              {  
                 $varheader="Diagnosis ".$k; 
                 $varheader1= "DiagnosisCondition ".$k;
-                $DiagnosisConditionheader = array("title"=>$varheader1);
+                $DiagnosisConditionheader = array("title"=>$varheader1); 
                 $dynamicheader[]=array("title"=>$varheader);
                 array_push($dynamicheader, $DiagnosisConditionheader); 
 
