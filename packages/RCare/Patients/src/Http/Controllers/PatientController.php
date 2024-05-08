@@ -1177,6 +1177,7 @@ class PatientController extends Controller
         $state = sanitizeVariable($request->state);
         $zipcode = sanitizeVariable($request->zipcode);
         $military_status = sanitizeVariable($request->military_status);
+        $add_1 = sanitizeVariable($request->add_1);
        // $monthly_notes = sanitizeVariable($request->call_monthly_notes);
 
         if ($military_status == '0') {
@@ -1255,7 +1256,7 @@ class PatientController extends Controller
           }
 
           $patient_address_data = array(
-            'add_1'              => '',
+            'add_1'              => $add_1,
             'add_2'              => '',
             'state'              => $state,
             'zipcode'            => $zipcode,
@@ -1665,6 +1666,7 @@ class PatientController extends Controller
         $city = empty($PatientAddress) ? '' : $PatientAddress->city;
         $state = empty($PatientAddress) ? '' : $PatientAddress->state;
         $zipcode = empty($PatientAddress) ? '' : $PatientAddress->zipcode;
+        $add_1 = empty($PatientAddress) ? '' : $PatientAddress->add_1;
         return [
             'patients' => $patients, 
             'practice_id' => $patient_providers->practice_id,
@@ -1675,6 +1677,7 @@ class PatientController extends Controller
             'city' => $city,
             'state' => $state,
             'zipcode' => $zipcode,
+            'add_1' => $add_1,
             'marital_status' => $marital_status
         ];
     }
@@ -1730,6 +1733,9 @@ class PatientController extends Controller
         $content_title = sanitizeVariable($request->content_title);
         $contact_via = "Call";
         $template_id = sanitizeVariable($request->script);
+        if($template_id == '' || $template_id == null){
+            $template_id = 0;
+        }
         $template = array(
             'content'            => $question, 
             'content_title'      => $content_title,
@@ -1749,6 +1755,7 @@ class PatientController extends Controller
             'created_by'    => session()->get('userid')
         );
 
+       
         $insert_content = ContentTemplateUsageHistory::create($questionnairehistory);
 
         $history_id      = $insert_content->id;
