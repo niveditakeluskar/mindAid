@@ -194,7 +194,7 @@
         <label for="add_1">Address <span class="error">*</span></label>
         <input id="addr1" name="add_1" type="text" v-model="address" autocomplete="off" class="form-control">
       </div>
-      <div class="col-md-4 form-group">
+      <div class="col-md-6 form-group">
         <label>We can offer some additional services to Veterans or their Spouse's, were you or your spousea Veteran?
           <span class="error">*</span></label>
         <select id="military" name="military_status" class="custom-select show-tick" v-model="selectedVeteran"
@@ -417,6 +417,7 @@ export default {
         if (response && response.status == 200) {
           updateTimer(props.patientId, val, props.moduleId);
           showAlert.value = true;
+          window.scrollTo(0, 0);
           //patientId.value = response.data.patient_id;
           isLoading.value = false;
           setTimeout(() => {
