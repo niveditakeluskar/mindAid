@@ -24,8 +24,8 @@ class PatientEnrollScript extends FormRequest
    public function rules()
     {
         return [
-            "script"                     => "required",
-            "text_msg"                     => "required", 
+           // "script"                     => "required",
+           // "text_msg"                     => "required", 
         ];
     }
 

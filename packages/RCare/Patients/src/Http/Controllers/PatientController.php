@@ -1733,6 +1733,9 @@ class PatientController extends Controller
         $content_title = sanitizeVariable($request->content_title);
         $contact_via = "Call";
         $template_id = sanitizeVariable($request->script);
+        if($template_id == '' || $template_id == null){
+            $template_id = 0;
+        }
         $template = array(
             'content'            => $question, 
             'content_title'      => $content_title,
@@ -1752,6 +1755,7 @@ class PatientController extends Controller
             'created_by'    => session()->get('userid')
         );
 
+       
         $insert_content = ContentTemplateUsageHistory::create($questionnairehistory);
 
         $history_id      = $insert_content->id;

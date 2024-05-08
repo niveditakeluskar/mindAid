@@ -425,6 +425,18 @@ export default {
               isTimer.value = false;
               emit('aceptDecline', 0);
             } else if (val == 2) {
+              const previousURL = document.referrer;
+              // console.log(previousURL);
+              const urlParams = window.location.pathname;
+              const parts = urlParams.split('/');
+              const idFromUrl = parts[parts.length - 1];
+              console.log(idFromUrl);
+              if (idFromUrl == 'patients') {
+                isTimer.value = false;
+                emit('aceptDecline', 0);
+              } else {
+                window.location.href = previousURL;
+              }
 
             } else {
               //router.push('/another-route');
