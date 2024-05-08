@@ -194,7 +194,9 @@
         <label for="add_1">Address <span class="error">*</span></label>
         <input id="addr1" name="add_1" type="text" v-model="address" autocomplete="off" class="form-control">
       </div>
-      <div class="col-md-6 form-group">
+    </div>
+    <div class="row">
+      <div class="col-md-4 form-group">
         <label>We can offer some additional services to Veterans or their Spouse's, were you or your spousea Veteran?
           <span class="error">*</span></label>
         <select id="military" name="military_status" class="custom-select show-tick" v-model="selectedVeteran"
@@ -423,8 +425,9 @@ export default {
           setTimeout(() => {
             showAlert.value = false;
             if (val == 0) {
-              isTimer.value = false;
-              emit('aceptDecline', 0);
+              //isTimer.value = false;
+              //emit('aceptDecline', 0);
+              window.location.href = "/patients/patient-reg-enrollment/patients";
             } else if (val == 2) {
               const previousURL = document.referrer;
               // console.log(previousURL);
