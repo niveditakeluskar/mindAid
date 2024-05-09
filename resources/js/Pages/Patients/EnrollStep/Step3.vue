@@ -199,6 +199,8 @@
         <label for="add_1">Address <span class="error">*</span></label>
         <input id="addr1" name="add_1" type="text" v-model="address" autocomplete="off" class="form-control">
       </div>
+      <div class="form-row invalid-feedback" v-if="formErrors.add_1" style="display: block;">{{
+    formErrors.add_1[0] }}</div>
     </div>
     <div class="row">
       <div class="col-md-4 form-group">
