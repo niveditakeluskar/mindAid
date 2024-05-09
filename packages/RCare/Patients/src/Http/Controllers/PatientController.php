@@ -1422,6 +1422,10 @@ class PatientController extends Controller
         }
 
         if (isset($request->template_id)) {
+
+            $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+            $new_sub_sequence = $last_sub_sequence + 1;
+
             foreach ($template_id as $key => $value) {
                 CallWrap::where('patient_id', $patient_id)->where('template_type', 'dt' . $value)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
                 $DT_topics0 = [];
