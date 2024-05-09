@@ -40,6 +40,8 @@ class PatientEnrollUpdateRequest extends FormRequest
             "military_status"                 => "required|int",
             "preferred_contact"               => "nullable|integer",
             "gender"                          => "required|gender", 
+            "add_1"                           => "required|max:70",
+
         ];
     }
 

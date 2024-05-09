@@ -1307,6 +1307,8 @@ class PatientController extends Controller
         $end_time     = sanitizeVariable($request->end_time);
         $module_id    = sanitizeVariable($request->module_id);
         $component_id = sanitizeVariable($request->component_id);
+        $moduleid     = sanitizeVariable($request->module_id);
+        $componentid  = sanitizeVariable($request->component_id);
         $stage_id     = 0;
         $billable     = 1;
         $form_name    = sanitizeVariable($request->form_name);
@@ -1406,6 +1408,132 @@ class PatientController extends Controller
                     }
                     $insert_query = QuestionnaireTemplatesUsageHistory::create($data);
                 }
+            }
+        }
+
+        if (isset($request->template_id)) {
+            $template_id  = sanitizeVariable($request->template_id);
+        }
+
+        if (isset($request->template_id)) {
+            foreach ($template_id as $key => $value) {
+                CallWrap::where('patient_id', $patient_id)->where('template_type', 'dt' . $value)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+            }
+        }
+
+        if (isset($request->template_id)) {
+
+            $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', $sequence)->max('sub_sequence');
+            $new_sub_sequence = $last_sub_sequence + 1;
+
+            foreach ($template_id as $key => $value) {
+                CallWrap::where('patient_id', $patient_id)->where('template_type', 'dt' . $value)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                $DT_topics0 = [];
+                $dti = sanitizeMultiDimensionalArray($request['DT' . $key]);
+                $i = 0;
+                while (isset($dti['qs'])) {
+                    if ($i == 0) {
+                        $qtn = $dti['qs']['q'];
+                        if (isset($dti['qs']['opt'])) {
+                            $ins = 1;
+                            foreach ($dti['qs']['opt'] as $keyin => $val) {
+                                if (isset($dti['qs'])) {
+                                    $DT_topics0[$qtn] = $dti['qs']['opt'][$keyin]['val'];
+                                    for ($nextindex = 1; $nextindex <= 6; $nextindex++) {
+                                        if (isset($dti['qs']['opt'][$keyin + $nextindex]['val'])) {
+                                            $DT_topics0[$qtn] .= ", " . $dti['qs']['opt'][$keyin + $nextindex]['val'];
+                                        }
+                                    }
+                                    $dti = $dti['qs']['opt'][$keyin];
+                                }
+                            }
+                        } else {
+                            $ins = 0;
+                        }
+                    } else {
+                        $l = 0;
+                        for ($qsl = 1; $qsl <= 6; $qsl++) {
+                            if (isset($dti['qs'][$qsl]['opt'])) {
+                                $l = $qsl;
+                            }
+                        }
+                        if (isset($dti['qs'][$l]['q'])) {
+                            $qtn = $dti['qs'][$l]['q'];
+                        }
+                        if (isset($dti['qs'][$l]['opt'])) {
+                            foreach ($dti['qs'][$l]['opt'] as $keyin => $val) {
+                                if (isset($dti['qs'])) {
+                                    $DT_topics0[$qtn] = $dti['qs'][$l]['opt'][$keyin]['val'];
+                                    for ($nextindex = 1; $nextindex <= 6; $nextindex++) {
+                                        if (isset($dti['qs'][$l]['opt'][$keyin + $nextindex]['val'])) {
+                                            $DT_topics0[$qtn] .= ", " . $dti['qs'][$l]['opt'][$keyin + $nextindex]['val'];
+                                        }
+                                    }
+                                    $dti = $dti['qs'][$l]['opt'][$keyin];
+                                }
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    $i++;
+                }
+                $sqind = 0;
+                foreach ($DT_topics0 as $inkey => $invalue) {
+                    $new_sub_sequence = $new_sub_sequence + 1;
+                    $notes = array(
+                        'uid'                 => $patient_id,
+                        'record_date'         => Carbon::now(),
+                        'topic'               => $inkey,
+                        'notes'               => $invalue,
+                        'created_by'          => session()->get('userid'),
+                        'patient_id'          => $patient_id,
+                        'template_type'       => 'dt' . $value,
+                        'sequence'            => $sequence,
+                        'sub_sequence'        => $new_sub_sequence,
+                        'question_sequence'   => $value,
+                        'question_sub_sequence' => sanitizeVariable($request->sq[$value][$sqind])
+                    );
+                    //print_r($notes);
+                    if ($invalue != '') {
+                        CallWrap::create($notes);
+                    }
+                    $sqind++;
+                }
+                $data = array(
+                    'contact_via'   => 'decisiontree',
+                    'template_type' => 6,
+                    'uid'           => $patient_id,
+                    'module_id'     => $moduleid[$key],
+                    'component_id'  => $componentid[$key],
+                    'template_id'   => $value,
+                    'template'      => json_encode(sanitizeMultiDimensionalArray($request['DT' . $key])),
+                    'created_by'    => session()->get('userid'),
+                    'patient_id'    => $patient_id,
+                    'monthly_notes' => sanitizeVariable($request->monthly_notes[$key]),
+                    'stage_code'    => sanitizeVariable($request->stage_code[$key]),
+                    'step_id'       => 0,
+                );
+                $new_sub_sequence = $new_sub_sequence + 1;
+                $monthly_notes_insert = array(
+                    'uid'                 => $patient_id,
+                    'record_date'         => Carbon::now(),
+                    'topic'               => sanitizeVariable($request->monthly_topic[$key]),
+                    'notes'               => sanitizeVariable($request->monthly_notes[$key]),
+                    'created_by'          => session()->get('userid'),
+                    'patient_id'          => $patient_id,
+                    'template_type'       => 'dt' . $value,
+                    'sequence'            => $sequence,
+                    'sub_sequence'        => $new_sub_sequence
+                );
+                if (sanitizeVariable($request->monthly_notes[$key]) != "") {
+                    CallWrap::create($monthly_notes_insert);
+                }
+                if ($ins == 1) {
+                    QuestionnaireTemplatesUsageHistory::create($data);
+                }
+                $module_id    = sanitizeVariable($moduleid[$key]);
+                $component_id = sanitizeVariable($componentid[$key]);
             }
         }
 

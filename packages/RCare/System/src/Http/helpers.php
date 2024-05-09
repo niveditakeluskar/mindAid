@@ -1508,6 +1508,7 @@
 
     function getQm($patient_id){
         $content = '';
+        $last_key = 0;
         $patient_providers = RCare\Patients\Models\PatientProvider::where('patient_id', $patient_id)->with('practice')->with('provider')->with('users')->where('provider_type_id', 1)
             ->where('is_active', 1)->orderby('id', 'desc')->first();
         if (isset($patient_providers->practice['practice_group'])) {
@@ -1519,10 +1520,70 @@
                 $submodule_id = $ccmSubModule[0]->id;
                 $stage_id = getFormStageId($module_id, $submodule_id, "General Question");
                 $stepid = getFormStepId($module_id, $submodule_id, $stage_id, 'Quality Measures');
+                $decisionTree = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('module_id', $module_id)->where('status', 1)->where('stage_id', $stage_id)->where('stage_code', $stepid)->orderBy('sequence', 'ASC')->get();
+                $genQuestion = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('module_id', $module_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $stepid)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
+                $off = 1;
+                foreach ($genQuestion as $key => $value) {
+                    $editGq = json_decode($value['template']);
+                    $javaObj = str_replace("'", "&#39;", json_encode($editGq));
+                    $sc = $value["stage_code"];
+                    // $content = $content . "<button type='button' id='RenderGeneralQuestion".$key."' onclick='checkQuestion($javaObj,$off,$sc)' style='display: none'></button>";
+                    $off++;
+                }   
+
+                foreach ($decisionTree as $value) {
+                    $months = json_decode($value['display_months']);
+                    $queData = json_decode($value['question']);
+                    if (empty($months)) {
+                        $months = array("All");
+                    }
+                    if (in_array(date('F'), $months) || in_array("All", $months)) {
+                        $content = $content . '<input type="hidden" name="module_id[' . $last_key . ']" value="' . $module_id . '">';
+                        $content = $content . '<input type="hidden" name="component_id[' . $last_key . ']" value="' . $submodule_id . '">';
+        
+                        $content = $content . '<input type="hidden"  id ="stage_id" name="stage_id[' . $last_key . ']" value="' . $value['stage_id'] . '">';
+                        $content = $content . '<input type="hidden" name="stage_code[' . $last_key . ']" value="' . $value['stage_code'] . '">';
+                        $content = $content . '<input type="hidden" name="step_id" value="' . $value['stage_code'] . '">';
+                        $content = $content . '<input type="hidden" name="form_name" value="general_question_form">';
+                        if ($value['template_type_id'] == 6) {
+                            $content = $content . '<input type="hidden" name="template_id[' . $last_key . ']" value="' . $value['id'] . '">';
+                            $content = $content . '<div class="mb-4 radioVal" id="' . $last_key . 'general_question11">';
+                            $que_val = trim(preg_replace('/\s+/', ' ', $queData->question->qs->q));
+                            $content = $content . '<label for="are-you-in-pain" class="col-md-12"><input type="hidden" name="DT' . $last_key . '[qs][q]" value="' . $que_val . '">' . $queData->question->qs->q . '</label>';
+                            $content = $content . '<input type="hidden" name="sq[' . $value['id'] . '][0]" value="0">';
+                            $content = $content . '<div class="d-inline-flex mb-2 col-md-12">';
+                            if (property_exists($queData->question->qs, 'opt')) {
+                                $rendOption = renderTrees($queData->question->qs->opt, 'DT' . $last_key . '[qs][q]', '1', $last_key, $queData->question->qs->AF, 0, $value['id']);
+                                $content = $content . $rendOption;
+                            }
+                            $content = $content . '</div>';
+                            $content = $content . '<p class="message" style="color:red"></p>';
+                            $content = $content . '</div>';
+                            $content = $content . '<div id="question' . $last_key . '"></div>';
+                            $content = $content . '<div id="in-pain">';
+                            $content = $content . '<label for="" class="mr-3">Current Monthly Notes:</label>';
+                            $content = $content . '<input type="hidden" name="monthly_topic[' . $last_key . ']" value="' . $value['content_title'] . ' Related Monthly Notes">';
+                            $content = $content . '<textarea class="form-control" placeholder="Monthly Notes" name="monthly_notes[' . $last_key . ']">';
+                            foreach ($genQuestion as $key => $val) {
+                                if ($val->template_id == $value['id']) {
+                                    $content = $content . $val->monthly_notes;
+                                }
+                            }
+                            $content = $content . '</textarea>';
+                            $content = $content . '<p class="txtmsg" style="color:red"></p>';
+                            $content = $content . '</div>';
+                            $content = $content . '<hr>';
+                            $last_key++;
+                        }
+                    }
+                }
+                $last_key = $last_key;
+
                 $content = $content . '<input type="hidden" name="qmid" value="' . $module_id . '">';
                 $content = $content . '<input type="hidden" name="qcid" value="' . $submodule_id . '">';
                 $content = $content . '<input type="hidden" name="qsid" value="' . $stage_id . '">';
                 $content = $content. getRelationshipQ($patient_id, $stepid, $module_id, $submodule_id, $stage_id);
+                //$content = $content. getDecisionTree($module_id, $patient_id, $stepid, $submodule_id);
             }
         }
         return $content;

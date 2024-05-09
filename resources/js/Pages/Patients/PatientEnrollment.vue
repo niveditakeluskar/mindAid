@@ -18,6 +18,11 @@
               <button type="button" class="close" data-dismiss="alert">x</button>
               <strong>Patient Register successfully! </strong><span id="text"></span>
             </div>
+            <div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"
+              :style="{ display: showAlerts ? 'block' : 'none' }">
+              <button type="button" class="close" data-dismiss="alert">× </button>
+              <strong>Please Fill All Mandatory Fields!</strong>
+            </div>
             <div class="form-group">
               <select name="patient_list" class="custom-select show-tick" v-model="selectList"
                 @change="patientRegisterUpdate" v-if="toShowList">
@@ -41,7 +46,8 @@
               </div>
               <div class="col-md-6 form-group mb-6">
                 <label for="patientsname">Patient Name</label>
-                <select name="patient" class="custom-select show-tick select2" v-model="selectedPatient" @change="handlePatientsChange">
+                <select name="patient" class="custom-select show-tick select2" v-model="selectedPatient"
+                  @change="handlePatientsChange">
                   <option value="" selected>Select Patient</option>
                   <option v-for="patient in patients" :key="patient.id" :value="patient.id">
                     {{ patient.fname }} {{ patient.mname }} {{ patient.lname }}
@@ -219,6 +225,7 @@ export default {
     const patients = ref([]);
     const toShowList = ref(true);
     const showAlert = ref(false);
+    const showAlerts = ref(false);
     const options = [
       { label: 'Register New Patient / Update Existing Patient', value: '' },
       { label: 'Register New', value: 0 },
@@ -243,7 +250,7 @@ export default {
       const urlParams = window.location.pathname;
       const parts = urlParams.split('/');
       const idFromUrl = parts[parts.length - 1];
-  
+
       if (idFromUrl && !isNaN(idFromUrl)) {
         patientId.value = idFromUrl;
         getPatientDetails(idFromUrl);
@@ -271,7 +278,7 @@ export default {
       }
     });
 
-   
+
 
     const fetchPractices = async () => {
       try {
@@ -311,31 +318,35 @@ export default {
           showAlert.value = true;
           patientId.value = response.data.patient_id;
           isLoading.value = false;
-          if(selectList.value == 1){
+          if (selectList.value == 1) {
             step3.value = true;
             showAlert.value = false;
             step1.value = false;
             practicePatientFilter.value = false;
             toShowList.value = false;
             step2.value = false;
-          }else{
+          } else {
             setTimeout(() => {
-            showAlert.value = false;
-            step1.value = false;
-            practicePatientFilter.value = false;
-            toShowList.value = false;
-            step2.value = true;
-            step3.value = false;
+              showAlert.value = false;
+              step1.value = false;
+              practicePatientFilter.value = false;
+              toShowList.value = false;
+              step2.value = true;
+              step3.value = false;
 
-          }, 3000);
+            }, 3000);
           }
-        
+
         }
         isLoading.value = false;
       } catch (error) {
         isLoading.value = false;
         if (error.response && error.response.status === 422) {
+          showAlerts.value = true;
           formErrors.value = error.response.data.errors;
+          setTimeout(() => {
+            showAlerts.value = false;
+          }, 3000);
         } else {
           console.error('Error submitting form:', error);
         }
@@ -430,18 +441,18 @@ export default {
     };
 
     const patientRegisterUpdate = () => {
-      
+
       if (selectList.value == 0) {
         firstname.value = '';
-      lastname.value = '';
-      middlename.value = '';
-      dateofbirth.value = '';
-      phonenumber.value = '';
-      selectedPractice.value = '';
-      selectedPCP.value = '';
-      emrnumber.value = '';
-      selectedPracticePatient.value = '';
-      selectedPatient.value = '';
+        lastname.value = '';
+        middlename.value = '';
+        dateofbirth.value = '';
+        phonenumber.value = '';
+        selectedPractice.value = '';
+        selectedPCP.value = '';
+        emrnumber.value = '';
+        selectedPracticePatient.value = '';
+        selectedPatient.value = '';
         practicePatientFilter.value = false;
         step1.value = true;
         step3.value = false;
@@ -449,7 +460,7 @@ export default {
           Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
         }, 3000);
 
-      }else{
+      } else {
         step1.value = false;
         step2.value = false;
         practicePatientFilter.value = true;
@@ -481,39 +492,39 @@ export default {
     };
 
     const getPatientDetails = async (id) => {
-      
+
       if (selectList.value != 1) {
         step1.value = true;
         await axios.get(`/patients/getDetails/${id}`)
-        .then(response => {
-          const data = response.data;
-          patientId.value = data.patients[0].id;
-          firstname.value = data.patients[0].fname;
-          lastname.value = data.patients[0].lname;
-          middlename.value = data.patients[0].mname;
-          dateofbirth.value = data.patients[0].dob;
-          phonenumber.value = data.patients[0].mob;
-          selectedPractice.value = data.practice_id;
-          selectedPCP.value = data.provider_id;
-          emrnumber.value = data.emr;
-       
-      setTimeout(() => {
-        Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
-      }, 3000);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+          .then(response => {
+            const data = response.data;
+            patientId.value = data.patients[0].id;
+            firstname.value = data.patients[0].fname;
+            lastname.value = data.patients[0].lname;
+            middlename.value = data.patients[0].mname;
+            dateofbirth.value = data.patients[0].dob;
+            phonenumber.value = data.patients[0].mob;
+            selectedPractice.value = data.practice_id;
+            selectedPCP.value = data.provider_id;
+            emrnumber.value = data.emr;
+
+            setTimeout(() => {
+              Inputmask({ mask: '(999) 999-9999' }).mask("#mob");
+            }, 3000);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
       }
 
       if (selectList.value == 1) {
         patientId.value = id;
         practicePatientFilter.value = false;
         step3.value = true;
-       
-        }
 
-    
+      }
+
+
     }
 
     return {
@@ -559,7 +570,8 @@ export default {
       emrnumber,
       toShowList,
       getPatientDetails,
-      showAlert
+      showAlert,
+      showAlerts
     }
   }
 };

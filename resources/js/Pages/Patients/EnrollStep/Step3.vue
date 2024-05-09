@@ -7,6 +7,11 @@
     <button type="button" class="close" data-dismiss="alert">x</button>
     <strong>Patient Update successfully! </strong><span id="text"></span>
   </div>
+  <div class="alert alert-danger alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"
+    :style="{ display: showAlerts ? 'block' : 'none' }">
+    <button type="button" class="close" data-dismiss="alert">× </button>
+    <strong>Please Fill All Mandatory Fields!</strong>
+  </div>
   <form method="post" enctype="multipart/form-data" name="patient_registrations_form" id="patient_registrations_form"
     @submit.prevent="updateRegisterForm">
     <input type="hidden" name="patient_id" :value="patientId">
@@ -194,6 +199,8 @@
         <label for="add_1">Address <span class="error">*</span></label>
         <input id="addr1" name="add_1" type="text" v-model="address" autocomplete="off" class="form-control">
       </div>
+      <div class="form-row invalid-feedback" v-if="formErrors.add_1" style="display: block;">{{
+    formErrors.add_1[0] }}</div>
     </div>
     <div class="row">
       <div class="col-md-4 form-group">
@@ -299,6 +306,7 @@ export default {
     const selectedCode = ref('');
     const codes = ref([]);
     const showAlert = ref(false);
+    const showAlerts = ref(false);
 
     watch(selectedPracticeStep, (newPracticeId) => {
       fetchPCP(newPracticeId);
@@ -452,7 +460,12 @@ export default {
       } catch (error) {
         isLoading.value = false;
         if (error.response && error.response.status === 422) {
+          window.scrollTo(0, 0);
+          showAlerts.value = true;
           formErrors.value = error.response.data.errors;
+          setTimeout(() => {
+            showAlerts.value = false;
+          }, 3000);
         } else {
           console.error('Error submitting form:', error);
         }
@@ -476,10 +489,85 @@ export default {
       await axios.get(`/patients/qualityMQuestion/${props.patientId}`)
         .then(response => {
           qualitymetric.value = response.data;
+          savedGeneralQuestion();
         })
         .catch(error => {
           console.error('Error fetching data:', error);
         });
+    }
+
+    const savedGeneralQuestion = async () => {
+      await axios.get(`/ccm/get-savedQuestion/3/${props.patientId}/0/saved_question`)
+        .then(response => {
+          let genQuestion = response.data;
+          var off = 1;
+          for (var i = 0; i < genQuestion.length; i++) {
+            var editGq = JSON.parse(genQuestion[i].template);
+            var javaObj = (genQuestion[i].template).replace("'", "&#39;");
+            checkQuestion(editGq, off);
+            off++;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    const checkQuestion = async (obj, i) => {
+      var tree = JSON.stringify(obj);
+      var treeobj = JSON.parse(tree);
+      for (var j = 1; j < 15; j++) {
+        //Object.keys(treeobj.qs.opt).forEach(function(j) {
+        if ((treeobj.qs.opt).hasOwnProperty(j)) {
+          var prnt = $('input[value="' + (treeobj.qs.q).replace(/[\r\n]+/gm, "") + '"]').parents('.mb-4').attr('id');
+          $('#' + prnt).find('input:radio[value="' + treeobj.qs.opt[j].val + '"], input:checkbox[value="' + treeobj.qs.opt[j].val + '"]').attr('checked', true).change();
+          if ($('#' + prnt).find('input[type=text]').attr('id')) {
+            var textid = $('#' + prnt).find('input[type=text]').attr('id');
+            $('#' + textid).val(treeobj.qs.opt[j].val);
+          }
+          var obj1 = treeobj.qs.opt;
+          renderEditquestion(obj1, j, i);
+        }
+      }
+    }
+
+    const renderEditquestion = async (obj1, i, nct) => {
+      var tree = JSON.stringify(obj1);
+      var treeobj = JSON.parse(tree);
+      var l = 1;
+      var objj = '';
+      var z = 0;
+      if (treeobj[i].hasOwnProperty('qs')) {
+        Object.keys(treeobj[i].qs).forEach(function (key) {
+          if ((treeobj[i].qs[key]).hasOwnProperty('opt')) {
+            Object.keys(treeobj[i].qs[key].opt).forEach(function (j) {
+              if ((treeobj[i].qs[key].opt).hasOwnProperty(j)) {
+                var qval = (treeobj[i].qs[key].q).replace(/[\r\n]+/gm, "");
+                var prnt = $('input[value="' + qval + '"]').parents('.mb-4').attr('id');
+                if (prnt != undefined) {
+                  var string1 = prnt;
+                  var result = string1.substring(string1.indexOf('general_question') + 1);
+                  var strValue = result;
+                  strValue = strValue.replace('general_question', '').replace('eneral_question', '');
+                  var strValue1 = string1.replace('general_question' + strValue, '');
+                  if ($('#options' + strValue + '' + strValue1).find('input[type=text]').attr('id')) {
+                    var inputbox = $('#options' + strValue + '' + strValue1).find('input[type=text]').attr('id');
+                    $("#" + inputbox).val(treeobj[i].qs[key].opt[j].val);
+                  }
+                }
+
+                $('#' + prnt).find('input:radio[value="' + treeobj[i].qs[key].opt[j].val + '"], input:checkbox[value="' + treeobj[i].qs[key].opt[j].val + '"]').attr('checked', true).change();
+                objj = treeobj[i].qs[key].opt;
+                z = j;
+                // this.renderEditquestion(objj, j, nct);
+              }
+            });
+          }
+        });
+      }
+      if (z != 0) {
+        renderEditquestion(objj, z, nct);
+      }
     }
 
     return {
@@ -513,6 +601,7 @@ export default {
       concent,
       notes,
       showAlert,
+      showAlerts,
       fetchPCP,
       setLandingTime,
       fetchState,
@@ -521,7 +610,10 @@ export default {
       getPatientDetailsPopulate,
       updateRegisterForm,
       fetchCountryCode,
-      fetchQualityMetric
+      fetchQualityMetric,
+      savedGeneralQuestion,
+      checkQuestion,
+      renderEditquestion
     }
   }
 };
