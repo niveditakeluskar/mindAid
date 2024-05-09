@@ -886,6 +886,9 @@ class CcmController extends Controller
         $ccmSubModule = ModuleComponents::where('components', "Monthly Monitoring")->where('module_id', $ccmModule)->where('status', 1)->get('id');
         $ccmSubModule = (isset($ccmSubModule) && ($ccmSubModule->isNotEmpty())) ? $ccmSubModule[0]->id : 0;
         $ccmSID = getFormStageId($ccmModule, $ccmSubModule, 'General Question');
+        if($step_id == 0){
+            $step_id = getFormStepId($module_id, $ccmSubModule, $ccmSID, 'Quality Measures');
+        }
         if ($enrollinRPM > 1) {
             $genQuestion = QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('contact_via', 'decisiontree')->where('step_id', 0)->where('stage_code', $step_id)->whereMonth('updated_at', date('m'))->whereYear('updated_at', date('Y'))->get();
         } else {
