@@ -1179,6 +1179,9 @@ class PatientController extends Controller
         $military_status = sanitizeVariable($request->military_status);
         $add_1 = sanitizeVariable($request->add_1);
        // $monthly_notes = sanitizeVariable($request->call_monthly_notes);
+       $secondary_country_code = sanitizeVariable($request->secondary_country_code);
+       $home_number = sanitizeVariable($request->home_number);
+       $secondary_cell_phone = sanitizeVariable($request->secondary_cell_phone);
 
         if ($military_status == '0') {
             $vtemplate = sanitizeVariable(json_encode($request->question['question']));
@@ -1197,7 +1200,10 @@ class PatientController extends Controller
             'created_by'                 => session()->get('userid'),
             'country_code'               => $country_code,
             'primary_cell_phone'         => $primary_cell_phone,
-            'consent_to_text'            => $consent_to_text
+            'consent_to_text'            => $consent_to_text,
+            'home_number'                => $home_number,
+            'secondary_country_code'     => $secondary_country_code,
+            'secondary_cell_phone'       => $secondary_cell_phone
         );
 
         // print_r($patient_data);

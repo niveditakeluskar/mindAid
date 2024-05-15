@@ -111,7 +111,7 @@
     </div>
     <div class="row">
       <div class="col-md-3 form-group">
-        <label>Country Code</label>
+        <label>Primary No. Country Code</label>
         <select name="country_code" class="custom-select show-tick select2" data-live-search="true"
           v-model="selectedCode">
           <option value="">Select Country Code</option>
@@ -159,6 +159,47 @@
           <label class="btn btn-outline-primary btn-toggle" :class="{ active: concent == 0 }">
             <input type="radio" name="consent_to_text" id="option2" value="0" autocomplete="off" v-model="concent"
               :checked="concent == 0"> No
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 form-group">
+        <label>Secondary No. Country Code</label>
+        <select name="secondary_country_code" class="custom-select show-tick select2" data-live-search="true"
+          v-model="selectedsCode">
+          <option value="">Select Country Code</option>
+          <option v-for="code in codes" :key="code.countries_isd_code" :value="'+' + code.countries_isd_code">
+            {{ code.countries_name }} ({{ code.countries_iso_code }}) {{ code.countries_isd_code }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-3 form-group">
+        <label for="mob">Secondary Phone Number</label>
+        <div class="input-group form-group">
+          <div class="input-group-prepend btn-group btn-group-toggle">
+            <label class="btn btn-outline-primary" for="phone-secondary-preferred">
+              Preferred
+              <input id="phone-secondary-preferred" value="0" data-feedback="contact-preferred-feedback"
+                name="preferred_contact" type="radio" autocomplete="off" class="form-control">
+            </label>
+          </div>
+          <input id="home_number" data-inputmask="'mask': '(999) 999-9999'" name="home_number" type="text" v-model="homemob"
+            autocomplete="off" class="form-control" im-insert="true">
+        </div>
+        <div class="form-row invalid-feedback" v-if="formErrors.home_number" style="display: block;">{{
+    formErrors.home_number[0] }}</div>
+      </div>
+      <div class="col-md-2 form-group">
+        <label>Is Cell Phone</label><br>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-outline-primary btn-toggle " :class="{ active: isscell == 1 }">
+            <input type="radio" name="secondary_cell_phone" id="option1" value="1" autocomplete="off" v-model="isscell"
+              :checked="isscell == 1"> Yes
+          </label>
+          <label class="btn btn-outline-primary btn-toggle" :class="{ active: isscell == 0 }">
+            <input type="radio" name="secondary_cell_phone" id="option2" value="0" autocomplete="off" v-model="isscell"
+              :checked="isscell == 0"> No
           </label>
         </div>
       </div>
@@ -291,6 +332,7 @@ export default {
     const mname = ref('');
     const dob = ref('');
     const mob = ref('');
+    const homemob = ref('');
     const gender = ref('');
     const marital_status = ref('');
     const country_code = ref('');
@@ -300,10 +342,12 @@ export default {
     const address = ref('');
     const military_status = ref('');
     const iscell = ref('');
+    const isscell = ref('');
     const concent = ref('');
     const notes = ref('');
     const isLoading = ref(false);
     const selectedCode = ref('');
+    const selectedsCode = ref('');
     const codes = ref([]);
     const showAlert = ref(false);
     const showAlerts = ref(false);
@@ -314,6 +358,7 @@ export default {
 
     onMounted(() => {
       Inputmask({ mask: '(999) 999-9999' }).mask('#mob');
+      Inputmask({ mask: '(999) 999-9999' }).mask('#home_number');
     });
 
     const setLandingTime = async () => {
@@ -397,6 +442,9 @@ export default {
           concent.value = data.patients[0].consent_to_text;
           iscell.value = data.patients[0].primary_cell_phone;
           selectedCode.value = data.patients[0].country_code;
+          selectedsCode.value = data.patients[0].secondary_country_code;
+          isscell.value = data.patients[0].secondary_cell_phone;
+          homemob.value = data.patients[0].home_number;
           marital_status.value = data.marital_status;
           if (selectedVeteran.value == '0') {
             veteran.value = true;
@@ -602,6 +650,9 @@ export default {
       notes,
       showAlert,
       showAlerts,
+      selectedsCode,
+      isscell,
+      homemob,
       fetchPCP,
       setLandingTime,
       fetchState,
