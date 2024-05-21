@@ -108,6 +108,14 @@
         <div class="form-row invalid-feedback" v-if="formErrors.dob" style="display: block;">{{
     formErrors.dob[0] }}</div>
       </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="emr">EMR#<span class="error">*</span></label> 
+          <input id="practice_emr" name="practice_emr" type="text" v-model="emr" autocomplete="off" class="form-control">  
+        </div>
+        <div class="form-row invalid-feedback" v-if="formErrors.practice_emr" style="display: block;">{{
+    formErrors.practice_emr[0] }}</div>
+      </div>
     </div>
     <div class="row">
       <div class="col-md-3 form-group">
@@ -331,6 +339,7 @@ export default {
     const lname = ref('');
     const mname = ref('');
     const dob = ref('');
+    const emr = ref('');
     const mob = ref('');
     const homemob = ref('');
     const gender = ref('');
@@ -446,6 +455,7 @@ export default {
           isscell.value = data.patients[0].secondary_cell_phone;
           homemob.value = data.patients[0].home_number;
           marital_status.value = data.marital_status;
+          emr.value = data.emr;
           if (selectedVeteran.value == '0') {
             veteran.value = true;
           }
@@ -653,6 +663,7 @@ export default {
       selectedsCode,
       isscell,
       homemob,
+      emr,
       fetchPCP,
       setLandingTime,
       fetchState,

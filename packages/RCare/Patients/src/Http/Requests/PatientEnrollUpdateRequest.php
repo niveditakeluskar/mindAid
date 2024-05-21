@@ -41,7 +41,7 @@ class PatientEnrollUpdateRequest extends FormRequest
             "preferred_contact"               => "nullable|integer",
             "gender"                          => "required|gender", 
             "add_1"                           => "required|max:70",
-
+            "practice_emr"                    => "required|max:15|alpha_num",
         ];
     }
 

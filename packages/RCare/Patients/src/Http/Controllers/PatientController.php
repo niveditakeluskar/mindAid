@@ -1182,6 +1182,7 @@ class PatientController extends Controller
        $secondary_country_code = sanitizeVariable($request->secondary_country_code);
        $home_number = sanitizeVariable($request->home_number);
        $secondary_cell_phone = sanitizeVariable($request->secondary_cell_phone);
+       $pracemr =  sanitizeVariable($request->practice_emr);
 
         if ($military_status == '0') {
             $vtemplate = sanitizeVariable(json_encode($request->question['question']));
@@ -1290,7 +1291,7 @@ class PatientController extends Controller
             'phone_no'                  => '',
             'last_visit_date'           => NULL,
             'review'                    => NULL,
-            'provider_name'             => NULL,
+            'practice_emr'              => $pracemr,
             'is_active'                 => 1
         );
         $PatientProvider = PatientProvider::where('patient_id', $patient_id)->where('is_active', 1)->where('provider_type_id', 1)->orderby('id', 'desc')->exists(); //get();
