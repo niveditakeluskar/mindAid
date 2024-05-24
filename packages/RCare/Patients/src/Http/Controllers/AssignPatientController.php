@@ -62,15 +62,6 @@ class AssignPatientController extends Controller
         return view('Patients::patient.assigned-patient-list',compact('active_pracs','inative_pracs'));      
     }
 
-    Route::get('/activeusers', function () {
-        $activeUsers = Users::activeUsers(); 
-        return response()->json($activeUsers);
-    });
-
-    Route::get('/activeproviders', function () {
-        $activeProviders = Providers::activeProviders();
-        return response()->json($activeProviders);
-    });
     
     public function newassignedPatients(Request $request)
     {
