@@ -239,7 +239,7 @@ class TotalTimeLogReportController extends Controller
           $module='null';
         }else{
           $module=$module;
-        }
+        }  
         if($sub_module==''|| $sub_module=='null'){
           $sub_module='null'; 
         }else{
