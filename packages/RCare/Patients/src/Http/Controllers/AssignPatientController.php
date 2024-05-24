@@ -50,6 +50,7 @@ use DataTables;
 use Illuminate\Support\Facades\Log; 
 use Carbon\Carbon;
 use File,DB;
+use Inertia\Inertia;
 
 class AssignPatientController extends Controller
 {
@@ -61,6 +62,15 @@ class AssignPatientController extends Controller
         return view('Patients::patient.assigned-patient-list',compact('active_pracs','inative_pracs'));      
     }
 
+    public function newassignedPatients(Request $request)
+    {
+        $active_pracs = Practices::activePcpPractices();
+        $inactive_pracs = Practices::InactivePcpPractices();
+           return Inertia::render('Patients/PatientsAssignment', [
+            'active_pracs' => $active_pracs,
+            'inactive_pracs' => $inactive_pracs,
+        ]);
+    }
        
     public function assignedPatientsSearch(Request $request) 
     {
