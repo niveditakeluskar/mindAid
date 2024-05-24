@@ -12,21 +12,41 @@
 */
 Route::prefix('reports')->group(function () { 
 
+
+
 Route::get('/time-logs-report', function(){
                 return view('Reports::time-logs-report.time-logs-list');
-            })->name('time.logs.report');
+            })->name('time.logs.report');     
 
-    Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
-    ->name('time.logs.report.search');
+Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
+->name('time.logs.report.search');
     
     Route::get('/task-status-report', function(){
         return view('Reports::task-status-report.task-status-list');
     })->name('task.status.report');
 
+    
+    Route::get('/rpm-enrolled-patient-report', function(){
+        return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
+    })->name('rpm.enrolled.patient.report');
+    
+     
+    Route::middleware(["auth", "web"])->group(function () {
+      
+        Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
+        Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
 
-        
-    Route::middleware(["auth", "web"])->group(function () { 
+        Route::get('/monthly-billing-reports', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReports')->name('monthly.billing.report'); 
+
+        Route::get('/monthlybilling-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getMonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
+     
+
+        Route::get('/total-patient-time-Log','RCare\Reports\Http\Controllers\TotalTimeLogReportController@PatientTimeLogReport')->name('patient.timelog.report');   
+       Route::get('/patient-time-Log/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@timeLogsReportSearch')->name('patienttime.logs.report.search');
+       Route::get('/total-patient-time-Log/{patient}/{practiceId}/{emr}/{caremanager}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@totaltimeLogsReportSearch')->name('totaltime.logs.report.search');
         Route::middleware(["roleAccess"])->group(function () {
+            Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
+            ->name('time.logs.report.search');
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
 
@@ -35,11 +55,17 @@ Route::get('/time-logs-report', function(){
             //     return view('Reports::to-do-list-report.to-do-list-report');
             // })->name('to-do-list-report');
 			//call additional services ashwini
+
+            Route::get('/rpm-enrolled-patient-report', function(){
+                return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
+            })->name('rpm.enrolled.patient.report');
+            
             Route::get('/call-and-additional-services-practicewise-count-report', function(){
                 return view('Reports::call-additional-ccm-note.call-additional-services-report');
             })->name('call.additional.ccm.call.report'); 
 
 			 Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
+			 Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
 			 
              Route::get('/Clinical-insight', function(){
                 return view('Reports::initial-report.initial-report');
@@ -85,6 +111,7 @@ Route::get('/time-logs-report', function(){
 
             Route::get('/daily-report', 'RCare\Reports\Http\Controllers\DailyBillableReportController@PatientDailyReport')->name('daily.report'); 
             Route::get('/monthly-billing-report', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReport')->name('monthly.billing.report'); 
+
             Route::get('/enrollment-tracking-report', 'RCare\Reports\Http\Controllers\EnrollmentTrackingReportController@PatientEnrollReport')->name('enrollment.tracking.report');               
             // enrollment-tracking-report/group
             Route::get('/enrollment-tracking-report/practicegroup', 'RCare\Reports\Http\Controllers\EnrollmentTrackingReportController@PracticeGroupEnrollmentTrackingList')->name('enrollment.tracking.report.practicegroup'); 
@@ -109,8 +136,39 @@ Route::get('/time-logs-report', function(){
         // Route::get('/task-status-report-search/{caremanagerid}/{practicesgrp}/{practiceid}/{patient}/{taskstatus}
         // /{fromdate}/{activedeactivestatus}',
         // 'RCare\Reports\Http\Controllers\TaskStatusReportController@TaskStatusReportSearch')->name('task.status.search.report'); 
+        Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
+        Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
+        Route::post('/shipping-statuschange', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@changeStatusShipping')->name('save.status');  
+        // Route::get('ajax/shippingreports_populate/{id}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshipping')->name("ajax.shipping.populate");
+        Route::get('ajax/shippingreports_populate/{patinet_id}/{device_code}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshippingdevicewise')->name("ajax.shipping.populate");
+        
+        Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
+        
+       
+        Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+ 
+
+
+        Route::post('/shipiing-save', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@shippingdetailssave')->name('ajax.save.shipping'); 
+        Route::post('/shipiing-device', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@devicedetailssave')->name('ajax.save.device');  
+        Route::post('/shipping-statuschange', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@changeStatusShipping')->name('save.status');  
+        // Route::get('ajax/shippingreports_populate/{id}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshipping')->name("ajax.shipping.populate");
+        Route::get('ajax/shippingreports_populate/{patinet_id}/{device_code}/populate', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@populateshippingdevicewise')->name("ajax.shipping.populate");
+        
+        Route::get("/ajax/patientdevice/{patientid}/pateintdevice", "RCare\Reports\Http\Controllers\RpmEnrolledReportController@patientdevicelist")->name("ajax.patient.device");
+        
+       
+        // Route::get('/rpmenrolledpatientlist/{practices}/{patient}/{shipping_status}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@RpmEnrolledReportSearch')->name('rpm.enrolled.search.report');  
+        // Route::get('/devicelist-rpmenrolled/{rowid}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@getdeviceslist')->name('devices_list');
+        // Route::get('/shippinglist/{id}/{shipping_status}','RCare\Reports\Http\Controllers\RpmEnrolledReportController@getshippinglist')->name('shipping_list');
+        // Route::post('/delete-devices/{id}', 'RCare\Reports\Http\Controllers\RpmEnrolledReportController@actiondevice')->name('devices_list');
+ 
 
 		Route::get('/questionaire_list/search/{practicesgrp}/{practice}/{provider}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReportSearch')->name('Questionaire.search.report');
+		Route::get('/patient_questionaire_list/search/{practice}/{patient}/{fromdate1}/{todate1}/{genquestionselection}', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReportSearch')->name('Patient.Questionaire.search.report');
 		
 		Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}','RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report'); 
 		
@@ -118,7 +176,7 @@ Route::get('/time-logs-report', function(){
         Route::get('/clinicalreportsearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
          'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalReportSearch')->name('initial.search.report');
 		 
-		Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
+		Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}/{onlycode}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
 		
 		Route::get('/noreadingslastthreedaysInRPM-patients-details/{practiceid}', 'RCare\Reports\Http\Controllers\RpmStatusReportController@PatientNoReadingsReport')->name('rpm.no.readings');
 
@@ -205,12 +263,12 @@ Route::get('/time-logs-report', function(){
         Route::post('/manually-adjust-time', 'RCare\System\Http\Controllers\CommonFunctionController@manuallyAdjustTime')->name('manually.adjust.time');
         Route::get('/care-manager-monthly-report/search/{practicegrpid}/{practice}/{caremanager}/{modules}/{monthly}/{monthlyto}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CareManagerMonthlyReportController@listCareManagerMonthlyReportPatientsSearch')->name('care.manager.monthly.report.search');
          //todolist report
-        Route::get('/task-management/search/{practice}/{patient}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\ToDoListReportController@ToDoListReportSearch')->name('to.do.list.search.report'); 
-
+        Route::get('/task-management/search/{practice}/{patient}/{caremanagerid}/{taskstatus}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\ToDoListReportController@ToDoListReportSearch')->name('to.do.list.search.report'); 
         Route::get('/daily-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{fromdate}/{todate}/{time}/{timeoption}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\DailyBillableReportController@DailyReportPatientsSearch')->name('daily.report.search'); 
 
         Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
         Route::get('/monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@MonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
+
         Route::get('/care-manager-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{time}/{care_manager_id}/{fromdate}/{todate}/{timeoption}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CMBillingStatusReport@CareManagerReportSearch')->name('care.manager.report.search');
         Route::post('/billupdate', 'RCare\Reports\Http\Controllers\CMBillingStatusReport@CMBillUpdate')->name('bill.update');
         Route::get('/enrollment-report/search/{practicesgrpid}/{practiceid}/{care_manager_id}/{fromdate}/{todate}/{module}/{provider}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\EnrollmentReportController@EnrollmentReportSearch')->name('enrollment.report.search');
@@ -314,7 +372,7 @@ Route::get('/time-logs-report', function(){
             return view('Reports::caremanager-performance-report.caremanager-performance');
         })->name('CareManager.performance.Report');
         
-        Route::get('/care-manager-performance-report/search/{caremanagerid}/{fromdate}/{todate}', 'RCare\Reports\Http\Controllers\CareManagerPerformanceController@CaremanagerPerformanceReportSearch')->name('caramanager.performance.report.search');
+        Route::get('/care-manager-performance-report/search/{caremanagerid}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\CareManagerPerformanceController@CaremanagerPerformanceReportSearch')->name('caramanager.performance.report.search');
 
         Route::get('/export-file', function(){
             return view('Reports::additional-activity-report.exportdata');
