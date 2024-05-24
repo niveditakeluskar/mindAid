@@ -179,7 +179,7 @@
 
             <!-- AgGrid table -->
             <div class="mt-1"> 
-              <span id="assignedMessage"></span>
+              <span id="assisgnedMessage"></span>
               <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" :onGridReady="onGridReadyWithLoading"/>
             </div>
           </div>
@@ -358,6 +358,18 @@ export default {
       { headerName: 'Enrolled Modules', field: 'module' }
     ]);
 
+
+   const onCheckboxClick = (event, name) => {
+      if (event.target.checked) {
+        selectedRows.value.push(name);
+      } else {
+        const index = selectedRows.value.indexOf(name);
+        if (index > -1) {
+          selectedRows.value.splice(index, 1);
+        }
+      }
+    };
+
     const submit = async () => {
       const apiUrl = '../patients/task-management-user-form';
       const token = document.head.querySelector('meta[name="csrf-token"]').content;
@@ -380,11 +392,24 @@ export default {
 
       axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
       try {
+        isLoading.value = true;
          const response = await axios.post('../patients/task-management-user-form', postData);
          if (response && response.status == 200) {
         $('#assisgnedMessage').html('<div class="alert alert-success"><strong>Patient assigned successfully!</strong></div>');
-        selectedRows.value =[];
-        selectedOptionManager.value = "";
+             selectedOptionManager.value = "";
+                         selectedRows.value = [];
+console.log("asdasd",selectedRows.value);
+
+               getPatientList(
+          selectedPractice.value === '' ? null : selectedPractice.value,
+          selectedProvider.value === '' ? null : selectedProvider.value,
+          timeValue.value === '' ? null : timeValue.value,
+          selectedCareManager.value === '' ? null : selectedCareManager.value,
+          selectedOption.value === '' ? null : selectedOption.value,
+          activedeactivestatus.value === '' ? null : activedeactivestatus.value
+        );
+                isLoading.value = false;
+
         setTimeout(function () {
          $('#assisgnedMessage').html('');
                         }, 3000);
@@ -396,16 +421,7 @@ export default {
 
     };
 
-    const onCheckboxClick = (event, name) => {
-      if (event.target.checked) {
-        selectedRows.value.push(name);
-      } else {
-        const index = selectedRows.value.indexOf(name);
-        if (index > -1) {
-          selectedRows.value.splice(index, 1);
-        }
-      }
-    };
+   
 
     watch(selectedCareManager, (newcareManagerId) => {
       fetchPractices(newcareManagerId);
