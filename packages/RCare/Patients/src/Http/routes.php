@@ -2,6 +2,9 @@
 
 use RCare\Patients\Models\Patients;
 use RCare\System\Support\Form;
+use RCare\Org\OrgPackages\Users\src\Models\Users;
+use RCare\Org\OrgPackages\Providers\src\Models\Providers;
+
 /*
 |--------------------------------------------------------------------------
 | RCare / Patients Routes
@@ -280,11 +283,24 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get('/patients-assignment/search/{practiceid}/{providerid}/{time}/{care_manager_id}/{timeoption}/{patientstatus}', 'RCare\Patients\Http\Controllers\AssignPatientController@assignedPatientsSearch')->name('patients.assignment.search');
 
+        Route::get('/mass-assign-patients', 'RCare\Patients\Http\Controllers\AssignPatientController@newassignedPatients')->name('patients.assignmentnew');
+
+        Route::get('/activeusers', function () {
+            $activeUsers = Users::activeUsers(); 
+            return response()->json($activeUsers);
+        });
+    
+        Route::get('/activeproviders', function () {
+            $activeProviders = Providers::activeProviders();
+            return response()->json($activeProviders);
+        });
         Route::post('/task-management-user-form', 'RCare\Patients\Http\Controllers\AssignPatientController@SavePatientUser')->name('task.management.user');
 
         Route::get('/patients-assignment/nonassignedpatients/{practiceid}', 'RCare\Patients\Http\Controllers\PatientController@Nonassignedpatients')->name('patients.assignment.nonassigned');
 
         Route::get('/patients-assignment', 'RCare\Patients\Http\Controllers\PatientController@assignedPatients')->name('patients.assignment');
+
+
         //Worklist patient active deactive status----
         Route::post('/patient-active-deactive', 'RCare\Patients\Http\Controllers\PatientController@savePatientActiveDeactive')->name('patient.active.deactive');
         Route::get("/ajax/active_deactive_populate/{patient_id}", 'RCare\Patients\Http\Controllers\PatientController@getPatientActiveDeactive')->name('ajax.active.deactive.populate');

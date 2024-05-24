@@ -87,11 +87,9 @@ export default {
             gridColumnApi.value = params.columnApi;
             paginationPageSize.value = 10;
             paginationPageSizeSelector.value = [10, 20, 30, 40, 50, 100];
-            /*   params.api.sizeColumnsToFit();  */
-
-            // Pass gridApi to the parent component
+             gridApi.value.showLoadingOverlay();
             if (props.onGridReady) {
-                props.onGridReady(params);
+               gridApi.value.showNoRowsOverlay();
             }
         };
 
