@@ -2906,6 +2906,48 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
+    
+    public function patientCaremanagersNew($patient){
+        if ($patient == "null" || $patient == 0) {
+            $caremanagers =
+                //  DB::table('patients.patient as p')
+                // ->select('u.id', 'u.f_name', 'u.l_name')
+                // // ->distinct()
+                // ->join('task_management.user_patients as up', function ($join) {
+                //     $join->on('p.id', '=', 'up.patient_id')
+                //         ->where('up.status', '=', 1);
+                // })
+                // ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                // ->join('patients.patient_providers as pp', function ($join) {
+                //     $join->on('p.id', '=', 'pp.patient_id')
+                //         ->where('pp.is_active', '=', 1)
+                //         ->where('pp.provider_type_id', '=', 1);
+                // })
+                // ->join('patients.patient_services as ps', 'p.id', '=', 'ps.patient_id')
+                // ->where('up.user_id', $cid)
+                // ->orderBy('p.fname')
+                DB::table('ren_core.users as u')
+                ->select('u.id', 'u.f_name', 'u.l_name')
+                ->get();
+        } else {
+            $caremanagers = DB::table('patients.patient as p')
+                ->select('u.id', 'u.f_name', 'u.l_name')
+                // ->distinct()
+                ->join('task_management.user_patients as up', function ($join) use($patient) {
+                    $join->on('p.id', '=', 'up.patient_id') 
+                        ->where('up.patient_id', '=', $patient)
+                        ->where('up.status', '=', 1);
+                })
+                ->join('ren_core.users as u', 'u.id', '=', 'up.user_id')
+                // ->where('up.user_id', 'u.id')
+                ->orderBy('u.id')
+                ->get();
+        }
+
+        return response()->json($caremanagers);
+
+    }
+
     public function assignpatientlist($practice)
     {
         $cid = session()->get('userid');

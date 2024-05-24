@@ -12,12 +12,14 @@
 */
 Route::prefix('reports')->group(function () { 
 
+
+
 Route::get('/time-logs-report', function(){
                 return view('Reports::time-logs-report.time-logs-list');
-            })->name('time.logs.report');
+            })->name('time.logs.report');     
 
-    Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
-    ->name('time.logs.report.search');
+Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
+->name('time.logs.report.search');
     
     Route::get('/task-status-report', function(){
         return view('Reports::task-status-report.task-status-list');
@@ -28,9 +30,9 @@ Route::get('/time-logs-report', function(){
         return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
     })->name('rpm.enrolled.patient.report');
     
-
-        
-    Route::middleware(["auth", "web"])->group(function () { 
+    
+    Route::middleware(["auth", "web"])->group(function () {
+      
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
         Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
 
@@ -39,8 +41,12 @@ Route::get('/time-logs-report', function(){
         Route::get('/monthlybilling-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getMonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
      
 
-
+        Route::get('/total-patient-time-Log','RCare\Reports\Http\Controllers\TotalTimeLogReportController@PatientTimeLogReport')->name('patient.timelog.report');   
+       Route::get('/patient-time-Log/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@timeLogsReportSearch')->name('patienttime.logs.report.search');
+       Route::get('/total-patient-time-Log/{patient}/{practiceId}/{emr}/{caremanager}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@totaltimeLogsReportSearch')->name('totaltime.logs.report.search');
         Route::middleware(["roleAccess"])->group(function () {
+            Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
+            ->name('time.logs.report.search');
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
 

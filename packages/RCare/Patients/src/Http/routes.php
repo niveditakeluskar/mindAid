@@ -340,6 +340,8 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get("/ajax/practice/{practice}/{moduleId}/assign-patient", "RCare\Patients\Http\Controllers\PatientController@practicePatientsAssignDevice")->name("ajax.practice.patient.assign");
 
         Route::get("/ajax/patientlist/{practice}/patientlist", "RCare\Patients\Http\Controllers\PatientController@practicePatientsNew")->name("ajax.practice.patient.new");
+        Route::get("/ajax/caremanagerlist/{patient}/caremanagerlist", "RCare\Patients\Http\Controllers\PatientController@patientCaremanagersNew")->name("ajax.pratient.caremanager.new");
+       
         Route::get("/ajax/assignpatientlist/{practice}/assignpatientlist", "RCare\Patients\Http\Controllers\PatientController@assignpatientlist")->name("ajax.assign.practice.patient.new");
         Route::get("/ajax/practicelist/{emr}/practicelist", "RCare\Patients\Http\Controllers\PatientController@practiceOnEmr")->name("ajax.emrpractice");
         Route::get("/ajax/emrlist/{practiceid}/{patientid}", "RCare\Patients\Http\Controllers\PatientController@EmrOnPractice")->name("ajax.practiceemr");
