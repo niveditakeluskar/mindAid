@@ -13,7 +13,7 @@ const URL_SUBMIT = "/ajax/tcm_submit";
 const URL_PRINT = "/tcm/printing/";
 const URL_POPULATE_DIAGNOSIS_LIST = '/ccm/patient-care-plan-list';
 
-
+var pause_stop_flag = 0;
 var baseURL = window.location.origin + '/';
 var patient_id = $("#hidden_id").val();
 var sPageURL = window.location.pathname;
@@ -70,6 +70,7 @@ var populateForm = function (data, url) {
                         } else {
                             var summaryslength = "";
                         }                        
+
 
                         var checklist_data = result[key].static['checklist_data'];
 
@@ -368,6 +369,8 @@ var onPreparationFollowUp = function (formObj, fields, response) {
         var patientId = id;
         carePlanDevelopment.renderLabsTable();
         carePlanDevelopment.renderVitalTable();
+        carePlanDevelopment.renderImagingTable();
+        carePlanDevelopment.renderHealthTable();
         var data = "";
         var researchPreparationNotesForm = 'research_follow_up_preparation_followup_form';
         var preparationNotesFormPopulateURL = URL_POPULATE_RESEARCH_FOLLOWUP_PREPARATION_NOTES + "/" + patientId + "/current";
@@ -1111,6 +1114,8 @@ var init = function () {
     carePlanDevelopment.renderAllergyOtherTableData();
     carePlanDevelopment.renderLabsTable();
     carePlanDevelopment.renderVitalTable();
+    carePlanDevelopment.renderImagingTable();
+    carePlanDevelopment.renderHealthTable();
     carePlanDevelopment.renderMedicationsTableData();
 
 
@@ -1123,6 +1128,7 @@ var init = function () {
     util.getPatientStatus(patient_id, module_id);
     util.gatCaretoolData(patient_id, module_id);
     util.getToDoListData($("#patient_id").val(), module_id);
+	util.getAssignPatientListData(0, patient_id);
     // util.getToDoListCalendarData($("#patient_id").val(), module_id);
     //util.getDataCalender($("#patient_id").val(), module_id);
     ccmcpdcommonJS.getFollowupList($('#patient_id').val(), module_id);
@@ -1439,6 +1445,7 @@ var init = function () {
         $("#healthcare-services").hide();
         $("#allergy-information").hide();
         $("#vitalsHealth").show();
+        $("form[name='number_tracking_vitals_form']")[0].reset();
     });
 
     $("#call_preparation-services-modal, #research_follow_up-services-modal").click(function () {
@@ -1924,6 +1931,9 @@ var init = function () {
             $("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn  btn-primary m-1" id="save-callstatus">Next</button>');
             $("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='call_action_script'] option:selected").text());
             util.getCallScriptsById($("form[name='callstatus_form'] #call_scripts_select option:selected").val(), '.call_answer_template', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+            if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
         } else if (checked_call_option == 2 || checked_call_option == "2") {
             $('.invalid-feedback').html('');
             $("form[name='callstatus_form'] #callAnswer").hide();
@@ -1935,7 +1945,11 @@ var init = function () {
             $("form[name='callstatus_form'] #call-save-button").html('<button type="submit" class="btn btn-primary m-1 call_status_submit" id="save_schedule_call">Schedule Call</button>');
             $("form[name='callstatus_form'] #call_action_script").val($("form[name='callstatus_form'] input[name='content_title'] option:selected").text());
             util.getCallScriptsById($("form[name='callstatus_form'] #ccm_content_title option:selected").val(), '#ccm_content_area', "form[name='callstatus_form'] input[name='template_type_id']", "form[name='callstatus_form'] input[name='content_title']");
+            if($('#timer_runing_status').val() == 1){
+                $("form").find(":submit").attr("disabled", true);
+            }
         }
+        
     });
 
     //text

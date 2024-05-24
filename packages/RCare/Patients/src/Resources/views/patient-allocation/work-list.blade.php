@@ -411,12 +411,13 @@
         var getmnth=("0" +(date.getMonth() + 1)).slice(-2);
         var firstDayWithSlashes = date.getFullYear()+ '-' + getmnth + '-' +('0' +(firstDay.getDate())).slice(-2);
 
-        $(document).ready(function() {
+        $(document).ready(function() { debugger;
             $('#davice_traning_date').val(currentdate); 
             worklist.init();
             filters();
             var table = $('#patient-list').DataTable();
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0,0);
             $(".patient-div").hide();
             $("[name='practices']").on("change", function() {
                 var practice_id = $(this).val();  

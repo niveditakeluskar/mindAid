@@ -74,7 +74,7 @@ var refreshAllergyCountCheckbox = function (id, allergy_type, form_name) {
     }).then(function (response) {
 
         var allergiescnt = response.data;
-        // console.log("allergycount"+allergiescnt+" "+allergy_type+ " "+form_name );      
+        // console.log("allergycount"+allergiescnt+" "+allergy_type+ " "+form_name );
 
 
         $('form[name="' + form_name + '"] #' + allergy_type + 'count').val(allergiescnt);
@@ -104,7 +104,7 @@ var getDistinctDiagnosisCountForBubble = function (patientId) {
 
         // console.log(response);
         var diagcount = response.data[0].count;
-        // alert(diagcount);  
+        // alert(diagcount);
 
         $('.reviewcareplanbuttoncount').html(diagcount);
 
@@ -117,7 +117,7 @@ var getDistinctDiagnosisCountForBubble = function (patientId) {
 }
 
 
-//ashwini 
+//ashwini
 var getDiagnosisCount = function (patientId) {
     if (!patientId) {
         return;
@@ -189,7 +189,7 @@ var getDiagnosisIdfromPatientdiagnosisid = function (editid, condition_name, cod
 
 
         } else {
-            // alert("else");  
+            // alert("else");
             var formName = $(formsObj).closest(":has(form)").find('form').attr('name');
 
             // alert(formName);
@@ -1006,11 +1006,11 @@ var age = function (date) {
     ageText = "";
     if (ageYears > 0) {
         ageText = ageText + ageYears + " year";
-        if (ageYears > 1) ageText = ageText + "s"; 
+        if (ageYears > 1) ageText = ageText + "s";
     }
     if (ageMonths > 0) {
         if (ageYears > 0) {
-            if (ageDays > 0) ageText = ageText + ", "; 
+            if (ageDays > 0) ageText = ageText + ", ";
             else if (ageDays == 0) ageText = ageText + " and ";
         }
         ageText = ageText + ageMonths + " month";
@@ -1021,7 +1021,7 @@ var age = function (date) {
         ageText = ageText + ageDays + " day";
         if (ageDays > 1) ageText = ageText + "s";
     }
-    
+
     return ageText;  */
 
 };
@@ -1101,10 +1101,10 @@ var renderDataTableOrder = function (tabid, url, columnData, assetBaseUrl, copyf
         // serverSide : true,
         destroy: true,
         // sScrollX: 1500,
-        // scrollY: true, 
+        // scrollY: true,
 
-        // scrollH: true,     
-        // scrollCollapse: true,        
+        // scrollH: true,
+        // scrollCollapse: true,
         ajax: url,
         columns: columnData,
         "Language": {
@@ -1126,7 +1126,7 @@ var renderDataTableOrder = function (tabid, url, columnData, assetBaseUrl, copyf
                 $('#' + copyTo + ' tbody').html(t2content);
                 //alert(copyTo);
 
-                
+
 
                 table2 = util.renderRawDataDataTable(copyTo, assetBaseUrl);
                //table2 = util.renderRawDataDataTableAnand(copyTo, assetBaseUrl,columnData);
@@ -1212,9 +1212,9 @@ var rendernewDataTable = function (tabid, url, columnData, assetBaseUrl, copyfla
         serverSide: false,
         destroy: true,
         //    sScrollX: true,
-        // scrollY: 120, 
-        // scrollH: true,     
-        // scrollCollapse: true,        
+        // scrollY: 120,
+        // scrollH: true,
+        // scrollCollapse: true,
         ajax: url,
         columns: columnData,
         "Language": {
@@ -1236,7 +1236,7 @@ var rendernewDataTable = function (tabid, url, columnData, assetBaseUrl, copyfla
                 $('#' + copyTo + ' tbody').html(t2content);
                 //alert(copyTo);
 
-                
+
 
                 table2 = util.renderRawDataDataTable(copyTo, baseURL);
                //table2 = util.renderRawDataDataTableAnand(copyTo, baseURL,columnData);
@@ -1358,9 +1358,9 @@ var renderDataTable = function (tabid, url, columnData, assetBaseUrl, copyflag =
         // serverSide : true,
         destroy: true,
         //    sScrollX: true,
-        // scrollY: 120, 
-        // scrollH: true,     
-        // scrollCollapse: true,        
+        // scrollY: 120,
+        // scrollH: true,
+        // scrollCollapse: true,
         ajax: url,
         columns: columnData,
         "Language": {
@@ -1392,7 +1392,7 @@ var renderDataTable = function (tabid, url, columnData, assetBaseUrl, copyflag =
                 $('#' + copyTo + ' tbody').html(t2content);
                 //alert(copyTo);
 
-                
+
 
                 table2 = util.renderRawDataDataTable(copyTo, baseURL);
                //table2 = util.renderRawDataDataTableAnand(copyTo, baseURL,columnData);
@@ -1553,9 +1553,9 @@ var renderRawDataDataTable = function (tabid, assetBaseUrl) {
         // serverSide : true,
         destroy: true,
         sScrollX: true,
-        // scrollY: 120, 
-        // scrollH: true,     
-        // scrollCollapse: true,        
+        // scrollY: 120,
+        // scrollH: true,
+        // scrollCollapse: true,
         //columns: columnData,
         "Language": {
             search: "_INPUT_",
@@ -1584,10 +1584,10 @@ var copyDataFromOneDataTableToAnother = function (table, copyFromTableId, copyTo
     // var fromTableId = $('#' + copyFromTableId).DataTable();
     // var toTableId = $('#' + copyToTableId).DataTable();
     // var aTrs = fromTableId.rows().select().data();
-    // // var aTrs = oTableSource.rows('.row_selected').data();  
-    // for ( var i=0 ; i<aTrs.length ; i++ ) {  
+    // // var aTrs = oTableSource.rows('.row_selected').data();
+    // for ( var i=0 ; i<aTrs.length ; i++ ) {
     //     toTableId.row.add(aTrs[i]).draw();
-    // }  
+    // }
 
 
     // var row = $('#' + copyFromTableId + ' tbody').clone();
@@ -1856,6 +1856,37 @@ var getPatientList = function (practiceId, selectElement, selectedPatients = nul
     });
 };
 
+var getCmAssignPatientList = function (practiceId, selectElement, selectedPatients = null) {
+    selectElement.html($("<option value=''>").html("Select Patient"));
+    // if (!practiceId) {
+    //     return;
+    // }
+
+    axios({
+        method: "GET",
+        //url: `/patients/ajax/practice/${practiceId}/${moduleId}/patient`
+        url: `/patients/ajax/assignpatientlist/${practiceId}/assignpatientlist`,
+    }).then(function (response) {
+        Object.values(response.data).forEach(function (patient) {
+            var mname;
+            if ((patient.mname != "") && (patient.mname != null) && (patient.mname != undefined)) {
+                mname = patient.mname;
+            } else {
+                mname = "";
+            }
+            $("<option>").val(patient.id).html(patient.fname + " " + mname + " " + patient.lname + ", DOB: " + moment(patient.dob).format('MM-DD-YYYY')).appendTo(selectElement);
+            // $("<option>").val(patient.id).html(patient.fname + " " + mname + " " +patient.lname + ", DOB: " + viewsDateFormat(patient.dob)).appendTo(selectElement);
+        });
+        if (selectedPatients) {
+            selectElement.val(selectedPatients);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
+
+
 /**
  * Update the list of call ccript to select from
  *
@@ -1887,9 +1918,9 @@ var getCallScripts = function (callStatus, selectElement, selectedPatients = nul
         //     url: '/ccm/fetchContentForMonthlyMonitoring',
         //     data: {template_type_id:template_type_id },
         //     success: function (response) {
-        //          document.getElementById("content_title").innerHTML=response; 
+        //          document.getElementById("content_title").innerHTML=response;
         //     }
-        // }); 
+        // });
         axios({
             method: "GET",
             url: `/ccm/fetchContentForMonthlyMonitoring`,
@@ -2084,7 +2115,7 @@ var getEmailScriptsBYId = function (callScriptId, selectElement = null, selectTe
 //         console.log("template_type_id=>"+template_type_id);
 //         console.log("question_data=>"+question_data);
 //         console.log("q_arr=>"+q_arr);
-//         // if (response.data[0].hasOwnProperty('content')) { 
+//         // if (response.data[0].hasOwnProperty('content')) {
 //         //     var script         = jQuery.parseJSON(response.data[0].content).message;
 //         //     if (selectElement) {
 //         //         $(selectElement).html($(script).text());
@@ -2355,7 +2386,7 @@ var updateTemplateLists = function (module, subModules, selectElement, templateI
 
 
 var updatePracticeListWithoutOther = function (caremanager, selectElement, selectedPractice = null) {
-    //  alert(caremanager);  
+    //  alert(caremanager);
     //selectElement.html($("<option value=''>").html("Select Physician"));
     $(selectElement)
         .empty()
@@ -2380,7 +2411,7 @@ var updatePracticeListWithoutOther = function (caremanager, selectElement, selec
 };
 
 var updatePracticeListOnEmr = function (emr, selectElement, selectedPractice = null) {
-    // alert(emr);  
+    // alert(emr);
     //selectElement.html($("<option value=''>").html("Select Physician"));
     $(selectElement)
         .empty()
@@ -2405,7 +2436,7 @@ var updatePracticeListOnEmr = function (emr, selectElement, selectedPractice = n
 };
 
 var getEmrOnPractice = function (practiceid, selectElement, patientid = null, selectedPractice = null) {
-    // alert(emr);  
+    // alert(emr);
     //selectElement.html($("<option value=''>").html("Select Physician"));
     $(selectElement)
         .empty()
@@ -2430,7 +2461,7 @@ var getEmrOnPractice = function (practiceid, selectElement, patientid = null, se
 };
 
 var updatePatientListOnEmr = function (emr, practiceId, module_id, selectElement, selectedPatients = null) {
-    // alert(emr);  
+    // alert(emr);
     if (isNaN(practiceId)) {
         practiceId = null;
     }
@@ -2507,15 +2538,15 @@ var getPatientStatus = function (patientId, moduleId) {
 
 // var getPatientDetailsModel = function (patientId, moduleId) {
 //     axios({
-//         method: "GET", 
+//         method: "GET",
 //         url: `/patients/patient_details_model/${patientId}/${moduleId}/patient_details_model`,
 //     }).then(function (response){
 //         // console.log(response.data + 'patient-Ajaxdetails');
 //         $("#patient-Ajaxdetails-model").html(response.data);
 //     }).catch(function (error) {
 //         console.error(error, error.response);
-//     }); 
-// }; 
+//     });
+// };
 
 var getPatientEnrollModule = function (patientId, selmoduleId) {
     axios({
@@ -2523,13 +2554,13 @@ var getPatientEnrollModule = function (patientId, selmoduleId) {
         url: `/patients/patient-module/${patientId}/patient-module`,
     }).then(function (response) {
         $('.enrolledservice_modules').html('');
-        enr = response.data;
-        count_enroll = enr.length;
+        var enr = response.data;
+        var count_enroll = enr.length;
         for (var i = 0; i < count_enroll; i++) {
             $('.enrolledservice_modules').append(`<option value="${response.data[i].module_id}">${response.data[i].module.module}</option>`);
         }
         $("#enrolledservice_modules").val(selmoduleId).trigger('change');
-        // $("#patient-Ajaxdetails-model").html(response.data); 
+        // $("#patient-Ajaxdetails-model").html(response.data);
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -2543,22 +2574,22 @@ var getPatientDetails = function (patientId, moduleId) {
     }).then(function (response) {
         // ptient enrolleed module in change status
         $('.enrolledservice_modules').html('');
-        enr = response.data.patient_services.length;
-        // alert(response.data.patient_services[0].module.module); 
-
-
-        for (i = 0; i < enr; i++) {
-            // alert(i); 
+        var enr = response.data.patient_services.length;
+        // alert(response.data.patient_services[0].module.module);
+        for (var i = 0; i < enr; i++) {
+            // alert(i);
             // var module_name = response.data.patient[0].patient_services[i].module.module;
             var module_id = response.data.patient_services[i].module_id;
             $('.enrolledservice_modules').append(`<option value="${module_id}">${response.data.patient_services[i].module.module}</option>`);
         }
-        // 
-        count_enroll_Services = response.data.patient_services.length;
+
+        //
+        var count_enroll_Services = response.data.patient_services.length;
         var enroll_services = [];
         var enroll_services_status = [];
-        for (i = 0; i < count_enroll_Services; i++) {
-            enroll_services_status = response.data.patient_services[i].status;
+        for (var i = 0; i < count_enroll_Services; i++) {
+            var patient_enroll_services_status = "";
+            var enroll_services_status = response.data.patient_services[i].status;
             if (enroll_services_status == 0) {
                 patient_enroll_services_status = '<i class="i-Closee i-Close" id="isuspended" data-toggle="tooltip" data-placement="top" data-original-title="Suspended"></i>';
             } else if (enroll_services_status == 1) {
@@ -2573,7 +2604,7 @@ var getPatientDetails = function (patientId, moduleId) {
                 $("#add_patient_devices").show();
             }
         }
-        console.log(enroll_services + 'enroll_services')
+        // console.log(enroll_services + 'enroll_services')
         $(".patient_enroll_services").html(enroll_services.toString());
 
         //dropdown for change modules in Change Patient Status priya 14 04 2023
@@ -2582,13 +2613,13 @@ var getPatientDetails = function (patientId, moduleId) {
         //changes for devices button ashwini mali 02 02 2023
         /*var devicesdata = enroll_services[0];
         var devicesdata1 = enroll_services[1];
-        if(devicesdata == 'RPM'){ 
+        if(devicesdata == 'RPM'){
               $("#add_patient_devices").show();
         }else{
             if(devicesdata1 == 'RPM'){
                 $("#add_patient_devices").show();
             }else{
-                $("#add_patient_devices").hide(); 
+                $("#add_patient_devices").hide();
             }
 
         }*/
@@ -2609,11 +2640,17 @@ var getPatientDetails = function (patientId, moduleId) {
         //second column
         var fname = '';
         if (response.data.patient[0].fname != '') {
-            var fname = response.data.patient[0].fname;
+             first_name = response.data.patient[0].fname;
+            var fname = first_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
         var lname = '';
         if (response.data.patient[0].lname != '') {
-            var lname = response.data.patient[0].lname;
+            last_name = response.data.patient[0].lname;
+            var lname = last_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
         $(".patient_name").text(fname + ' ' + lname);
 
@@ -2652,7 +2689,7 @@ var getPatientDetails = function (patientId, moduleId) {
             var mob = response.data.patient[0].mob;
         }
         $(".patient_contact_num").text(mob + '|' + home_num);
-
+        var consent_to_text;
         if (response.data.consent_to_text == "1") {
             consent_to_text = "Consent to text - Yes";
         } else {
@@ -2699,8 +2736,12 @@ var getPatientDetails = function (patientId, moduleId) {
 
         var assignCM = '';
         if (response.data.caremanager_name != '') {
-            assignCM = response.data.caremanager_name;
+            cm_name = response.data.caremanager_name; 
+            var assignCM = cm_name.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
         }
+        
         $(".patient_assign_cm").text(assignCM);
 
         //fift column
@@ -2766,6 +2807,22 @@ var getPatientDetails = function (patientId, moduleId) {
             device_code = response.data.device_code;
         }
         $(".patient_device_code").text(device_code)
+
+        var device_status = '';
+        if (response.data.device_status != '') {
+            shipping_status = response.data.device_status;
+            if (shipping_status == 1) {
+                device_status = 'Dispatched';
+            } else if (shipping_status == 2) {
+                device_status = 'Delivered';
+            } else if (shipping_status == 3) {
+                device_status = 'Pending';
+            } else {
+                device_status = '';
+            }
+        }
+
+        $(".device_delivery_status").text(device_status);
 
         if (response.data.billable_time != '') {
             $("#btime").html(response.data.billable_time)
@@ -2883,8 +2940,9 @@ var getPatientDetails = function (patientId, moduleId) {
         $("#spirometerpeflow").val(spirometerpeflow);
 
         var personal_notes = '';
+        console.log("response.data", response.data);
         if (response.data.personal_notes != '') {
-            var personal_notes = response.data.personal_notes['static']['personal_notes'];
+            personal_notes = response.data.personal_notes;//response.data.personal_notes['static']['personal_notes'];
         }
         $("textarea#personal_notes").val(personal_notes);
         var research_study = '';
@@ -2925,7 +2983,7 @@ var getPatientDetails = function (patientId, moduleId) {
 //     axios({
 //         method: "GET",
 //         url: `/ccm/populateCarePlanDevelopmentrelationship/${patientId}/radiostatus`,
-//     }).then(function (response) { 
+//     }).then(function (response) {
 //         //console.log(response.data);
 //         $("#status_blockcontent").html(response.data);
 //     }).catch(function (error) {
@@ -2941,7 +2999,7 @@ var getPatientCurrentMonthNotes = function (patientId, moduleId) {
         // console.log(response.data);
         $("#currentMonthData").html(response.data);
         // $("#condition_requirnment").val(response.data.condition_requirnment_notes);
-        // $("#nov_notes").val(response.data.nov_notes); 
+        // $("#nov_notes").val(response.data.nov_notes);
         // $("#nd_notes").val(response.data.nd_notes);
         // $("#med_added_or_discon_notes").val(response.data.med_added_or_discon_notes);
         // $("#report_requirnment_notes").val(response.data.report_requirnment_notes);
@@ -3029,11 +3087,48 @@ var getToDoListData = function (patientId, moduleId) {
         method: "GET",
         url: `/task-management/patient-to-do/${patientId}/${moduleId}/list`,
     }).then(function (response) {
-
         // console.log(response.data);
         $("#toDoList").html(response.data);
-        //alert();
         $('.badge').html($('#count_todo').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+var getAssignPatientListData = function (practice, patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        // $('.badge').html($('#count_patient').val());
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+};
+
+var getAssignPatientListData = function (practice,patient) { //debugger;
+    if (practice == '') {
+        practice = 0;
+    }
+    if (patient == '') {
+        patient = 0;
+    }
+    axios({
+        method: "GET",
+        url: `/patients/cm-assignpatient/${practice}/${patient}/cmassignpatient`
+    }).then(function (response) {
+        // console.log(response.data);
+        $("#patientassignlist").html(response.data);
+        //alert();
+        // $('.badge').html($('#count_patient').val());
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -3068,7 +3163,7 @@ var getToDoListCalendarData = function (patient_id, module_id) {
 //         $('.badge').html($('#count_cal').val());
 //     }).catch(function (error) {
 //         console.error(error, error.response);
-//     });  
+//     });
 // }
 var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stageId, billable, uId, stepId, formName) {
     axios({
@@ -3093,10 +3188,13 @@ var logPauseTime = function (timerStart, patientId, moduleId, subModuleId, stage
         $('.form_start_time').val(response.data.form_start_time);
         $("form").find(":submit").attr("disabled", false);
         $("form").find(":button").attr("disabled", false);
+        $(".change_status_flag").attr("disabled", false);
+        $('.click_id').css({ 'opacity': '', 'pointer-events': '' });
+        $(".delete_callwrap").show();
         pause_next_stop_flag = 0;
         setTimeout(function () {
             pause_stop_flag = 0;
-            if(pause_next_stop_flag == 0){
+            if (pause_next_stop_flag == 0) {
                 updateTimeEveryMinutes(patientId, moduleId, response.data.form_start_time);
             }
         }, 60000);
@@ -3134,6 +3232,9 @@ var logTimeManually = function (timerStart, timerEnd, patientId, moduleId, subMo
             updateTimer(patientId, billable, moduleId);
             $("form").find(":submit").attr("disabled", true);
             $("form").find(":button").attr("disabled", true);
+            $(".change_status_flag").attr("disabled", true);
+            $('.click_id').css({ 'opacity': '0.5', 'pointer-events': 'none' });
+            $(".delete_callwrap").hide();
             //$(".last_time_spend").html(response.data.end_time);
             $('.form_start_time').val(response.data.form_start_time);
             alert("Timer paused and Time Logged successfully.");
@@ -3213,7 +3314,7 @@ var updateCpdProviderList = function (practiceid = null, selectElement, selected
             // if(selectedProvider == provider.name){
             //     $("<option selected>").val(provider.id).html(provider.name).appendTo(selectElement);
             // } else {
-            //     $("<option>").val(provider.id).html(provider.name).appendTo(selectElement); 
+            //     $("<option>").val(provider.id).html(provider.name).appendTo(selectElement);
             // }
         });
     }).catch(function (error) {
@@ -3286,6 +3387,34 @@ var getPracticelistaccordingtopracticegrp = function (practicegrpId, selectEleme
     });
 };
 
+var pateintdevicecode = function (id, selectElement, selecteddevice = null) {
+    $(selectElement)
+        .empty()
+        .append('<option value="">Select Device</option>');
+    if (!id) {
+        id = null;
+
+    }
+    if (isNaN(id)) {
+        id = null;
+    }
+    axios({
+        method: "GET",
+        url: `/reports/ajax/patientdevice/${id}/pateintdevice`,
+    }).then(function (response) {
+        console.log(response);
+        // $("<option>").val('0').html('None').appendTo(selectElement);
+        Object.values(response.data).forEach(function (pateint) {
+            $("<option>").val(pateint.id).html(pateint.device_code).appendTo(selectElement);
+        });
+        if (selecteddevice) {
+            selectElement.val(selecteddevice);
+        }
+    }).catch(function (error) {
+        console.error(error, error.response);
+    });
+}
+
 var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectedPractice = null) {
     // alert(practicegrpId);
     // console.log(selectElement);
@@ -3309,9 +3438,9 @@ var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, sel
 
             $("<li>").val(practice.id).html("<input type='checkbox' value='' name ='activity[0][practices][" + practicegrpId + "][" + practice.id + "]' />" + practice.name + " " + "(" + practice.count + ")").appendTo($('#utilulpract'));
         });
-        // $('.multiDrop').on('click', function (event) { 
-        //     // alert("1"); 
-        // event.stopPropagation();  
+        // $('.multiDrop').on('click', function (event) {
+        //     // alert("1");
+        // event.stopPropagation();
         // $(this).next('ul').slideToggle();
         // });
         // $(document).on('click', function () {
@@ -3338,7 +3467,7 @@ var getactivityPracticelistaccordingtopracticegrp = function (practicegrpId, sel
 };
 
 var getnewactivityPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, formCountId, selectElementid, selectedPractice = null) {
-    // alert(practicegrpId); 
+    // alert(practicegrpId);
     // console.log(formCountId, selectElementid);
 
     formCountId = formCountId == 0 ? 0 : formCountId - 1;
@@ -3363,9 +3492,9 @@ var getnewactivityPracticelistaccordingtopracticegrp = function (practicegrpId, 
 
             $("<li>").val(practice.id).html("<input type='checkbox' value='' name ='activity[" + formCountId + "][practices][" + practicegrpId + "][" + practice.id + "]' />" + practice.name + " " + "(" + practice.count + ")").appendTo($('#utilulpract_' + formCountId + '_' + selectElementid));
         });
-        // $('#candy_'+formCountId+'_'+selectElementid).on('click', function (event) { 
-        //     // alert("1"); 
-        // event.stopPropagation();  
+        // $('#candy_'+formCountId+'_'+selectElementid).on('click', function (event) {
+        //     // alert("1");
+        // event.stopPropagation();
         // $(this).next('ul').slideToggle();
         // });
 
@@ -3373,7 +3502,7 @@ var getnewactivityPracticelistaccordingtopracticegrp = function (practicegrpId, 
         //     if (!$(event.target).closest('#utilulpract_'+formCountId+'_'+selectElementid).length) {
         //         $('#utilulpract_'+formCountId+'_'+selectElementid+' ul').slideUp();
         //     }
-        // });  
+        // });
 
         $('#utilulpract_' + formCountId + '_' + selectElementid + ' ul li input[type="checkbox"]').on('change', function () {
             // alert("2");
@@ -3393,11 +3522,11 @@ var getnewactivityPracticelistaccordingtopracticegrp = function (practicegrpId, 
 };
 
 var getappendPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, formCountId, selectElementid, selectedPractice = null) {
-    // alert(practicegrpId); 
+    // alert(practicegrpId);
     // console.log(formCountId, selectElementid);
     // formCountId = formCountId-1;
     // selectElementid = selectElementid-1;
-    // console.log(formCountId,selectElement);    
+    // console.log(formCountId,selectElement);
     $('#appendutilulpract_' + formCountId + '_' + selectElementid)
         .empty()
         .append('<li value="">Select Practices</li>');
@@ -3418,17 +3547,17 @@ var getappendPracticelistaccordingtopracticegrp = function (practicegrpId, selec
             $("<li>").val(practice.id).html("<input type='checkbox' value='' name ='activity[" + formCountId + "][practices][" + practicegrpId + "][" + practice.id + "]' />" + practice.name + " " + "(" + practice.count + ")").appendTo($('#appendutilulpract_' + formCountId + '_' + selectElementid));
         });
 
-        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) { 
-        //     // alert("1"); 
-        // event.stopPropagation();  
+        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) {
+        //     // alert("1");
+        // event.stopPropagation();
         // $(this).next('ul').slideToggle();
         // });
 
         // $(document).on('click', function () {
         //     if (!$(event.target).closest('.wrapMulDrop').length) {
-        //         $('.wrapMulDrop ul').slideUp();  
+        //         $('.wrapMulDrop ul').slideUp();
         //     }
-        // });       
+        // });
 
         $('.wrapMulDrop ul li input[type="checkbox"]').on('change', function () {
             // alert("2");
@@ -3448,11 +3577,11 @@ var getappendPracticelistaccordingtopracticegrp = function (practicegrpId, selec
 };
 
 var geteditappendPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectElementid, formlength, selectedPractice = null) {
-    // alert(practicegrpId); 
-    // console.log(formCountId,selectElementid);    
+    // alert(practicegrpId);
+    // console.log(formCountId,selectElementid);
     // formCountId = formCountId-1;
     // selectElementid = selectElementid-1;
-    // console.log(formCountId,selectElement);    
+    // console.log(formCountId,selectElement);
 
 
     $('#editappendul_' + selectElementid)
@@ -3478,17 +3607,17 @@ var geteditappendPracticelistaccordingtopracticegrp = function (practicegrpId, s
 
         });
 
-        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) { 
-        //     // alert("1"); 
-        // event.stopPropagation();  
+        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) {
+        //     // alert("1");
+        // event.stopPropagation();
         // $(this).next('ul').slideToggle();
         // });
 
         // $(document).on('click', function () {
         //     if (!$(event.target).closest('.wrapMulDrop').length) {
-        //         $('.wrapMulDrop ul').slideUp();  
+        //         $('.wrapMulDrop ul').slideUp();
         //     }
-        // });       
+        // });
 
         $('.wrapMulDrop ul li input[type="checkbox"]').on('change', function () {
             // alert(selectElementid);
@@ -3509,11 +3638,11 @@ var geteditappendPracticelistaccordingtopracticegrp = function (practicegrpId, s
 };
 
 var geteditPracticelistaccordingtopracticegrp = function (practicegrpId, selectElement, selectElementid, selectedPractice = null) {
-    // alert(practicegrpId); 
-    // console.log(formCountId,selectElementid);    
+    // alert(practicegrpId);
+    // console.log(formCountId,selectElementid);
     // formCountId = formCountId-1;
     // selectElementid = selectElementid-1;
-    // console.log(formCountId,selectElement);    
+    // console.log(formCountId,selectElement);
 
 
     $('#editul_' + selectElementid)
@@ -3538,9 +3667,9 @@ var geteditPracticelistaccordingtopracticegrp = function (practicegrpId, selectE
             $("<li>").val(practice.id).html("<input type='checkbox' value='' name ='editActivity[" + (selectElementid) + "]" + "[" + "practicesnew_" + selectElementid + "][practices][" + practicegrpId + "][" + practice.id + "]' />" + practice.name + " " + "(" + practice.count + ")").appendTo($('#editul_' + selectElementid));
         });
 
-        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) { 
-        //     // alert("1"); 
-        // event.stopPropagation();  
+        // $('#appendnewcandy_'+formCountId+'_'+selectElementid).on('click', function (event) {
+        //     // alert("1");
+        // event.stopPropagation();
         // $(this).next('ul').slideToggle();
         // });
 
@@ -3548,9 +3677,9 @@ var geteditPracticelistaccordingtopracticegrp = function (practicegrpId, selectE
 
         // $(document).on('click', function () {
         //     if (!$(event.target).closest('.wrapMulDrop').length) {
-        //         $('.wrapMulDrop ul').slideUp();  
+        //         $('.wrapMulDrop ul').slideUp();
         //     }
-        // });       
+        // });
 
         $('.wrapMulDrop ul li input[type="checkbox"]').on('change', function () {
             // alert("2");
@@ -3562,7 +3691,7 @@ var geteditPracticelistaccordingtopracticegrp = function (practicegrpId, selectE
             }
         });
         // if (selectedPractice) {
-        //     selectElement.val(selectedPractice);  
+        //     selectElement.val(selectedPractice);
         // }
     }).catch(function (error) {
         console.error(error, error.response);
@@ -3689,7 +3818,8 @@ var totalTimeSpentByCM = function () {
         }
         var finaldata = " : " + totaltime + " / " + totalpatients;
         $(".cmtotaltimespent").html(finaldata);
-        //console.log(response.data[0].totalpatients+" checkdata "+finaldata+"testdata"+data);
+
+        console.log("kart cm:"+finaldata);
 
     }).catch(function (error) {
         console.error(error, error.response);
@@ -3719,7 +3849,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 
 // var getChartAjax = function(patient_id,deviceid,month,year) {
 //     axios({
-//         method: "GET", 
+//         method: "GET",
 //         url :'/rpm/graphreadingnew-chart/'+ patient_id +'/'+ deviceid +'/'+month+'/'+year+'/graphchart',
 //     }).then(function (response) {
 //         //alert(JSON.stringify(response.data) +'graph');
@@ -3734,17 +3864,17 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //         var label1 = JSON.stringify(response.data.label1).replace(/\"/g, "");
 
 //         var arrayreading_min =JSON.stringify(response.data.arrayreading_min);
-//         var reading_min = JSON.parse(arrayreading_min); 
+//         var reading_min = JSON.parse(arrayreading_min);
 //         var arrayreading_max =JSON.stringify(response.data.arrayreading_max);
 //         var reading_max = JSON.parse(arrayreading_max);
 
 //         var arrayreading_min1 =JSON.stringify(response.data.arrayreading_min1);
-//         var reading_min1 = JSON.parse(arrayreading_min1); 
+//         var reading_min1 = JSON.parse(arrayreading_min1);
 //         var arrayreading_max1 =JSON.stringify(response.data.arrayreading_max1);
 //         var reading_max1 = JSON.parse(arrayreading_max1);
 
 //         var chart_text =JSON.stringify(response.data.chart_text);
-//         var chart_name = JSON.parse(chart_text); 
+//         var chart_name = JSON.parse(chart_text);
 //         var subtitle1 =  "<b>" + label +"</b>"+" - [Min:"+ reading_min +" ]/[Max: "+ reading_max +"]" ;
 //         if(label1!=''){
 //             var subtitle2 =  "<b>" + label1 +"</b>"+" - [Min:"+ reading_min1 +" ]/[Max: "+ reading_max1 +"]" ;
@@ -3775,7 +3905,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //             text: chart_name
 //           },
 //           subtitle: {
-//             text: subtitle1+ ' '+subtitle2             
+//             text: subtitle1+ ' '+subtitle2
 //           },
 //           yAxis: {
 //                 title: {
@@ -3785,16 +3915,16 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //                 minorGridLineWidth: 0,
 //                 // gridLineWidth: 1,
 //                 // tickInterval: 1,
-//                 alternateGridColor: null, 
+//                 alternateGridColor: null,
 //                 plotBands: [
-//                     { 
+//                     {
 //                         from:reading_min,
 //                         to:reading_max,
 //                         color: 'rgba(68, 170, 213, 0.1)',
 
 //                     },
-//                     { 
-//                         from:reading_min1, 
+//                     {
+//                         from:reading_min1,
 //                         to:reading_max1,
 //                         color: 'rgba(243, 248, 157, 1)',//'rgba(269, 70, 213, 0.1)',
 
@@ -3803,31 +3933,31 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //             },
 //             tooltip: {
 //                 shared: true,
-//                 crosshairs: true 
+//                 crosshairs: true
 //             },
 //             plotOptions: {
 //                 spline: {
 //                     lineWidth: 4,
 //                     states: {
-//                         hover: { 
+//                         hover: {
 //                           lineWidth: 5
 //                         }
 //                     },
 //                     marker: {
 //                         enabled: true
 //                     },
-//                 } 
+//                 }
 //             },
 //             series: [{
 //                         name: label,
 //                         data: reading
-//                     }, 
+//                     },
 //                     {
 //                         name: label1,
 //                         data: reading1
 //             }],
 //             navigation: {
-//                 menuItemStyle: {  
+//                 menuItemStyle: {
 //                     fontSize: '10px'
 //                 }
 //             }
@@ -3839,7 +3969,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //     axios({
 //         method: "GET",
 //         url :'/rpm/graphreadingnew-chart/'+ patient_id +'/'+ deviceid +'/'+month+'/'+year+'/graphchart',
-//     }).then(function (response) {   
+//     }).then(function (response) {
 //      // alert(JSON.stringify(response.data) +'graph');
 
 //         var arraydate = JSON.stringify(response.data.uniArray);
@@ -3853,12 +3983,12 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //         var label1 = JSON.stringify(response.data.label1).replace(/\"/g, "");
 
 //         var arrayreading_min =JSON.stringify(response.data.arrayreading_min);
-//         var reading_min = JSON.parse(arrayreading_min); 
+//         var reading_min = JSON.parse(arrayreading_min);
 //         var arrayreading_max =JSON.stringify(response.data.arrayreading_max);
 //         var reading_max = JSON.parse(arrayreading_max);
 
 //         var arrayreading_min1 =JSON.stringify(response.data.arrayreading_min1);
-//         var reading_min1 = JSON.parse(arrayreading_min1); 
+//         var reading_min1 = JSON.parse(arrayreading_min1);
 //         var arrayreading_max1 =JSON.stringify(response.data.arrayreading_max1);
 //         var reading_max1 = JSON.parse(arrayreading_max1);
 
@@ -3874,7 +4004,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //                 text: chart_name
 //             },
 //             subtitle: {
-//                 text: subtitle1+ ' '+subtitle2             
+//                 text: subtitle1+ ' '+subtitle2
 //             },
 //             xAxis: [{
 //                 categories: patientarraydatetime,
@@ -3898,7 +4028,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //                         color: Highcharts.getOptions().colors[0]
 //                     }
 //                 },*/
-//                 plotBands: [{ 
+//                 plotBands: [{
 //                       from:reading_min,
 //                       to:reading_max,
 //                       color: 'rgba(68, 170, 213, 0.1)',
@@ -3931,7 +4061,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //                         color: Highcharts.getOptions().colors[1]
 //                     }
 //                 },*/
-//                 plotBands: [{ 
+//                 plotBands: [{
 //                       from: reading_min1,
 //                       to: reading_max1,
 //                       color:'rgba(243, 248, 157, 1)',
@@ -3964,7 +4094,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //             spline: {
 //               lineWidth: 4,
 //               states: {
-//                 hover: { 
+//                 hover: {
 //                   lineWidth: 5
 //                 }
 //               },
@@ -3974,12 +4104,12 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 
 //               // pointInterval: 3600000, // one hour
 //               // pointStart: patientarraydatetime//Date.UTC(2018, 1, 13, 0, 0, 0)
-//             } 
+//             }
 //             },
 //             series: [{
 //                 name: label,
 //                 type: 'spline',
-//                 yAxis: 1, 
+//                 yAxis: 1,
 //                 data: reading,
 //                 tooltip: {
 //                     valueSuffix: ' L/min'
@@ -3989,7 +4119,7 @@ var totalTimeSpent = function (patient_id, module_id, stage_id) {
 //                 name: label1,
 //                 type: 'spline',
 //                 yAxis: 2,
-//                 data: reading1, 
+//                 data: reading1,
 //                 tooltip: {
 //                     valueSuffix: ' L'
 //                 }
@@ -4008,7 +4138,7 @@ var getChartAjax = function (patient_id, deviceid, month, year) {
         dataType: "json",
         success: function (response) {
             /*axios({
-                method: "GET", 
+                method: "GET",
                 url :'/rpm/graphreadingnew-chart/'+ patient_id +'/'+ deviceid +'/'+month+'/'+year+'/graphchart',
                 async: true,
                 dataType: "json",
@@ -4043,10 +4173,16 @@ var getChartOnclick = function (data, id, deviceid) {
     } else {
         var subtitle2 = "";
     }
-
+    //alert("entering..");
     var subtitle1 = "<b>" + label + "</b>" + " - [Min:" + reading_min + " ]/[Max: " + reading_max + "]";
 
-    Highcharts.chart(id, {
+    // Highcharts.setOptions({
+    //     time: {
+    //         timezone: 'America/Chicago'
+    //     }
+    // });
+
+    let chart = Highcharts.chart(id, {
         chart: {
             type: 'spline',
             events: {
@@ -4061,11 +4197,22 @@ var getChartOnclick = function (data, id, deviceid) {
         },
         xAxis: {
             //type: 'datetime',
+            labels: {
+                rotation: -90,
+                step: 1,
+                padding: 0,
+                style: {
+                    fontSize: '8px'
+                }
+            },
             categories: patientarraydatetime,
             crosshair: true,  //extra
             index: 1,//extra
             gridLineWidth: 1,
         },
+        // time: {
+        //     timezone: 'America/Chicago'
+        // },
         title: {
             text: title_name
         },
@@ -4126,6 +4273,28 @@ var getChartOnclick = function (data, id, deviceid) {
             }
         }
     });
+    let btn = document.getElementById("btnFullScreen")
+
+    btn.addEventListener('click', function () {
+        Highcharts.FullScreen = function (container) {
+            this.init(container.parentNode); // main div of the chart
+        };
+
+        Highcharts.FullScreen.prototype = {
+            init: function (container) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    container.mozRequestFullScreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            }
+        };
+        chart.fullscreen = new Highcharts.FullScreen(chart.container);
+    })
 
 }
 
@@ -4308,6 +4477,7 @@ var setLandingTime = function () {
         var landing_time = data['landing_time'];
         $("#page_landing_times").val(landing_time);
         $(".form_start_time").val(landing_time);
+        $('#stopwatch').css("display", "block");
     }).catch(function (error) {
         console.error(error, error.response);
     });
@@ -4318,8 +4488,8 @@ var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
         method: "GET",
         url: `/system/get-total-time/${patientID}/${moduleId}/${starttime}/total-time`,
     }).then(function (response) {
-        if (patientID != 0 ) {
-            if(pause_stop_flag == 0){
+        if (patientID != 0) {
+            if (pause_stop_flag == 0) {
                 var data = response.data;
                 var fial_time = data['total_time'];
                 $("#time-containers").html(fial_time);
@@ -4338,7 +4508,7 @@ var updateTimeEveryMinutes = function (patientID, moduleId, starttime) {
                     updateTimeEveryMinutes(patientID, moduleId, start_time);
                 }, 60000);
             }
-        }else{
+        } else {
             var data = response.data;
             $(".message-notification").html('');
             $(".message-notification").append(data['count']);
@@ -4433,6 +4603,7 @@ window.util = {
     updatePatientList: updatePatientList,
     updatePatientListAssignedDevice: updatePatientListAssignedDevice,
     getPatientList: getPatientList,
+    getCmAssignPatientList: getCmAssignPatientList,
     renderDataTableOrder: renderDataTableOrder,
     renderDataTable: renderDataTable,
     renderDataTable_pdf: renderDataTable_pdf,
@@ -4478,6 +4649,7 @@ window.util = {
     updateStageList: updateStageList,
     updateStageCodeList: updateStageCodeList,
     getToDoListData: getToDoListData,
+    getAssignPatientListData: getAssignPatientListData,
     getFollowupListData: getFollowupListData,
     //lineChartVariables          : lineChartVariables,
     //businessDays                : businessDays,
@@ -4494,6 +4666,7 @@ window.util = {
     updatePhysicianListWithoutOther: updatePhysicianListWithoutOther,
     getPracticelistaccordingtopracticegrp: getPracticelistaccordingtopracticegrp,
     getRpmPatientList: getRpmPatientList,
+    pateintdevicecode: pateintdevicecode,
     getactivityPracticelistaccordingtopracticegrp: getactivityPracticelistaccordingtopracticegrp,
     getnewactivityPracticelistaccordingtopracticegrp: getnewactivityPracticelistaccordingtopracticegrp,
     getappendPracticelistaccordingtopracticegrp: getappendPracticelistaccordingtopracticegrp,

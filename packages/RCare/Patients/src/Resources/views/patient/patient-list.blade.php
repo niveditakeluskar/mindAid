@@ -81,6 +81,7 @@
         var table = util.renderDataTable('patient-list', "{{ route('patients_list') }}", columns, "{{ asset('') }}");  
         $(document).ready(function() {
             util.getToDoListData(0, {{getPageModuleName()}});
+            util.getAssignPatientListData(0, 0);
         });
     </script>
 @endsection

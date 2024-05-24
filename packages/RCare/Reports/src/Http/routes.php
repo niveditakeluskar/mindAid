@@ -30,7 +30,7 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
         return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
     })->name('rpm.enrolled.patient.report');
     
-     
+    
     Route::middleware(["auth", "web"])->group(function () {
       
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 

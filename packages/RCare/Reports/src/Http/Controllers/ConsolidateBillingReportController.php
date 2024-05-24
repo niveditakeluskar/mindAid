@@ -18,6 +18,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
+use Inertia\Inertia;
 
 class ConsolidateBillingReportController extends Controller
 {   
@@ -27,12 +28,71 @@ class ConsolidateBillingReportController extends Controller
           $year = date('Y', strtotime($monthly));
           $month = date('m', strtotime($monthly));
           
-          $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
-          $diagnosis = DB::select( DB::raw($diagnosis) );    
+          $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes 
+          where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
+          $diagnosis = DB::select($diagnosis);    
           //dd($diagnosis);
           return view('Reports::monthly-biling-report.consolidated-monthly-billing-report');
           
     }
+
+    public function PatientConsolidateBillingReport(Request $request){
+          $monthly = date('Y-m');
+          $year = date('Y', strtotime($monthly));
+          $month = date('m', strtotime($monthly));
+          
+          $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes 
+          where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
+          $diagnosis = DB::select($diagnosis);    
+          return Inertia::render('Report/ConsolidatedBilling', [
+            'diagnosis' => $diagnosis,
+    ]);
+    }
+
+    public function getConsolidateBillingReport(Request $request){
+      $practicesgrp = sanitizeVariable($request->route('practicesgrpid'));  
+      $practices = sanitizeVariable($request->route('practiceid'));
+      $provider = sanitizeVariable($request->route('providerid'));
+      $monthly   = sanitizeVariable($request->route('monthly'));
+      $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
+      $callstatus = sanitizeVariable($request->route('callstatus'));
+      $onlycode =  sanitizeVariable($request->route('onlycode'));
+      $m = substr($monthly, -1);//dd($m);
+      $m = (int)$m;
+
+        $monthly = date('Y-m');
+        $year = date('Y', strtotime($monthly));
+        $month = date('m', strtotime($monthly));
+  
+      $query = "select * from etl_reports.consolidate_monthly_billing_report_py where months = ".$m." and years = ".$year." ";
+
+      if($practices!="" && $practices !='null'){
+        $query .= " and pracid =".$practices;
+      }
+     
+      if($provider!="" && $provider !='null'){
+        $query .= " and proid =".$provider;
+      }
+      if($practicesgrp!="" && $practicesgrp !='null'){
+        $query .= " and pgroupid =".$practicesgrp;
+      }
+      if($activedeactivestatus!="" && $activedeactivestatus !='null'){
+        $query .= " and pstatus =".$activedeactivestatus;
+      }
+      if($callstatus!="" && $callstatus !='null'){
+        $query .= " and csid =".$callstatus;
+      }
+      if($onlycode == true){
+        $query .= " and billingcode != 'null'";
+      }
+     // $query .= "  LIMIT  10";
+      $data = DB::select( $query);  
+       
+            return Datatables::of($data) 
+            ->addIndexColumn()            
+            ->make(true);  
+    }
+
     public function ConsolidateMonthlyBilllingReportPatientsSearch(Request $request)
     {   
         $practicesgrp = sanitizeVariable($request->route('practicesgrpid'));  
@@ -44,6 +104,7 @@ class ConsolidateBillingReportController extends Controller
         $monthlyto   = sanitizeVariable($request->route('monthlyto'));
         $activedeactivestatus = sanitizeVariable($request->route('activedeactivestatus'));
         $callstatus = sanitizeVariable($request->route('callstatus'));
+        $onlycode =  sanitizeVariable($request->route('onlycode'));
         if($module_id=='null')
         {
            $module_id=3; 
@@ -100,7 +161,7 @@ class ConsolidateBillingReportController extends Controller
                     inner join patients.patient_services ps on pd.patient_id=ps.patient_id
                     where pd.created_at between '".$dt1."'and '".$dt2."' and pd.status =1 and pp.provider_type_id = 1 and pp.is_active =1
                     "; 
-    
+
                 if($practices!="" && $practices !='null'){
                   $query .= " and pp.practice_id =".$practices;
                 }
@@ -117,14 +178,19 @@ class ConsolidateBillingReportController extends Controller
     
               //  $query .= "and pd.patient_id in ('1896660271','1264936305','706138193')";
     
-                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid";
-                    $data = DB::select( DB::raw($query) );
-                        //  dd($query);
+                    $query .=" group by pd.patient_id,pd.code,r.qualified,dr.qualified ) x group  by x.patient_id) y on y.patient_id=sp.pid"; 
+                    
+                    if($onlycode == 1){
+                      $query .= " where sp.billingcode != 'null'";
+                    }
+                   // dd($query);
+                    $data = DB::select( $query);
+                         
                         //  dd($data);
                         
                 
                     $diagnosis = "select max(maxval.total) as total ,max(maxval.qualified) as quli,max(maxval.disquali) as nonquli from ($query) maxval";
-                    $diagnosis = DB::select( DB::raw($diagnosis) );
+                    $diagnosis = DB::select( $diagnosis) ;
                     //  dd($diagnosis);  
     
           
@@ -236,17 +302,22 @@ class ConsolidateBillingReportController extends Controller
                         if($data[$i]->call_conti_status == '000'){
                           $data[$i]->call_conti_status='';
                         }
-    
-                        if(is_null($data[$i]->finalize_cpd)){
+						
+						$finalize_cpd_query = PatientServices::where('patient_id',$pid)->where('status',1)->get();						
+						if(count($finalize_cpd_query)>0){
+                        if(is_null($finalize_cpd_query[0]->finalize_cpd)){
                           $finalize_cpd='';
                         }else{
-                          if($data[$i]->finalize_cpd=='1'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='1'){
                             $finalize_cpd ='Yes';
                           } 
-                          if($data[$i]->finalize_cpd=='0'){
+                          if($finalize_cpd_query[0]->finalize_cpd=='0'){
                             $finalize_cpd ='No';
                           }
                         }
+						}else{
+							$finalize_cpd='';
+						}
                         if(is_null($data[$i]->total_reading_days)){
                           $total_reading_days ='';
                         }else{

@@ -164,6 +164,7 @@
           $('#time').val('00:20:00');
           getproviderPerformanceList();   
           util.getToDoListData(0, {{getPageModuleName()}});
+          util.getAssignPatientListData(0, 0);
 
         
          

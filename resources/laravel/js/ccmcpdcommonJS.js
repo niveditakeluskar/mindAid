@@ -170,9 +170,23 @@ var onSaveActiveDeactive = function (formObj, fields, response) {
   }
 };
 
-var onActiveDeactiveClick = function ($pid, $status) {
-  var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
+// export default {
+//   // ... other code
+//   onActiveDeactiveClick: function(pid, status) {
+//     // Your function logic here
+//     console.log('PID:', pid);
+//     console.log('Status:', status);
+//     // Other actions...
+//   }
+//   // ... other code
+// };
+
+// var onActiveDeactiveClick = function ($pid, $status) {
+//   var sPageURL = window.location.pathname;
+//   parts = sPageURL.split("/"),
+var onActiveDeactiveClick = function ($pid, $status,$fromstarttime) { console.log($fromstarttime);
+    var sPageURL = window.location.pathname;
+    parts = sPageURL.split("/"),
     patientId = parts[parts.length - 1];
   if ($.isNumeric(patientId) == true) {
     //patient list
@@ -186,10 +200,12 @@ var onActiveDeactiveClick = function ($pid, $status) {
     //worklist 
     var patientId = $pid;
     var selmoduleId = $("#modules").val();
+    var fromstarttime1 = $fromstarttime; 
     util.getPatientEnrollModule(patientId, selmoduleId);
     var status = $status;
     $("form[name='active_deactive_form'] #worklistclick").val("1");
     $("form[name='active_deactive_form'] #patientid").val(patientId);
+    $("form[name='active_deactive_form'] #fromstarttime").val(fromstarttime1);
     $("form[name='active_deactive_form'] #date_value").hide();
     $("form[name='active_deactive_form'] #fromdate").hide();
     $("form[name='active_deactive_form'] #todate").hide();
@@ -334,6 +350,7 @@ $('#add_patient_devices').click(function () { //alert("add_patient_devices")
 });
 
 
+
 $('.noallergiescheck').click(function () {
   var form = $(this).closest('form');
   var formname = $(form).attr('name');
@@ -423,8 +440,8 @@ var callMonthllyMonitoringInitFunctions = function () {
   util.getCallScriptsById($("form[name='text_form'] #text_template_id").val(), '#templatearea_sms', "form[name='text_form'] input[name='template_type_id']", "form[name='text_form'] input[name='content_title']");
 
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
-    id = parts[parts.length - 1];
+  var parts = sPageURL.split("/");
+  var id = parts[parts.length - 1];
   var patientId = id;
   var data = "";
   var preparationNotesFormPopulateURL = URL_POPULATE_PREPARATION_NOTES + "/" + patientId + "/current";
@@ -993,8 +1010,8 @@ function newcheckquery2(value) {
  */
 var init = function () {
   var sPageURL = window.location.pathname;
-  parts = sPageURL.split("/"),
-    id = parts[parts.length - 1];
+  var parts = sPageURL.split("/");
+  var id = parts[parts.length - 1];
   var patientId = id;
   if ($.isNumeric(patientId)) {
     datapopulate(patientId);

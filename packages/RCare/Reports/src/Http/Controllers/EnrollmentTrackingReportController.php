@@ -91,7 +91,7 @@ class EnrollmentTrackingReportController extends Controller
 
         $query = "select * from ren_core.practicegroup where status = 1 ";
 
-  $data = DB::select( DB::raw($query) );
+  $data = DB::select($query);
   // $dlength = count($data);
   // $a=array("0","Total");
   // array_push( $data , $a);
@@ -151,7 +151,7 @@ class EnrollmentTrackingReportController extends Controller
                   inner join ren_core.practices rp on pp.practice_id = rp.id
                   where rp.practice_group = '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
 
-        $countdata = DB::select( DB::raw($query1) );   
+        $countdata = DB::select($query1);   
         $c = count($countdata) ;      
         $sum = $c+$sum; 
 
@@ -186,7 +186,7 @@ class EnrollmentTrackingReportController extends Controller
       inner join patients.patient_services ps on ps.patient_id = pp.patient_id
       inner join ren_core.practices rp on pp.practice_id = rp.id
       where rp.practice_group= '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
-      $countdata2 = DB::select( DB::raw($query2) ); 
+      $countdata2 = DB::select($query2); 
      
       $lastmonthcount = count($countdata2);      
       $sumofcurrentmonth_countoflastmonth[0] = $sum;
@@ -281,14 +281,14 @@ class EnrollmentTrackingReportController extends Controller
   $query1 = "select * from ren_core.practicegroup where practice_name='HMG'";
 
        
-  $data1 = DB::select( DB::raw($query1) );
+  $data1 = DB::select($query1);
 
   // dd();
 
   $query2 = "select pr.*,pg.practice_name as practicegroup from ren_core.practices pr
   inner join ren_core.practicegroup pg on pr.practice_group = pg.id
   where is_active = 1 and practice_group = 7";
-  $data2 = DB::select( DB::raw($query2) );
+  $data2 = DB::select($query2);
   // dd($data2);
 
   $a = array_merge($data1,$data2); 
@@ -322,7 +322,7 @@ class EnrollmentTrackingReportController extends Controller
   $query3 = "select  pr.*,pg.practice_name as practicegroup from ren_core.practices pr
              inner join ren_core.practicegroup pg on pr.practice_group = pg.id
              where pr.is_active = 1 and pr.practice_group != 7 ";  
-  $data3 = DB::select( DB::raw($query3) );
+  $data3 = DB::select($query3);
 
 
 
@@ -363,6 +363,7 @@ class EnrollmentTrackingReportController extends Controller
   $finalheader=array();
   $maxcount=0;
   $codedata; 
+//  dd($data);  
 
   for($i=0;$i<count($data);$i++)
   {
@@ -373,11 +374,10 @@ class EnrollmentTrackingReportController extends Controller
     $headername="header".$i;
     
 
-    if (array_key_exists("practice_name",$data[$i])){ 
-    $practicegroupid=$data[$i]->id;
-    $name = $data[$i]->practice_name; 
-  
-
+    if (property_exists($data[$i], "practice_name")) {
+      //dd($data[$i]);  
+      $practicegroupid=$data[$i]->id;
+      $name = $data[$i]->practice_name; 
     }else{
      $practiceid=$data[$i]->id;
      $name = $data[$i]->name;
@@ -422,7 +422,7 @@ class EnrollmentTrackingReportController extends Controller
       
       
         // $practiceid = 1;
-        if (array_key_exists("practice_name",$data[$i])){ 
+        if (property_exists($data[$i], "practice_name")) {
             if($practicegroupid == 0){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
               inner join patients.patient_services ps on ps.patient_id = pp.patient_id
@@ -449,7 +449,7 @@ class EnrollmentTrackingReportController extends Controller
         }  
         
 
-        $countdata = DB::select( DB::raw($query1) );   
+        $countdata = DB::select($query1);   
         $c = count($countdata) ;      
         $sum = $c+$sum; 
 
@@ -480,7 +480,7 @@ class EnrollmentTrackingReportController extends Controller
       $tdt2 = $todate1 ." "."23:59:59";   
  
       // $practiceid = 1;
-      if (array_key_exists("practice_name",$data[$i])){ 
+      if (property_exists($data[$i], "practice_name")) {
         if($practicegroupid == 0){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
           inner join patients.patient_services ps on ps.patient_id = pp.patient_id
@@ -506,7 +506,7 @@ class EnrollmentTrackingReportController extends Controller
       }
  
 
-      $countdata2 = DB::select( DB::raw($query2) ); 
+      $countdata2 = DB::select($query2); 
      
       $lastmonthcount = count($countdata2);      
       $sumofcurrentmonth_countoflastmonth[0] = $sum;

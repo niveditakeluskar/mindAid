@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
 	<!-- <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
@@ -208,21 +210,32 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header"> 
                 <h4 class="modal-title">URL Confirm</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
+            </div> 
             <div class="modal-body">
                 <?php 
-                    $base_url = url('/');
-                    if($base_url == "https://rcareproto2.d-insights.global") {
-                        echo "You are in the test system – this is not production – do you acknowledge you would like to proceed in the test system?";
-                    } elseif($base_url == "https://rcarestaging.d-insights.global") {
-                        echo "You are in the staging – this is not production – do you acknowledge you would like to proceed in the test system?";
+                    $base_url = 'prod';//url('/');
+                    // print_r($DomainFeatures->instance);
+					if(isset($DomainFeatures->instance)){
+						if($base_url == trim($DomainFeatures->instance)){
+							$define_server = trim($DomainFeatures->instance);
+						}
+						else{
+							$define_server = trim($DomainFeatures->instance);
+							echo "You are in the  $DomainFeatures->instance system – this is not production – do you acknowledge you would like to proceed in the test system?";
+						}
+					}
+                    else{
+                        $define_server = '';
+                        echo "URL is not registered in the system. Please contact system administrator to check the url";
                     }
-                ?>
+                ?> 
+                <input type="hidden" id="origin" name="origin" value =<?php echo $define_server;?>>
+                    
             </div>
-            <div class="card-footer">
+            <div class="card-footer"> 
                 <div class="mc-footer">
                     <div class="row">
                         <div class="col-lg-12 text-right">
@@ -231,7 +244,7 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
@@ -329,10 +342,11 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
             // alert(timezone);
             $('#timezone').val(timezone);
             $("#password").attr("autocomplete", "off");
-            var origin   = window.location.origin;
-            if(origin != "https://rcare.d-insights.global"){
+            var origin   = 'prod';//window.location.origin;
+            var instance = $('#origin').val();
+            if(origin != instance){ //https://rcare.d-insights.global
                 $('#confirm_url').modal('show');
-                $('#confirm_url_ok').click(function (){
+                $('#confirm_url_ok').click(function (){ 
                     $('#confirm_url').modal('hide');
                 }); 
                 $('#confirm_url_cancel').click(function (){

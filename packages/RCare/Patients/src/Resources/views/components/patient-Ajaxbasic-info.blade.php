@@ -73,10 +73,11 @@
                                 <label for="programs"  data-toggle="tooltip" title="Enrolled Services" data-original-title="Patient Enrolled Services">
                                     <i class="text-muted i-Library"></i>: <span id="enroll_services" class="patient_enroll_services"></span> 
                                 </label>
-                                <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
+                                <!-- <a href="javascript:void(0)" data-toggle="modal" style="margin-left: 15px; display:none" class="adddeviceClass patient_add_device" data-target="#add-device"  id="deviceadd" > 
                                     <i class="plus-icons i-Add" id="adddevice" style="font-size: 15px;" data-toggle="tooltip" data-placement="top" data-original-title="Additional Device"></i>
-                                </a>
+                                </a> -->
                                <!-- ash -->
+                                <br/>
                                 <a href="javascript:void(0)" type="button" class="btn btn-info btn-sm add_patient_devices" data-toggle="modal" data-target="#add-patient-devices" style="background-color:#27a7de;border:none;display: none;" id="add_patient_devices">Devices</a>  
                                 <!-- !ash -->
                                 <br/>
@@ -88,6 +89,9 @@
                                 <label data-toggle="tooltip" title="Device Code" data-original-title="Patient Device Code." for="Device Code">
                                     <i class="text-muted i-Hospital"></i> : <span id="device_code" class="patient_device_code"></span>
                                 </label>   
+                                <label data-toggle="tooltip" title="" data-original-title="Delivery status" for="Delivery status">
+                                    <span id="delivery_status" class="device_delivery_status"></span>
+                                </label>
                             </div>   
                             <div class="row col-md-3">
                                 <div class="col-md-11 careplan">
@@ -95,7 +99,7 @@
                                     <span class="last_time_spend" id="btime"></span></label>
                                     <label for="total time" data-toggle="tooltip" title="Non Billable Time" data-original-title="Non Billable Time">
                                      / <span class="non_billabel_last_time_spend" id="nbtime"></span></label>
-                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/registerd-patient-edit/{{$patient_id}}/{{$m_id}}/{{$c_id}}/{{$enroll_service}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
+                                    <button class="button" style="border: 0px none;background: #f7f7f7;outline: none;"><a href="/patients/patient-reg-enrollment/{{$patient_id}}" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>
                                     <div class="demo-div" style="margin-bottom:5px;">
                                         @hidden("timer_start",["id"=>"timer_start"])
                                         @hidden("timer_end",["id"=>"timer_end"])
@@ -105,13 +109,13 @@
                                         @hidden("pause_time",["id"=>"pause_time", "value"=>"0"])
                                         @hidden("play_time",["id"=>"play_time", "value"=>"0"])
                                         @hidden("pauseplaydiff",["id"=>"pauseplaydiff", "value"=>"0"])
-                                        <div class="stopwatch" id="stopwatch">
+                                        <div class="stopwatch" id="stopwatch" style="display:none">
                                             <i class="text-muted i-Timer1"></i> :
                                             <div id="time-container" class="container" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time" style="display:none!important"></div>
                                             <label for="Current Running Time" data-toggle="tooltip" title="Current Running Time" data-original-title="Current Running Time">
                                             <span id="time-containers"></span></label>
                                             <button class="button" id="start" data-toggle="tooltip" data-placement="top" title="Start Timer" data-original-title="Start Timer" onclick="util.logPauseTime($('.form_start_time').val(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/play.png')}}" style=" width: 28px;" /></button>
-                                            <button class="button" id="pause" data-toggle="tooltip" data-placement="top" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0,  $('input[name=billable]').val(), {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></button>
+                                            <button class="button" id="pause"  data-toggle="tooltip" data-placement="top" title="Pause Timer" data-original-title="Pause Timer" onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0,  $('input[name=billable]').val(), {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" ><img src="{{asset('assets/images/pause.png')}}" style=" width: 28px;" /></button>
 											
                                             <button class="button" id="stop" data-toggle="tooltip" data-placement="top" title="Stop Timer" data-original-title="Stop Timer"  onclick="util.logTimeManually($('#timer_start').val(), $('#time-container').text(), {{$patient_id}}, {{ getPageModuleName() }}, {{ getPageSubModuleName() }}, 0, 1, {{$patient_id}}, 0, 'log_time_<?php $uriSegments = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));echo $uriSegments[1].'_'.$uriSegments[2];?>');" style=" display: <?php echo $showstopbtn; ?>"><img src="{{asset('assets/images/stop.png')}}" style=" width: 28px; " /></button>
 											

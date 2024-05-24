@@ -7,7 +7,7 @@ class RcareOrgs extends Model
 {
     //
     protected $table ='rcare_admin.rcare_orgs';
-
+ 
     /**
     * The attributes that are mass assignable.
     *

@@ -50,6 +50,7 @@ use DataTables;
 use Illuminate\Support\Facades\Log; 
 use Carbon\Carbon;
 use File,DB;
+use Inertia\Inertia;
 
 class AssignPatientController extends Controller
 {
@@ -61,6 +62,16 @@ class AssignPatientController extends Controller
         return view('Patients::patient.assigned-patient-list',compact('active_pracs','inative_pracs'));      
     }
 
+    
+    public function newassignedPatients(Request $request)
+    {
+        $active_pracs = Practices::activePcpPractices();
+        $inactive_pracs = Practices::InactivePcpPractices();
+           return Inertia::render('Patients/PatientsAssignment', [
+            'active_pracs' => $active_pracs,
+            'inactive_pracs' => $inactive_pracs,
+        ]);
+    }
        
     public function assignedPatientsSearch(Request $request) 
     {
@@ -148,7 +159,7 @@ class AssignPatientController extends Controller
 
             $query = "select * from patients.sp_assigned_patients_report($p,$pr,$month, $year,$timeoption,'".$totime."',$status, '".$configTZ ."','".$userTZ."',$c)";        
                // dd($query);   
-            $data = DB::select( DB::raw($query) );
+            $data = DB::select($query);
               //$careManager = DB::table('ren_core.users')->where('role', '=', 5)->get();
               // dd($data);  
                return Datatables::of($data)
@@ -172,7 +183,7 @@ class AssignPatientController extends Controller
                   where us.status=1 and user_id = $row->userid   $practice_cond
                   GROUP BY us.user_id, pp.practice_id";
     
-                  $patient_count = DB::select( DB::raw($patientcount) );
+                  $patient_count = DB::select(($patientcount) );
                   if(!empty($patient_count)) {
                     return $patient_count[0]->patient_count;
                 }else{
@@ -216,32 +227,40 @@ class AssignPatientController extends Controller
           ->make(true); 
     }
 
-    public function SavePatientUser(Request $request){
+    public function getActiveUsers(Request $request){
 
-      $user = sanitizeVariable($request->user);
-      $patient_id = sanitizeVariable($request->patient);
-      $data = array( 
-          'user_id' => sanitizeVariable($request->user),
-          'patient_id' => $patient_id,
-          'created_by' => session()->get('userid'),
-          'updated_by' => session()->get('userid'), 
-          'status' => 1
-      );
-      if(UserPatients::where('patient_id',$patient_id)->exists()){
-          $update_data = array(
-              'status' => 0
-          );
-          if($user == '' ||  $user == 'select CM'){
-              
-              UserPatients::where('patient_id',$patient_id)->update($update_data);
-          }else{
-              UserPatients::where('patient_id',$patient_id)->update($update_data);
-              UserPatients::create($data);
-          }            
+        $careManager =   DB::table('ren_core.users')
+        ->whereIN('role', array(5,8))
+        ->where('status',1)
+        ->get();
+        return response()->json($careManager);
+    
+        }
+
+    public function SavePatientUser(Request $request){
+        $user = sanitizeVariable($request->selectedOptionManager);
+        $patientIds = sanitizeVariable($request->selectedRows);
+        $data = [];
+        $now = Carbon::now();
+        $updateData = ['status' => 0];
+        foreach($patientIds as $patientId){
+          $data[] = [ 
+              'user_id' => sanitizeVariable($user),
+              'patient_id' => $patientId,
+              'created_by' => session()->get('userid'),
+              'updated_by' => session()->get('userid'), 
+              'created_at' => $now,
+              'status' => 1
+          ];
       }
-      else
-      {
-          UserPatients::create($data);
-      }        
-  }
+  
+      if(UserPatients::whereIn('patient_id', $patientIds)->exists()){
+        UserPatients::whereIn('patient_id', $patientIds)->update($updateData);
+         }
+  
+    if(!empty($data)){
+        UserPatients::insert($data);
+    }
+  
+    }
 }  

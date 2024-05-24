@@ -35,7 +35,10 @@ class DomainFeatures extends Model
         'updated_by',
         'logoutpoptime',
         'idle_time_redirect',
-        'block_time'
+        'block_time', 
+        'instance',
+        'logo',
+        'rpm_messages'
     ];
     
     public function users()
@@ -52,7 +55,7 @@ class DomainFeatures extends Model
     {
         $url = url('/');
         // return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->first();  
-        return self::select('session_timeout', 'logoutpoptime','url')->where('status',1)->where('url', 'like', '%' . $url . '%')->first();  
+        return self::select('session_timeout', 'logoutpoptime','url')->where('url', 'like', '%' . $url . '%')->first();  
     }
 
 }

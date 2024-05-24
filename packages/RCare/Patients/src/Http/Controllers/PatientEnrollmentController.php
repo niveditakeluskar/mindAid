@@ -31,9 +31,12 @@ use RCare\Patients\Http\Requests\CallFinalisedChecklistRequest;
 use RCare\Patients\Models\PatientActiveDeactiveHistory;
 use RCare\Org\OrgPackages\Modules\src\Models\ModuleComponents;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use DataTables;
 use Carbon\Carbon;
 use RCare\Org\OrgPackages\Users\src\Models\Users;     
+use RCare\Org\OrgPackages\DomainFeatures\src\Models\DomainFeatures;
+use URL;
 
 class PatientEnrollmentController extends Controller
 {
@@ -64,6 +67,15 @@ class PatientEnrollmentController extends Controller
             ->make(true);
         }
         return view('Patients::patient-enrollment.patient-list');
+    }
+
+    public function patientRegEnroll(Request $request) {
+        $module_id    = getPageModuleName();
+        $submodule_id = getPageSubModuleName();
+        return Inertia::render('Patients/PatientEnrollment', [
+            'moduleId' => $module_id,
+            'componentId' => $submodule_id,
+        ]);
     }
 
     public function listPatientEnrollmentPatientsSearch(Request $request) {
@@ -715,7 +727,7 @@ class PatientEnrollmentController extends Controller
 
             //    dd($questionnairehistory);
             $insert_content = QuestionnaireTemplateUsageHistory::create($questionnairehistory);
-        
+            // dd($insert_content);
             $history_id      = $insert_content->id;
             $action_template = array('template_id' => $template_id, 'history_id' => $history_id);
 
@@ -905,16 +917,16 @@ class PatientEnrollmentController extends Controller
             $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
 
             // $insert_query = PatientEnrollment::create($data);
-
+    
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $time_rec_module, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
         
+            $url = strtolower(URL::to('/').'/rcare-login'); 
+           if($module_id == 2 && DomainFeatures::where(DB::raw('lower(url)'), $url)->where('rpm_messages',1)->exists()){
 
-           /* if($module_id == 2){
                 $ccmSubModule = ModuleComponents::where('components',"Monthly Monitoring")->where('module_id',$module_id)->where('status',1)->get('id');
                 $SID          = getFormStageId($module_id, $ccmSubModule[0]->id, 'Enroll In RPM');
                 $enroll_msg = CommonFunctionController::sentSchedulMessage($module_id,$patient_id,$SID);
                }
-			*/
 
             DB::commit();
             return response(['form_start_time' =>$form_save_time]);

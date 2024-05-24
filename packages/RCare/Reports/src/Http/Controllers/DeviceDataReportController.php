@@ -45,15 +45,43 @@ class DeviceDataReportController extends Controller
         $pdf = PDF::loadView('Reports::device-data-reports.device-data-report-pdf');
         return $pdf->download('users.pdf');
     }
+	
+	public function getAssignDevice(Request $request)
+    {
+      // dd('getAssignDevice');
+      try {
+		  $patientid = sanitizeVariable($request->pid);
+		  $patient_assign_device="";
+		  $patient_assign_deviceid="";
+			
+		  $PatientDevices = PatientDevices::where('patient_id',$patientid)->where('status',1)->orderby('id','desc')->first();
+		  if(!empty($PatientDevices)){
+                $deviceid = $PatientDevices->device_id;
+				$dev=  Devices::where('id',$deviceid)->where('status','1')->orderby('id','asc')->first();
+                       if(!empty($dev)){
+                        $show_device = $dev->device_name;
+                        $show_device_id = $dev->id.","; 
+					   }
+					   return response()->json([ 'patient_assign_deviceid'=>$show_device_id]); 
+            }      
+            
+      }
+      catch(\Exception $ex) {
+          //  DB::rollBack();
+            // return $ex;
+            return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
 
+	/*
     public function getAssignDevice(Request $request)
     {
       // dd('getAssignDevice');
       try {
       $patientid = sanitizeVariable($request->pid);
-
+		
       $PatientDevices = PatientDevices::where('patient_id',$patientid)->where('status',1)->orderby('id','desc')->first();
-      //dd($PatientDevices);
+      
             if(!empty($PatientDevices)){
                 $data = json_decode($PatientDevices->vital_devices);
                 
@@ -67,6 +95,7 @@ class DeviceDataReportController extends Controller
                        if(!empty($dev)){
                         $show_device.= $dev->device_name.", ";
                         $show_device_id.= $dev->id.", ";
+						dd($show_device_id);
                        }
                       }
                   
@@ -78,6 +107,7 @@ class DeviceDataReportController extends Controller
                 $patient_assign_device="";
                 $patient_assign_deviceid="";
             }
+			
             return response()->json([ 'patient_assign_deviceid'=>$patient_assign_deviceid]); 
             }
       catch(\Exception $ex) {
@@ -86,7 +116,7 @@ class DeviceDataReportController extends Controller
             return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
         }
     }
-
+	*/
     
     public function DDReportSerch(Request $request)
     {
@@ -148,7 +178,7 @@ class DeviceDataReportController extends Controller
        pef_value
         from patients.devivedatareport($patientid, timestamp '".$dt1."',timestamp '".$dt2."')";  */
 
-       $query="select distinct x.effdatetime,x.patient_id,bp.alert_status as bp_alert_status,bp.systolic_qty, bp.diastolic_qty,hr.alert_status as hr_alert_status, hr.resting_heartrate, wt.alert_status as wt_alert_status,wt.weight,ox.alert_status as ox_alert_status, ox.oxy_qty,temp.alert_status as temp_alert_status, temp.bodytemp,glc.alert_status as glc_alert_status, glc.value,spt.alert_status as spt_alert_status, spt.fev_value,spt.pef_value  from 
+       $query="select distinct x.effdatetime,x.patient_id,bp.alert_status as bp_alert_status,bp.systolic_qty, bp.diastolic_qty,hr.alert_status as hr_alert_status, bp.resting_heartrate, wt.alert_status as wt_alert_status,wt.weight,ox.alert_status as ox_alert_status, ox.oxy_qty,temp.alert_status as temp_alert_status, temp.bodytemp,glc.alert_status as glc_alert_status, glc.value,spt.alert_status as spt_alert_status, spt.fev_value,spt.pef_value  from 
        ((select distinct effdatetime,patient_id from rpm.observations_heartrate where effdatetime between '$fdt' and '$tdt' and patient_id=$patientid) 
          UNION 
         (select distinct effdatetime,patient_id from rpm.observations_oxymeter where effdatetime between '$fdt' and '$tdt' and patient_id=$patientid )
@@ -172,7 +202,7 @@ class DeviceDataReportController extends Controller
        left join rpm.observations_spirometer spt on spt.effdatetime =x.effdatetime
         where x.effdatetime between '$fdt' and '$tdt' and x.patient_id=$patientid";
    
-  $data  = DB::select( DB::raw($query) );
+  $data  = DB::select($query);
 
   return Datatables::of($data)
       ->addIndexColumn()

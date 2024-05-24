@@ -3,17 +3,17 @@
 		<label>Condition<span class="error">*</span> :</label>	  
 			<input type="hidden" name="condition" value="">
 			@selectdiagnosiscondition("diagnosis",["id" => "diagnosis_condition", "onchange" =>"carePlanDevelopment.clearConditionForm(this)"])
-			{{-- @selectCarePlancondition("diagnosis",["id" => "diagnosis_condition","onchange"=>"carePlanDevelopment.changeCondition(this)"]) --}}
+			<!-- selectCarePlancondition("diagnosis",["id" => "diagnosis_condition","onchange"=>"carePlanDevelopment.changeCondition(this)"]) -->
 	</div>
 	<div class="col-md-2">
 		<label><span class="error"></span>&nbsp; </label>
 		<button type="button" class="col-md-12 btn btn-primary " onclick = "carePlanDevelopment.changeCondition(this)" id="render_plan_form" >Display Care Plan</button>
 	</div>
-	<div class="col-md-4 emaillist">
+	<div class="col-md-4">
 		<label>Code<span class="error">*</span> :</label>
 			<input type="hidden" id="codeid">
-			{{--@hidden("prev_code",["id" => "prev_code"])--}}
-			{{--@text("code",["id" => "diagnosis_code"])--}}
+			<!-- hidden("prev_code",["id" => "prev_code"]) -->
+			<!-- text("code",["id" => "diagnosis_code"]) -->
 			@selectconditioncode("code",["id" => "diagnosis_code","onchange"=>"carePlanDevelopment.changeCode(this)"])
 
 	</div>
@@ -23,9 +23,9 @@
 	</div>
 
 	
-	<div>
-        <button type="button" class="btn btn-primary mt-2 ml-3" id="enable_diagnosis_button" onclick="carePlanDevelopment.enableDiagnosisbutton(this)" style="display:none">Enable Editing</button>
-		<button type="button" class="btn btn-primary mt-2 ml-3" id="disable_diagnosis_button" onclick="carePlanDevelopment.disableDiagnosisbutton(this)" style="display:none">Disable Editing</button>
+	<div class ="eneable_disable_btn" id="eneable_disable_btn" style="display:none">
+        <button type="button" class="btn btn-primary mt-2 ml-3" id="enable_diagnosis_button" onclick="carePlanDevelopment.enableDiagnosisbutton(this)">Enable Editing</button>
+		<button type="button" class="btn btn-primary mt-2 ml-3" id="disable_diagnosis_button" onclick="carePlanDevelopment.disableDiagnosisbutton(this)">Disable Editing</button>
 	</div>    
 
 	<div class="col-md-12">

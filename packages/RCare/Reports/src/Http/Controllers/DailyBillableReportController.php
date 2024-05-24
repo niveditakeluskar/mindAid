@@ -168,7 +168,7 @@ class DailyBillableReportController extends Controller
        
         $query = "select pid, pfname, plname, pmname, pdob , pprofileimg, pppracticeemr, pracpracticename, prprovidername, pdcondition, to_char(ccsrecdate at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as ccsrecdate  , pstatus, ptrtotaltime, billingcode,unit from patients.daily_billing_report($p,$pr,3, timestamp '".$dt1."', timestamp '".$dt2."',$timeoption,'".$totime."',$practicesgrp,$activedeactivestatus)";      
         // dd($query); 
-        $data = DB::select( DB::raw($query) );
+        $data = DB::select($query);
       //  dd($data);
             return Datatables::of($data) 
             ->addIndexColumn()             

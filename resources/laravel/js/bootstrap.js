@@ -1,7 +1,9 @@
 //import * as pdfMake from 'pdfmake/build/pdfmake.js';
 //import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-window._ = require('lodash');
+// window._ = require('lodash');
+import InputMask from 'inputmask'; 
+import _ from 'lodash';
 // window.Popper = require('popper.js').default; // Already included in Dashmix Core JS
 
 /**
@@ -30,7 +32,10 @@ try {
     require('bootstrap-notify');
 	
     require('bootstrap-select-v4');
-    window.InputMask = require('inputmask');
+    // window.InputMask = require('inputmask');
+    window.InputMask = InputMask;
+$.fn.inputmask = window.InputMask;
+
     require('inputmask/dist/jquery.inputmask.bundle.js');
 
     //require( 'jszip' );
@@ -43,7 +48,9 @@ try {
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
-window.axios = require('axios');
+// window.axios = require('axios');
+import axios from "axios";
+window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

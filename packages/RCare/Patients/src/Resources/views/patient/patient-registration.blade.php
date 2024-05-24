@@ -11,6 +11,7 @@
 		<div class="row mb-4">
 			<div class="col-md-12  mb-4">
 				<form action="{{ route('ajax.patient.registration')}}" method="post" enctype="multipart/form-data" name ="patient_registration_form"  id="patient_registration_form">
+						@csrf
 					<div class="card mb-4">
 						<div class="card-header mb-3">
 							<div class="row">
@@ -28,6 +29,7 @@
 												$showstopbtn = "none";
 											}
 										?>
+										{{ csrf_field() }}
             							<input type="hidden" name="module_id" value="{{ $module_id }}" />
             							<input type="hidden" name="submodule_id" value="{{ $submodule_id }}" />
 							            <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
@@ -504,8 +506,8 @@
 								<hr>
 								<div class="col-md-6 form-group mb-3">  
 									<label for="entrollment_form">Enrollment From <span class="error">*</span></label> 
-									@select("Select Enrollment From", "entrollment_from", [
-											0 => "Clinic Care Manage",
+									@select("Enrollment From", "entrollment_from", [
+											0 => "Clinic Care Manager",
 											1 => "Remote Care Manager By Phone"
 										])                          
 								</div>
@@ -648,6 +650,7 @@
 			patientRegistration.init();
 			$("#file").removeClass("form-control");
 			util.getToDoListData(0, {{getPageModuleName()}});
+			util.getAssignPatientListData(0, 0);
 			$("#start").hide();
             $("#pause").show();
 			$("#time-container").val(AppStopwatch.startClock);

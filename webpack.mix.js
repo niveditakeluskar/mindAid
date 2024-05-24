@@ -74,10 +74,7 @@ mix.combine([
     'resources/gull/assets/js/vendor/perfect-scrollbar.min.js',
 ], 'public/assets/js/common-bundle-script.js');
 
-mix.combine([
-    'resources/gull/assets/js/libs/moment.min.js',
-    'resources/gull/assets/js/libs/moment-timezone-with-data.js',
-], 'public/assets/js/moment.min.js');
+mix.js('node_modules/moment/moment.js', 'public/assets/js');
 
 mix.js([
 

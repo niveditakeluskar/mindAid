@@ -42,7 +42,7 @@ class AdditionalAcitvitiesReportController extends Controller
     // dd($query);   
 
 
-    $data = DB::select(DB::raw($query));
+    $data = DB::select($query);
       // dd($query); 
       // dd($data);
       return Datatables::of($data)
@@ -77,12 +77,12 @@ class AdditionalAcitvitiesReportController extends Controller
         // $query="select * from patients.sp_additional_activities_details($patient_id,'".$fromdate."','".$todate."','".$configTZ ."','".$userTZ."')";
         $query="select * from patients.sp_additional_activities_details($patient_id,'".$dt1."','".$dt2."','".$configTZ ."','".$userTZ."')";
   
-        $data = DB::select(DB::raw($query));    
+        $data = DB::select($query);    
            return Datatables::of($data) 
            ->addIndexColumn()                      
            ->make(true);
 
-    }
+    } 
 
 }
 

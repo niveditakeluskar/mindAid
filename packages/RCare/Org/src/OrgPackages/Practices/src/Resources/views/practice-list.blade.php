@@ -94,10 +94,28 @@
                                 <label for="practicename">Outgoing Phone Number <span style="color:red">*</span></label>
                                 @phone("outgoing_phone_number",["placeholder" => "Enter Outgoing Phone Number"])
                             </div>
-                            <div class="col-md-3 form-group mb-3"> 
+                            <!-- <div class="col-md-3 form-group mb-3"> 
               					      <label>
               						      <yes-no name="billable" label-no="No" label-yes="Yes">CPD billable with MM</yes-no>
               					      </label>
+              				</div> -->
+                              <div class="col-md-3 form-group mb-3"> 
+                                <label for="billable" class="control-label">CPD billable with MM</label> <span></span> 
+                                <div class="mr-3 d-inline-flex">    
+                                    <label for="billable-yes" class="radio radio-primary mr-3">
+                                        <input type="radio" formcontrolname="radio" name="billable" id="billable-yes" value="1">
+                                        <span>Yes</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                    <label for="billable-no" class="radio radio-primary mr-3">
+                                        <input type="radio" formcontrolname="radio" name="billable" id="billable-no" value="0">
+                                        <span>No</span>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                <!-- <label>
+                                    <yes-no name="billable" label-no="No" label-yes="Yes">CPD billable with MM</yes-no>
+                                </label> -->
+                                </div>
               				</div>
                             <div class="col-md-3 form-group mb-3">
                             <label for="practicename">Practice Type<span style="color:red">*</span></label>

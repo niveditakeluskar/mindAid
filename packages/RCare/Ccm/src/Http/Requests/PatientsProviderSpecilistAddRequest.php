@@ -1,5 +1,5 @@
 <?php
-namespace RCare\Ccm\src\Http\Requests;
+namespace RCare\Ccm\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

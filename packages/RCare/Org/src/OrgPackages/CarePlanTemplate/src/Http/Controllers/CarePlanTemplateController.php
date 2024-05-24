@@ -21,7 +21,7 @@ class CarePlanTemplateController extends Controller {
     {
        $condition = 
        // Diagnosis::with('CareplanTemplate')->whereNotIn('condition','CareplanTemplate.condition')->get();  
-       DB::select( DB::raw("select * from ren_core.diagnosis where condition not in
+       DB::select(("select * from ren_core.diagnosis where condition not in
                                   (select distinct condition from ren_core.care_plan_templates) order by condition asc")); 
          $code  = DiagnosisCode::where('diagnosis_id', $condition[0]->id)->get();
       return view('CarePlanTemplate::care-plan-template-add',['condition'=>$condition],['code'=>$code]);
@@ -63,7 +63,7 @@ class CarePlanTemplateController extends Controller {
         // CarePlanTemplate::with('Diagnosis')
         //           ->whereNotIn('Diagnosis.condition',CarePlanTemplate::pluck('condition')->unique()
         //           )->get(); 
-     DB::select( DB::raw("select * from ren_core.diagnosis where condition not in
+     DB::select(("select * from ren_core.diagnosis where condition not in
      (select distinct condition from ren_core.care_plan_templates) order by condition asc")); 
 
         $code  = DiagnosisCode::where('diagnosis_id', $condition[0]->id)->get();
@@ -290,7 +290,7 @@ class CarePlanTemplateController extends Controller {
       {
          $med = implode(', ', $med_id);         
       
-       $medications=DB::select( DB::raw("select description from ren_core.medication where id in (".$med.")")); 
+       $medications=DB::select(("select description from ren_core.medication where id in (".$med.")")); 
      }
        PDF::setOptions(['dpi' => 96, 'defaultFont' => 'serif','fontHeightRatio' => 1.3]);
         $pdf = PDF::loadView('CarePlanTemplate::care-plan-template-pdf',compact('diagnosis_data','medications'));

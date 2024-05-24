@@ -15,7 +15,10 @@ Route::prefix('rpm')->group(function () {
         return view('Rpm::timeline_rpm.Timeline-Activities');
     })->name('timeline.activities');
 	
-	Route::get('preview', 'RCare\Rpm\Http\Controllers\PDFController@preview');
+
+    Route::get('/timeline-daily-activity/{patient_id}/timelinedailyactivity','RCare\Rpm\Http\Controllers\TimelineActivityController@patientMonthlyData');
+	Route::get('/timeline-daily-activity-search/{patient_id}/{month_val}/timelinedailyactivitysearch','RCare\Rpm\Http\Controllers\TimelineActivityController@patientMonthlyDataSearch');
+    Route::get('preview', 'RCare\Rpm\Http\Controllers\PDFController@preview');
     Route::get('download', 'RCare\Rpm\Http\Controllers\PDFController@download')->name('download');
 	Route::get('/rpm-device-report-pdf', 'RCare\Ccm\Http\Controllers\CPDController@rpmDeviceReport')->name('rpm.device.report'); 
 	
@@ -29,8 +32,9 @@ Route::prefix('rpm')->group(function () {
             
             Route::get('/monthly-monitoring/patients', 'RCare\Ccm\Http\Controllers\CcmController@listMonthalyMonitoringPatients')->name('monthly.monitoring.patients');
             Route::get('/care-plan-development-patients', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@listCarePlanDevelopmentPatients')->name('care.plan.development.patients'); 
-
+            Route::get('/bulkupload-devices', 'RCare\Rpm\Http\Controllers\BulkUploadDeviceController@index')->name('device_upload');
         });
+        Route::post('/bulkupload-rpm-device','RCare\Rpm\Http\Controllers\BulkUploadDeviceController@fileUpload')->name('fileUpload');
 
         Route::get('/daily-review/{id}/{deviceid}', 'RCare\Rpm\Http\Controllers\DailyReadingController@dailyReading')->name('daily-review'); 
 
