@@ -44,9 +44,10 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
         Route::get('/total-patient-time-Log','RCare\Reports\Http\Controllers\TotalTimeLogReportController@PatientTimeLogReport')->name('patient.timelog.report');   
        Route::get('/patient-time-Log/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@timeLogsReportSearch')->name('patienttime.logs.report.search');
        Route::get('/total-patient-time-Log/{patient}/{practiceId}/{emr}/{caremanager}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TotalTimeLogReportController@totaltimeLogsReportSearch')->name('totaltime.logs.report.search');
-        Route::middleware(["roleAccess"])->group(function () {
-            Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
-            ->name('time.logs.report.search');
+       Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
+       ->name('time.logs.report.search');
+       Route::middleware(["roleAccess"])->group(function () {
+    
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
 
