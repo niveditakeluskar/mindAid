@@ -238,6 +238,9 @@ class AssignPatientController extends Controller
         }
 
     public function SavePatientUser(Request $request){
+      if (empty($request->selectedOptionManager)) {
+        return response()->json(['error' => 'Selected option manager is required.'], 400);
+    }
         $user = sanitizeVariable($request->selectedOptionManager);
         $patientIds = sanitizeVariable($request->selectedRows);
         $data = [];
@@ -261,6 +264,7 @@ class AssignPatientController extends Controller
     if(!empty($data)){
         UserPatients::insert($data);
     }
-  
+    return response()->json(['success' => 'Data saved successfully.'], 200);
+
     }
 }  

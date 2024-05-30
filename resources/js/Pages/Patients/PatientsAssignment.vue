@@ -386,7 +386,7 @@ export default {
       }
 
       const postData = {
-        selectedOptionManager: selectedOptionManager.id,
+        selectedOptionManager: selectedOptionManager.value.id,
         selectedRows: selectedRows.value
       };
 
@@ -394,12 +394,12 @@ export default {
       try {
         isLoading.value = true;
          const response = await axios.post('../patients/task-management-user-form', postData);
+   
+
          if (response && response.status == 200) {
         $('#assisgnedMessage').html('<div class="alert alert-success"><strong>Patient assigned successfully!</strong></div>');
              selectedOptionManager.value = "";
                          selectedRows.value = [];
-console.log("asdasd",selectedRows.value);
-
                getPatientList(
           selectedPractice.value === '' ? null : selectedPractice.value,
           selectedProvider.value === '' ? null : selectedProvider.value,
@@ -414,7 +414,13 @@ console.log("asdasd",selectedRows.value);
          $('#assisgnedMessage').html('');
                         }, 3000);
       }
+
     } catch (error) {
+                 isLoading.value = false;
+        $('#assisgnedMessage').html('<div class="alert alert-danger"><strong>Failed to assign Patient</strong></div>');
+setTimeout(function () {
+         $('#assisgnedMessage').html('');
+                        }, 3000);
       console.error('Error assisgning Patients:', error);
 
     }
@@ -461,9 +467,9 @@ console.log("asdasd",selectedRows.value);
     const fetchUsersCount = async () => {
       try {
         const token = document.head.querySelector('meta[name="csrf-token"]').content;
-        const tokenResponse = await getCSRFToken();
-        const tokenz = tokenResponse ? tokenResponse.csrf_token : null;
-        console.log(token,"--",tokenResponse,tokenz);
+        //const tokenResponse = await getCSRFToken();
+        //const tokenz = tokenResponse ? tokenResponse.csrf_token : null;
+        //console.log(token,"--",tokenResponse,tokenz);
         //const token = tokenResponse.csrf_token;
         const response = await fetch('../reports/patient-summary', {
           method: 'POST', 
