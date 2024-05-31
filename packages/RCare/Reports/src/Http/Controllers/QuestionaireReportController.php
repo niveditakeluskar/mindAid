@@ -19,8 +19,25 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
-    
+    use RCare\Org\OrgPackages\StageCodes\src\Models\StageCode;
+
 class QuestionaireReportController extends Controller {
+
+    public function generalStageCode(Request $request)
+        {
+    $options = [];
+    $module_id = '3';
+$submodule_id = '19';
+$stage_id = getFormStageId($module_id, $submodule_id, 'General Question');
+
+        foreach (StageCode::generalStageCode($module_id,$stage_id) as $activeDiagnosisList) {
+            $options[$activeDiagnosisList->id] = $activeDiagnosisList->description;
+        }
+          
+        $options = array_unique($options);
+   
+        return response()->json($options);
+  }
 
     public function QuestionaireReport(Request $request){ 
         return view('Reports::questionaire_report.questionaire-report');

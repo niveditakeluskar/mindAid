@@ -10,11 +10,18 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::prefix('reports')->group(function () { 
 
+        Route::get('/productivity-daily-report-users', 'RCare\Reports\Http\Controllers\ProductivityReportController@ProductivityDailyReportUsers'); 
 
+        Route::get('/diagnosis-condition', 'RCare\Reports\Http\Controllers\Verifyicd10CodeReportController@activeDiagnosis');
 
-Route::get('/time-logs-report', function(){
+        Route::get('/steps', 'RCare\Reports\Http\Controllers\QuestionaireReportController@generalStageCode');
+
+            Route::get('/additional-activities', 'RCare\Reports\Http\Controllers\AdditionalAcitvitiesReportController@groupedPatientActivies'); 
+
+        Route::get('/time-logs-report', function(){
                 return view('Reports::time-logs-report.time-logs-list');
             })->name('time.logs.report');     
 
@@ -30,6 +37,7 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
         return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
     })->name('rpm.enrolled.patient.report');
     
+
     
     Route::middleware(["auth", "web"])->group(function () {
       
