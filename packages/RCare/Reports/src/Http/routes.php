@@ -13,14 +13,7 @@
 
 Route::prefix('reports')->group(function () { 
 
-        Route::get('/productivity-daily-report-users', 'RCare\Reports\Http\Controllers\ProductivityReportController@ProductivityDailyReportUsers'); 
-
-        Route::get('/diagnosis-condition', 'RCare\Reports\Http\Controllers\Verifyicd10CodeReportController@activeDiagnosis');
-
-        Route::get('/steps', 'RCare\Reports\Http\Controllers\QuestionaireReportController@generalStageCode');
-
-            Route::get('/additional-activities', 'RCare\Reports\Http\Controllers\AdditionalAcitvitiesReportController@groupedPatientActivies'); 
-
+      
         Route::get('/time-logs-report', function(){
                 return view('Reports::time-logs-report.time-logs-list');
             })->name('time.logs.report');     
@@ -40,7 +33,16 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
 
     
     Route::middleware(["auth", "web"])->group(function () {
-      
+        
+          Route::get('/users', 'RCare\Reports\Http\Controllers\ProductivityReportController@ProductivityDailyReportUsers'); 
+
+        Route::get('/diagnosis-condition', 'RCare\Reports\Http\Controllers\Verifyicd10CodeReportController@activeDiagnosis');
+
+        Route::get('/steps', 'RCare\Reports\Http\Controllers\QuestionaireReportController@generalStageCode');
+
+            Route::get('/additional-activities', 'RCare\Reports\Http\Controllers\AdditionalAcitvitiesReportController@groupedPatientActivies'); 
+
+
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
         Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data'); 
 
