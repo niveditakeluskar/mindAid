@@ -34,13 +34,14 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
     
     Route::middleware(["auth", "web"])->group(function () {
         
-          Route::get('/users', 'RCare\Reports\Http\Controllers\ProductivityReportController@ProductivityDailyReportUsers'); 
+             Route::get('/users', 'RCare\Reports\Http\Controllers\ProductivityReportController@ProductivityDailyReportUsers'); 
 
         Route::get('/diagnosis-condition', 'RCare\Reports\Http\Controllers\Verifyicd10CodeReportController@activeDiagnosis');
 
         Route::get('/steps', 'RCare\Reports\Http\Controllers\QuestionaireReportController@generalStageCode');
 
             Route::get('/additional-activities', 'RCare\Reports\Http\Controllers\AdditionalAcitvitiesReportController@groupedPatientActivies'); 
+
 
 
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report'); 
@@ -57,7 +58,9 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
        Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{module}/{sub_module}/{fromdate}/{todate}/{activedeactivestatus}', 'RCare\Reports\Http\Controllers\TimeLogsReportController@timeLogsReportSearch')
        ->name('time.logs.report.search');
        Route::middleware(["roleAccess"])->group(function () {
-    
+            
+
+         
             // Route::get('/daily_reports','RCare\Reports\Http\Controllers\ReportController@index')->name('daily.reports');
             // Route::post('reports','RCare\Reports\Http\Controllers\ReportController@index');
 
