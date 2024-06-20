@@ -18,6 +18,7 @@ use DB;
 use DateTime;
 use Session;
 use Carbon\Carbon;
+use RCare\System\Traits\DatesTimezoneConversion; 
 
 class ReadingChartController extends Controller
 {
@@ -1219,10 +1220,9 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->weight . ' ' . ucfirst($row->unit),
-                    'start'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"]),
-                    'end'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"])
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    
                 );
             }
         }
@@ -1237,10 +1237,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->oxy_qty . ' ' . ucfirst($row->oxy_unit),
-                    'start'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"]),
-                    'end'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"])
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
                 );
             }
         }
@@ -1249,14 +1247,14 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 to_char(effdatetime at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as effdatetime
                 FROM rpm.observations_bp where patient_id = '$patient_id'");
             // Observation_BP::where('patient_id',$patient_id)->get();
+            //dd($readingBp);
             $data = array();
             foreach ($readingBp as $row) {
-                // print_r($row);
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => 'Systolic -' . $row->systolic_qty . ' ' . ucfirst($row->systolic_unit) . '/' . 'Diastolic -' . $row->diastolic_qty . ' ' . ucfirst($row->systolic_unit),
-                    'start'   => ($row->effdatetime),
-                    'end'   => ($row->effdatetime)
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                 );
             }
         }
@@ -1272,10 +1270,9 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->bodytemp . ' ' . ucfirst($row->unit),
-                    'start'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"]),
-                    'end'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"])
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    
                 );
             }
         }
@@ -1290,10 +1287,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row["id"],
                     'title'   => 'Fev -' . $row["fev_value"] . ' ' . ucfirst($row['fev_unit']) . '/' . 'Pef -' . $row["pef_value"] . ' ' . ucfirst($row['pef_unit']),
-                    'start'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"]),
-                    'end'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"])
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
                 );
             }
         }
@@ -1309,10 +1304,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row["id"],
                     'title'   => $row["value"] . ' ' . ucfirst($row['unit']),
-                    'start'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"]),
-                    'end'   => // DatesTimezoneConversion::userToConfigTimeStamp
-                    ($row["effdatetime"])
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
                 );
             }
         }
