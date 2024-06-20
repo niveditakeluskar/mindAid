@@ -340,10 +340,12 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
         }
         if ($deviceid == '3') {
             //$datetime = Observation_BP::where('patient_id',$patient_id)->whereMonth('effdatetime',$month)->whereYear('effdatetime',$year)->pluck('effdatetime');
-            $datetimes = "select to_char(effdatetime at time zone 'UTC' at time zone 'America/Chicago', 'DD-MM-YYYY HH24:MI:SS') as effdatetime
-                FROM rpm.observations_bp WHERE patient_id = '" . $patient_id . "' AND EXTRACT(Month FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '" . $month . "' AND EXTRACT(Year FROM effdatetime AT TIME ZONE 'UTC' AT TIME ZONE 'America/Chicago') = '" . $year . "'";
+            $datetimes = "select to_char(effdatetime at time zone '".$configTZ."' at time zone '".$userTZ."', 'DD-MM-YYYY HH24:MI:SS') as effdatetime
+                FROM rpm.observations_bp WHERE patient_id = '" . $patient_id . "' AND EXTRACT(Month FROM effdatetime AT TIME ZONE '".$configTZ."' AT TIME ZONE '".$userTZ."') = '" . $month . "' AND EXTRACT(Year FROM effdatetime AT TIME ZONE '".$configTZ."' AT TIME ZONE '".$userTZ."') = '" . $year . "'";
+
 
             $DateArray = DB::select($datetimes);
+            //dd($DateArray);
             //$uniArray = $datetime->toArray();
             //$DateArray = $datetime->toArray();
             $reading2 = PatientThreshold::where('patient_id', $patient_id)
@@ -360,7 +362,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
 
             for ($a = 0; $a < $arrLength; $a++) {
                 //echo $DateArray[$a];
-                $b = date("M j, g:i a", strtotime($DateArray[$a]->effdatetime));
+                $b = date("M j, G:i a", strtotime($DateArray[$a]->effdatetime));
                 $c = array_push($uniArray, $b);
             }
 

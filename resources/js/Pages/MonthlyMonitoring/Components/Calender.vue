@@ -42,6 +42,11 @@ export default {
           eventLimit: 1 // adjust to 6 only for timeGridWeek/timeGridDay
         }
       },
+      eventTimeFormat: { 
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12:false
+      },
       events: [],
       eventMouseEnter: handleEventMouseEnter,
       eventMouseLeave: handleEventMouseLeave,
