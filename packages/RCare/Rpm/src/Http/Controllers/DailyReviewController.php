@@ -453,7 +453,7 @@ class DailyReviewController extends Controller
         
 
 
-        $reviewdata1 = DB::select( DB::raw($query) ); 
+        $reviewdata1 = DB::select($query); 
         // dd($reviewdata1);  
          $reviewdata=array_filter($reviewdata1);
           if(!empty($reviewdata))
@@ -538,7 +538,7 @@ class DailyReviewController extends Controller
             vital_name
             from rpm.sp_childreviewdailydata(null, null, null,null,'".$pat."',timestamp'".$dt1."',timestamp'".$dt2."','".$unit."','".$reviewedstatus."','".$serialid."')";    
         
-            $reviewchilddata = DB::select( DB::raw($childquery) );
+            $reviewchilddata = DB::select( $childquery);
             $r->childdatacount = count($reviewchilddata);
              $r->results=$reviewchilddata;
             
