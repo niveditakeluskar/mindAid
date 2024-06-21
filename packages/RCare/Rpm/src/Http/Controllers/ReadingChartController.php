@@ -236,8 +236,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
             $min_threshold_array = isset($reading2[0]['weightlow']) ? $reading2[0]['weightlow'] : '';
             $max_threshold_array = isset($reading2[0]['weighthigh']) ? $reading2[0]['weighthigh'] : '';
             foreach ($datetime as $datetime) {
-                // print_r(($datetime->effdatetime));
-                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime));
                 $uniArray[] = $formattedDate;
             }
             $reading = DB::table('rpm.observations_weight')
@@ -298,7 +297,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
 
             foreach ($datetime as $datetime) {
                 // print_r(($datetime->effdatetime));
-                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime));
                 $uniArray[] = $formattedDate;
             }
 
@@ -466,7 +465,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
 
             foreach ($datetime as $datetime) {
                 // print_r(($datetime->effdatetime));
-                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime));
                 $uniArray[] = $formattedDate;
             }
 
@@ -532,7 +531,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
 
             foreach ($datetime as $datetime) {
                 // print_r(($datetime->effdatetime));
-                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime));
                 $uniArray[] = $formattedDate;
             }
 
@@ -643,7 +642,7 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
 
             foreach ($datetime as $datetime) {
                 // print_r(($datetime->effdatetime));
-                $formattedDate = date("M j, g:i a", strtotime($datetime->effdatetime));
+                $formattedDate = date("M j, g:i a", strtotime($datetime));
                 $uniArray[] = $formattedDate;
             }
 
@@ -1222,8 +1221,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->weight . ' ' . ucfirst($row->unit),
-                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
-                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                     
                 );
             }
@@ -1239,8 +1238,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->oxy_qty . ' ' . ucfirst($row->oxy_unit),
-                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
-                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                 );
             }
         }
@@ -1272,8 +1271,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row->id,
                     'title'   => $row->bodytemp . ' ' . ucfirst($row->unit),
-                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
-                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                     
                 );
             }
@@ -1289,8 +1288,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row["id"],
                     'title'   => 'Fev -' . $row["fev_value"] . ' ' . ucfirst($row['fev_unit']) . '/' . 'Pef -' . $row["pef_value"] . ' ' . ucfirst($row['pef_unit']),
-                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
-                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                 );
             }
         }
@@ -1306,8 +1305,8 @@ SELECT count(*) as cnt FROM rpm.observations_glucose gl  WHERE gl.patient_id='" 
                 $data[] = array(
                     'id'   => $row["id"],
                     'title'   => $row["value"] . ' ' . ucfirst($row['unit']),
-                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s'),
-                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row["effdatetime"])->format('Y-m-d\TH:i:s')
+                    'start'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s'),
+                    'end'   => Carbon::createFromFormat('m-d-Y H:i:s', $row->effdatetime)->format('Y-m-d\TH:i:s')
                 );
             }
         }
