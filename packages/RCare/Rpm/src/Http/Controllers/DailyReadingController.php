@@ -41,10 +41,26 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Session;
 use RCare\System\Traits\DatesTimezoneConversion; 
+use Inertia\Inertia;
 
 class DailyReadingController extends Controller{
 
-    public function dailyReading(Request $request)//patientinfo
+    public function dailyReading($pid, $device_id){
+        $patient_id   = $pid;
+        $landingTime  = CommonFunctionController::getLandingTime();
+        $module_id    = getPageModuleName();
+        $submodule_id = getPageSubModuleName();
+        $stage_id =  0;
+        return Inertia::render('RPM/DailyReview', [
+            'patientId' => $patient_id,
+            'moduleId' => $module_id,
+            'componentId' => 0,
+            'stageid' => $stage_id,
+            'landingTime' => $landingTime,
+        ]);
+    }
+
+    public function dailyReadings(Request $request)//patientinfo
     {   
         
         $id = sanitizeVariable($request->route('id'));

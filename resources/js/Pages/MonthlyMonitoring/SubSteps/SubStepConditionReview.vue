@@ -301,9 +301,15 @@ export default {
 
         document.body.appendChild(script);
         //this.time = document.getElementById('page_landing_times').value;
+        
         var time = document.getElementById('page_landing_times').value;
+        console.log(time);
         $(".timearr").val(time);
-        this.timerStatus = document.getElementById('timer_runing_status').value;
+        const timerStatusElement = document.getElementById('timer_runing_status');
+        if (timerStatusElement !== null) {
+            this.timerStatus = timerStatusElement.value;
+        }
+        console.log('time');
         this.setdata(30);
         this.getStageID();
         this.getDevice();
