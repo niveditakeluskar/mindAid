@@ -206,6 +206,10 @@ Route::get('/time-logs-report/{patient}/{practiceid}/{emr}/{caremanagerid}/{modu
          Route::get('/task-status-report-search/{caremanagerid}/{practicesgrp}/{practiceid}/{patient}/{taskstatus}/{fromdate}/{todate}/{activedeactivestatus}/{score}/{timeoption}/{time}',
         'RCare\Reports\Http\Controllers\TaskStatusReportController@TaskStatusReportSearch')->name('task.status.search.report'); 
         
+        Route::post('/task-status-report-user-form', 'RCare\Reports\Http\Controllers\TaskStatusReportController@reassign')->name('save.reassign');  
+        Route::post('/task-status-report-statuschange', 'RCare\Reports\Http\Controllers\TaskStatusReportController@changeStatus')->name('save.changeStatus');  
+       
+
         Route::get('/login-logs-report/{fromdate}/{users}', 'RCare\Reports\Http\Controllers\LoginReportController@LoginLogsReportSearch')->name('login.search.report');
 
         //RPM billing report
