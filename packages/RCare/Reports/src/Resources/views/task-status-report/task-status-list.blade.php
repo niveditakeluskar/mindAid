@@ -99,6 +99,10 @@
                 </div>
                 </form>
             </div>
+            <div id="todo-success-alert" style="display: none;">  
+                <div class="alert alert-success alert-block " style="margin-left: 1.1em;margin-right: 1.1em;"><button type="button" class="close" data-dismiss="alert">× </button><strong>Action Complete Successfully.</strong>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -565,16 +569,19 @@ $.ajaxSetup({
     url: '/reports/task-status-report-user-form',
     data: data,
     success: function (data) {
-        $("#assign-success-alert").show();
+        $("#todo-success-alert").show();
         var scrollPos = $(".main-content").offset().top;
         $(window).scrollTop(scrollPos);
         // getPatientData();
-        taskstatusreport();
+        //taskstatusreport();
         // setTimeout($("#assign-success-alert").hide(), 30000);
         setTimeout(function () {
             // Closing the alert
-            $('#assign-success-alert').alert('close');
-        }, 3000);
+            // $('#todo-success-alert').alert('close');
+            $('#todo-success-alert').fadeOut('slow', function() {
+                $(this).hide(); // Ensure the alert is hidden
+            });
+        }, 2000);
     }
 });
 
@@ -610,11 +617,14 @@ $.ajax({
         $(window).scrollTop(scrollPos);
         //getToDoListReport(practice,patient,modules,activedeactivestatus);
         // getflyout();
-        //setTimeout($("#todo-success-alert").hide(), 20000);
+        //setTimeout($("#todo-success-alert").hide(), 30000);
         setTimeout(function () {
             // Closing the alert
-            $('#todo-success-alert').alert('close');
-        }, 3000);
+           // $('#todo-success-alert').alert('close');
+           $('#todo-success-alert').fadeOut('slow', function() {
+                $(this).hide(); // Ensure the alert is hidden
+            });
+        }, 2000);
 
     }
 });
