@@ -14,9 +14,24 @@ use DataTables;
 use Carbon\Carbon;
 use Session;
 use RCare\System\Traits\DatesTimezoneConversion; 
+use RCare\Org\OrgPackages\Users\src\Models\Users;
 
 class ProductivityReportController extends Controller
 {
+
+
+  public function ProductivityDailyReportUsers(Request $request)
+  {
+    $options = [];
+
+        foreach (Users::activeUsers() as $activeUserList) {
+            $options[$activeUserList->id] = $activeUserList->f_name ." ". $activeUserList->l_name;
+        }
+          
+        $options = array_unique($options);
+   
+        return response()->json($options);
+  }
 
   public function ProductivityReport(Request $request)
   {

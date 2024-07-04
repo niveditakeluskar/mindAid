@@ -25,6 +25,20 @@ use Session;
     
 class Verifyicd10CodeReportController extends Controller {
 
+   public function activeDiagnosis(Request $request)
+        {
+    $options = [];
+
+        foreach (Diagnosis::activeDiagnosis() as $activeDiagnosisList) {
+            $options[$activeDiagnosisList->id] = $activeDiagnosisList->condition;
+        }
+          
+        $options = array_unique($options);
+   
+        return response()->json($options);
+  }
+  
+
   public function verifycodeReport(Request $request){ 
       return view('Reports::verify_icd10_codes_reports.verifyicd10_codes_reports');
   }
