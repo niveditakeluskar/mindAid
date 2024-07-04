@@ -15,6 +15,7 @@ use RCare\Org\OrgPackages\Users\src\Models\Users;
 use DataTables;
 use Carbon\Carbon;
 use Session;
+use Inertia\Inertia;
 // use RCare\Org\OrgPackages\Users\src\Models\RenUserLoginHistory;
 use RCare\System\Traits\DatesTimezoneConversion; 
 
@@ -25,6 +26,10 @@ class TaskStatusReportController extends Controller
         
     //       return view('Reports::task-status-report.task-status-list');
     // }
+    public function TaskStatusReportList(Request $request) 
+    {
+        return Inertia::render('Report/TaskStatusReport');
+    }
 
     public function TaskStatusReportSearch(Request $request)  
     {  
