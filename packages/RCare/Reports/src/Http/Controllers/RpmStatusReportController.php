@@ -16,6 +16,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
+use Inertia\Inertia;
 
 class RpmStatusReportController extends Controller
 {
@@ -23,7 +24,7 @@ class RpmStatusReportController extends Controller
     public function PatientRpmStatusReport(Request $request) 
     {
     
-          return view('Reports::rpm-status-report.rpm-status-list');
+        return Inertia::render('Report/ManagementReports/RpmDailyStatusReport');
     }
 
 

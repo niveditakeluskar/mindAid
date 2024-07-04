@@ -79,20 +79,16 @@ Route::prefix('reports')->group(function () {
                 return view('Reports::call-additional-ccm-note.call-additional-services-report');
             })->name('call.additional.ccm.call.report');
 
-            Route::get('/questionnaire', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
+            Route::get('/questionnaire-new', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
             Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
 
-            Route::get('/Clinical-insight', function () {
-                return view('Reports::initial-report.initial-report');
-            })->name('initial.report');
+            Route::get('/clinical-insight-new', 'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalInsightList')->name('initial.report');
 
             Route::get('/rpm-billing-report', function () {
                 return view('Reports::rpm-billing-report.rpm-billing-report');
             })->name('rpm.billing.report');
 
-            Route::get('/patient-vitals-report', function () {
-                return view('Reports::patient-vitals-report.patient-vitals-report');
-            })->name('patientvital.report');
+            Route::get('/patient-vitals-report-new', 'RCare\Reports\Http\Controllers\PatientVitalsReportController@PatientVitalReport')->name('patient-vitals-report');
 
             Route::get('/monthly-account-performance-report', function () {
                 return view('Reports::monthly-account-performance-report.monthly-account-performance-report');
@@ -134,7 +130,7 @@ Route::prefix('reports')->group(function () {
             Route::get('/enrollment-report', function () {
                 return view('Reports::enrollment-report.enrollment-report');
             })->name('enrollment.report');
-            Route::get('/provider-performance-report', 'RCare\Reports\Http\Controllers\ProviderPerformanceController@assignedPatients')->name('patients.assignment');
+            Route::get('/provider-performance-report-new', 'RCare\Reports\Http\Controllers\ProviderPerformanceController@providerPerformanceReportList')->name('patients.assignment');
 
             Route::get('/device-data-report', function () {
                 return view('Reports::device-data-reports.device-data-report');
@@ -144,7 +140,7 @@ Route::prefix('reports')->group(function () {
             Route::get('/call-status-report', 'RCare\Reports\Http\Controllers\CallStatusReportController@PatientCallStatusReport')->name('call.status.report');
 
             //rpm-status-report 20th march 2023
-            Route::get('/rpm-daily-status-report', 'RCare\Reports\Http\Controllers\RpmStatusReportController@PatientRpmStatusReport')->name('rpm.daily.status.report');
+            Route::get('/rpm-daily-status-report-new', 'RCare\Reports\Http\Controllers\RpmStatusReportController@PatientRpmStatusReport')->name('rpm.daily.status.report');
         });
 
         // //TaskStatusReport
