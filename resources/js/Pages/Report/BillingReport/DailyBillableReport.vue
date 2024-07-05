@@ -329,6 +329,7 @@ const columnDefs = ref([
   { headerName: "Minutes Spent", field: "ptrtotaltime", flex: 2 },
 ]);
 const fetchProvider = async () => {
+  filterState.provider = null;
   try {
     const response = await fetch(
       "../org/ajax/practice/" + filterState.practiceId + "/physicians"
@@ -342,7 +343,8 @@ const fetchProvider = async () => {
     console.error("Error fetching practices:", error);
   }
 };
-const fetchPractices = async (id) => {
+const fetchPractices = async () => {
+  filterState.practiceId = null;
   try {
     const response = await fetch(
       "../org/ajax/practicegrp/" + filterState.organization + "/practice"
