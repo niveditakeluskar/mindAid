@@ -48,7 +48,7 @@ Route::prefix('reports')->group(function () {
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report');
         Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data');
 
-        Route::get('/monthly-billing-reports', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReports')->name('monthly.billing.report');
+        Route::get('/monthly-billing-report-new', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@MonthlyBillingReportList')->name('monthly.billing.report'); 
 
         Route::get('/monthlybilling-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getMonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
 
@@ -84,9 +84,7 @@ Route::prefix('reports')->group(function () {
 
             Route::get('/clinical-insight-new', 'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalInsightList')->name('initial.report');
 
-            Route::get('/rpm-billing-report', function () {
-                return view('Reports::rpm-billing-report.rpm-billing-report');
-            })->name('rpm.billing.report');
+            Route::get('/rpm-billing-report-new', 'RCare\Reports\Http\Controllers\RpmBillingReportController@RpmBillingReportList')->name('rpm.billing.report');
 
             Route::get('/patient-vitals-report-new', 'RCare\Reports\Http\Controllers\PatientVitalsReportController@PatientVitalReport')->name('patient-vitals-report');
 
@@ -120,7 +118,7 @@ Route::prefix('reports')->group(function () {
 
             Route::get("/callactivityServicelist", "RCare\Reports\Http\Controllers\CallActivityServicesReportController@callActivityServiceListsReport")->name("callactivityServicelist");
 
-            Route::get('/daily-report', 'RCare\Reports\Http\Controllers\DailyBillableReportController@PatientDailyReport')->name('daily.report');
+            Route::get('/daily-report-new', 'RCare\Reports\Http\Controllers\DailyBillableReportController@PatientDailyReport')->name('daily.report');
             Route::get('/monthly-billing-report', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@PatientMonthlyBillingReport')->name('monthly.billing.report');
 
             Route::get('/enrollment-tracking-report', 'RCare\Reports\Http\Controllers\EnrollmentTrackingReportController@PatientEnrollReport')->name('enrollment.tracking.report');
