@@ -140,6 +140,7 @@ const isLoading = ref(false);
 const practices = ref([]);
 const currentDate = moment().format("YYYY-MM-DD");
 const patientSummry = ref({});
+const searchedDate = ref(null);
 const filterState = reactive({
   practiceId: null,
   fromDate: currentDate,
@@ -151,11 +152,14 @@ onBeforeMount(() => {
   fetchPractices();
   fetchRpmDailyStatusReportApiData();
 });
-const formatDate = (date) => {
-  if (!date) return null;
-  return moment(date).format("MM-DD-YYYY");
-};
-const columnDefs = ref([
+const getMonth = computed(() => {
+  const date = moment(
+    searchedDate.value ? searchedDate.value : currentDate,
+    "YYYY-MM-DD"
+  );
+  return date.format("MMMM");
+});
+const columnDefs = computed(() => [
   {
     headerName: "Sr. No.",
     valueGetter: "node.rowIndex + 1",
@@ -170,7 +174,7 @@ const columnDefs = ref([
     field: "enrolledcount",
   },
   {
-    headerName: "Newly Enrolled in this Month (May)",
+    headerName: `Newly Enrolled in this Month (${getMonth.value})`,
     field: "newlyenrolled",
   },
   {
@@ -224,13 +228,16 @@ const fetchPractices = async () => {
 };
 
 const fetchRpmDailyStatusReportApiData = async () => {
+  searchedDate.value = filterState.fromDate;
   try {
     isLoading.value = true;
     const csrfToken = document
       .querySelector('meta[name="csrf-token"]')
       .getAttribute("content");
     const response = await fetch(
-      `/reports/rpm-daily-status-report/search/${filterState.practiceId}/${filterState.fromDate}?_=1715324427764`,
+      `/reports/rpm-daily-status-report/search/${filterState.practiceId}/${
+        filterState.fromDate ?? null
+      }?_=1715324427764`,
       {
         method: "GET",
         headers: {
