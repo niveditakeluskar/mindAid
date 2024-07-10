@@ -139,46 +139,10 @@ class RpmStatusReportController extends Controller
                 inner join ren_core.practices as rp on rp.id = pp.practice_id and rp.is_active = 1
                 and p.id not in 
 
-        ((select bp.patient_id
-        from rpm.observations_bp bp
-        where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."')) 
-
-        union 
-        (select oxy.patient_id
-        from rpm.observations_oxymeter oxy where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."') )
-                	
-		union 
-		
-		(select hrt.patient_id
-		from rpm.observations_heartrate hrt
-		where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."') )
-		
-		union 
-		
-		(select glc.patient_id
-		 from rpm.observations_glucose glc
-		 where (effdatetime::timestamp between'".$lastdt1."' and '".$lastdt2."')
-		)
-		
-		union 
-		
-		(select spi.patient_id
-		from rpm.observations_spirometer spi
-		where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."') )
-		
-		union 
-		
-		(select wght.patient_id
-		from rpm.observations_weight wght
-		where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."') )
-		
-		union 
-		
-		(select temp.patient_id
-		from rpm.observations_temp temp
-		where (effdatetime::timestamp between '".$lastdt1."' and '".$lastdt2."')
-		)
-        ) 
+        ((select pcob1.patient_id 
+            from rpm.patient_cons_observations1 pcob1
+            where (effdatetime::timestamp between timestamp '".$lastdt2."' and timestamp '".$dt2."')
+		)) 
                 where 1=1 
                 and
                 p.status = 1
