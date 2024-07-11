@@ -62,7 +62,7 @@
                                     <div class="form-row invalid-feedback"  v-if="formErrors.status" style="display: block;">{{ formErrors.status[0] }}</div>
                                 </div>
                             </div>
-                            <div class="col-md-12" id="date_value">
+                            <div class="col-md-12" id="date_value"> 
                                 <div class="form-group row">
                                     <div class="col-md-6 form-group" id="fromdate">
                                         <label for="date" id="from_date">From Date <span class="error">*</span></label>
