@@ -17,6 +17,7 @@ use DateTime;
 use DataTables;
 use Carbon\Carbon; 
 use Session;
+use Inertia\Inertia;
 
 class EnrollmentTrackingReportController extends Controller
 {
@@ -30,7 +31,8 @@ class EnrollmentTrackingReportController extends Controller
       // $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
       // $diagnosis = DB::select( DB::raw($diagnosis) );    
       //dd($diagnosis);
-      return view('Reports::enrollment-tracking-report.enrollment-tracking-report');        
+      // return view('Reports::enrollment-tracking-report.enrollment-tracking-report'); 
+      return Inertia::render('Report/enrollment-tracking-report');       
     }
 
 
