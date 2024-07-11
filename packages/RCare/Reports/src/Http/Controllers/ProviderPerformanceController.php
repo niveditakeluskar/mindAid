@@ -16,6 +16,7 @@ use RCare\Org\OrgPackages\Providers\src\Models\Providers;
 use DataTables;
 use Carbon\Carbon; 
 use Session;
+use Inertia\Inertia;
 
 class ProviderPerformanceController extends Controller
 {
@@ -34,7 +35,7 @@ class ProviderPerformanceController extends Controller
        }
        
 
-       return view('Reports::provider-performance-report.sub-steps-provider-performance-report.patient-details-in-ccm-list',compact('practiceid','providerid','practicename','providername'));
+       return Inertia::render('Report/ProviderPerformanceDetailsInCCM', ['practiceId' => $practiceid, 'practiceName' => $practicename, 'providerId' => $providerid, 'providerName' => $providername]);
      }
 
     //created by 27nov2020 drilldown for provider performance report( view file Total no. of patients in rpm)
@@ -49,8 +50,8 @@ class ProviderPerformanceController extends Controller
        }else{
         $providername='';
        }
-
-       return view('Reports::provider-performance-report.sub-steps-provider-performance-report.patient-details-in-rpm-list',compact('practiceid','providerid','practicename','providername'));
+       
+        return Inertia::render('Report/ProviderPerformanceDetailsInRPM', ['practiceId' => $practiceid, 'practiceName' => $practicename, 'providerId' => $providerid, 'providerName' => $providername]);
      }
  
     //created by 27nov2020 drilldown for provider performance report(Total no. of patients details in ccm)
