@@ -66,18 +66,21 @@
                                 <div class="form-group row">
                                     <div class="col-md-6 form-group" id="fromdate">
                                         <label for="date" id="from_date">From Date <span class="error">*</span></label>
-                                        <input name="activedeactivefromdate" id="fromdate" type="date" class="form-control">
-                                        <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivefromdate" style="display: block;">{{ formErrors.activedeactivefromdate[0] }}</div>
+                                        <input name="activedeactivefromdate" id="fromdate" type="date" class="form-control" max="9999-12-31"  min="1902-01-01">
+                                        <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivefromdate" style="display: block;">
+                                            {{ formErrors.activedeactivefromdate[0] }}</div>
                                     </div>
                                     <div class="col-md-6 form-group" id="deceasedfromdate">
                                         <label for="date" id="from_date">Date of Deceased <span class="error">*</span></label>
-                                        <input name="deceasedfromdate" id="deceasedfromdate" type="date" class="form-control">
-                                        <div class="form-row invalid-feedback"  v-if="formErrors.deceasedfromdate" style="display: block;">{{ formErrors.deceasedfromdate[0] }}</div>
+                                        <input name="deceasedfromdate" id="deceasedfromdate" type="date" class="form-control" max="9999-12-31" min="1902-01-01">
+                                        <div class="form-row invalid-feedback"  v-if="formErrors.deceasedfromdate" style="display: block;">
+                                            {{ formErrors.deceasedfromdate[0] }}</div>
                                     </div>
                                     <div class="col-md-6 form-group" id="todate">
                                         <label for="date">To Date <span class="error">*</span></label>
-                                        <input name="activedeactivetodate" type="date" class="form-control">
-                                        <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivetodate" style="display: block;">{{ formErrors.activedeactivetodate[0] }}</div>
+                                        <input name="activedeactivetodate" type="date" class="form-control" max="9999-12-31"  min="1902-01-01">
+                                        <div class="form-row invalid-feedback"  v-if="formErrors.activedeactivetodate" style="display: block;">
+                                            {{ formErrors.activedeactivetodate[0] }}</div>
                                     </div>
                                     <div class="col-md-6 form-group" id="deactivation_drpdwn_div">
                                         <label for="deactivation_drpdwn">Reason for Deactivation</label>
