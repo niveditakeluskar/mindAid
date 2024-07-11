@@ -16,6 +16,7 @@ use RCare\System\Traits\DatesTimezoneConversion;
 use DataTables;
 use Carbon\Carbon; 
 use Session; 
+use Inertia\Inertia;
 
 class RpmStatusReportController extends Controller
 {
@@ -30,7 +31,9 @@ class RpmStatusReportController extends Controller
     public function PatientNoReadingsReport(Request $request)
     {
         $selectedpractices = sanitizeVariable($request->route('practiceid'));
-        return view('Reports::rpm-status-report.no-readings',compact('selectedpractices'));   
+        return Inertia::render('Report/ManagementReports/RpmPatientDetails', [
+            'practiceId' => $selectedpractices
+        ]); 
     }
 
     public function PatientRpmStatusReportSearch(Request $request)
