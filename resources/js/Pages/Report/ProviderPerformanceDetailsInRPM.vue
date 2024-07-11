@@ -60,9 +60,9 @@ import {
   AgGridTable,
   onBeforeMount,
   Head,
-} from "../../commonImports";
+} from "../commonImports";
 import moment from "moment";
-import LayoutComponent from "../../LayoutComponent.vue";
+import LayoutComponent from "../LayoutComponent.vue";
 import { first } from "lodash";
 import { startCase } from "lodash";
 const title = "Provider Performance Patients Details In RPM";
