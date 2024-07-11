@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-md-4 form-group mb-3">   
                             <label for="labdate">Date<span class="error">*</span> :</label>
-                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate" data-date-format="MM/DD/YYYY" />
+                            <input type="date" name="labdate[]" id="labdate" class="form-control" v-model="labDate" data-date-format="MM/DD/YYYY"  min="01/01/1902"  max="01/01/9999"/>
                             <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.${selectedLabs}.0`]" style="display: block;">{{ formErrors[`labdate.${selectedLabs}.0`][0] }}</div>
                             <div class="invalid-feedback" v-if="formErrors && formErrors[`labdate.0`]" style="display: block;">{{ formErrors[`labdate.0`][0] }}</div>
                         </div>
