@@ -24,7 +24,7 @@ class ActiveDeactiveAddRequest extends FormRequest
     {
         return validationRules(True, 
             [   'status'                 => 'required',
-                'activedeactivefromdate' => 'nullable|required_if:status,0|required_if:status,2',
+                'activedeactivefromdate' => 'nullable|required_if:status,0|required_if:status,2|after_or_equal:'. date('Y-m-d'),
                 'deceasedfromdate'       => 'nullable|required_if:status,3|before_or_equal:'. date('Y-m-d'), 
                 'activedeactivetodate'   => 'nullable|required_if:status,0|after:activedeactivefromdate',
                 'deactivation_reason'    => 'required'//'required_if:status,0|required_if:status,2|required_if:status,3'

@@ -56,9 +56,9 @@
                 <div class="col-2">
                   <div class="form-group">
                     <label>Date of Birth<span class="error">*</span></label>
-                    <input type="date" name="dob" class="form-control" ref="dob" @focusout="generateUID">
+                    <input type="date" name="dob" class="form-control" ref="dob" @focusout="generateUID" max="9999-12-31"  min="1902-01-01">
                   </div>
-                  <div class="form-row invalid-feedback" v-if="formErrors.dob" style="display: block;">{{
+                  <div class="form-row invalid-feedback" v-if="formErrors.dob" style="display: block;">{{ 
                 formErrors.dob[0] }}</div>
                 </div>
 
