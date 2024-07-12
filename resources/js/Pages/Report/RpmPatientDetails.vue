@@ -170,7 +170,7 @@
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
       const response = await fetch(
-        `reports/noreadingslastthreedaysInRPM/search/${filterState.practiceId}?_=1715324427764`,
+        `/reports/noreadingslastthreedaysInRPM/search/${filterState.practiceId}?_=1715324427764`,
         {
           method: "GET",
           headers: {

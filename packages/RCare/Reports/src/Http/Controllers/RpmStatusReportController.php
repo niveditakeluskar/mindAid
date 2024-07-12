@@ -31,7 +31,7 @@ class RpmStatusReportController extends Controller
     public function PatientNoReadingsReport(Request $request)
     {
         $selectedpractices = sanitizeVariable($request->route('practiceid'));
-        return Inertia::render('Report/ManagementReports/RpmPatientDetails', [
+        return Inertia::render('Report/RpmPatientDetails', [
             'practiceId' => $selectedpractices
         ]); 
     }

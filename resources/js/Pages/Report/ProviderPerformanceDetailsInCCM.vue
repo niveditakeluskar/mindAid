@@ -147,7 +147,6 @@ const columnDefs = ref([
 ]);
 
 const fetchRpmPatientDetailsApiData = async () => {
-  console.log(props.practiceId, props.providerId, "ddfasf");
   try {
     isLoading.value = true;
     const csrfToken = document
