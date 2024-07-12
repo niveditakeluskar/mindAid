@@ -321,8 +321,8 @@ const columnDefs = ref([
     valueGetter: "node.rowIndex + 1",
     flex: 1,
   },
-  { headerName: "Assigned Care Manager", field: "cm", flex: 2 },
-  { headerName: "Practice Name", field: "pracpracticename", flex: 2 },
+  { headerName: "Assigned Care Manager", field: "cm", flex: 2, minWidth: 200 },
+  { headerName: "Practice Name", field: "pracpracticename", flex: 2, minWidth: 200 },
   {
     headerName: "Patient",
     field: "full_name",
@@ -333,11 +333,12 @@ const columnDefs = ref([
         ? row.pprofileimg
         : "/assets/images/faces/avatar.png";
       return `<div style="display: flex; align-items: center; gap: 3px">
-                    <img :src=${pImg} class='user-image' style="width: 50px; border-radius: 50%" />
+                    <img src=${pImg} class='user-image' style="width: 50px; border-radius: 50%" />
                     <span style="margin-left: 4px;">${camelCaseFullName}</span>
                  </div>`;
     },
-    flex: 3,
+    flex: 2,
+    minWidth: 200
   },
   {
     headerName: "DOB",
@@ -367,9 +368,11 @@ const columnDefs = ref([
       const formattedDate = formatDate(date);
       return formattedDate;
     },
+    flex: 2,
+    minWidth: 200
   },
-  { headerName: "Task Created By", field: "task_created_by" },
-  { headerName: "Patient Score", field: "tmscore" },
+  { headerName: "Task Created By", field: "task_created_by", minWidth: 200 },
+  { headerName: "Patient Score", field: "tmscore", minWidth: 200 },
   { headerName: "Module", field: "mmodulename" },
   { headerName: "Component", field: "mccomponentsname", flex: 2 },
   { headerName: "Task Type", field: "fufollowuptaskcategory", flex: 2 },
@@ -407,6 +410,7 @@ const columnDefs = ref([
       return link;
     },
     flex: 2,
+    minWidth: 200
   },
   {
     headerName: "Status",

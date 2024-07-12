@@ -66,7 +66,7 @@
                       data-live-search="true"
                       v-model="filterState.provider"
                     >
-                      <option :value="null">Select Report To</option>
+                      <option :value="null">Select Provider</option>
                       <option
                         v-for="physician in physicians"
                         :key="physician.id"
