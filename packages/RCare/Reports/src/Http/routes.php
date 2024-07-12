@@ -128,8 +128,8 @@ Route::prefix('reports')->group(function () {
             Route::get('/enrollment-report', function () {
                 return view('Reports::enrollment-report.enrollment-report');
             })->name('enrollment.report');
-            Route::get('/provider-performance-report-new', 'RCare\Reports\Http\Controllers\ProviderPerformanceController@provider-performance-patient-details-in-ccm')->name('patients.assignment');
 
+            Route::get('/provider-performance-report-new', 'RCare\Reports\Http\Controllers\ProviderPerformanceController@providerPerformanceReportList')->name('patients.assignment');
             Route::get('/device-data-report', function () {
                 return view('Reports::device-data-reports.device-data-report');
             })->name('device.data.report');
