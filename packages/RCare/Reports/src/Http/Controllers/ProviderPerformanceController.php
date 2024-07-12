@@ -25,7 +25,7 @@ class ProviderPerformanceController extends Controller
   {
     return Inertia::render('Report/ManagementReports/ProviderPerformanceReport');
   }
- 
+
      //created by 27nov2020 drilldown for provider performance report( view file Total no. of patients in ccm)
      public function getPPPatientsDetailsInCCM(Request $request)
      {
@@ -78,8 +78,9 @@ class ProviderPerformanceController extends Controller
             ->addIndexColumn()   
             ->addColumn('editPatient', function($row){
               
-              $btn ='<button class="button" style="border: 0px none;background: none;outline: none;"><a href="/patients/registerd-patient-edit/'.$row->pid.'/3/19/0" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>';
+              $btn ='<button class="button" style="border: 0px none;background: none;outline: none;"><a href="/patients/patient-reg-enrollment/'.$row->pid.'" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>';
               return $btn;
+              // .'/3/19/0
             })
             ->rawColumns(['editPatient'])
             ->make(true);
@@ -102,8 +103,9 @@ class ProviderPerformanceController extends Controller
       ->addIndexColumn()
       ->addColumn('editPatient', function ($row) {
 
-        $btn = '<button class="button" style="border: 0px none;background: none;outline: none;"><a href="/patients/registerd-patient-edit/' . $row->pid . '/2/18/0" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>';
+        $btn = '<button class="button" style="border: 0px none;background: none;outline: none;"><a href="/patients/patient-reg-enrollment/'.$row->pid.'" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>';
         return $btn;
+        // . '/2/18/0
       })
       ->rawColumns(['editPatient'])
       ->make(true);
