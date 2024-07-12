@@ -117,7 +117,7 @@ export default {
                 });
         }
 
-        const prev = async() => {
+        const prev = async() => { 
             isLoading.value = true;
             let myForm = document.getElementById('enroll_step_form');
             let formData = new FormData(myForm);
