@@ -39,16 +39,16 @@
       <div class="col-md-12 mb-4">
         <div class="card text-left">
           <div class="card-body">
-            <AgGridTable
-              class="ag-theme-alpine"
-              style="width: 100%; height: 600px;"
-              :rowData="passRowData"
-              :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
-              :domLayout="'autoHeight'"
-              :getRowHeight="getRowHeight"
-              :components="components"
-            ></AgGridTable>
+              <AgGridTable
+                class="ag-theme-alpine"
+                style="width: 100%; height: 600px;"
+                :rowData="passRowData"
+                :columnDefs="columnDefs"
+                :defaultColDef="defaultColDef"
+                :domLayout="'autoHeight'"
+                :getRowHeight="getRowHeight"
+                :components="components"
+              ></AgGridTable>
           </div>
         </div>
       </div>
@@ -68,12 +68,14 @@ import {
 } from './../commonImports';
 import LayoutComponent from './../LayoutComponent.vue';
 import AgGridTable from './../components/AgGridTable.vue';
+import LoadingSpinner from './../LoadingSpinner.vue';
 
 export default {
   props: {},
   components: {
     LayoutComponent,
     AgGridTable,
+    LoadingSpinner
   },
   setup(props) {
     const passRowData = ref([]);
@@ -87,8 +89,7 @@ export default {
     const columnDefs = ref([]);
 
     const fetchFilters = async () => {
-      isLoading.value = true;
-      fetchData();
+      await fetchData();
     }
 
      const addDynamicColumns = (columns, rowData) => {
@@ -154,20 +155,21 @@ export default {
       });
     };
 
-    const fetchData = async () => {
+    const fetchData = async () => { 
       try {
+        isLoading.value = true;
         let m = document.getElementById("from_month").value;
         const response = await fetch(`/reports/enrollment-tracking-report/search/${m}`);
         const data = await response.json();
         const columns = data.COLUMNS;
         const rowData = data.DATA;
 
-       console.log('Fetched Data:', data);
+        console.log('Fetched Data:', data);
         addDynamicColumns(columns, rowData);
+        
+        isLoading.value = false;
       } catch (error) {
         console.error('Error fetching user filters:', error);
-      } finally {
-        isLoading.value = false;
       }
     };
 
