@@ -39,6 +39,99 @@ class ProviderPerformanceController extends Controller
       $providername = '';
     }
 
+     //created by 27nov2020 drilldown for provider performance report( view file Total no. of patients in ccm)
+     public function getPPPatientsDetailsInCCM(Request $request)
+     {
+      $practiceid = sanitizeVariable($request->route('practiceid'));      
+       $providerid = sanitizeVariable($request->route('providerid'));
+
+       $practicename=Practices::where('id',$practiceid)->get('name');
+       if($providerid != 'null'){
+        $providername=Providers::where('id',$providerid)->get('name');
+       }else{
+        $providername='';
+       }
+       
+
+       return Inertia::render('Report/ProviderPerformanceDetailsInCCM', ['practiceId' => $practiceid, 'practiceName' => $practicename, 'providerId' => $providerid, 'providerName' => $providername]);
+     }
+
+    //created by 27nov2020 drilldown for provider performance report( view file Total no. of patients in rpm)
+     public function getPPPatientsDetailsInRPM(Request $request)
+     {
+      $practiceid = sanitizeVariable($request->route('practiceid'));      
+       $providerid = sanitizeVariable($request->route('providerid'));
+
+       $practicename=Practices::where('id',$practiceid)->get('name');
+       if($providerid != 'null'){
+        $providername=Providers::where('id',$providerid)->get('name');
+       }else{
+        $providername='';
+       }
+       
+        return Inertia::render('Report/ProviderPerformanceDetailsInRPM', ['practiceId' => $practiceid, 'practiceName' => $practicename, 'providerId' => $providerid, 'providerName' => $providername]);
+     }
+ 
+    //created by 27nov2020 drilldown for provider performance report(Total no. of patients details in ccm)
+     public function getPPPatientDetailsInCCMData(Request $request)
+     {
+      
+
+      $practiceid = sanitizeVariable($request->route('practiceid'));      
+       $providerid = sanitizeVariable($request->route('providerid'));
+
+       if($providerid == ""){
+        $providerid = 'null';
+       }
+
+       $query = "select * from patients.sp_patientdetailsinccmdata($practiceid,$providerid)";
+       //dd($query);
+        // $query="select distinct pt.* from patients.patient_providers pp
+        //  left join ren_core.providers p on pp.provider_id=p.id and p.is_active = 1 
+        // inner join ren_core.practices p2 on pp.practice_id = p2.id 
+        // inner join patients.patient pt on pt.id=pp.patient_id  
+        // inner join patients.patient_services ps  on ps.patient_id=pp.patient_id and ps.status =1
+        // where pt.status=1 and pp.provider_type_id = 1 and pp.is_active = 1 and ps.module_id ='3' and pp.practice_id=$practiceid"; 
+        //    if($providerid == "null"){
+        //     $query.=" and pp.provider_id is null";
+        //    }else{
+        //     $query.=" and pp.provider_id =$providerid"; 
+        //    }
+ 
+            $data = DB::select($query);     
+             return Datatables::of($data)
+            ->addIndexColumn()   
+            ->addColumn('editPatient', function($row){
+              
+              $btn ='<button class="button" style="border: 0px none;background: none;outline: none;"><a href="/patients/registerd-patient-edit/'.$row->pid.'/3/19/0" title="Edit Patient Info" data-toggle="tooltip" data-placement="top"  data-original-title="Edit Patient Info" ><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a></button>';
+              return $btn;
+            })
+            ->rawColumns(['editPatient'])
+            ->make(true);
+
+     }
+
+      //created by 27nov2020 drilldown for provider performance report(Total no. of patients details in rpm)
+     public function getPPPatientDetailsInRPMData(Request $request)
+     {
+      $practiceid = sanitizeVariable($request->route('practiceid'));      
+      $providerid = sanitizeVariable($request->route('providerid'));
+      if($providerid == ""){
+        $providerid = 0;
+       }
+
+       $query = "select * from patients.sp_patientdetailsinrpmdata($practiceid,$providerid)";
+        // $query="select distinct pt.* from patients.patient_providers pp
+        // left join ren_core.providers p on pp.provider_id=p.id and p.is_active = 1 
+        // inner join ren_core.practices p2 on pp.practice_id = p2.id 
+        // inner join patients.patient pt on pt.id=pp.patient_id  
+        // inner join patients.patient_services ps  on ps.patient_id=pp.patient_id and ps.status =1
+        // where pt.status=1 and pp.provider_type_id = 1 and pp.is_active = 1 and ps.module_id ='2' and pp.practice_id=$practiceid";
+        //    if($providerid == "null"){
+        //     $query.=" and pp.provider_id is null";
+        //    }else{
+        //     $query.=" and pp.provider_id =$providerid";
+        //    }
 
     return view('Reports::provider-performance-report.sub-steps-provider-performance-report.patient-details-in-ccm-list', compact('practiceid', 'providerid', 'practicename', 'providername'));
   }
@@ -240,5 +333,7 @@ class ProviderPerformanceController extends Controller
     $inative_pracs = Practices::InactivePractices();
     return view('Reports::provider-performance-report.provider-performance-report', compact('active_pracs', 'inative_pracs'));
   }
+
+}
 
 }
