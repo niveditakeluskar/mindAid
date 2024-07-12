@@ -400,7 +400,7 @@ class EnrollmentTrackingReportController extends Controller
       // } 
 
 
-      $arrydata=array($name,$practicegroupname);
+      $arrydata=array($practicegroupname , $name);
       // dd($arrydata);
 
       for($j=1;$j<=($total_diag);$j++)
@@ -526,7 +526,7 @@ class EnrollmentTrackingReportController extends Controller
 
   $dynamicheader=array();
 
-  $columnheader=array("Practices",config('global.practice_group') );
+  $columnheader=array(config('global.practice_group'),"Practices" );
 
   for($m=0;$m<count($columnheader);$m++)
   { 

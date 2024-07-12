@@ -39,7 +39,16 @@
       <div class="col-md-12 mb-4">
         <div class="card text-left">
           <div class="card-body">
-            <AgGridTable :rowData="passRowData" :columnDefs="columnDefs" />
+            <AgGridTable
+              class="ag-theme-alpine"
+              style="width: 100%; height: 600px;"
+              :rowData="passRowData"
+              :columnDefs="columnDefs"
+              :defaultColDef="defaultColDef"
+              :domLayout="'autoHeight'"
+              :getRowHeight="getRowHeight"
+              :components="components"
+            ></AgGridTable>
           </div>
         </div>
       </div>
@@ -54,10 +63,11 @@ import {
   onMounted,
   computed,
   watch,
-  AgGridTable,
+  //AgGridTable,
   onBeforeMount,
 } from './../commonImports';
 import LayoutComponent from './../LayoutComponent.vue';
+import AgGridTable from './../components/AgGridTable.vue';
 
 export default {
   props: {},
@@ -81,29 +91,33 @@ export default {
       fetchData();
     }
 
-    const addDynamicColumns = (columns, rowData) => {
-      
-      columnDefs.value = [];
-      columns.forEach((col, index) => {
-        columnDefs.value.push({
-          headerName: col.title,
-          field: `col${index}`,
-        });
-      });
-    //console.log('Column Definitions:', columnDefs.value);
-
-      // Map row data to match the dynamic columns
-    /*  passRowData.value = rowData.map(row => {
-        const mappedRow = {};
-        row.forEach((value, index) => {
-          mappedRow[`col${index}`] = value;
-        });
-        return mappedRow;
-      }); */
+     const addDynamicColumns = (columns, rowData) => {
+      columnDefs.value = columns.map((col, index) => ({
+        headerName: col.title,
+        field: `col${index}`,
+        cellClass: (params) => {
+          return params.data && params.data.isTotal && index === 0 ? 'total-cell' : '';
+        },
+        cellStyle: (params) => {
+          if (params.data && params.data.isTotal) {
+            return {
+              'font-weight': 'bold',
+              'background-color': '#e0e0e0',
+            };
+          }
+          return null; // No additional styles for other cells
+        },
+        colSpan: (params) => {
+          if (params.data && params.data.isTotal && index === 0) {
+            return 2;
+          }
+          return 1;
+        },
+      }));
 
       const groupedRows = {};
-      rowData.forEach(row => {
-        const groupKey = row[1]; 
+      rowData.forEach((row) => {
+        const groupKey = row[0];
         if (!groupedRows[groupKey]) {
           groupedRows[groupKey] = [];
         }
@@ -111,9 +125,9 @@ export default {
       });
 
       passRowData.value = [];
-      Object.keys(groupedRows).forEach(groupKey => {
+      Object.keys(groupedRows).forEach((groupKey) => {
         const totals = new Array(columns.length).fill(0);
-        groupedRows[groupKey].forEach(row => {
+        groupedRows[groupKey].forEach((row) => {
           row.forEach((value, index) => {
             if (index > 1 && typeof value === 'number') {
               totals[index] += value;
@@ -121,7 +135,7 @@ export default {
           });
         });
 
-        const totalRow = { col0: `Total for ${groupKey}`, colspan: 2 };
+        const totalRow = { col0: `Total for ${groupKey}`, isTotal: true };
         totals.forEach((total, index) => {
           if (index > 1) {
             totalRow[`col${index}`] = total;
@@ -129,7 +143,7 @@ export default {
         });
         passRowData.value.push(totalRow);
 
-        groupedRows[groupKey].forEach(row => {
+        groupedRows[groupKey].forEach((row) => {
           const mappedRow = {};
           row.forEach((value, index) => {
             mappedRow[`col${index}`] = value;
@@ -138,7 +152,6 @@ export default {
           passRowData.value.push(mappedRow);
         });
       });
-      //console.log('Row Data:', passRowData.value); 
     };
 
     const fetchData = async () => {
@@ -149,7 +162,7 @@ export default {
         const columns = data.COLUMNS;
         const rowData = data.DATA;
 
-       //console.log('Fetched Data:', data);
+       console.log('Fetched Data:', data);
         addDynamicColumns(columns, rowData);
       } catch (error) {
         console.error('Error fetching user filters:', error);
@@ -175,3 +188,4 @@ export default {
   },
 };
 </script>
+
