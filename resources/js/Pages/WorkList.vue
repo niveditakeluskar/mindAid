@@ -217,13 +217,13 @@ export default {
         field: 'pdob',
         cellRenderer: function (params) {
           const date = params.value; 
-          if (!date) return null;
-          const formattedDate = new Date(date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            }).replace(/\//g, '-'); 
+          if (!date) return null;         
+          const parsedDate = new Date(date);
+          const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+          const day = String(parsedDate.getUTCDate()).padStart(2, '0');
+          const year = parsedDate.getUTCFullYear();
 
+          const formattedDate = `${month}-${day}-${year}`;
           return formattedDate; 
         },
       },
