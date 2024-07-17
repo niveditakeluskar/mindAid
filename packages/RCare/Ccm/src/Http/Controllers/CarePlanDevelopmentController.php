@@ -5209,18 +5209,64 @@ class CarePlanDevelopmentController extends Controller
         $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
-        $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date
+        $qry = "select distinct health_data, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, health_date, id
             from patients.patient_health_data
             where  patient_id =" . $patientId . "
             and health_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
-            group by health_data,health_date order by updated_at desc";
+            and status = 1
+            group by health_data,health_date,id order by updated_at desc";
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" onclick="editHealthData(' . $row->id . ')"><i class="i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                $btn .= '<i class="i-Close" onclick="deleteHealthData(' . $row->id . ')" title="Delete Labs" style="color: red; cursor: pointer;"></i>';
+
+                return $btn;
+            })
+            ->rawColumns(['action'])
             ->make(true);
-        return Datatables::of($data)
-            ->addIndexColumn()
-            ->make(true);
+    }
+
+    public function getPatientHealthDataById(Request $request)
+    {
+        $id                                               = sanitizeVariable($request->id);
+        $patientHealthData                                = (PatientHealthData::self($id) ? PatientHealthData::self($id)->population() : "");
+        $result['number_tracking_healthdata_form']        = $patientHealthData;
+        $result['review_number_tracking_healthdata_form'] = $patientHealthData;
+        return $result;
+    }
+
+    public function deletePatientHealthDataById(Request $request)
+    {
+        $id           = sanitizeVariable($request->id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id);
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        DB::beginTransaction();
+        try {
+            if (
+                !empty($id) || $id != ''
+            ) {
+                $update_health_data['status'] = 0;
+                $update_health_data['updated_by'] = session()->get('userid');
+                PatientHealthData::where('id', $id)->update($update_health_data);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            }
+            DB::commit();
+            return response(['form_start_time' => $form_save_time]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
     }
 
     public function saveTravelData(PatientsTravelAddRequest $request)

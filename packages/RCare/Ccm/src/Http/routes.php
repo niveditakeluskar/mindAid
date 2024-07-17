@@ -157,6 +157,8 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::post('/care-plan-development-numbertracking-healthdata', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientHealthData')->name('care.plan.development.numbertracking.healthdata');
         Route::get('/care-plan-development-health-healthlist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getHealthData')->name('care.plan.development.health.healthlist');
+        Route::get('/get-patient-healthdata-by-id/{id}/patient-healthdata', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientHealthDataById')->name('get.all.healthdata.patient.by.id');
+        Route::post('/delete-patient-healthdata-by-id', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientHealthDataById')->name('delete.patient.healthdata.by.id');
 
         //providers
         // Route::get('/carePlanDevelopment/{typeId}/practice', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@fetchProviderList')->name('care.plan.development.providers');
