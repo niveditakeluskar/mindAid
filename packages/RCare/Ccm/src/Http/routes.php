@@ -150,7 +150,11 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/delete-patient-vital-by-id', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientVitalsById')->name('delete.patient.vitals.by.id');
 
         Route::post('/care-plan-development-numbertracking-labs', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientLabData')->name('care.plan.development.numbertracking.labs');
+
         Route::post('/care-plan-development-numbertracking-imaging', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientImagingData')->name('care.plan.development.numbertracking.imaging');
+        Route::get('/get-patient-imaging-by-id/{id}/patient-imaging', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientImagingById')->name('get.all.imaging.patient.by.id');
+        Route::post('/delete-patient-imaging-by-id', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientImagingById')->name('delete.patient.imaging.by.id');
+
         Route::post('/care-plan-development-numbertracking-healthdata', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientHealthData')->name('care.plan.development.numbertracking.healthdata');
         Route::get('/care-plan-development-health-healthlist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getHealthData')->name('care.plan.development.health.healthlist');
 

@@ -138,18 +138,71 @@ class CarePlanDevelopmentController extends Controller
         $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
-        $qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date
-            from patients.patient_imaging
-            where  patient_id =" . $patientId . "
-            and imaging_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
-            group by imaging_details,imaging_date order by updated_at desc";
-        $data = DB::select($qry);
+        // $qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date, id
+        //     from patients.patient_imaging
+        //     where  patient_id =" . $patientId . "
+        //     and imaging_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
+        //     and status = 1
+        //     group by imaging_details,imaging_date,id order by updated_at desc";
+        // $data = DB::select($qry);
+        $data =  PatientImaging::where('patient_id', $patientId)
+            ->whereBetween('imaging_date', [$dateS, $dateE])
+            ->where('status', 1)
+            ->groupBy('imaging_details', 'imaging_date', 'id')
+            ->orderBy('updated_at', 'desc')
+            ->distinct()
+            ->get();
         return Datatables::of($data)
             ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" onclick="editImagingData(' . $row->id . ')"><i class="i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                $btn .= '<i id="labdelid" class="i-Close" onclick="deleteImagingData(' . $row->id . ')" title="Delete Labs" style="color: red; cursor: pointer;"></i>';
+
+                return $btn;
+            })
+            ->rawColumns(['action'])
             ->make(true);
-        return Datatables::of($data)
-            ->addIndexColumn()
-            ->make(true);
+    }
+
+    public function getPatientImagingById(Request $request)
+    {
+        $id                                            = sanitizeVariable($request->id);
+        $patientImaging                                = (PatientImaging::self($id) ? PatientImaging::self($id)->population() : "");
+        $result['number_tracking_imaging_form']        = $patientImaging;
+        $result['review_number_tracking_imaging_form'] = $patientImaging;
+        return $result;
+    }
+
+    public function deletePatientImagingById(Request $request)
+    {
+        $id           = sanitizeVariable($request->id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id);
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        DB::beginTransaction();
+        try {
+            if (
+                !empty($id) || $id != ''
+            ) {
+                $update_imaging['status'] = 0;
+                $update_imaging['updated_by'] = session()->get('userid');
+                PatientImaging::where('id', $id)->update($update_imaging);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            }
+            DB::commit();
+            return response(['form_start_time' => $form_save_time]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
     }
 
     public function getVitalData(Request $request)
