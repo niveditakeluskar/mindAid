@@ -162,18 +162,32 @@ class CarePlanDevelopmentController extends Controller
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
         $qry = "select distinct rec_date ,height,weight,bmi,bp,o2,pulse_rate,
-            diastolic,other_vitals,oxygen,notes,pain_level
+            diastolic,other_vitals,oxygen,notes,pain_level, id
             from patients.patient_vitals
             where rec_date is not null and patient_id =" . $patientId . "
             and rec_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
+            and status= 1
             order by rec_date desc";
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<a href="javascript:void(0)" data-toggle="tooltip" onclick="editVitals(' . $row->id . ')"><i class="i-Pen-4" style="color: #2cb8ea;"></i></a>';
+                $btn .= '<i id="labdelid" class="i-Close" onclick="deleteVitals(' . $row->id . ')" title="Delete Labs" style="color: red; cursor: pointer;"></i>';
+
+                return $btn;
+            })
+            ->rawColumns(['action'])
             ->make(true);
-        return Datatables::of($data)
-            ->addIndexColumn()
-            ->make(true);
+    }
+
+    public function getPatientVitalsById(Request $request)
+    {
+        $id                                = sanitizeVariable($request->id);
+        $patientVitals            = (PatientVitalsData::self($id) ? PatientVitalsData::self($id)->population() : "");
+        $result['number_tracking_vitals_form']        = $patientVitals;
+        $result['review_number_tracking_vitals_form'] = $patientVitals;
+        return $result;
     }
 
     //created by radha(2020-12-17)
@@ -4503,6 +4517,7 @@ class CarePlanDevelopmentController extends Controller
     public function savePatientvitalData(PatientsVitalsDataAddRequest $request)
     {
         $patient_id           = sanitizeVariable($request->patient_id);
+        $id                   = sanitizeVariable($request->id);
         $height               = sanitizeVariable($request->height);
         $weight               = sanitizeVariable($request->weight);
         $bmi                  = sanitizeVariable($request->bmi);
@@ -4521,91 +4536,109 @@ class CarePlanDevelopmentController extends Controller
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
         $oxygen               = sanitizeVariable($request->oxygen);
-        $notes                = sanitizeVariable($request->notes);
+        $notes                = ($oxygen == 0) ? sanitizeVariable($request->notes) : "";
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
         // dd($pain_level);
-        //DB::beginTransaction();
-        // try {
-        $cv1 = is_numeric($height);
-        $cv2 = is_numeric($weight);
-        $cv3 = is_numeric($bmi);
-        $cv4 = is_numeric($bp);
-        $cv5 = is_numeric($diastolic);
-        $cv6 = is_numeric($o2);
-        $cv7 = is_numeric($pulse_rate);
-        $cv8 = is_numeric($pain_level);
-        $cv9 = isset($oxygen);
-        // dd($cv8);
+        DB::beginTransaction();
+        try {
+            $cv1 = is_numeric($height);
+            $cv2 = is_numeric($weight);
+            $cv3 = is_numeric($bmi);
+            $cv4 = is_numeric($bp);
+            $cv5 = is_numeric($diastolic);
+            $cv6 = is_numeric($o2);
+            $cv7 = is_numeric($pulse_rate);
+            $cv8 = is_numeric($pain_level);
+            $cv9 = isset($oxygen);
+            // dd($cv8);
 
-        if (($cv1 || $cv2 || $cv3 || $cv4 || $cv5 || $cv6 || $cv7 || $cv8 || $cv9) == 'true') {
-            $current_date = date('Y-m-d H:i:s');
-            $data   = array(
-                'patient_id'    => $patient_id,
-                'uid'           => $patient_id,
-                'rec_date'      => $current_date,
-                'height'        => $height,
-                'weight'        => $weight,
-                'bmi'           => $bmi,
-                'bp'            => $bp,
-                'diastolic'     => $diastolic,
-                'o2'            => $o2,
-                'pulse_rate'    => $pulse_rate,
-                'pain_level'    => $pain_level,
-                'created_by'    => session()->get('userid'),
-                'other_vitals'  => $other_vitals,
-                'oxygen'        => $oxygen,
-                'notes'         => $notes
-            );
+            if (($cv1 || $cv2 || $cv3 || $cv4 || $cv5 || $cv6 || $cv7 || $cv8 || $cv9) == 'true') {
+                $current_date = date('Y-m-d H:i:s');
+                $data   = array(
+                    'patient_id'    => $patient_id,
+                    'uid'           => $patient_id,
+                    'rec_date'      => $current_date,
+                    'height'        => $height,
+                    'weight'        => $weight,
+                    'bmi'           => $bmi,
+                    'bp'            => $bp,
+                    'diastolic'     => $diastolic,
+                    'o2'            => $o2,
+                    'pulse_rate'    => $pulse_rate,
+                    'pain_level'    => $pain_level,
+                    'created_by'    => session()->get('userid'),
+                    'other_vitals'  => $other_vitals,
+                    'oxygen'        => $oxygen,
+                    'notes'         => $notes
+                );
 
-            $check = PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+                if (isset($id)) {
+                    $check = PatientVitalsData::where('id', $id)->exists();
+                    if ($check == 'true') {
+                        PatientVitalsData::where('id', $id)->update($data);
+                    }
+                } else {
+                    // $check = PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->where('status', 1)->exists();
 
-            if ($check == 'true') {
-                PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($data);
-            } else {
-                $insert_query = PatientVitalsData::create($data);
-            }
+                    // if ($check == 'true') {
+                    //     PatientVitalsData::where('patient_id', $patient_id)->whereDate('created_at', '=', Carbon::today()->toDateString())->where('status', 1)->update($data);
+                    // } else {
+                    $insert_query = PatientVitalsData::create($data);
+                    // }
+                }
 
-            $cw_height               = !empty(sanitizeVariable($request->height)) ? 'height:' . sanitizeVariable($request->height) . ',' : '';
-            $cw_weight               = !empty(sanitizeVariable($request->weight)) ? 'weight:' . sanitizeVariable($request->weight) . ',' : '';
-            $cw_bmi                  = !empty(sanitizeVariable($request->bmi)) ? 'bmi:' . sanitizeVariable($request->bmi) . ',' : '';
-            $cw_bp                   = !empty(sanitizeVariable($request->bp)) ? sanitizeVariable($request->bp) : '';
-            $cw_diastolic            = !empty(sanitizeVariable($request->diastolic)) ? sanitizeVariable($request->diastolic) : '';
-            if ($cw_bp == '' && $cw_diastolic == '') {
-                $cw_blood_pressure       =  '';
-            } else {
-                $cw_blood_pressure       =  'Blood Pressure :' . $cw_bp . '/' . $cw_diastolic . ',';
-            }
-            $cw_o2                   = !empty(sanitizeVariable($request->o2)) ? 'o2:' . sanitizeVariable($request->o2) . ',' : '';
-            $cw_pulse_rate           = !empty(sanitizeVariable($request->pulse_rate)) ? 'pulse rate:' . sanitizeVariable($request->pulse_rate) . ',' : '';
-            $cw_pain_level           = !empty(sanitizeVariable($request->pain_level)) ? 'pain level:' . sanitizeVariable($request->pain_level) . ',' : '';
-            if (sanitizeVariable($request->oxygen == 1)) {
-                $cw_oxygen = 'Room Air';
-            }
-            if (sanitizeVariable($request->oxygen == 0)) {
-                $cw_oxygen = 'Supplemental Oxygen Notes : ' . sanitizeVariable($request->notes) . ',';
-            }
-            $arraynama = implode(" ", [$cw_height, $cw_weight, $cw_bmi, $cw_blood_pressure, $cw_o2, $cw_pulse_rate, $cw_pain_level, $cw_oxygen]);
-            $vitals_data_array = rtrim($arraynama, ", ");
-            $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
-            $new_sub_sequence = $last_sub_sequence + 1;
-            $vitals = array(
-                'uid'                 => $patient_id,
-                'record_date'         => Carbon::now(),
-                'topic'               => 'Vitals Data',
-                'notes'               => $vitals_data_array,
-                'patient_id'          => $patient_id
-            );
+                $cw_height               = !empty(sanitizeVariable($request->height)) ? 'height:' . sanitizeVariable($request->height) . ',' : '';
+                $cw_weight               = !empty(sanitizeVariable($request->weight)) ? 'weight:' . sanitizeVariable($request->weight) . ',' : '';
+                $cw_bmi                  = !empty(sanitizeVariable($request->bmi)) ? 'bmi:' . sanitizeVariable($request->bmi) . ',' : '';
+                $cw_bp                   = !empty(sanitizeVariable($request->bp)) ? sanitizeVariable($request->bp) : '';
+                $cw_diastolic            = !empty(sanitizeVariable($request->diastolic)) ? sanitizeVariable($request->diastolic) : '';
+                if ($cw_bp == '' && $cw_diastolic == '') {
+                    $cw_blood_pressure       =  '';
+                } else {
+                    $cw_blood_pressure       =  'Blood Pressure :' . $cw_bp . '/' . $cw_diastolic . ',';
+                }
+                $cw_o2                   = !empty(sanitizeVariable($request->o2)) ? 'o2:' . sanitizeVariable($request->o2) . ',' : '';
+                $cw_pulse_rate           = !empty(sanitizeVariable($request->pulse_rate)) ? 'pulse rate:' . sanitizeVariable($request->pulse_rate) . ',' : '';
+                $cw_pain_level           = !empty(sanitizeVariable($request->pain_level)) ? 'pain level:' . sanitizeVariable($request->pain_level) . ',' : '';
+                if (sanitizeVariable($request->oxygen == 1)) {
+                    $cw_oxygen = 'Room Air';
+                }
+                if (sanitizeVariable($request->oxygen == 0)) {
+                    $cw_oxygen = 'Supplemental Oxygen Notes : ' . sanitizeVariable($request->notes) . ',';
+                }
+                $arraynama = implode(" ", [$cw_height, $cw_weight, $cw_bmi, $cw_blood_pressure, $cw_o2, $cw_pulse_rate, $cw_pain_level, $cw_oxygen]);
+                $vitals_data_array = rtrim($arraynama, ", ");
+                $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
+                $new_sub_sequence = $last_sub_sequence + 1;
+                $vitals = array(
+                    'uid'                 => $patient_id,
+                    'record_date'         => Carbon::now(),
+                    'topic'               => 'Vitals Data',
+                    'notes'               => $vitals_data_array,
+                    'patient_id'          => $patient_id
+                );
 
 
 
-            $CallWrap_check = CallWrap::where('patient_id', $patient_id)->where('topic', 'Vitals Data')->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
-            // if($module_id=='3' && $component_id=='19'){
-            if ($CallWrap_check == 'true') {
-                $vitals['sequence'] = "1";
-                $vitals['sub_sequence'] = $last_sub_sequence;
-                $vitals['updated_by'] = session()->get('userid');
-                CallWrap::where('patient_id', $patient_id)->where('topic', 'Vitals Data')->whereDate('created_at', '=', Carbon::today()->toDateString())->update($vitals);
+                $CallWrap_check = CallWrap::where('patient_id', $patient_id)->where('topic', 'Vitals Data')->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+                // if($module_id=='3' && $component_id=='19'){
+                if ($CallWrap_check == 'true') {
+                    $vitals['sequence'] = "1";
+                    $vitals['sub_sequence'] = $last_sub_sequence;
+                    $vitals['updated_by'] = session()->get('userid');
+                    CallWrap::where('patient_id', $patient_id)->where('topic', 'Vitals Data')->whereDate('created_at', '=', Carbon::today()->toDateString())->update($vitals);
+                } else {
+                    $vitals['sequence'] = "1";
+                    $vitals['sub_sequence'] = $last_sub_sequence;
+                    $vitals['created_by'] = session()->get('userid');
+                    $vitals['updated_by'] = session()->get('userid');
+                    $insert_vitalsDataCallwrapup =  CallWrap::create($vitals);
+                }
+                // }
+                //record time
+                // $record_time      = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+                $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
             } else {
                 $vitals['sequence'] = "1";
                 $vitals['sub_sequence'] = $last_sub_sequence;
@@ -4615,31 +4648,63 @@ class CarePlanDevelopmentController extends Controller
             }
             // }
             //record time
-            $record_time      = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            $record_time      = CommonFunctionController::recordTimeSpent(
+                $start_time,
+                $end_time,
+                $patient_id,
+                $module_id,
+                $component_id,
+                $stage_id,
+                $billable,
+                $patient_id,
+                $step_id,
+                $form_name,
+                $form_start_time,
+                $form_save_time
+            );
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
+            // } else {
+            //     echo "false";
+            // }
+            DB::commit();
             return response(['form_start_time' => $form_save_time]);
-        } else {
-            $vitals['sequence'] = "1";
-            $vitals['sub_sequence'] = $last_sub_sequence;
-            $vitals['created_by'] = session()->get('userid');
-            $vitals['updated_by'] = session()->get('userid');
-            $insert_vitalsDataCallwrapup =  CallWrap::create($vitals);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
         }
-        // }
-        //record time
-        $record_time      = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name);
-        $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
-        // } else {
-        //     echo "false";
-        // }
-        //DB::commit();
-        //} catch(\Exception $ex) {
-        //  DB::rollBack();
-        // return $ex;
-        //return response(['message'=>'Something went wrong, please try again or contact administrator.!!'], 406);
-        //}
     }
 
+    public function deletePatientVitalsById(Request $request)
+    {
+        $id           = sanitizeVariable($request->id);
+        $patient_id   = sanitizeVariable($request->patient_id);
+        $module_id    = sanitizeVariable($request->module_id);
+        $component_id = sanitizeVariable($request->component_id);
+        $start_time   = sanitizeVariable($request->start_time);
+        $end_time     = sanitizeVariable($request->end_time);
+        $stage_id     = sanitizeVariable($request->stage_id);
+        $step_id      = sanitizeVariable($request->step_id);
+        $form_name    = sanitizeVariable($request->form_name);
+        $billable     = sanitizeVariable($request->billable);
+        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        DB::beginTransaction();
+        try {
+            if (
+                !empty($id) || $id != ''
+            ) {
+                $update_vitals['status'] = 0;
+                $update_vitals['updated_by'] = session()->get('userid');
+                PatientVitalsData::where('id', $id)->update($update_vitals);
+                $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
+            }
+            DB::commit();
+            return response(['form_start_time' => $form_save_time]);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return response(['message' => 'Something went wrong, please try again or contact administrator.!!'], 406);
+        }
+    }
 
     public function getLabParamRange(Request $request)
     {

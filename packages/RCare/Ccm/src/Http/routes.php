@@ -54,7 +54,7 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::get('/populate-monthly-monitoring-data/{id}', 'RCare\Ccm\Http\Controllers\CcmController@populateMonthlyMonitoringData')->name('populate.MonthlyMonitoring.data');
 
-        // Route::get("/monthly-monitoring/{id}", function(){ 
+        // Route::get("/monthly-monitoring/{id}", function(){
         //         return view('Ccm::monthly-monitoring.patient-details');
         //     })->name('monthly.monitoring.patient.details');
 
@@ -69,7 +69,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/save-patient-fin-number', 'RCare\Patients\Http\Controllers\PatientController@savepatientfinnumber')->name('patient.savefinnumber');
         Route::post('/monthly-monitoring-call-preparation-form-draft', 'RCare\Ccm\Http\Controllers\CcmController@DraftSaveCallPreparation')->name('monthly.monitoring.call.preparation.draft');
 
-        // preparation total time spent 
+        // preparation total time spent
         Route::get("/getSpentTime/{patient_id}/{module_id}/{stage_id}/spent_total-time", "RCare\Ccm\Http\Controllers\CcmController@getTotalTimeSpent")->name("getSpentTime");
         Route::post('/monthly-monitoring-call-callstatus', 'RCare\Ccm\Http\Controllers\CcmController@SaveCallSatus')->name('monthly.monitoring.call.callstatus');
         Route::post('/monthly-monitoring-call-hippa', 'RCare\Ccm\Http\Controllers\CcmController@SaveCallHippa')->name('monthly.monitoring.call.hippa');
@@ -86,14 +86,14 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/saveGeneralQuestion', 'RCare\Ccm\Http\Controllers\CcmController@generalQuestion')->name('saveGeneralQuestion');
         Route::post('/saveEmrSummary', 'RCare\Ccm\Http\Controllers\CcmController@emrSummary')->name('saveEmrSummary');
 
-        // Route::post('/selectFollowUp', 'RCare\Ccm\Http\Controllers\CcmController@selectFollowUp')->name('selectFollowUp'); 
-        //Route::get('/getFollowUpTaskNotes/{patientId}/{moduleId}/{emrSelectId}/tasknotes', 'RCare\Ccm\Http\Controllers\CcmController@getFollowupTaskNotes')->name('getFollowUpTaskNotes'); 
+        // Route::post('/selectFollowUp', 'RCare\Ccm\Http\Controllers\CcmController@selectFollowUp')->name('selectFollowUp');
+        //Route::get('/getFollowUpTaskNotes/{patientId}/{moduleId}/{emrSelectId}/tasknotes', 'RCare\Ccm\Http\Controllers\CcmController@getFollowupTaskNotes')->name('getFollowUpTaskNotes');
         Route::get("/patient-followup-task/{patientId}/{moduleId}/followuplist", "RCare\Ccm\Http\Controllers\CcmController@getFollowupTaskListData")->name("ajax.followup.task.list");
         Route::post('/completeIncompleteTask', 'RCare\Ccm\Http\Controllers\CcmController@changeTodoStatusFlag');
         Route::get('/getFollowupListData-edit/{id}/{patientId}/followupnotespopulate', 'RCare\Ccm\Http\Controllers\CcmController@populateFollowupNotes')->name('populate.followupnotes');
         Route::post('/saveFollowupListData-edit', 'RCare\Ccm\Http\Controllers\CcmController@SaveFollowupEditData')->name('save.followup.edit.data');
 
-        ///////////////////////////////////side current and perious and careplan Sidebar notes visible 
+        ///////////////////////////////////side current and perious and careplan Sidebar notes visible
         Route::get('/current-month-status/{patient_id}/{module_id}/currentstatus', 'RCare\Ccm\Http\Controllers\CcmController@currentMonthStatus')->name('current_month_status');
         Route::get('/previous-month-status/{patient_id}/{module_id}/{month}/{year}/previousstatus', 'RCare\Ccm\Http\Controllers\CcmController@previousMonthStatus')->name('previouse_month_status');
         Route::get('/careplan-status/{patient_id}/{module_id}/careplanstatus', 'RCare\Ccm\Http\Controllers\CcmController@patientCarePlanStatus')->name('patient_careplan_status');
@@ -117,7 +117,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/care-plan-development-family-emergency-contact', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientpersonalfamilyData')->name('care.plan.development.family.emergency.contact');
         Route::post('/care-plan-development-family-care-giver', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientpersonalfamilyData')->name('care.plan.development.family.care.giver');
         Route::post('/care-plan-development-family-patient-data', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientData')->name('care.plan.development.family.patient.data');
-        //Review 
+        //Review
         Route::get('/get-all-family_patient-by-id/{id}/{relation}/familypatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientFamilyById')->name('get.all.family.patient.by.id');
         Route::post('/get-delete-family_patient-by-id/{id}/familypatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientFamilyById')->name('get.delete.family.patient.by.id');
         Route::get('care-plan-development-siblinglist/{id}/{tab_name}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getSiblingList')->name('care.plan.development.review.siblinglist');
@@ -146,6 +146,9 @@ Route::middleware(["auth", "web"])->group(function () {
 
         //NumberTracking
         Route::post('/care-plan-development-numbertracking-vitals', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientvitalData')->name('care.plan.development.numbertracking.vitals');
+        Route::get('/get-patient-vital-by-id/{id}/patient-vital', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientVitalsById')->name('get.all.vitals.patient.by.id');
+        Route::post('/delete-patient-vital-by-id', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deletePatientVitalsById')->name('delete.patient.vitals.by.id');
+
         Route::post('/care-plan-development-numbertracking-labs', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientLabData')->name('care.plan.development.numbertracking.labs');
         Route::post('/care-plan-development-numbertracking-imaging', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientImagingData')->name('care.plan.development.numbertracking.imaging');
         Route::post('/care-plan-development-numbertracking-healthdata', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@savePatientHealthData')->name('care.plan.development.numbertracking.healthdata');
@@ -180,7 +183,7 @@ Route::middleware(["auth", "web"])->group(function () {
         // Route::get('/care-plan-template-select/{id}/{patientid}', 'RCare\Ccm\Http\Controllers\CcmController@populateCarePlanTemplateData')->name('get.cp.code');
         // Route::get('/care-plan-template-add/{id}/{patientid}', 'RCare\Ccm\Http\Controllers\CcmController@addCarePlanTemplateData')->name('get.add.code');
         // Route::get('/care-plan-template-edit/{id}/{patientid}', 'RCare\Ccm\Http\Controllers\CcmController@editCarePlanTemplateData')->name('get.edit.code');
-        // edit & delete hobbies,pet,travel 
+        // edit & delete hobbies,pet,travel
 
         Route::get('/get-all-pet_patient-by-id/{id}/petpatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientPetById')->name('get.all.pet.patient.by.id');
         Route::get('/get-all-hobbie_patient-by-id/{id}/hobbiepatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getPatientHobbieById')->name('get.all.hobbie.patient.by.id');
@@ -192,8 +195,8 @@ Route::middleware(["auth", "web"])->group(function () {
         // Route::post('/care-plan-data-save', 'RCare\Ccm\Http\Controllers\CcmController@saveCarePlanData')->name('care.plan.data.save');
 
         // Print Patient Care Plan
-        // Route::get('/patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@patientCarePlan')->name('patient.care.plan');   
-        // Route::get('/cpd-patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\CPDController@cpdpatientCarePlan')->name('cpd.patient.care.plan'); 
+        // Route::get('/patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@patientCarePlan')->name('patient.care.plan');
+        // Route::get('/cpd-patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\CPDController@cpdpatientCarePlan')->name('cpd.patient.care.plan');
 
         // Route::get('pdfview/{id}',array('as'=>'pdfview','uses'=>'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@pdfview'));
         // Route::get('/create-modify-patient-care-plan/{patientid}/{id}', 'RCare\Ccm\Http\Controllers\CPDController@CreateModifyPatientCarePlan')->name('create.modify.patient.care.plan');
@@ -203,7 +206,7 @@ Route::middleware(["auth", "web"])->group(function () {
 
         Route::post("/addnewcode", "RCare\Org\OrgPackages\CarePlanTemplate\src\Http\Controllers\CarePlanDevelopmentController@addnewcode")->name("add.new.code");
         Route::post("/delete-diagnosis", "RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@deleteCarePlan")->name("delete.diagnosis");
-        // Route::post("/code-availabel", "RCare\Ccm\Http\Controllers\CcmController@checkCodeAvailabel")->name("code.availabel");  
+        // Route::post("/code-availabel", "RCare\Ccm\Http\Controllers\CcmController@checkCodeAvailabel")->name("code.availabel");
         Route::post("/lab-param", "RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getLabParamRange")->name("lab.param");
         Route::post("/finalize-cpd", "RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@finalizeCpd")->name("finalize.cpd");
 
@@ -224,7 +227,7 @@ Route::middleware(["auth", "web"])->group(function () {
         //No Allergies Data
         Route::get('/care-plan-development-allergies-allergylist/{id}/{allergytype}/count_allergy', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@count_Allergies_Inside_Table')->name('care.plan.development.allergies.allergylist');
 
-        //Allergies Data  
+        //Allergies Data
         // Route::post('/care-plan-development-allergy-food', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@saveAllergy')->name('care.plan.development.allergy.food');
         // Route::post('/care-plan-development-allergy-drug', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@saveAllergy')->name('care.plan.development.allergy.drug');
         // Route::post('/care-plan-development-allergy-enviromental', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@saveAllergy')->name('care.plan.development.allergy.enviromental');
@@ -252,7 +255,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/get-services/{id}/servicespatient', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getServices')->name('get.services');
 
         Route::get('/care-plan-development-services-list/{id}/{servicetype}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@Services_list')->name('care.plan.development.services.list');
-            
+
         Route::get('/care-plan-development-provider-providerspecilistreviewlist/{id}/{servicetype}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@provider')->name('care.plan.development.provider.providerspecilistreviewlist');
 
         Route::get('/care-plan-development-services-review-otherlist/{id}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@ServicesReview_Other_list')->name('care.plan.development.services.review.otherlist');
@@ -270,7 +273,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::get('/care-plan-development-imaging-imaginglist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getImagingData')->name('care.plan.development.imaging.imaginglist');
 
         Route::get('/care-plan-development-health-healthlist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getHealthData')->name('care.plan.development.health.healthlist');
-        
+
         Route::get('/care-plan-development-vital-vitallist/{patientid}', 'RCare\Ccm\Http\Controllers\CarePlanDevelopmentController@getVitalData')->name('care.plan.development.vital.vitallist');
 
 
@@ -285,7 +288,7 @@ Route::middleware(["auth", "web"])->group(function () {
 
 
         //print care plan modified by pranali on 18March2021
-        // Route::get('/cpd-patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\PrintCarePlanController@patientCarePlan')->name('cpd.patient.care.plan'); 
+        // Route::get('/cpd-patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\PrintCarePlanController@patientCarePlan')->name('cpd.patient.care.plan');
         Route::get('/{sub_module}/patient-care-plan/{id}', 'RCare\Ccm\Http\Controllers\PrintCarePlanController@patientCarePlan')->name('patient.care.plan');
         Route::get('/{sub_module}/generate-docx/{id}', 'RCare\Ccm\Http\Controllers\PrintCarePlanController@patientCarePlan')->name('patient.care.plan.docs');
         Route::get('/monthly-monitoring/call-wrap-up-word/{id}', 'RCare\Ccm\Http\Controllers\CcmController@downloadAbleFile')->name('monthly.monitoring.call.wrap.up.word');
