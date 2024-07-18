@@ -506,7 +506,7 @@ class EnrollmentTrackingReportController extends Controller
         inner join patients.patient_services ps on ps.patient_id = pp.patient_id
         where pp.practice_id = '".$practiceid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
       }
- 
+      
 
       $countdata2 = DB::select($query2); 
      
