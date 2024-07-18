@@ -585,6 +585,7 @@ export default {
       oldlab,
       labdateexist,
       token,
+      isLoading,
     };
   },
 };

@@ -103,6 +103,7 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id
                       where plr.lab_date is not null and plr.lab_test_id is not null and plr.patient_id=" . $patientId . "
                       and plr.lab_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
+                      and plr.status = 1
                       group  by plr.lab_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes
                       union
                       select plr.patient_id,plr.lab_test_id, (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as  description,plr.rec_date ,(case when rlt.description='COVID-19' then STRING_AGG (
@@ -115,7 +116,9 @@ class CarePlanDevelopmentController extends Controller
                       left join ren_core.rcare_lab_test_param_range rltpr on plr.lab_test_parameter_id = rltpr.id and rltpr.status=1
                       where plr.lab_date is null and plr.lab_test_id is not null and plr.patient_id =" . $patientId . "
                       and plr.lab_date::timestamp between '" . $dateS . "' and '" . $dateE . "'
+                      and plr.status = 1
                       group by plr.rec_date ,rlt.description,plr.patient_id,plr.lab_test_id,plr.notes,plr.lab_date";
+        //   dd($qry);
         $data = DB::select($qry);
         return Datatables::of($data)
             ->addIndexColumn()
@@ -273,28 +276,54 @@ class CarePlanDevelopmentController extends Controller
 
             $topic_name_exist  = callwrap::where('patient_id', $patientId)->where('topic', $topic)
                 ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+            $update_data['status'] = 0;
+            $update_data['updated_by'] = session()->get('userid');
             if ($labdateexist == '1') {
                 $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('lab_date', $labdate)
                     ->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
                 if ($lab_exit == true) {
-                    PatientLabRecs::where('patient_id', $patientId)->where('lab_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                    PatientLabRecs::where('patient_id', $patientId)
+                        ->where('lab_date', $labdate)
+                        ->where('lab_test_id', $labid)
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    // ->delete();
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    //->delete();
                 } else {
-                    PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                    PatientLabRecs::where('patient_id', $patientId)
+                        ->where('rec_date', $labdate)
+                        ->where('lab_test_id', $labid)
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    // ->delete();
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    //->delete();
                 }
             } else {
                 $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)
                     ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
                 if ($lab_exit == true) {
-                    PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                    PatientLabRecs::where('patient_id', $patientId)
+                        ->where('rec_date', $labdate)
+                        ->where('lab_test_id', $labid)
+                        ->whereMonth('created_at', date('m'))
+                        ->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    // ->delete();
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                        ->update($update_data);
+                    //->delete();
                 }
             }
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patientId, $module_id, $component_id, $stage_id, $billable, $patientId, $step_id, $form_name, $form_start_time, $form_save_time);
@@ -4821,71 +4850,89 @@ class CarePlanDevelopmentController extends Controller
             foreach ($lab  as $key => $labvalue) {
                 $i = 0;
                 if ($editform != 'edit') {
-                    if (isset($lab_test_parameter_id) && $lab_test_parameter_id != null) {
-                        $LabParameter = '';
-                        foreach ($lab_test_parameter_id[$labvalue] as $test_param) {
-                            $lbdate = '';
-                            if (!empty($labdate[$labvalue][$i])) {
-                                $lab_exit = PatientLabRecs::where('patient_id', $patient_id)->where('lab_date', $labdate[$labvalue][$i])->where('lab_test_id', $labvalue)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-                                if ($lab_exit == true) {
-                                    PatientLabRecs::where('patient_id', $patient_id)->where('lab_date', $labdate[$labvalue][$i])->where('lab_test_id', $labvalue)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                    if ($lab[0] == 0) {
+                        $labdata = array(
+                            'patient_id'            => $patient_id,
+                            'uid'                   => $uid,
+                            'rec_date'              => Carbon::now(),
+                            'notes'                 => $notes[0],
+                            'lab_date'              => $labdate[0],
+                            'status'                => 1,
+                            'lab_test_id'           => $lab_test_id[0][0],
+                        );
+                        $labdata['updated_by'] = session()->get('userid');
+                        $labdata['created_by'] = session()->get('userid');
+                        $insertData = PatientLabRecs::create($labdata);
+                    } else {
+                        if (isset($lab_test_parameter_id) && $lab_test_parameter_id != null) {
+                            $LabParameter = '';
+                            foreach ($lab_test_parameter_id[$labvalue] as $test_param) {
+                                $lbdate = '';
+                                if (!empty($labdate[$labvalue][$i])) {
+                                    $lab_exit = PatientLabRecs::where('patient_id', $patient_id)->where('lab_date', $labdate[$labvalue][$i])->where('lab_test_id', $labvalue)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
+                                    if ($lab_exit == true) {
+                                        $data['status'] = 0;
+                                        $data['updated_by'] = session()->get('userid');
+                                        PatientLabRecs::where('patient_id', $patient_id)->where('lab_date', $labdate[$labvalue][$i])->where('lab_test_id', $labvalue)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->update($data); //->delete();
+                                    }
                                 }
-                            }
-                            $labdata = array(
-                                'patient_id'            => $patient_id,
-                                'uid'                   => $uid,
-                                'rec_date'              => Carbon::now(),
-                                'lab_test_id'           => $lab_test_id[$labvalue][$i],
-                                'lab_test_parameter_id' => $test_param,
-                                'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i] ?? null,
-                                'notes'                 => $notes[$labvalue],
-                                'lab_date'              => $labdate[$labvalue][0]
-                                //'lab_date'              =>Carbon::now()
-                            );
-                            $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
-                            if (isset($name_param[0]->parameter)) {
-                                $new_high_vallue = $high_val[$labvalue][$i] ?? null;
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $new_high_vallue . ', ';
-                            }
-                            $labdata['updated_by'] = session()->get('userid');
-                            $labdata['created_by'] = session()->get('userid');
-                            $insertData = PatientLabRecs::create($labdata);
-                            $i++;
-                        } //end foreach;
-                        //callwrap up
-                        if (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'rpm' && $component_name == 'monthly-monitoring')) {
-                            $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $lab)->get();
-                            $LabName = '';
-                            if (isset($name_lab[0]->description)) {
-                                $LabName = $name_lab[0]->description . '(' . date('m-d-Y', strtotime($labdate[$labvalue][0])) . ')';
-                            } else {
-                                $LabName = 'Other (' . date('m-d-Y', strtotime($labdate[$labvalue][0])) . ')';
-                            }
-                            $topic = 'Lab Data : ' . $LabName;
-                            $notes = !empty($LabParameter) ? rtrim($LabParameter, ", ") : $notes[$labvalue];
-                            $callwrapData = array(
-                                'uid'                 => $patient_id,
-                                'record_date'         => Carbon::now(),
-                                'topic'               => $topic,
-                                'notes'               => $notes,
-                                'patient_id'          => $patient_id
-                            );
-                            $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
-                            $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
-                            if ($check == true) {
-                                $callwrapData['sequence'] = "1";
-                                $callwrapData['sub_sequence'] = $last_sub_sequence;
-                                $callwrapData['updated_by'] = session()->get('userid');
-                                CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($callwrapData);
-                            } else {
-                                $callwrapData['sequence'] = "1";
-                                $callwrapData['sub_sequence'] = $last_sub_sequence;
-                                $callwrapData['created_by'] = session()->get('userid');
-                                $callwrapData['updated_by'] = session()->get('userid');
-                                CallWrap::create($callwrapData);
-                            }
-                        } //callwrap Data
+                                $labdata = array(
+                                    'patient_id'            => $patient_id,
+                                    'uid'                   => $uid,
+                                    'rec_date'              => Carbon::now(),
+                                    'lab_test_id'           => $lab_test_id[$labvalue][$i],
+                                    'lab_test_parameter_id' => $test_param,
+                                    'reading'               => $reading[$labvalue][$i],
+                                    'high_val'              => $high_val[$labvalue][$i] ?? null,
+                                    'notes'                 => $notes[$labvalue],
+                                    'lab_date'              => $labdate[$labvalue][0],
+                                    'status'                => 1
+                                    //'lab_date'              =>Carbon::now()
+                                );
+                                $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
+                                if (isset($name_param[0]->parameter)) {
+                                    $new_high_vallue = $high_val[$labvalue][$i] ?? null;
+                                    $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $new_high_vallue . ', ';
+                                }
+                                $labdata['updated_by'] = session()->get('userid');
+                                $labdata['created_by'] = session()->get('userid');
+                                $insertData = PatientLabRecs::create($labdata);
+                                $i++;
+                            } //end foreach;
+                            //callwrap up
+                            if (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'rpm' && $component_name == 'monthly-monitoring')) {
+                                $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $lab)->get();
+                                $LabName = '';
+                                if (isset($name_lab[0]->description)) {
+                                    $LabName = $name_lab[0]->description . '(' . date('m-d-Y', strtotime($labdate[$labvalue][0])) . ')';
+                                } else {
+                                    $LabName = 'Other (' . date('m-d-Y', strtotime($labdate[$labvalue][0])) . ')';
+                                }
+                                $topic = 'Lab Data : ' . $LabName;
+                                $notes = !empty($LabParameter) ? rtrim($LabParameter, ", ") : $notes[$labvalue];
+                                $callwrapData = array(
+                                    'uid'                 => $patient_id,
+                                    'record_date'         => Carbon::now(),
+                                    'topic'               => $topic,
+                                    'notes'               => $notes,
+                                    'patient_id'          => $patient_id
+                                );
+                                $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+                                $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
+                                if ($check == true) {
+                                    $callwrapData['sequence'] = "1";
+                                    $callwrapData['sub_sequence'] = $last_sub_sequence;
+                                    $callwrapData['updated_by'] = session()->get('userid');
+                                    CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($callwrapData);
+                                } else {
+                                    $callwrapData['sequence'] = "1";
+                                    $callwrapData['sub_sequence'] = $last_sub_sequence;
+                                    $callwrapData['created_by'] = session()->get('userid');
+                                    $callwrapData['updated_by'] = session()->get('userid');
+                                    CallWrap::create($callwrapData);
+                                }
+                            } //callwrap Data
+                        }
                     }
                 } else {
                     $LabParameter = '';
