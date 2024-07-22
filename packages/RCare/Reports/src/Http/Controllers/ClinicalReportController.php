@@ -15,11 +15,16 @@ use RCare\Org\OrgPackages\Users\src\Models\Users;
 use DataTables;
 use Carbon\Carbon;
 use Session;
+use Inertia\Inertia;
 // use RCare\Org\OrgPackages\Users\src\Models\RenUserLoginHistory;
 use RCare\System\Traits\DatesTimezoneConversion; 
 
 class ClinicalReportController extends Controller  
 { 
+    public function ClinicalInsightList(Request $request) 
+    {
+            return Inertia::render('Report/ManagementReports/ClinicalInsight');
+    }
     public function ClinicalReportSearch(Request $request)  
     {  
         $practicesgrp = sanitizeVariable($request->route('practicesgrp'));

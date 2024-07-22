@@ -16,10 +16,23 @@ use DataTables;
 use Carbon\Carbon; 
 use Session; 
 use RCare\System\Traits\DatesTimezoneConversion;   
+use RCare\TaskManagement\Models\PatientActivity;
 
 class AdditionalAcitvitiesReportController extends Controller
 {
+    
+    public function groupedPatientActivies(Request $request)
+        {
+
+        foreach (PatientActivity::groupedPatientActivies() as $groupedPatientActiviesList) {
+          
+            $options[$groupedPatientActiviesList->id] = $groupedPatientActiviesList->name;
+        }
+          
+        $options = array_unique($options);
    
+        return response()->json($options);
+  }
     //created by radha(29dec2020)  
     public function AcitvitiesReportSearch(Request $request)
     {
