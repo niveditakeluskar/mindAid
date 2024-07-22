@@ -30,7 +30,9 @@
           <input type="hidden" name="start_time" value="00:00:00" />
           <input type="hidden" name="end_time" value="00:00:00" />
           <input type="hidden" name="module_id" :value="moduleId" />
+          <input type="hidden" name="module_name" :value="module_name" />
           <input type="hidden" name="component_id" :value="componentId" />
+          <input type="hidden" name="component_name" :value="component_name" />
           <input type="hidden" name="stage_id" :value="stageId" />
           <input type="hidden" name="step_id" :value="labsStepId" />
           <input
@@ -144,7 +146,7 @@ import moment from "moment";
 import { ajaxForm } from "../../Utility/Form.vue";
 import {
   getStepID,
-  updateTimer,
+  // updateTimer,
   editData,
   deleteRecordDetails,
 } from "../../Utility/CommonFunctions.vue";
@@ -177,6 +179,8 @@ export default {
     const month = new Date().getMonth() + 1;
     const formName = "number_tracking_labs_form";
     let isLoading = ref(false);
+    const module_name = ref("");
+    const component_name = ref("");
     let token = document.head.querySelector('meta[name="csrf-token"]').content;
     const columnDefs = ref([
       {
@@ -188,17 +192,17 @@ export default {
       {
         headerName: "Lab Date",
         field: "lab_date",
-        valueFormatter: (params) => {
-          const date = new Date(params.value);
-          const month = date.getMonth() + 1;
-          const day = date.getDate();
-          const year = date.getFullYear();
+        cellRenderer: (params) => {
+            const dateStr = params.value;
+            if (!dateStr) return null;
+            // Split the input date string (assuming it's in YYYY-MM-DD format)
+            const [year, month, day] = dateStr.split('-');
 
-          // Format the date as mm-dd-yyyy
-          return `${month.toString().padStart(2, "0")}-${day
-            .toString()
-            .padStart(2, "0")}-${year}`;
-        },
+            // Format the date as MM-DD-YYYY
+            const formattedDate = `${month}-${day}-${year}`;
+
+            return formattedDate;
+        }
       },
       { headerName: "Reading", field: "labparameter" },
       { headerName: "Notes", field: "notes" },
@@ -227,6 +231,9 @@ export default {
         isLoading.value = false;
         const data = await response.json();
         labsRowData.value = data.data;
+        
+        module_name.value = parts[parts.length - 3];
+        component_name.value = parts[parts.length - 2];
       } catch (error) {
         console.error("Error fetching labs list:", error);
         isLoading.value = false;
@@ -586,6 +593,8 @@ export default {
       labdateexist,
       token,
       isLoading,
+      module_name,
+      component_name,
     };
   },
 };
