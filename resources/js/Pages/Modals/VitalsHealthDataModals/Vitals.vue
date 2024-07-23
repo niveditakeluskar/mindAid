@@ -486,8 +486,3 @@ export default {
   },
 };
 </script>
-<style>
-.d-none {
-  display: none !important; /* Use !important to override Vue conditional display */
-}
-</style>

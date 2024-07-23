@@ -87,7 +87,7 @@ class CarePlanDevelopmentController extends Controller
         $patientId = sanitizeVariable($request->route('patientid'));
         $month     = date('m');
         $year      = date("Y");
-        
+
         $configTZ     = config('app.timezone');
         $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
         $dateS = Carbon::now()->startOfMonth()->subMonth(6);
@@ -96,7 +96,7 @@ class CarePlanDevelopmentController extends Controller
         $editFunction = ($mm === 'monthly-monitoring' ? 'editlabsformnew' : 'carePlanDevelopment.editlabsformnew');
         $deleteFunction = ($mm === 'monthly-monitoring' ? 'deleteLabs' : 'carePlanDevelopment.deleteLabs');
 
-        $qry       = "select plr.patient_id,plr.lab_test_id, 
+        $qry       = "select plr.patient_id,plr.lab_test_id,
                      (case when plr.lab_test_id=0 then 'Other' else rlt.description end) as description,
                      plr.lab_date,
                      (case when rlt.description='COVID-19' then STRING_AGG (
@@ -4906,7 +4906,7 @@ class CarePlanDevelopmentController extends Controller
                                 $i++;
                             } //end foreach;
                             //callwrap up
-                            print_r($module_name.'===='.$component_name);
+                            print_r($module_name . '====' . $component_name);
                             if (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'rpm' && $component_name == 'monthly-monitoring')) {
                                 $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $lab)->get();
                                 $LabName = '';
@@ -4964,20 +4964,20 @@ class CarePlanDevelopmentController extends Controller
                         }
                     } else {
                         $lab_exit = PatientLabRecs::where('patient_id', $patient_id)->where('lab_date', $olddate)->where('lab_test_id', $oldlab)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-                    //    dd($lab_exit);
+                        //    dd($lab_exit);
                         if ($lab_exit == true) {
                             PatientLabRecs::where('patient_id', $patient_id)
-                            ->where('lab_date', $olddate)->where('lab_test_id', $oldlab)
-                            ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
+                                ->where('lab_date', $olddate)->where('lab_test_id', $oldlab)
+                                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->delete();
                         }
-                        // dd($check_callwrap_exist); 
+                        // dd($check_callwrap_exist);
                         if ($check_callwrap_exist == true) {
                             callwrap::where('patient_id', $patient_id)->where('topic', $topic)
                                 ->whereMonth('record_date', date('m'))->whereYear('record_date', date('Y'))->delete();
                         }
                     }
                     if ($lab_test_parameter_id == null || $lab_test_parameter_id == '' || $lab_test_parameter_id == '0') {
-                       
+
                         $labdata = array(
                             'patient_id'            => $patient_id,
                             'uid'                   => $uid,
@@ -5023,48 +5023,48 @@ class CarePlanDevelopmentController extends Controller
                         }
                     }
 
-                    if (isset($lab_test_parameter_id) && ($lab_test_parameter_id != null|| $lab_test_parameter_id[0]!=null)) {
-                        foreach ($lab_test_parameter_id[$labvalue] as $test_param) { 
-                            if($test_param == null || $test_param == 'null'){
+                    if (isset($lab_test_parameter_id) && ($lab_test_parameter_id != null || $lab_test_parameter_id[0] != null)) {
+                        foreach ($lab_test_parameter_id[$labvalue] as $test_param) {
+                            if ($test_param == null || $test_param == 'null') {
                                 $labdata = array(
                                     'patient_id'            => $patient_id,
                                     'uid'                   => $uid,
                                     'rec_date'              => Carbon::now(),
                                     'lab_test_id'           =>  0,
-                                    'lab_test_parameter_id' =>  0,//isset($test_param) ? $test_param : 0,
+                                    'lab_test_parameter_id' =>  0, //isset($test_param) ? $test_param : 0,
                                     'reading'               =>  null,
                                     'high_val'              =>  null,
-                                    'notes'                 => !empty($notes[$labvalue]) ? $notes[$labvalue] : null, 
+                                    'notes'                 => !empty($notes[$labvalue]) ? $notes[$labvalue] : null,
                                     'lab_date'              => !empty($labdate[$labvalue][0]) ? $labdate[$labvalue][0] : null
                                 );
-                            }else{
+                            } else {
                                 $labdata = array(
                                     'patient_id'            => $patient_id,
                                     'uid'                   => $uid,
                                     'rec_date'              => Carbon::now(),
                                     'lab_test_id'           => isset($lab_test_id[$labvalue][$i]) ? $lab_test_id[$labvalue][$i] : 0,
-                                    'lab_test_parameter_id' => isset($lab_params_id[$labvalue][$i]) ? $lab_params_id[$labvalue][$i] : 0,//isset($test_param) ? $test_param : 0,
+                                    'lab_test_parameter_id' => isset($lab_params_id[$labvalue][$i]) ? $lab_params_id[$labvalue][$i] : 0, //isset($test_param) ? $test_param : 0,
                                     'reading'               => isset($reading[$labvalue][$i]) ? $reading[$labvalue][$i] : null,
                                     'high_val'              => isset($high_val[$labvalue][$i]) ? $high_val[$labvalue][$i] : null,
-                                    'notes'                 => !empty($notes[$labvalue]) ? $notes[$labvalue] : null, 
+                                    'notes'                 => !empty($notes[$labvalue]) ? $notes[$labvalue] : null,
                                     'lab_date'              => !empty($labdate[$labvalue][0]) ? $labdate[$labvalue][0] : null
                                 );
                             }
-                            
-                            if($test_param == null || $test_param == 'null'){
+
+                            if ($test_param == null || $test_param == 'null') {
                                 $id = 0;
-                            }else{
+                            } else {
                                 $id = $test_param;
                             }
                             // dd($id);
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $id)->exists();
                             // dd($name_param);
-                            if ($name_param== false){
+                            if ($name_param == false) {
                                 $labdata['updated_by'] = session()->get('userid');
                                 $labdata['created_by'] = session()->get('userid');
                                 PatientLabRecs::create($labdata);
                                 $i++;
-                            }else{
+                            } else {
                                 if (isset($name_param[0]->parameter)) {
                                     $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
                                 }
@@ -5094,10 +5094,10 @@ class CarePlanDevelopmentController extends Controller
                                 'patient_id'          => $patient_id
                             );
                             $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())
-                            ->exists();
-                        
+                                ->exists();
+
                             $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
-                            ->where('sequence', 1)->max('sub_sequence');
+                                ->where('sequence', 1)->max('sub_sequence');
                             if ($check == true) {
                                 $callwrapData['sequence'] = "1";
                                 $callwrapData['sub_sequence'] = $last_sub_sequence;
@@ -5139,62 +5139,33 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
-        $comment             = sanitizeVariable($request->comment);
+        $comment              = sanitizeVariable($request->comment);
+        $id                   = sanitizeVariable($request->id);
         $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
+        $new_sub_sequence = $last_sub_sequence + 1;
         DB::beginTransaction();
         try {
             // $DelPatientImaging = PatientImaging::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
             // PatientImaging::destroy($DelPatientImaging->toArray());
-            $imaging_array_data = '';
-            $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
-            $new_sub_sequence = $last_sub_sequence + 1;
-            foreach ($imaging as $key => $values) {
-                if ($imaging_date[$key] != '') {
-                    $t = $imaging_date[$key] . ' 00:00:00';
-                } else {
-                    $t = null;
-                }
-                if ($values != '') {
-                    $imaging_data = array(
-                        'patient_id'      => $patient_id,
-                        'uid'             => $patient_id,
-                        'imaging_details' => $values,
-                        'created_by'      => session()->get('userid'),
-                        'imaging_date'    => $t,
-                        'updated_by'      => session()->get('userid'),
-                        'comment'        => $comment
-                    );
-                    PatientImaging::create($imaging_data);
-                    $callwrapimaging_array = array(
-                        'uid'                 => $patient_id,
-                        'record_date'         => Carbon::now(),
-                        'topic'               => 'Imaging Notes',
-                        'notes'               => $comment,
-                        'patient_id'          => $patient_id,
-                        'sequence'            => "1",
-                        'sub_sequence'        => $last_sub_sequence,
-                        'created_by'          => session()->get('userid'),
-                        'updated_by'          => session()->get('userid')
-                    );
-                    CallWrap::create($callwrapimaging_array);
-                    $imaging_array_data .= $values . '(' . date('m-d-Y', strtotime($imaging_date[$key])) . ') , ';
-                }
-            } //end foreach
-            //callwrapup Data
-            if ($module_id == '3' && $component_id == '19') {
-                $topic = 'Imaging Data';
+            if ($id) {
+                $value     = $imaging[0];
+                $dt_img    = $imaging_date[0];
+                $new_topic = $value . '(' . date('m-d-Y', strtotime($dt_img)) . ')';
+                $old_data  = PatientImaging::where('id', $id)->get();
+                $old_value = $old_data[0]['imaging_details'];
+                $old_dt    = $old_data[0]['imaging_date'];
+                $topic     = $old_value . '(' . date('d-m-Y', strtotime($old_dt)) . ')';
+                $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->exists();
                 $imaging_array = array(
                     'uid'                 => $patient_id,
                     'record_date'         => Carbon::now(),
                     'topic'               => 'Imaging Data',
-                    'notes'               => rtrim($imaging_array_data, ", "),
+                    'notes'               => rtrim($new_topic, ", "),
                     'patient_id'          => $patient_id
                 );
-                $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
                 if ($check == true) {
-                    $imaging_array['sequence'] = "1";
-                    $imaging_array['sub_sequence'] = $last_sub_sequence;
                     $imaging_array['updated_by'] = session()->get('userid');
                     CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($imaging_array);
                 } else {
@@ -5204,7 +5175,71 @@ class CarePlanDevelopmentController extends Controller
                     $imaging_array['updated_by'] = session()->get('userid');
                     CallWrap::create($imaging_array);
                 }
-            } //end call wrapup
+                $imaging_data['imaging_details'] = $value;
+                $imaging_data['imaging_date'] = $dt_img;
+                $imaging_data['updated_by'] = session()->get('userid');
+                PatientImaging::where('patient_id', $patient_id)->where('id', $id)->update($imaging_data);
+            } else {
+                $imaging_array_data = '';
+                foreach ($imaging as $key => $values) {
+                    if ($imaging_date[$key] != '') {
+                        $t = $imaging_date[$key] . ' 00:00:00';
+                    } else {
+                        $t = null;
+                    }
+                    if ($values != '') {
+                        $imaging_data = array(
+                            'patient_id'      => $patient_id,
+                            'uid'             => $patient_id,
+                            'imaging_details' => $values,
+                            'created_by'      => session()->get('userid'),
+                            'imaging_date'    => $t,
+                            'updated_by'      => session()->get('userid'),
+                            'comment'        => $comment
+                        );
+                        PatientImaging::create($imaging_data);
+                        $callwrapimaging_array = array(
+                            'uid'                 => $patient_id,
+                            'record_date'         => Carbon::now(),
+                            'topic'               => 'Imaging Notes',
+                            'notes'               => $comment,
+                            'patient_id'          => $patient_id,
+                            'sequence'            => "1",
+                            'sub_sequence'        => $last_sub_sequence,
+                            'created_by'          => session()->get('userid'),
+                            'updated_by'          => session()->get('userid')
+                        );
+                        CallWrap::create($callwrapimaging_array);
+                        $imaging_array_data .= $values . '(' . date('m-d-Y', strtotime($imaging_date[$key])) . ') , ';
+                    }
+                } //end foreach
+                //callwrapup Data
+                if (
+                    $module_id == '3' && $component_id == '19'
+                ) {
+                    $topic = 'Imaging Data';
+                    $imaging_array = array(
+                        'uid'                 => $patient_id,
+                        'record_date'         => Carbon::now(),
+                        'topic'               => 'Imaging Data',
+                        'notes'               => rtrim($imaging_array_data, ", "),
+                        'patient_id'          => $patient_id
+                    );
+                    $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+                    if ($check == true) {
+                        $imaging_array['sequence'] = "1";
+                        $imaging_array['sub_sequence'] = $last_sub_sequence;
+                        $imaging_array['updated_by'] = session()->get('userid');
+                        CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($imaging_array);
+                    } else {
+                        $imaging_array['sequence'] = "1";
+                        $imaging_array['sub_sequence'] = $last_sub_sequence;
+                        $imaging_array['created_by'] = session()->get('userid');
+                        $imaging_array['updated_by'] = session()->get('userid');
+                        CallWrap::create($imaging_array);
+                    }
+                } //end call wrapup
+            }
             //record time
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
@@ -5217,8 +5252,7 @@ class CarePlanDevelopmentController extends Controller
     }
 
     public function savePatientHealthData(PatientsHealthDataRequest $request)
-    { 
-        // dd($request->all());
+    {
         $other_vitals         = sanitizeVariable($request->health_data);
         $health_date          = sanitizeVariable($request->health_date);
         $patient_id           = sanitizeVariable($request->patient_id);
@@ -5230,59 +5264,35 @@ class CarePlanDevelopmentController extends Controller
         $step_id              = sanitizeVariable($request->step_id);
         $form_name            = sanitizeVariable($request->form_name);
         $billable             = sanitizeVariable($request->billable);
-        $comment             = sanitizeVariable($request->comment);
-        $id                  = sanitizeVariable($request->id);
-        $form_start_time = sanitizeVariable($request->timearr['form_start_time']);
-        $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $comment              = sanitizeVariable($request->comment);
+        $form_start_time      = sanitizeVariable($request->timearr['form_start_time']);
+        $form_save_time       = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
+        $id                   = sanitizeVariable($request->id);
+        $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
+        $new_sub_sequence = $last_sub_sequence + 1;
         DB::beginTransaction();
         try {
             // $DelPatientHealthdata = PatientHealthData::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get(['id']);
             // PatientHealthData::destroy($DelPatientHealthdata->toArray());
-            $health_data_array = '';
-            foreach ($other_vitals as $key => $values) {
-                if ($health_date[$key] != '') {
-                    $t = $health_date[$key] . ' 00:00:00';
-                } else {
-                    $t = null;
-                }
-                //dd($values);
-                if ($values != '') { //dd($values);
-                    $health_data = array(
-                        'patient_id'      => $patient_id,
-                        'health_data'     => $values,
-                        'created_by'      => session()->get('userid'),
-                        'updated_by'      => session()->get('userid'),
-                        'health_date'     => $t,
-                        'comment'         => $comment
-                    );
-                    // dd($health_data);
-                    if($id !=''){
-                        PatientHealthData::where('id' , $id)->update($health_data);     
-                    }else {
-                        PatientHealthData::create($health_data);   
-                    }
-                    $health_data_array .= $values . '(' . date('m-d-Y', strtotime($health_date[$key])) . ') , ';
-                }
-            } //end foreach
-            //callwrapup Data 
-            if ($module_id == '3' && $component_id == '19') {
-                $last_sub_sequence = CallWrap::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('sequence', 1)->max('sub_sequence');
-                $new_sub_sequence = $last_sub_sequence + 1;
-                $topic = 'Health Data';
+            if ($id) {
+                $value     = $other_vitals[0];
+                $dt_hd     = $health_date[0];
+                $new_topic = $value . '(' . date('m-d-Y', strtotime($dt_hd)) . ')';
+                $old_data  = PatientHealthData::where('id', $id)->get();
+                $old_value = $old_data[0]['health_data'];
+                $old_dt    = $old_data[0]['health_date'];
+                $topic     = $old_value . '(' . date('d-m-Y', strtotime($old_dt)) . ')';
+                $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->exists();
                 $healthdata_array = array(
                     'uid'                 => $patient_id,
                     'record_date'         => Carbon::now(),
                     'topic'               => 'Health Data',
-                    'notes'               => rtrim($health_data_array, ", "),
+                    'notes'               => rtrim($new_topic, ", "),
                     'patient_id'          => $patient_id
                 );
-                $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
-                // dd($check);
                 if ($check == true) {
-                    $healthdata_array['sequence'] = "1";
-                    $healthdata_array['sub_sequence'] = $last_sub_sequence;
                     $healthdata_array['updated_by'] = session()->get('userid');
-                    CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($healthdata_array);
+                    CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($imaging_array);
                 } else {
                     $healthdata_array['sequence'] = "1";
                     $healthdata_array['sub_sequence'] = $last_sub_sequence;
@@ -5290,7 +5300,58 @@ class CarePlanDevelopmentController extends Controller
                     $healthdata_array['updated_by'] = session()->get('userid');
                     CallWrap::create($healthdata_array);
                 }
-            } //end call wrapup
+                $healthdata['health_data'] = $value;
+                $healthdata['health_date'] = $dt_hd;
+                $healthdata['updated_by'] = session()->get('userid');
+                PatientHealthData::where('patient_id', $patient_id)->where('id', $id)->update($healthdata);
+            } else {
+                $health_data_array = '';
+                foreach ($other_vitals as $key => $values) {
+                    if ($health_date[$key] != '') {
+                        $t = $health_date[$key] . ' 00:00:00';
+                    } else {
+                        $t = null;
+                    }
+                    if ($values != '') {
+                        $health_data = array(
+                            'patient_id'      => $patient_id,
+                            'health_data'     => $values,
+                            'created_by'      => session()->get('userid'),
+                            'updated_by'      => session()->get('userid'),
+                            'health_date'     => $t,
+                            'comment'         => $comment
+                        );
+                        PatientHealthData::create($health_data);
+                        $health_data_array .= $values . '(' . date('m-d-Y', strtotime($health_date[$key])) . ') , ';
+                    }
+                } //end foreach
+                //callwrapup Data
+                if (
+                    $module_id == '3' && $component_id == '19'
+                ) {
+                    $topic = 'Health Data';
+                    $healthdata_array = array(
+                        'uid'                 => $patient_id,
+                        'record_date'         => Carbon::now(),
+                        'topic'               => 'Health Data',
+                        'notes'               => rtrim($health_data_array, ", "),
+                        'patient_id'          => $patient_id
+                    );
+                    $check = CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->exists();
+                    if ($check == true) {
+                        $healthdata_array['sequence'] = "1";
+                        $healthdata_array['sub_sequence'] = $last_sub_sequence;
+                        $healthdata_array['updated_by'] = session()->get('userid');
+                        CallWrap::where('patient_id', $patient_id)->where('topic', $topic)->whereDate('created_at', '=', Carbon::today()->toDateString())->update($healthdata_array);
+                    } else {
+                        $healthdata_array['sequence'] = "1";
+                        $healthdata_array['sub_sequence'] = $last_sub_sequence;
+                        $healthdata_array['created_by'] = session()->get('userid');
+                        $healthdata_array['updated_by'] = session()->get('userid');
+                        CallWrap::create($healthdata_array);
+                    }
+                } //end call wrapup
+            }
             //record time
             $record_time  = CommonFunctionController::recordTimeSpent($start_time, $end_time, $patient_id, $module_id, $component_id, $stage_id, $billable, $patient_id, $step_id, $form_name, $form_start_time, $form_save_time);
             $this->patientDataStatus($patient_id, $module_id, $component_id, $stage_id, $step_id);
