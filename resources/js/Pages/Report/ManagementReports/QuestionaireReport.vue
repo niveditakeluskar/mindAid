@@ -238,27 +238,31 @@ const columnDefs = ref([
     headerName: "BP Count",
     field: "bpcount",
   },
-  { headerName: "BMI Greater Than 25", field: "bmi_greater_25", flex: 2 },
-  { headerName: "BMI Less Than 18", field: "bmi_less_18", flex: 2 },
+  { headerName: "BMI Greater Than 25", field: "bmi_greater_25", flex: 2, minWidth: 200 },
+  { headerName: "BMI Less Than 18", field: "bmi_less_18", flex: 2, minWidth: 200 },
   {
     headerName: "BP Systolic 140 And Diastolic 90 & Greater",
     field: "bp_140_90",
     flex: 2,
+    minWidth: 200
   },
   {
     headerName: "BP Systolic 140 And Diastolic 110 & Greater",
     field: "bp_180_110",
     flex: 2,
+    minWidth: 200
   },
   {
     headerName: "HgA1c Greater Than 7",
     field: "hga1c_greater_7",
     flex: 2,
+    minWidth: 200
   },
   {
     headerName: "HgA1c Less Than 6.9",
     field: "hga1c_less_7",
     flex: 2,
+    minWidth: 200
   },
 
   {
@@ -269,7 +273,7 @@ const columnDefs = ref([
     headerName: "Answers",
     field: "option",
   },
-  { headerName: "Patient Count", field: "count" },
+  { headerName: "Patient Count", field: "count", minWidth: 150 },
 ]);
 const fetchPractices = async () => {
   try {
