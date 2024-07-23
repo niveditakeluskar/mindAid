@@ -427,18 +427,18 @@ class EnrollmentTrackingReportController extends Controller
         if (property_exists($data[$i], "practice_name")) {
             if($practicegroupid == 0){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where rp.practice_group != 7 and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }else if($practicegroupid == null){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }
             else{
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where rp.practice_group = '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }
@@ -446,7 +446,7 @@ class EnrollmentTrackingReportController extends Controller
 
         }else{
           $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           where pp.practice_id = '".$practiceid."' and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
         }  
         
@@ -485,25 +485,25 @@ class EnrollmentTrackingReportController extends Controller
       if (property_exists($data[$i], "practice_name")) {
         if($practicegroupid == 0){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where rp.practice_group != 7 and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
         }else if($practicegroupid == null){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";  
         }
         else{
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where rp.practice_group= '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
         }
        
       }else{
         $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-        inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+        inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
         where pp.practice_id = '".$practiceid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
       }
       
