@@ -145,6 +145,10 @@ class CarePlanDevelopmentController extends Controller
         $dateE = Carbon::now()->endOfMonth();
         $configTZ = config('app.timezone');
         $userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $mm = $request->query('mm');
+        $editImagingData = ($mm === 'monthly-monitoring' ? 'editlabsformnew' : 'carePlanDevelopment.editlabsformnew');
+        $deleteImagingData = ($mm === 'monthly-monitoring' ? 'deleteLabs' : 'carePlanDevelopment.deleteLabs');
+
         /*$data = PatientVitalsData::where('patient_id',$patientId)->whereNotNull('rec_date')->where('status',1)
                             ->whereBetween('created_at', [$dateS, $dateE])->orderby('id','desc')->get();*/
         // $qry = "select distinct imaging_details, to_char( max(updated_at) at time zone '" . $configTZ . "' at time zone '" . $userTZ . "', 'MM-DD-YYYY HH24:MI:SS') as updated_at, imaging_date, id
