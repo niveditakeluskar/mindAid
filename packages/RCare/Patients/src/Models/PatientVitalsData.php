@@ -7,18 +7,19 @@ use RCare\System\Support\DashboardFetchable;
 use RCare\System\Support\ModelMapper;
 use Illuminate\Database\Eloquent\Model;
 use RCare\System\Traits\DatesTimezoneConversion;
+
 class PatientVitalsData extends Model
 {
     //
-use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='patients.patient_vitals';
+    use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
+    protected $table = 'patients.patient_vitals';
 
-        /**
+    /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
-	 
+
     protected $population_include = [
         "id"
     ];
@@ -26,7 +27,7 @@ use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
         'rec_date',
         'created_at',
         'updated_at'
-    ]; 
+    ];
     protected $fillable = [
         'patient_id',
         'uid',
@@ -46,19 +47,22 @@ use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
         'oxygen',
         'notes'
     ];
-	
-	
-	 public static function latest($patientId)
+
+    public static function self($id)
     {
-        $patient_id=sanitizeVariable($patientId);
+        $ids = sanitizeVariable($id);
+        return self::where('id', $ids)->orderBy('created_at', 'desc')->first();
+    }
+
+    public static function latest($patientId)
+    {
+        $patient_id = sanitizeVariable($patientId);
         return self::where('patient_id', $patient_id)->orderBy('created_at', 'desc')->first();
     }
-	
-	
-	public static function getLatestValuesOnly($patientId)
-    {
-         $patient_id=sanitizeVariable($patientId);
-        return self::select('height','weight','bmi','bp','o2','pulse_rate','diastolic','other_vitals')->where('patient_id', $patient_id)->orderBy('created_at', 'desc')->first();
 
+    public static function getLatestValuesOnly($patientId)
+    {
+        $patient_id = sanitizeVariable($patientId);
+        return self::select('height', 'weight', 'bmi', 'bp', 'o2', 'pulse_rate', 'diastolic', 'other_vitals')->where('patient_id', $patient_id)->orderBy('created_at', 'desc')->first();
     }
 }

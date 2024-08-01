@@ -113,7 +113,7 @@
     {{-- laravel js --}}
     <script defer src="{{asset('assets/js/laravel/iapp.js')}}"></script>
     <script defer src="{{asset(mix('assets/js/laravel/commonHighchart.js'))}}"></script>
-    <script defer src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script>
+    <!-- <script defer src="https://cdn.ckeditor.com/4.14.0/basic/ckeditor.js"></script> -->
 
 </body>
 
