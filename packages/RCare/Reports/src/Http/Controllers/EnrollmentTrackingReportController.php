@@ -17,6 +17,7 @@ use DateTime;
 use DataTables;
 use Carbon\Carbon; 
 use Session;
+use Inertia\Inertia;
 
 class EnrollmentTrackingReportController extends Controller
 {
@@ -30,7 +31,8 @@ class EnrollmentTrackingReportController extends Controller
       // $diagnosis = "select max(count) from (select uid,count(*) as count from patients.patient_diagnosis_codes where EXTRACT(Month from created_at) = '$month' and EXTRACT(year from created_at) = $year group by uid) x";
       // $diagnosis = DB::select( DB::raw($diagnosis) );    
       //dd($diagnosis);
-      return view('Reports::enrollment-tracking-report.enrollment-tracking-report');        
+      // return view('Reports::enrollment-tracking-report.enrollment-tracking-report'); 
+      return Inertia::render('Report/enrollment-tracking-report');       
     }
 
 
@@ -398,7 +400,7 @@ class EnrollmentTrackingReportController extends Controller
       // } 
 
 
-      $arrydata=array($name,$practicegroupname);
+      $arrydata=array($practicegroupname , $name);
       // dd($arrydata);
 
       for($j=1;$j<=($total_diag);$j++)
@@ -425,18 +427,18 @@ class EnrollmentTrackingReportController extends Controller
         if (property_exists($data[$i], "practice_name")) {
             if($practicegroupid == 0){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where rp.practice_group != 7 and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }else if($practicegroupid == null){
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }
             else{
               $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-              inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+              inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
               inner join ren_core.practices rp on pp.practice_id = rp.id
               where rp.practice_group = '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
             }
@@ -444,7 +446,7 @@ class EnrollmentTrackingReportController extends Controller
 
         }else{
           $query1 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           where pp.practice_id = '".$practiceid."' and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
         }  
         
@@ -483,28 +485,28 @@ class EnrollmentTrackingReportController extends Controller
       if (property_exists($data[$i], "practice_name")) {
         if($practicegroupid == 0){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where rp.practice_group != 7 and  ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";
         }else if($practicegroupid == null){
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where ps.date_enrolled  between '".$fdt."'and '".$tdt."' ";  
         }
         else{
           $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-          inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+          inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
           inner join ren_core.practices rp on pp.practice_id = rp.id
           where rp.practice_group= '".$practicegroupid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
         }
        
       }else{
         $query2 ="select pp.patient_id,ps.date_enrolled from patients.patient_providers pp
-        inner join patients.patient_services ps on ps.patient_id = pp.patient_id
+        inner join patients.patient_services ps on ps.patient_id = pp.patient_id and pp.is_active = 1
         where pp.practice_id = '".$practiceid."' and  ps.date_enrolled  between '".$fdt2."'and '".$tdt2."' ";
       }
- 
+      
 
       $countdata2 = DB::select($query2); 
      
@@ -524,7 +526,7 @@ class EnrollmentTrackingReportController extends Controller
 
   $dynamicheader=array();
 
-  $columnheader=array("Practices",config('global.practice_group') );
+  $columnheader=array(config('global.practice_group'),"Practices" );
 
   for($m=0;$m<count($columnheader);$m++)
   { 
