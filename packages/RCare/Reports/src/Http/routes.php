@@ -48,6 +48,9 @@ Route::prefix('reports')->group(function () {
         Route::get('/consolidated-billing-report', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@PatientConsolidateBillingReport')->name('consolidate.billing.report');
         Route::get('/consolidate-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{monthly}/{activedeactivestatus}/{callstatus}/{onlycode}/search', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@getConsolidateBillingReport')->name('consolidate.searh.data');
 
+        Route::get('/call-and-additional-services-practicewise-count-report',
+       'RCare\Reports\Http\Controllers\CallActivityPractiseWiseCountReportController@CAPWCReport');
+        
         Route::get('/monthly-billing-report-new', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@MonthlyBillingReportList')->name('monthly.billing.report'); 
 
         Route::get('/monthlybilling-searh-data/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{activedeactivestatus}/{callstatus}', 'RCare\Reports\Http\Controllers\MonthlyBillableReportController@getMonthlyBilllingReportPatientsSearch')->name('monthly.billing.report.search');
@@ -75,9 +78,9 @@ Route::prefix('reports')->group(function () {
                 return view('Reports::rpm-enrolled-report.rpm-enrolled-report');
             })->name('rpm.enrolled.patient.report');
 
-            Route::get('/call-and-additional-services-practicewise-count-report', function () {
-                return view('Reports::call-additional-ccm-note.call-additional-services-report');
-            })->name('call.additional.ccm.call.report');
+            // Route::get('/call-and-additional-services-practicewise-count-report', function () {
+            //     return view('Reports::call-additional-ccm-note.call-additional-services-report');
+            // })->name('call.additional.ccm.call.report');
 
             Route::get('/questionnaire-new', 'RCare\Reports\Http\Controllers\QuestionaireReportController@QuestionaireReport')->name('Questionaire-report');
             Route::get('/patient-questionnaire', 'RCare\Reports\Http\Controllers\PatientQuestionaireReportController@PatientQuestionaireReport')->name('Patient-Questionaire-report');
