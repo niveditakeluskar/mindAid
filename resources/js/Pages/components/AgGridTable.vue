@@ -82,6 +82,7 @@
         resizable: false,
         wrapText: true,
         autoHeight: true,
+        autoHeaderHeight: true,
         flex: 1,
       });
   
