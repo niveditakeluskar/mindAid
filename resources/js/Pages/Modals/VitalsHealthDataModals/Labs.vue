@@ -195,13 +195,11 @@ export default {
         cellRenderer: (params) => {
             const dateStr = params.value;
             if (!dateStr) return null;
-            // Split the input date string (assuming it's in YYYY-MM-DD format)
-            const [year, month, day] = dateStr.split('-');
-
-            // Format the date as MM-DD-YYYY
-            const formattedDate = `${month}-${day}-${year}`;
-
-            return formattedDate;
+            const date = new Date(dateStr);
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            const day = String(date.getDate()).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${month}-${day}-${year}`;      
         }
       },
       { headerName: "Reading", field: "labparameter" },
