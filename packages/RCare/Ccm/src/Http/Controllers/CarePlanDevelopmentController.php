@@ -5001,7 +5001,7 @@ class CarePlanDevelopmentController extends Controller
                             }
                         }
                     }
-                    if (isset($lab_test_parameter_id) && $lab_test_parameter_id != null) {
+                    if (isset($lab_test_parameter_id) || $lab_test_parameter_id != null) {
                         foreach ($lab_test_parameter_id[$labvalue] as $test_param) {
                             $labdata = array(
                                 'patient_id'            => $patient_id,
@@ -5009,14 +5009,14 @@ class CarePlanDevelopmentController extends Controller
                                 'rec_date'              => Carbon::now(),
                                 'lab_test_id'           => $lab_test_id[$labvalue][$i],
                                 'lab_test_parameter_id' => $test_param,
-                                'reading'               => $reading[$labvalue][$i],
-                                'high_val'              => $high_val[$labvalue][$i] ?? null,
+                                'reading'               => !empty($reading[$labvalue][$i]) ? $reading[$labvalue][$i] : null,
+                                'high_val'              => !empty($high_val[$labvalue][$i]) ? $high_val[$labvalue][$i]:  null,
                                 'notes'                 => $notes[$labvalue],
                                 'lab_date'              => $labdate[$labvalue][0]
-                            );
+                            ); 
                             $name_param = DB::table('ren_core.rcare_lab_test_param_range')->where('id', $test_param)->get();
                             if (isset($name_param[0]->parameter)) {
-                                $LabParameter .= $name_param[0]->parameter . '(' . $reading[$labvalue][$i] . ')' . ' : ' . $high_val[$labvalue][$i] ?? null . ', ';
+                                $LabParameter .= $name_param[0]->parameter . '(' . (!empty($reading[$labvalue][$i]) ? $reading[$labvalue][$i] : null) . ')' . ' : ' . (!empty($high_val[$labvalue][$i]) ? $high_val[$labvalue][$i] : null) . ', ';
                             }
                             $labdata['updated_by'] = session()->get('userid');
                             $labdata['created_by'] = session()->get('userid');
