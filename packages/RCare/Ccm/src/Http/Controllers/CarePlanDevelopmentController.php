@@ -273,8 +273,9 @@ class CarePlanDevelopmentController extends Controller
         $billable     = sanitizeVariable($request->billable);
         $form_start_time = sanitizeVariable($request->form_start_time);
         $form_save_time = date("m-d-Y H:i:s", $_SERVER['REQUEST_TIME']);
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $name_lab = DB::table('ren_core.rcare_lab_tests')->where('id', $labid)->get();
             $LabName = '';
             if (isset($name_lab[0]->description)) {
@@ -283,56 +284,55 @@ class CarePlanDevelopmentController extends Controller
                 $LabName = 'Other (' . $labdate . ')';
             }
             $topic = 'Lab Data : ' . $LabName;
-
-            $topic_name_exist  = callwrap::where('patient_id', $patientId)->where('topic', $topic)
-                ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
-            $update_data['status'] = 0;
-            $update_data['updated_by'] = session()->get('userid');
+        
+            $update_by = session()->get('userid');
             if ($labdateexist == '1') {
                 $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('lab_date', $labdate)
                     ->where('lab_test_id', $labid)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
                 if ($lab_exit == true) {
-                    PatientLabRecs::where('patient_id', $patientId)
-                        ->where('lab_date', $labdate)
+                    // Update PatientLabRecs
+                        PatientLabRecs::where('patient_id', $patientId)
+                        ->whereDate('lab_date', $labdate)
                         ->where('lab_test_id', $labid)
-                        ->whereMonth('created_at', date('m'))
-                        ->whereYear('created_at', date('Y'))
-                        ->update($update_data);
-                    // ->delete();
-                    //delete from Callwrap-table
-                    callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
-                        ->update($update_data);
-                    //->delete();
+                        // ->whereMonth('created_at', date('m'))
+                        // ->whereYear('created_at', date('Y'))
+                        ->update(['status' => 0, 'updated_by' => $update_by]);
+
+                    // Update callwrap
+                    callwrap::where('patient_id', $patientId)
+                        ->where('topic', $topic)
+                        // ->whereMonth('created_at', date('m'))
+                        // ->whereYear('created_at', date('Y'))
+                        ->update(['status' => 0, 'updated_by' => $update_by]);
                 } else {
                     PatientLabRecs::where('patient_id', $patientId)
-                        ->where('rec_date', $labdate)
+                        ->whereDate('lab_date', $labdate)
                         ->where('lab_test_id', $labid)
-                        ->whereMonth('created_at', date('m'))
-                        ->whereYear('created_at', date('Y'))
-                        ->update($update_data);
-                    // ->delete();
+                        // ->whereMonth('created_at', date('m'))
+                        // ->whereYear('created_at', date('Y'))
+                        ->update(['status' => 0, 'updated_by'=>$update_by]);
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
-                        ->update($update_data);
+                        //->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                        ->update(['status' => 0, 'updated_by'=>$update_by]);
                     //->delete();
                 }
             } else {
-                $lab_exit = PatientLabRecs::where('patient_id', $patientId)->where('rec_date', $labdate)->where('lab_test_id', $labid)
+                // dd('EEEEEEEEEEEEE');
+                $lab_exit = PatientLabRecs::where('patient_id', $patientId)->whereDate('lab_date', $labdate)->where('lab_test_id', $labid)
                     ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->exists();
                 if ($lab_exit == true) {
                     PatientLabRecs::where('patient_id', $patientId)
-                        ->where('rec_date', $labdate)
+                        ->whereDate('lab_date', $labdate) 
                         ->where('lab_test_id', $labid)
-                        ->whereMonth('created_at', date('m'))
-                        ->whereYear('created_at', date('Y'))
-                        ->update($update_data);
+                        // ->whereMonth('created_at', date('m'))
+                        // ->whereYear('created_at', date('Y'))
+                      ->update(['status' => "0", 'updated_by'=>$update_by]);
                     // ->delete();
                     //delete from Callwrap-table
                     callwrap::where('patient_id', $patientId)->where('topic', $topic) //->where('topic_id',$labid)
-                        ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
-                        ->update($update_data);
+                        // ->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))
+                      ->update(['status' => "0", 'updated_by'=>$update_by]);
                     //->delete();
                 }
             }

@@ -383,10 +383,7 @@ export default {
         try {
           axios.defaults.headers.common["X-CSRF-TOKEN"] =
             document.querySelector('meta[name="csrf-token"]').content;
-          const deleteServicesResponse = await axios.post(
-            `/ccm/delete-lab`,
-            formData
-          );
+          const deleteServicesResponse = await axios.post(`/ccm/delete-lab`,formData);
           updateTimer(props.patientId, "1", props.moduleId);
           getPatientCareplanNotes(props.patientId, props.moduleId);
           getPatientPreviousMonthNotes(
@@ -399,14 +396,13 @@ export default {
             deleteServicesResponse.data.form_start_time
           );
           await fetchPatientLabsList();
-          showLabsAlert.value = true;
           formErrors.value = false;
           const successMessage = "Labs data delete successfully!";
           alertMsg.value = successMessage;
           var form = $("#" + formName)[0];
           form.scrollIntoView({ behavior: "smooth" });
-          // showLabsAlert.value = true;
-          document.getElementById("service_dme_form").reset();
+          showLabsAlert.value = true;
+          document.getElementById("number_tracking_labs_form").reset();
           setTimeout(() => {
             showLabsAlert.value = false;
             var time = document.getElementById("page_landing_times").value;
