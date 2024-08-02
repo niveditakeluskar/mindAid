@@ -176,16 +176,13 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
-        /*
-        * RCare Service Providers...
-        */
-        RCare\RCareAdmin\Providers\RCareServiceProvider::class,
+        
+		
         RCare\System\Providers\SystemServiceProvider::class,
         RCare\System\Providers\FormServiceProvider::class,
         RCare\System\Providers\LoginServiceProvider::class,
         RCare\Theme\Providers\ThemeServiceProvider::class,
         RCare\Org\Providers\OrgServiceProvider::class,
-        RCare\Rpm\Providers\RpmServiceProvider::class,
         RCare\Ccm\Providers\CcmServiceProvider::class,
         RCare\Patients\Providers\PatientServiceProvider::class,
         RCare\TaskManagement\Providers\TaskManagementServiceProvider::class,
