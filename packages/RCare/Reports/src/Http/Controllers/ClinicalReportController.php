@@ -25,7 +25,77 @@ class ClinicalReportController extends Controller
     {
             return Inertia::render('Report/ManagementReports/ClinicalInsight');
     }
+
     public function ClinicalReportSearch(Request $request)  
+    {  
+        $practicesgrp = sanitizeVariable($request->route('practicesgrp'));
+        $practices = sanitizeVariable($request->route('practices'));
+        $fromdate  =sanitizeVariable($request->route('from_date'));
+        // $todate  =sanitizeVariable($request->route('todate1'));
+        $configTZ     = config('app.timezone');
+        $userTZ       = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
+        $cid = session()->get('userid');
+        $userid = $cid;
+        $usersdetails = Users::where('id',$cid)->get();
+        $roleid = $usersdetails[0]->role;
+        $pracgrp; 
+        $pr;
+        if($fromdate=='' || $fromdate=='null' || $fromdate=='0') 
+        {
+            $fromdate = date('Y-m');
+        }
+        else
+        { 
+             $fromdate = $fromdate;
+        }
+
+        $year = date('Y', strtotime($fromdate));
+        // $month = date('m', strtotime($fromdate));  
+        $month = strtoupper(date('M', strtotime($fromdate)));
+      
+
+        if( $practicesgrp!='null')
+        {
+            if( $practicesgrp==0)
+            {
+                $pracgrp = 0;  
+            }
+            else{
+                $pracgrp = $practicesgrp;
+            } 
+        }
+        else
+        {
+        $pracgrp = 'null';
+        }
+
+        if( $practices!='null')
+        {
+            if( $practices==0)
+            {
+                $p = 0;  
+            }
+            else{
+                $p = $practices;
+            } 
+        }
+        else
+        {
+        $p = 'null';
+        }
+
+        // $query =   "select * from patients.initial_report($pracgrp,$pr,$p,'".$fromdate."', '".$todate."')";
+               
+        $query = "Select * from reports.zr_mis_01_clinicalinsights order by refmonth";
+        // "select * from reports.zr_mis_clinical_insights($pracgrp,$p,'".$month."',$year)";            
+            $data = DB::select($query);  
+            return Datatables::of($data)     
+            ->addIndexColumn()            
+            ->make(true);
+    }
+
+
+    public function ClinicalReportDynamicSearch(Request $request)  
     {  
         $practicesgrp = sanitizeVariable($request->route('practicesgrp'));
         $practices = sanitizeVariable($request->route('practices'));

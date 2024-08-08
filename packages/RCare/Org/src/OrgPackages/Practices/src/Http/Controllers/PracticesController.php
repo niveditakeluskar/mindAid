@@ -30,88 +30,88 @@ use Validator;
 class PracticesController extends Controller {
 
     
-    public function AddPracticeLogo(Request $request){
-     if(isset($_FILES) && !empty($_FILES)) {          
-        if(sanitizeVariable($request->hasFile('file'))){                  
-            $image = sanitizeVariable($request->file('file'));                
-            $original_name = preg_replace("/\s+/", "_", $image->getClientOriginalName());
-            $file_extension=$image->getClientOriginalExtension();
-            $new_name = $original_name;  
-            $image = $image->move(public_path('PracticeLogo'), $new_name);
-         // $img_path = '/orgLogoRcare/PracticeLogo'.$new_name;                       
-            return $new_name;
-        }
-      }
-   }
+//     public function AddPracticeLogo(Request $request){
+//      if(isset($_FILES) && !empty($_FILES)) {          
+//         if(sanitizeVariable($request->hasFile('file'))){                  
+//             $image = sanitizeVariable($request->file('file'));                
+//             $original_name = preg_replace("/\s+/", "_", $image->getClientOriginalName());
+//             $file_extension=$image->getClientOriginalExtension();
+//             $new_name = $original_name;  
+//             $image = $image->move(public_path('PracticeLogo'), $new_name);
+//          // $img_path = '/orgLogoRcare/PracticeLogo'.$new_name;                       
+//             return $new_name;
+//         }
+//       }
+//    }
 
-    public function uploadDocsFile(practicesDocsAddRequest $request){
-        $destinationPath = base_path('practice-provider-documents');
-        $id              = sanitizeVariable($request->id);
-        $type            = sanitizeVariable($request->doc_type);
-        $formatted_now   = preg_replace("/\s+/", "_", now());
-        if($type == '0'){
-            $doc_type = sanitizeVariable($request->other_doc_type);
-        } else {
-            $doc_type = $type; 
-        }
-        $practice_id           = sanitizeVariable($request->practice_id);      
-        $provider_id           = sanitizeVariable($request->provider_id);
-        $doc_name              = sanitizeVariable($request->doc_name);
-        $formattd_doc_name     = preg_replace("/\s+/", "_", $doc_name);
-        $doc_comments          = sanitizeVariable($request->doc_comments);
-        $created_by            = session()->get('userid'); 
+//     public function uploadDocsFile(practicesDocsAddRequest $request){
+//         $destinationPath = base_path('practice-provider-documents');
+//         $id              = sanitizeVariable($request->id);
+//         $type            = sanitizeVariable($request->doc_type);
+//         $formatted_now   = preg_replace("/\s+/", "_", now());
+//         if($type == '0'){
+//             $doc_type = sanitizeVariable($request->other_doc_type);
+//         } else {
+//             $doc_type = $type; 
+//         }
+//         $practice_id           = sanitizeVariable($request->practice_id);      
+//         $provider_id           = sanitizeVariable($request->provider_id);
+//         $doc_name              = sanitizeVariable($request->doc_name);
+//         $formattd_doc_name     = preg_replace("/\s+/", "_", $doc_name);
+//         $doc_comments          = sanitizeVariable($request->doc_comments);
+//         $created_by            = session()->get('userid'); 
 
-        if(sanitizeVariable($request->hasFile('file'))){     
-            $uploadedFile    = sanitizeVariable($request->file('file'));  
-            $filename        = $uploadedFile->getClientOriginalName();
-            $original_name   = preg_replace("/\s+/", "_", $uploadedFile->getClientOriginalName());
-            $file_extension  = $uploadedFile->getClientOriginalExtension();
-            $docs_new_name = $formattd_doc_name.'_'.$formatted_now.'.'.$file_extension;
-            $move_file_in_folder = $uploadedFile->move(public_path('practice-provider-documents'), $docs_new_name);
-            $documents_array = array(
-                'doc_type'              => $doc_type,
-                'practice_id'           => $practice_id,
-                'provider_id'           => $provider_id,
-                'doc_name'              => $doc_name,
-                'doc_content'           => $docs_new_name,
-                'doc_comments'          => $doc_comments,
-            );
-        } else {
-            $docs_new_name = sanitizeVariable($request->exist_docs);  
-            $documents_array = array(
-                'doc_type'              => $doc_type,
-                'practice_id'           => $practice_id,
-                'provider_id'           => $provider_id,
-                'doc_name'              => $doc_name,
-                'doc_content'           => $docs_new_name,
-                'doc_comments'          => $doc_comments,
-            );
-        }
-        if(isset($id) && ($id != "")){
-            $documents_array['updated_by'] = $created_by; 
-            $update_doc = Document::where('id',$id)->update($documents_array);
-            if($update_doc) {
-                return 'The Document Updated Succesfully!'; 
-            } else {
-                return 'Something went wrong! Please try again.'; 
-            }
-        } else {
-            $documents_array['created_by'] = $created_by;
-            $documents_array['updated_by'] = $created_by;
-            $insert_doc = Document::create($documents_array);
-            if($insert_doc) {
-                return 'The Document Uploaded Succesfully!';
-            } else {
-                return 'Something went wrong! Please try again.'; 
-            }
-        }
-    }
+//         if(sanitizeVariable($request->hasFile('file'))){     
+//             $uploadedFile    = sanitizeVariable($request->file('file'));  
+//             $filename        = $uploadedFile->getClientOriginalName();
+//             $original_name   = preg_replace("/\s+/", "_", $uploadedFile->getClientOriginalName());
+//             $file_extension  = $uploadedFile->getClientOriginalExtension();
+//             $docs_new_name = $formattd_doc_name.'_'.$formatted_now.'.'.$file_extension;
+//             $move_file_in_folder = $uploadedFile->move(public_path('practice-provider-documents'), $docs_new_name);
+//             $documents_array = array(
+//                 'doc_type'              => $doc_type,
+//                 'practice_id'           => $practice_id,
+//                 'provider_id'           => $provider_id,
+//                 'doc_name'              => $doc_name,
+//                 'doc_content'           => $docs_new_name,
+//                 'doc_comments'          => $doc_comments,
+//             );
+//         } else {
+//             $docs_new_name = sanitizeVariable($request->exist_docs);  
+//             $documents_array = array(
+//                 'doc_type'              => $doc_type,
+//                 'practice_id'           => $practice_id,
+//                 'provider_id'           => $provider_id,
+//                 'doc_name'              => $doc_name,
+//                 'doc_content'           => $docs_new_name,
+//                 'doc_comments'          => $doc_comments,
+//             );
+//         }
+//         if(isset($id) && ($id != "")){
+//             $documents_array['updated_by'] = $created_by; 
+//             $update_doc = Document::where('id',$id)->update($documents_array);
+//             if($update_doc) {
+//                 return 'The Document Updated Succesfully!'; 
+//             } else {
+//                 return 'Something went wrong! Please try again.'; 
+//             }
+//         } else {
+//             $documents_array['created_by'] = $created_by;
+//             $documents_array['updated_by'] = $created_by;
+//             $insert_doc = Document::create($documents_array);
+//             if($insert_doc) {
+//                 return 'The Document Uploaded Succesfully!';
+//             } else {
+//                 return 'Something went wrong! Please try again.'; 
+//             }
+//         }
+//     }
 
-     public function getActiveOtherDocumentList() {
-        $otherdocumentList = [];
-        $otherdocumentList = Document::activeDocument();
-        return response()->json($otherdocumentList);
-    }
+//      public function getActiveOtherDocumentList() {
+//         $otherdocumentList = [];
+//         $otherdocumentList = Document::activeDocument();
+//         return response()->json($otherdocumentList);
+//     }
     // public function uploadDocsFileZZZZ(Request $request){
     //  if(isset($_FILES) && !empty($_FILES)) {          
     //     if(sanitizeVariable($request->hasFile('file'))){                  
@@ -215,180 +215,79 @@ class PracticesController extends Controller {
 
     // }
 
-    public function uploadDocsFileBK(Request $request){ //practicesDocsAddRequest
-        //dd($request->id);
-       //dd($request->all());
-        $this->validate($request,[
-         'practice_id'=>'required',[
-            'practice_id.required' => "field is required."
-         ]
-        ]);
-       // dd($request->all());
-        $destinationPath = base_path('practice-provider-documents');
-        if(sanitizeVariable($request->hasFile('file'))){                
-            $image = sanitizeVariable($request->file('file'));                
-            $original_name = preg_replace("/\s+/", "_", $image->getClientOriginalName());
-            $file_extension=$image->getClientOriginalExtension();
-            $expolde_name = explode(".", $original_name);
-            $expolde_name1 = ("." . $expolde_name[1]);
-                $without_ext_doc_name = 'upload'.($request->id);
-                $Document = Document::max('id');
-                $addid = $Document + '1';
-               // dd($addid);
-                if(($request->id) != NULL){
-                    $random_name = 'upload'.($request->id).$expolde_name1;
-                } else{
-                    $random_name = 'upload'.$addid.$expolde_name1;
-                }
-                //dd($random_name);
-                $docs_new_name =  $random_name;
-                $image = $image->move(public_path('practice-provider-documents'), $docs_new_name);
-        }
-            $id                    = sanitizeVariable($request->id); 
-            $doc_type              = sanitizeVariable($request->doc_type);
-            //$doc_subtype           = sanitizeVariable($request->doc_subtype);
-            $practice_id           = sanitizeVariable($request->practice_id);      
-            $provider_id           = sanitizeVariable($request->provider_id);
-            $doc_name              = sanitizeVariable($request->doc_name);
-            $doc_comments          = sanitizeVariable($request->doc_comments);
-            $created_by            = session()->get('userid'); 
 
-        if(sanitizeVariable($request->hasFile('file'))){  
-            $documents_array = array(
-                                'doc_type'              => $doc_type,
-                                'practice_id'           => $practice_id,
-                                //'doc_subtype'           => $doc_subtype, 
-                                'provider_id'           => $provider_id,
-                                'doc_name'              => $doc_name,
-                                'doc_content'           => $docs_new_name,
-                                'doc_comments'          => $doc_comments
-                                );
-        } else {
-            $documents_array = array(
-                                'doc_type'              => $doc_type,
-                                'practice_id'           => $practice_id,
-                                //'doc_subtype'           => $doc_subtype, 
-                                'provider_id'           => $provider_id,
-                                'doc_name'              => $doc_name,
-                                //'doc_content'           => $docs_new_name,
-                                'doc_comments'          => $doc_comments
-                                );
-        }
-        // dd($documents_array);
-        //dd($docs_new_name);
-        if(sanitizeVariable($request->hasFile('file'))){    
-            $Document = Document::where('id',$id)->where('doc_content',$docs_new_name)->exists();
-            //dd($Document);
-            if($Document==true)
-            { 
-                File::delete($destinationPath.'/'.$docs_new_name);
-                $documents_array['updated_by']=$created_by; 
-                $update_document = Document::where('id',$id)->update($documents_array);
-                // return view('Practices::practice-main');
-                return back();
-                return "upload docs add";
-            }else{  
-                $documents_array['created_by']=$created_by;
-                $documents_array['updated_by']=$created_by;
-                $insert_practice = Document::create($documents_array);
-                // return view('Practices::practice-main');
-                return back();
-                return "upload docs edit";
-            }
-        } else {
-           $Document = Document::where('id',$id)->exists();
-            //dd($Document);
-            if($Document==true)
-            { 
-            
-                $documents_array['updated_by']=$created_by; 
-                $update_document = Document::where('id',$id)->update($documents_array);
-                // return view('Practices::practice-main');
-                return back();
-                return "upload docs add";
-            }else{  
-                $documents_array['created_by']=$created_by;
-                $documents_array['updated_by']=$created_by;
-                $insert_practice = Document::create($documents_array);
-                // return view('Practices::practice-main');
-                return back();
-                return "upload docs edit";
-            } 
-        }
-    }
+//    public function DocumentList(Request $request) {
+//         if ($request->ajax()) {
+//             $data = Document::with('users','practices','providers')->latest()->get();//Document::with('users')->latest()->get();
+//             return Datatables::of($data)
+//             ->addIndexColumn()
+//             ->addColumn('action', function($row){
+//                 $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editDocs" title="Edit"><i class=" editform i-Pen-4"></i></a>';  
+//                 if($row->status == 1){
+//                 $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_docstatus_active" data-toggle="tooltip" data-original-title="Deactive" title="Deactive"><i class="i-Yess i-Yes" style="color: green;"></i></a>';
+//                 }
+//                 else
+//                 {
+//                     $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_docstatus_deactive" data-toggle="tooltip" data-original-title="Active" title="Active"><i class="i-Closee i-Close"  style="color: red;"></i></a>';
+//                 }
+//                 return $btn;
+//             })
+//             ->rawColumns(['action'])
+//             ->make(true);
+//         }
+//         //return view('Devices::devices-list');
+//         return view('Practices::practice-main');
+//     }
 
-   public function DocumentList(Request $request) {
-        if ($request->ajax()) {
-            $data = Document::with('users','practices','providers')->latest()->get();//Document::with('users')->latest()->get();
-            return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editDocs" title="Edit"><i class=" editform i-Pen-4"></i></a>';  
-                if($row->status == 1){
-                $btn = $btn. '<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_docstatus_active" data-toggle="tooltip" data-original-title="Deactive" title="Deactive"><i class="i-Yess i-Yes" style="color: green;"></i></a>';
-                }
-                else
-                {
-                    $btn = $btn.'<a href="javascript:void(0)" data-id="'.$row->id.'" class="change_docstatus_deactive" data-toggle="tooltip" data-original-title="Active" title="Active"><i class="i-Closee i-Close"  style="color: red;"></i></a>';
-                }
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-        }
-        //return view('Devices::devices-list');
-        return view('Practices::practice-main');
-    }
+//   // public function addpracticethreshold(practicesThresholdRequest $request) {
+//     public function addpracticethreshold(Request $request) {
+//             $practice_id = sanitizeVariable($request->practice_id);
+//             $bpmHigh = sanitizeVariable($request->bpmhigh);
+//             $bpmLow = sanitizeVariable($request->bpmlow);
+//             $diastolicHigh = sanitizeVariable($request->diastolichigh);
+//             $diastolicLow = sanitizeVariable($request->diastoliclow);
+//             $glucoseHigh = sanitizeVariable($request->glucosehigh);
+//             $glucoseLow = sanitizeVariable($request->glucoselow);
+//             $oxSatHigh = sanitizeVariable($request->oxsathigh);
+//             $oxSatLow = sanitizeVariable($request->oxsatlow);
+//             $systolicHigh = sanitizeVariable($request->systolichigh);
+//             $systolicLow = sanitizeVariable($request->systoliclow);
+//             $temperatureHigh= sanitizeVariable($request->temperaturehigh);
+//             $temperatureLow = sanitizeVariable($request->temperaturelow);
+//             $eff_date = Carbon::now();
+//             $created_by = session()->get('userid');
 
-  // public function addpracticethreshold(practicesThresholdRequest $request) {
-    public function addpracticethreshold(Request $request) {
-            $practice_id = sanitizeVariable($request->practice_id);
-            $bpmHigh = sanitizeVariable($request->bpmhigh);
-            $bpmLow = sanitizeVariable($request->bpmlow);
-            $diastolicHigh = sanitizeVariable($request->diastolichigh);
-            $diastolicLow = sanitizeVariable($request->diastoliclow);
-            $glucoseHigh = sanitizeVariable($request->glucosehigh);
-            $glucoseLow = sanitizeVariable($request->glucoselow);
-            $oxSatHigh = sanitizeVariable($request->oxsathigh);
-            $oxSatLow = sanitizeVariable($request->oxsatlow);
-            $systolicHigh = sanitizeVariable($request->systolichigh);
-            $systolicLow = sanitizeVariable($request->systoliclow);
-            $temperatureHigh= sanitizeVariable($request->temperaturehigh);
-            $temperatureLow = sanitizeVariable($request->temperaturelow);
-            $eff_date = Carbon::now();
-            $created_by = session()->get('userid');
-
-            $threshold_data = array(
-                'practice_id' => $practice_id,
-                'bpmhigh' => $bpmHigh,
-                'bpmlow' => $bpmLow,
-                'diastolichigh' => $diastolicHigh,
-                'diastoliclow' => $diastolicLow,
-                'glucosehigh' => $glucoseHigh,
-                'glucoselow' => $glucoseLow,
-                'oxsathigh' => $oxSatHigh,
-                'oxsatlow' => $oxSatLow,
-                'systolichigh' => $systolicHigh,
-                'systoliclow' => $systolicLow,
-                'temperaturehigh' => $temperatureHigh,
-                'temperaturelow' => $temperatureLow,
-                'eff_date' => $eff_date
+//             $threshold_data = array(
+//                 'practice_id' => $practice_id,
+//                 'bpmhigh' => $bpmHigh,
+//                 'bpmlow' => $bpmLow,
+//                 'diastolichigh' => $diastolicHigh,
+//                 'diastoliclow' => $diastolicLow,
+//                 'glucosehigh' => $glucoseHigh,
+//                 'glucoselow' => $glucoseLow,
+//                 'oxsathigh' => $oxSatHigh,
+//                 'oxsatlow' => $oxSatLow,
+//                 'systolichigh' => $systolicHigh,
+//                 'systoliclow' => $systolicLow,
+//                 'temperaturehigh' => $temperatureHigh,
+//                 'temperaturelow' => $temperatureLow,
+//                 'eff_date' => $eff_date
                 
-            );
-            $PracticeThreshold = PracticeThreshold::where('practice_id',$practice_id)->exists();
-        if($PracticeThreshold==true)
-        {
-            $threshold_data['updated_by']=$created_by; 
-            $update_practice = PracticeThreshold::where('practice_id',$practice_id)->update($threshold_data);
-            //return "edit";
-        }else{  
-            $threshold_data['created_by']=$created_by;
-            $threshold_data['updated_by']=$created_by;
-            $insert_practice = PracticeThreshold::create($threshold_data);
-            //return "add";
-        }
+//             );
+//             $PracticeThreshold = PracticeThreshold::where('practice_id',$practice_id)->exists();
+//         if($PracticeThreshold==true)
+//         {
+//             $threshold_data['updated_by']=$created_by; 
+//             $update_practice = PracticeThreshold::where('practice_id',$practice_id)->update($threshold_data);
+//             //return "edit";
+//         }else{  
+//             $threshold_data['created_by']=$created_by;
+//             $threshold_data['updated_by']=$created_by;
+//             $insert_practice = PracticeThreshold::create($threshold_data);
+//             //return "add";
+//         }
     
-   }
+//    }
 
        public function addorgthreshold(Request $request) {
     
@@ -598,13 +497,9 @@ class PracticesController extends Controller {
 
     public function PracticeList(Request $request) {
         if ($request->ajax()) {
-            $data = Practices::with('users')->with('practice_group')->with('partners')->latest()->get();
+            $data = Practices::with('users')->latest()->get();
             return Datatables::of($data) 
             ->addIndexColumn()
-            ->addColumn('threshold', function($row){ 
-                $btns =    '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="practicethreshold" title="Edit">Edit</a>'; 
-                return $btns;
-            })
             ->addColumn('action', function($row){
             
                 $btn =    '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editPractices" title="Edit"><i class=" editform i-Pen-4"></i></a>';  
@@ -617,7 +512,7 @@ class PracticesController extends Controller {
                      }
                     return $btn;
             })
-            ->rawColumns(['action','threshold'])
+            ->rawColumns(['action'])
             ->make(true);
         }
         // return view('Practices::practice-list');

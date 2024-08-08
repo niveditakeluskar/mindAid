@@ -20,14 +20,22 @@ class MedicationController extends Controller {
     // }
 
     public function addMedication(MedicationRequest $request) {
-        $drugname = sanitizeVariable($request->description);
-        $drugreaction = sanitizeVariable($request->drug_reaction);
+        $code = sanitizeVariable($request->code);
+        $name = sanitizeVariable($request->name);
+        $description = sanitizeVariable($request->description);
+        $category = sanitizeVariable($request->category);
+        $sub_category = sanitizeVariable($request->sub_category);
+        $duration = sanitizeVariable($request->duration);
         $created_by  = session()->get('userid');
         // $updated_by  = session()->get('userid');
         $status = '1';
         $medication_array = array(
-            'description' => $drugname,
-            'drug_reaction' => $drugreaction,
+            'code'   => $code,
+            'name'   => $name,
+            'description' => $description,
+            'category' => $category,
+            'sub_category' => $sub_category,
+            'duration' => $duration,
             'status' => $status,
             'created_by'  =>$created_by,
             'updated_by' =>$created_by,
@@ -39,7 +47,6 @@ class MedicationController extends Controller {
     public function MedicationList(Request $request) {
         if ($request->ajax()) {
         $data = Medication::with('users')->latest()->get();
-
         return Datatables::of($data)
         ->addIndexColumn()
         ->addColumn('action', function($row){
@@ -69,12 +76,20 @@ class MedicationController extends Controller {
     // edit users
     public function updateMedication(MedicationUpdateRequest $request) {
         $id= sanitizeVariable($request->id);        
-        $drugname = sanitizeVariable($request->description);
-        $drugreaction = sanitizeVariable($request->drug_reaction);   
-        $updated_by  = session()->get('userid');
-        $update = array(
-            'description' => $drugname, 
-            'drug_reaction' => $drugreaction, 
+        $code = sanitizeVariable($request->code);
+        $name = sanitizeVariable($request->name);
+        $description = sanitizeVariable($request->description);
+        $category = sanitizeVariable($request->category);
+        $sub_category = sanitizeVariable($request->sub_category);
+        $duration = sanitizeVariable($request->duration);
+        $created_by  = session()->get('userid');
+       $update = array(
+           'code'   => $code,
+            'name'   => $name,
+            'description' => $description,
+            'category' => $category,
+            'sub_category' => $sub_category,
+            'duration' => $duration,
             'updated_by' =>$updated_by
         );
         $update_medication = Medication::where('id',$id)->update($update);

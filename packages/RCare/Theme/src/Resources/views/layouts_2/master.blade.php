@@ -69,95 +69,6 @@
         {{-- @include('Theme::layouts.search') --}}
         <!-- ============ Search UI End ============= -->
         <!-- ============ Horizontal Layout End ============= -->
-        <!-- Modal -->
-        <div id="personal-notes" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-            <!-- Modal -->
-        <div id="personal-notes" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-            <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Personal Notes</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{route("patient.personalnotes")}}" method="post" name ="personal_notes_form"  id="personal_notes_form">
-                            @csrf
-                            <?php
-                                $module_id      = getPageModuleName();
-                                $submodule_id   = getPageSubModuleName();
-                            ?>
-                            <input type="hidden" name="patient_id" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>" />
-                            <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
-                            <input type="hidden" name="start_time" value="00:00:00">
-                            <input type="hidden" name="end_time" value="00:00:00"> 
-                            <input type="hidden" name="module_id" value="{{ $module_id }}" />
-                            <input type="hidden" name="component_id" value="{{ $submodule_id }}" /> 
-                            <input type="hidden" name="id">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Personal Notes<span class='error'>*</span></label>
-                                            <textarea name ="personal_notes" class="form-control forms-element personal_notes_class"><?php if(isset($personal_notes['static']['personal_notes'])) { echo $personal_notes['static']['personal_notes']; }?></textarea>
-                                        <div class="invalid-feedback"></div>
-                                    </div> 
-                                </div>
-                            </div>                              
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary float-right submit-personal-notes">Submit</button>
-                                <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal -->
-        <div id="part-of-research-study" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Part of Research Study</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{route("patient.researchstudy")}}" method="post" name ="part_of_research_study_form"  id="part_of_research_study_form">
-                        @csrf
-                            <?php
-                                $module_id    = getPageModuleName();
-                                $submodule_id = getPageSubModuleName();
-                            ?>
-                            <input type="hidden" name="patient_id" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>" />
-                            <input type="hidden" name="uid" value="<?php if(isset($patient[0]->id)){ echo $patient[0]->id; } ?>">
-                            <input type="hidden" name="start_time" value="00:00:00">
-                            <input type="hidden" name="end_time" value="00:00:00"> 
-                            <input type="hidden" name="module_id" value="{{ $module_id }}" />
-                            <input type="hidden" name="component_id" value="{{ $submodule_id }}" />
-                            <input type="hidden" name="id">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Part of Research Study<span class='error'>*</span></label>
-                                            <textarea name ="part_of_research_study" class="form-control forms-element"><?php if(isset($research_study['static']['part_of_research_study'])) { echo $research_study['static']['part_of_research_study']; }?><?php //if(isset($research_study[0]->part_of_research_study)){echo $research_study[0]->part_of_research_study;}?></textarea>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>                              
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary float-right submit-part-of-research-study">Submit</button>
-                                <button type="button" class="btn btn-default float-left" data-dismiss="modal">Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         {{-- jquery js --}} 
 <!--         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
@@ -181,7 +92,7 @@
              <script src="{{asset('assets/js/vendor/jquery.smartWizard.min.js')}}"></script>
       
              <!-- <script src="{{asset('assets/js/smart.wizard.script.js')}}"></script> -->
-            <script src="{{asset('assets/js/customizer.script.js')}}"></script>
+            
             <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
         @yield('bottom-js')
 

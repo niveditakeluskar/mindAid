@@ -72,7 +72,10 @@ use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
        'secondary_cell_phone',
        'consent_to_text',
        'fin_number',
-	    'enrollment_from'
+	    'enrollment_from',
+        'surgery_date',
+        'total_ques_resp',
+        'pending_ques_resp',
     ];
 	
 	//  public function populationRelations()

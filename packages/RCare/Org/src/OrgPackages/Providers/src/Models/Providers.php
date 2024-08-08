@@ -36,14 +36,9 @@ class Providers extends Model
     // ];
     protected $fillable = [
         'id',
-        'name',
-        'physicians_uid',
-        'practice_id',
-        'provider_type_id',
-        'provider_subtype_id',
-        'phone',
-        'address',
-        'email',
+        'licenese_number',
+        'qualification',
+        'physician_id',
         'created_by',
         'updated_by',
         'is_active',
@@ -64,7 +59,7 @@ class Providers extends Model
      public static function activeProviders()
     { 
       
-        $providers = \DB::table('ren_core.providers')->where("is_active", 1)->where("name","!=","null")->orderBy('name','asc')->get();
+        // $providers = \DB::table('ren_core.providers')->where("is_active", 1)->where("name","!=","null")->orderBy('name','asc')->get();
          
         // foreach($providers as $p)
         // {
@@ -92,18 +87,18 @@ class Providers extends Model
             
         //     $p->count = $providerscount;
         // }
-        return $providers;
+        // return $providers;
     }
 
-    public static function newactiveProviders()
-    { 
+    // public static function newactiveProviders()
+    // { 
       
-        $providers = \DB::table('ren_core.providers')->where("is_active", 1)->where("practice_id","!=",0)
-        ->where("name","!=","null")->orderBy('name','asc')->get();
-          // return Providers::where("is_active", 1)->where("name","!=","null")->orderBy('name','asc')->get();
-        foreach($providers as $p)
-        {
-            $id = $p->id;
+    //     $providers = \DB::table('ren_core.providers')->where("is_active", 1)->where("practice_id","!=",0)
+    //     ->where("name","!=","null")->orderBy('name','asc')->get();
+    //       // return Providers::where("is_active", 1)->where("name","!=","null")->orderBy('name','asc')->get();
+    //     foreach($providers as $p)
+    //     {
+    //         $id = $p->id;
             
 			/*$pro= \DB::select(\DB::raw("select  count(distinct p.id) from patients.patient p 
             left join (select pp1.patient_id , pp1.practice_id, pp1.provider_id, pp1.practice_emr 
@@ -114,22 +109,22 @@ class Providers extends Model
             on p.id = pp.patient_id
             left join ren_core.providers rp on rp.id = pp.provider_id where rp.id = '".$id."' "));  
 			*/
-             $d = \DB::table('patients.patient as p')
-			 ->join('patients.patient_providers as pp', 'p.id', '=', 'pp.patient_id')
-             ->where('p.status',1)
-             ->where('provider_id',$p->id)
-             ->where('provider_type_id',1)
-             ->where('pp.is_active',1)
-             ->distinct('pp.patient_id')
-             ->count('patient_id');
-			//dd($d);
-          //  $providerscount = $pro[0]->count;  
-            $providerscount = $d;  
+    //          $d = \DB::table('patients.patient as p')
+	// 		 ->join('patients.patient_providers as pp', 'p.id', '=', 'pp.patient_id')
+    //          ->where('p.status',1)
+    //          ->where('provider_id',$p->id)
+    //          ->where('provider_type_id',1)
+    //          ->where('pp.is_active',1)
+    //          ->distinct('pp.patient_id')
+    //          ->count('patient_id');
+	// 		//dd($d);
+    //       //  $providerscount = $pro[0]->count;  
+    //         $providerscount = $d;  
             
-            $p->count = $providerscount;
-        }
-        return $providers; 
-    }
+    //         $p->count = $providerscount;
+    //     }
+    //     return $providers; 
+    // }
 
 
     // public static function groupedProvider() { 

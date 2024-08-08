@@ -67,7 +67,7 @@ class LoginController extends Controller
         }      
         $base_url = strtolower(URL::to('/').'/rcare-login'); 
         $DomainFeatures=DomainFeatures::where('features','2FA')
-        ->where(DB::raw('lower(url)'), $base_url)
+        // ->where(DB::raw('lower(url)'), $base_url)
         ->first(); 
     //    dd($DomainFeatures); 
         $maxAttempts     = isset($DomainFeatures)?$DomainFeatures->password_attempts:''; //3
@@ -586,10 +586,8 @@ class LoginController extends Controller
         $timezone    =    !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
         $response = array();
         $DomainFeatures= DomainFeatures::where('features','2FA')
-        ->where(DB::raw('lower(url)'), $base_url)
-        // ->where('url',$base_url) 
-        // ->where('status',1) 
-        ->first(); 
+        ->whereRaw('LOWER(url) like ?', [$base_url])
+        ->where('status',1)->first();
         // dd($DomainFeatures);
         // dd($DomainFeatures->password_attempts); 
         $no_of_days  =  !empty($DomainFeatures) ? $DomainFeatures->no_of_days:''; 
@@ -606,9 +604,9 @@ class LoginController extends Controller
                 $today = carbon::now();//date("m-d-Y");
                 if($userlockStatus->otp_date=='' || $userlockStatus->otp_date==null|| $userlockStatus->otp_date=='null'){
                         $current_date='';
-                    }else{
-                       $current_date = Carbon::parse($userlockStatus->otp_date)->addDay($no_of_days); 
-                    }
+                }else{
+                    $current_date = Carbon::parse($userlockStatus->otp_date)->addDay($no_of_days); 
+                }
                 ($chk_attempts->max_attempts =="" && $chk_attempts->max_attempts ==null && $chk_attempts->max_attempts ==0) ? $count_attempts=1 : $count_attempts=$chk_attempts->max_attempts+1;
                 // dd(Auth::guard('renCore_user')->attempt($credentials,$remember));
                 if(Auth::guard('renCore_user')->attempt($credentials,$remember)==true){
@@ -618,10 +616,11 @@ class LoginController extends Controller
                         ->whereRaw('LOWER(url) like ?', [$base_url])
                         //DomainFeatures::where('features','2FA')->where('url',$base_url)
                         ->where('status',1)->first();
+                        // dd($domainFeatures_status->status);
                         if(isset($domainFeatures_status)){
                             if($userlockStatus->status==0){
                                 $this->setLogInLog_renCore($id,$email);
-                                 echo "string1";
+                                //  echo "string0";
                                 $response['success']='n';
                                 $response['url']=''; 
                                 $response['error']='You are temparary deactivated. Please contact to admin.';
@@ -656,21 +655,10 @@ class LoginController extends Controller
 
                                 $this->setLogInLog_renCore($id,$email);
                                 if($m>$remaining_time){  
-                                Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0,'blocked_via'=>'']);
-                                // if($userExist!=true){
-                                //     dd('adasdasdsa'); 
-                                //     Users::where('email',$email)->where('id', $id )->update(['max_attempts' =>$count_attempts]);
-                                //     $response['error']='Incorrect Username and Password';
-                                // }  
+                                    Users::where('email',$email)->where('id', $id )->update(['temp_lock_time' => null,'max_attempts' =>0,'blocked_via'=>'']);  
                                 }else{
                                     $response['error']="Too many login attempts. Please try again in $remaining_time minutes.";
-                                }
-                            // }
-                            // else if($userlockStatus->max_attempts > $DomainFeatures->password_attempts && ($userlockStatus->temp_lock_time=="" && $userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00') ){ 
-                            //     echo "string4".$userlockStatus->max_attempts .'==='. $DomainFeatures->password_attempts;
-                            //     Users::where('email',$email)->where('id',$id )->update(['max_attempts' =>0,'temp_lock_time' => Carbon::now()]);
-                            //     $this->setLogInLog_renCore($id,$email);
-                            //     $response['error']="Too many login attempts. Please try again after 3 minutes.";
+                                } 
                             }else if(($current_date=='')&& $pwd_attempts > $userlockStatus->max_attempts 
                             && ($userlockStatus->block_unblock_status==0 ||$userlockStatus->block_unblock_status=='') 
                             && ($userlockStatus->temp_lock_time==null ||$userlockStatus->temp_lock_time=='00:00:00')){
@@ -848,7 +836,7 @@ class LoginController extends Controller
                             $response['error']='Incorrect username or password. Please try again.';
                         }
                 }
-            }else{
+            }else{ 
                 $response['success']='n';
                 $response['url']='';
                 $response['error']='Incorrect Username.';

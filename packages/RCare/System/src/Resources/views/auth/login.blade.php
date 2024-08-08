@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
+    <!-- <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">-->
 	<!-- <meta http-equiv="cache-control" content="max-age=0" />
 <meta http-equiv="cache-control" content="no-cache" />
 <meta http-equiv="expires" content="0" />
 <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" /> 
 <meta http-equiv="pragma" content="no-cache" /> -->
-    <title>Renova HealthCare</title> 
+    <title>PeriOps</title> 
     <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet"> -->
     <link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}">
     <link rel="stylesheet" href="{{asset('assets/styles/css/themes/lite-purple.min.css')}}">
@@ -21,11 +21,7 @@
          color:red !important;
      }
  </style>
- <script type="text/javascript"> //<![CDATA[ 
-var tlJsHost = ((window.location.protocol == "https:") ? "https://secure.trust-provider.com/" : "http://www.trustlogo.com/");
-document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/trustlogo.js' type='text/javascript'%3E%3C/script%3E"));
-//]]>
-</script>
+
 
 </head>
 
@@ -140,11 +136,11 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
 
    
 <!---2FA otp screen--->
-<div class="container" id="hd_otp" style="display: none">
-    <div class="row justify-content-center">
+<div id="hd_otp" style="display: none">
+    <div class="">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header"> <img src="{{asset('assets/images/logo.png')}}" alt=""> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Multifactor authentication<b/></div>
+                <div class="card-header"> <!--<img src="{{asset('assets/images/logo.png')}}" alt="">--> <b>Multifactor authentication<b/></div>
                     <!-- <form method="POST" action="{{ route('2fapost') }}"> -->
                 <form id="2faotp">
                 @csrf
@@ -196,16 +192,7 @@ document.write(unescape("%3Cscript src='" + tlJsHost + "trustlogo/javascript/tru
 </div>
 <!--=============================================================================-->
 </div>
-<div id="secureCerticate" style="position: absolute;     top: 90% !important;">
-	<script language="JavaScript" type="text/javascript">
-//TrustLogo("https://rcarestaging.d-insights.global/positivessl_trust_seal_md_167x42.png", "CL1", "none");
-TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
-//TrustLogo("<?php // echo url('').'/positivessl_trust_seal_md_167x42.png'; ?>", "CL1", "none");
 
-
-</script>
-<a  href="https://www.positivessl.com/" id="comodoTL">Positive SSL Wildcard</a>
-</div>
 <div id="confirm_url" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
@@ -335,7 +322,7 @@ TrustLogo("{{asset('/positivessl_trust_seal_md_167x42.png')}}" , "CL1", "none");
 
 
             if (window.matchMedia("(max-width: 767px)").matches){
-              window.location.href = "/login-access-denied";// The viewport is less than 768 pixels wide ->mobile
+             // window.location.href = "/login-access-denied";// The viewport is less than 768 pixels wide ->mobile
             }
             //DISABLE AUTO FILL 
             var timezone = moment.tz.guess();

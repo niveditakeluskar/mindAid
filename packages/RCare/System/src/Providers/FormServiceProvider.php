@@ -1016,7 +1016,6 @@ class FormServiceProvider extends ServiceProvider
         });
 
 
-
         Blade::directive("selectspecialpractices", function ($expression) {
              return '<?php
                 $params     = [' . $expression . '];

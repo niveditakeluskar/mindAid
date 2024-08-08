@@ -30,12 +30,12 @@ class OrgUserAddRequest extends FormRequest
                 'password'              => 'required|min:6|confirmed', 
                 'role'                  => 'required|integer',
                 'report_to'             => 'required|integer',
-                'practice__id'          => 'required|integer', 
+                // 'practice__id'          => 'required|integer', 
               /*  'profile_img'         => 'required',*/
                 // 'category_id'        => 'required',
-                'extension'             =>'nullable|min:2|regex:/^[0-9]*$/',
-                'office_id'             => 'nullable|integer',
-                'emp_id'                => 'required|alpha_num|max:10|unique:ren_core.users,emp_id',
+                // 'extension'             =>'nullable|min:2|regex:/^[0-9]*$/',
+                // 'office_id'             => 'nullable|integer',
+                // 'emp_id'                => 'required|alpha_num|max:10|unique:ren_core.users,emp_id',
             ]
         );
 

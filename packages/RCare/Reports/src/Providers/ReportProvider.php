@@ -14,12 +14,12 @@ class ReportProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->make('RCare\Reports\Http\Controllers\ReportController');
+        $this->app->make('RCare\Reports\Http\Controllers\ReportController'); 
     }
 
     /**
      * Bootstrap services.
-     *
+     * 
      * @return void
      */
     public function boot(Router $router)

@@ -11,8 +11,8 @@ use RCare\System\Traits\DatesTimezoneConversion;
 class Medication extends Model
 {
     use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='ren_core.medication';
-
+    protected $table ='ren_core.surgery';
+ 
     /**
     * The attributes that are mass assignable.
     *
@@ -30,8 +30,12 @@ class Medication extends Model
     
     protected $fillable = [
         'id',
-        'description',
-        'drug_reaction',
+        'code',
+        'name',
+        'description', 
+        'category',
+        'sub_category',
+        'duration',
         'created_by',
         'updated_by',
         'status',

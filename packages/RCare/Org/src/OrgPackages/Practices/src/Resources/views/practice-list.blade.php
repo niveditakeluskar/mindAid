@@ -26,16 +26,9 @@
                           <th width ="10px">Sr No.</th>
                           <th width ="10px">Practice</th>        
                           <th width ="10px">Location</th>
-                          <th width ="10px">Partner</th> 
                           <th width ="10px">Practice Number</th>
                           <th width ="10px">Address</th>
                           <th width ="10px">Phone Number</th>
-                          <th width ="10px">Key Contact</th> 
-                          <th width ="10px">{{config('global.practice_group')}}</th>
-                          <th width ="10px">Outgoing Phone Number</th> 
-                          <th width ="10px">CPD billable with MM</th>
-                          <th width ="10px">Practice Type</th>
-                          <th width ="10px">Threshold</th>
                           <th width ="10px">Last Modified By</th>
                           <th width ="10px">Last Modified On</th>                
                           <th width ="10px">Action</th>
@@ -85,10 +78,6 @@
                                 <label for="practicename">Key Contact <span style="color:red">*</span></label>
                                 @text("key_contact",["placeholder" => "Enter Key Contacts"])
                             </div>
-                            <div class="col-md-6 form-group mb-3 ">
-                                <label for="practicename">Select {{config('global.practice_group')}}</label>
-                                @selectgrppractices("practice_group")
-                            </div>
                             
                             <div class="col-md-6 form-group mb-3 ">
                                 <label for="practicename">Outgoing Phone Number <span style="color:red">*</span></label>
@@ -128,10 +117,6 @@
                               </select> 
                               <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-md-6 form-group mb-3 ">  
-                                <label for="partners">Select Partner</label>
-                                @selectpartner("partner_id",["id" => "partner_id"])
-                            </div>
                             <div class="col-md-12  form-group mb-3 ">
                                 <label for="practicename">Address <span style="color:red">*</span></label>
                                 <textarea class="form-control forms-element" name="address" placeholder = "Enter Address"></textarea>
@@ -162,11 +147,6 @@
                                 <div id="uploading_img_loader" style="display:none;" class="loader-bubble loader-bubble-primary m-5"></div>
                             </div>
                         </div>
-                        <div style="display: none">
-                            @selectprovidertypes("provider_type_id[]",["id"=>"providertype", "onchange" => "providerSubtype(this)"])
-                            @selectspecialpractices("provider_subtype_id[]",["id"=>"provider_subtype"])
-                        </div>                
-                        <div class="form-group" id="appendprovider"></div> 
                     </div>
                 </div>
                 <div class="card-footer">
@@ -184,4 +164,3 @@
         </div>
     </div>
 </div>
-@include('Practices::practice-threshold')

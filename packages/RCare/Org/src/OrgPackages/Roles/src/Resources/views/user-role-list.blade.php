@@ -1,4 +1,4 @@
-@extends('Theme::layouts.master')
+@extends('Theme::layouts_2.master')
 @section('page-css')
 
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">

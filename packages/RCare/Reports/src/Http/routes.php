@@ -185,10 +185,18 @@ Route::prefix('reports')->group(function () {
         Route::get('/patient-vitals-report-search/{practicegrpid}/{practiceid}/{patient}/{fromdate1}/{todate1}', 'RCare\Reports\Http\Controllers\PatientVitalsReportController@vitalsReportSearch')->name('patient.vitals.search.report');
 
         //Clinical insight
+        // Route::get(
+        //     '/clinicalreportsearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
+        //     'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalReportSearch'
+        // )->name('initial.search.report');
+
         Route::get(
-            '/clinicalreportsearch/{practicesgrp}/{practices}/{provider}/{fromdate1}/{todate1}',
+            '/clinicalreportsearch/{practicesgrp}/{practices}/{fromdate}',
             'RCare\Reports\Http\Controllers\ClinicalReportController@ClinicalReportSearch'
         )->name('initial.search.report');
+
+
+
 
         Route::get('/consolidate-monthly-billing-report/search/{practicesgrpid}/{practiceid}/{providerid}/{module}/{monthly}/{monthlyto}/{activedeactivestatus}/{callstatus}/{onlycode}', 'RCare\Reports\Http\Controllers\ConsolidateBillingReportController@ConsolidateMonthlyBilllingReportPatientsSearch')->name('consolidate.monthly.billing.report.search');
 
