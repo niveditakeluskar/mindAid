@@ -41,8 +41,6 @@
                             <th>Number</th> 
                             <th>Created At</th>
                             <th>Role</th>		
-                            <th>Report To</th> 
-                            <th>MFA Config</th>
                             <th>Last Modified By</th>
                             <th>Last Modified On</th>						
                             <th>Action</th>
@@ -138,13 +136,6 @@
                             <div class="col-md-6 form-group mb-3">
                                 <label for="role"><span class="error">*</span> Role</label>
                                 @selectorgrole("role", ["id" => "roles"])
-                            </div>
-
-                            <div class="col-md-6 form-group mb-3">
-                                <label for="report"><span class="error">*</span> Report To</label>
-                                <div id="report_to_select">
-                                    @selectorguser("report_to", ["id" => "reports"])  
-                                </div>
                             </div>
                         </div>
                        <div class="row" id ="providers_details">
@@ -251,12 +242,6 @@
                                                  @selectorgrole("role", ["id" => "edit-roles"])
                                             </div>
 
-                                            <div class="col-md-6 form-group mb-3">
-                                                <label for="report"><span class="error">*</span> Report To</label>
-                                                <div id="report_to_select">
-                                                    @selectorguser("report_to", ["id" => "edit-reports"])
-                                                </div>
-                                            </div> 
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4 form-group mb-3" >
@@ -393,11 +378,11 @@
         var columns = [
             {data: 'DT_RowIndex', name: 'DT_RowIndex'},
             {data: 'f_name',name: 'f_name',
-                mRender: function(data, type, full, meta){
-                if(full['m_name']!='' && full['m_name']!='NULL' && full['m_name']!=undefined){
-                    return full['f_name']+' '+full['m_name']+' '+full['l_name'];
-                } else { 
-                        full['f_name']+' '+full['l_name'];
+                mRender: function(data, type, full, meta){ 
+                if(data!='' && data!='NULL' && data!=undefined){
+                    return full['f_name']+' '+full['l_name'];
+                 } else {
+                    return '';
                 }
             },
                 orderable: true
@@ -414,30 +399,7 @@
                     }
                 }
             },
-            {data: 'reportto', mRender: function(data, type, full, meta){
-                if(data!='' && data!='NULL' && data!=undefined){
-                    if(data['l_name'] == null && data['f_name'] == null){
-                        return '';
-                    }else{
-                        return data['f_name'] + ' ' + data['l_name'];
-                    } 
-                }else { return '';}    
-            },orderable: false}, 
-
-            // {data: 'responsibility', name: 'responsibility'},
-            {data: 'mfa_status', name: 'mfa_status',
-                render: function(data, type, full, meta){
-                    if(data!='' && data!='NULL' && data!=undefined){
-                        if(data==1){
-                            return "SMS";
-                        }else{
-                            return "2FA";
-                        }
-                    } else {
-                        return "-";
-                    }
-                }
-            },
+            
             {data: 'users', mRender: function(data, type, full, meta){
                 if(data!='' && data!='NULL' && data!=undefined){
                     if(data['l_name'] == null && data['f_name'] == null){
@@ -467,7 +429,7 @@
         $('#country_code option:contains(United States (US) +1)').attr('selected', 'selected');
 
         $('#roles').change(function() { 
-            alert(this.value);
+            // alert(this.value);
             if(this.value == '2'){
                 $('#providers_details').show();
             } else {

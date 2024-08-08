@@ -82,7 +82,7 @@ class LoginController extends Controller
      */
     // protected $redirectTo = '/dashboard';
     // protected $redirectTo = 'task-management/work-list'; 
-    protected $redirectTo = 'patients/worklist'; 
+    protected $redirectTo = 'patients/patients'; 
 
     /**
      * Create a new controller instance.
@@ -169,7 +169,7 @@ class LoginController extends Controller
                         $userStatus = Auth::guard('renCore_user')->user()->status;
                         Users::where('id',sanitizeVariable($request->userid))->update(['max_attempts' =>0,'otp_date'=>Carbon::now()]);
                         $this->setAfterLogInLog_renCore($request->userid,$chk_attempts->email);
-                        return response(['sucsses'=>1,'message'=>'patients/worklist']);
+                        return response(['sucsses'=>1,'message'=>'patients/patients']);
 
                 }else{
                     return response(['sucsses'=>0,'message'=>'You entered wrong authentication code.']);
@@ -699,7 +699,7 @@ class LoginController extends Controller
                                         $this->setAfterLogInLog_renCore($id,$email);
                                         // $this->clearLoginAttempts($request);
                                         $response['success']='y';
-                                        $response['url'] = 'patients/worklist';
+                                        $response['url'] = 'patients/patients';
                                         $response['error']='';
                                         // return redirect()->route("org_users_list");
                                     }else{
@@ -779,7 +779,7 @@ class LoginController extends Controller
                                     $this->setAfterLogInLog_renCore($id,$email);
                                     // $this->clearLoginAttempts($request);
                                         $response['success']='y';
-                                        $response['url'] = 'patients/worklist';
+                                        $response['url'] = 'patients/patients';
                                         $response['error']='';
                                 }else{
                                     // dd('ELSE-else');
@@ -797,7 +797,7 @@ class LoginController extends Controller
                         $response['url']='';
                         $response['error']='Your URL Domain Not Valid';*/
                         $response['success']='y';
-                        $response['url'] = 'patients/worklist';
+                        $response['url'] = 'patients/patients';
                         $response['error']='';
                     }
                 }else{
@@ -1162,7 +1162,7 @@ class LoginController extends Controller
     //                             $this->setAfterLogInLog_renCore($id,$email); 
     //                             // $this->clearLoginAttempts($request);
     //                              $response['success']='y';
-    //                              $response['url'] = 'patients/worklist';
+    //                              $response['url'] = 'patients/patients';
     //                              $response['error']='';
     //                         }else{
     //                             $this->setLogInLog_renCore($id,$email);
@@ -1324,7 +1324,7 @@ class LoginController extends Controller
     //                                 $this->setAfterLogInLog_renCore($id,$email);
     //                                 // $this->clearLoginAttempts($request);
     //                                  $response['success']='y';
-    //                                  $response['url'] = 'patients/worklist';
+    //                                  $response['url'] = 'patients/patients';
     //                                  $response['error']='';
     //                                  // return redirect()->route("org_users_list");
     //                             }else{
@@ -1390,7 +1390,7 @@ class LoginController extends Controller
     //                             $this->setAfterLogInLog_renCore($id,$email);
     //                             // $this->clearLoginAttempts($request);
     //                              $response['success']='y';
-    //                              $response['url'] = 'patients/worklist';
+    //                              $response['url'] = 'patients/patients';
     //                              $response['error']='';
     //                         }else{
     //                             $this->setLogInLog_renCore($id,$email);

@@ -66,87 +66,22 @@
                                 <label for="practicename">Practice Number <span style="color:red">*</span></label>
                                 @text("number",["placeholder" => "Enter Practice Number"])
                             </div>
-                            <div class="col-md-4 form-group mb-3 ">
+                            <div class="col-md-6 form-group mb-3 ">
                                 <label for="practicename">Location <span style="color:red">*</span></label>
                                 @text("location",["placeholder" => "Enter Location"])
                             </div>
-                            <div class="col-md-4 form-group mb-3 ">
+                            <div class="col-md-6 form-group mb-3 ">
                                 <label for="practicename">Phone Number <span style="color:red">*</span></label>
                                 @phone("phone",["placeholder" => "Enter Phone Number"])
                             </div>
-                            <div class="col-md-4 form-group mb-3 "> 
-                                <label for="practicename">Key Contact <span style="color:red">*</span></label>
-                                @text("key_contact",["placeholder" => "Enter Key Contacts"])
-                            </div>
                             
-                            <div class="col-md-6 form-group mb-3 ">
-                                <label for="practicename">Outgoing Phone Number <span style="color:red">*</span></label>
-                                @phone("outgoing_phone_number",["placeholder" => "Enter Outgoing Phone Number"])
-                            </div>
-                            <!-- <div class="col-md-3 form-group mb-3"> 
-              					      <label>
-              						      <yes-no name="billable" label-no="No" label-yes="Yes">CPD billable with MM</yes-no>
-              					      </label>
-              				</div> -->
-                              <div class="col-md-3 form-group mb-3"> 
-                                <label for="billable" class="control-label">CPD billable with MM</label> <span></span> 
-                                <div class="mr-3 d-inline-flex">    
-                                    <label for="billable-yes" class="radio radio-primary mr-3">
-                                        <input type="radio" formcontrolname="radio" name="billable" id="billable-yes" value="1">
-                                        <span>Yes</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                    <label for="billable-no" class="radio radio-primary mr-3">
-                                        <input type="radio" formcontrolname="radio" name="billable" id="billable-no" value="0">
-                                        <span>No</span>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                <!-- <label>
-                                    <yes-no name="billable" label-no="No" label-yes="Yes">CPD billable with MM</yes-no>
-                                </label> -->
-                                </div>
-              				</div>
-                            <div class="col-md-3 form-group mb-3">
-                            <label for="practicename">Practice Type<span style="color:red">*</span></label>
-                              <select class="custom-select" name="practice_type" id="practice_type">
-                                <option value="">Practice Type</option>
-                                <option value="pcp">PCP</option>
-                                <option value="specialist">Specialist</option>
-                                <option value="dentist">Dentist</option>
-                                <option value="vision">Vision</option>
-                              </select> 
-                              <div class="invalid-feedback"></div>
-                            </div>
                             <div class="col-md-12  form-group mb-3 ">
                                 <label for="practicename">Address <span style="color:red">*</span></label>
                                 <textarea class="form-control forms-element" name="address" placeholder = "Enter Address"></textarea>
                                 <div class="invalid-feedback"></div>
                             </div>                   
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="file"><span class="error"></span>Upload logo</label>
-                                    @file("file", ["id" => "logo", "class" => "form-control",'onchange'=>"uploadfile()"])
-                                    <input type="hidden" name="image_path" id="image_path">
-                                    <br/>
-                                    <div id="viewlogo"> </div>
-                                    <!-- <input type="hidden" name="profile_img" id="profile_img"> -->
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="uploading_img_loader" style="display:none;" class="loader-bubble loader-bubble-primary m-5"></div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
                 <div class="card-footer">

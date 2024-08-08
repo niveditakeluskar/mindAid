@@ -1,4 +1,4 @@
-@extends('Theme::layouts.master')
+@extends('Theme::layouts_2.master')
 @section('main-content')
 <div class="row mb-4" id="call-sub-steps">
     <div class="col-md-12">
