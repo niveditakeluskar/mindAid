@@ -25,8 +25,9 @@ class MedicationUpdateRequest extends FormRequest
     {
         return [
             //
-            'description'          => 'required|regex:/^[a-zA-Z0-9-%+().# ]+$/|unique:ren_core.medication,description,'.$this->id, //|unique:ren_core.medication,description,'.$this->id,
-            'drug_reaction' => 'nullable|regex:/^[a-zA-Z0-9-, ]+$/'
+            // 'description'          => 'required|regex:/^[a-zA-Z0-9-%+().# ]+$/|unique:ren_core.medication,description,'.$this->id, //|unique:ren_core.medication,description,'.$this->id,
+            // 'drug_reaction' => 'nullable|regex:/^[a-zA-Z0-9-, ]+$/'
+            'name' => 'required',
 
         ];
     }

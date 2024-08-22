@@ -5,8 +5,8 @@
             @csrf
 
             <?php 
-               $module_id    = getPageModuleName();
-               $submodule_id = getPageSubModuleName();
+               $module_id    = 3;//getPageModuleName();
+               $submodule_id = 19; //getPageSubModuleName();
                $stage_id =  getFormStageId($module_id , $submodule_id, 'Text');
             ?>
             <input type="hidden" name="uid" value="{{$patient_id}}" />

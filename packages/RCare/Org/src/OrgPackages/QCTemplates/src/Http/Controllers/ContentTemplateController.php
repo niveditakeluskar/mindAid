@@ -67,8 +67,8 @@ class ContentTemplateController extends Controller
         $data = TemplateTypes::where('id','!=',5)->where('id','!=',6)->get();
         $module = Module::all();
         $components = ModuleComponents::all();
-        $devices = Devices::all();
-        return view('QCTemplates::ContentTemplates.add-content-template', compact('data','components','devices', 'module'));
+       
+        return view('QCTemplates::ContentTemplates.add-content-template', compact('data','components', 'module'));
         
     }
 

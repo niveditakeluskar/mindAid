@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- CSRF Token -->
+    <!-- CSRF Token --> 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('page-title') Renova Healthcare</title>
+    <title>@yield('page-title') PeriOp</title>
     <!--  <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet"> -->
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
@@ -43,7 +43,7 @@
             height: 34px !important;
         }
 
-        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge">< !-- CSRF Token --><meta name="csrf-token" content="{{ csrf_token() }}"><title>@yield('page-title') Renova Healthcare</title>< !-- <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet">--><link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}"><link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">< !-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />--><link rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">@yield('before-css') {
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="ie=edge">< !-- CSRF Token --><meta name="csrf-token" content="{{ csrf_token() }}"><title>@yield('page-title') PeriOp</title>< !-- <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,400i,600,700,800,900" rel="stylesheet">--><link rel="stylesheet" href="{{ asset('assets/styles/external-css/fonts-googleapis.css')}}"><link rel="stylesheet" href="{{ asset('assets/styles/external-css/select2.min.css') }}">< !-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />--><link rel="stylesheet" href="{{asset('assets/styles/vendor/calendar/fullcalendar.min.css')}}">@yield('before-css') {
                 {
                 -- form wizard --
             }

@@ -39,7 +39,7 @@
               <th width="235px">Description</th>      
               <th width="50px"> Category</th>  
               <th width="235px">Sub Category</th>      
-              <th width="50px">Duration</th>  
+              <th width="50px">Tentative Duration</th>  
               <th width="50px">Last Modified By</th>
               <th width="50px">Last Modified On</th>                 
               <th width="65px">Action</th>
@@ -72,30 +72,30 @@
         <div class="form-group">
           <div class="row">
             <div class="col-md-12  form-group mb-3">            
-                <label for="code">Code <span class='error'>*</span></label>
+                <label for="code">Code </label>
                 @text("code", ["placeholder" => "Enter Code"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="name">Name</label>
+                <label for="name">Name <span class='error'>*</span> </label>
                 <!-- <span class='error'>*</span> -->
                 @text("name",["placeholder" => "Enter Surgery Name"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="description">Description <span class='error'>*</span></label>
+                <label for="description">Description</label>
                 @text("description", ["placeholder" => "Enter Description"])
               </div>
               
               <div class="col-md-12  form-group mb-3">            
-                <label for="category">Category <span class='error'>*</span></label>
+                <label for="category">Category</label>
                 @text("category", ["placeholder" => "Enter Category"])
               </div>
               
               <div class="col-md-12  form-group mb-3">            
-                <label for="sub_category">Sub category <span class='error'>*</span></label>
+                <label for="sub_category">Sub category</label>
                 @text("sub_category", ["placeholder" => "Enter Sub category"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="duration">Duration</label>
+                <label for="duration">Tentative Duration</label>
                 <!-- <span class='error'>*</span> -->
                 @text("duration",["placeholder" => "Enter Duration"])
               </div>     
@@ -134,31 +134,29 @@
           <div class="form-group">
           <div class="row">
             <div class="col-md-12  form-group mb-3">            
-                <label for="code">Code <span class='error'>*</span></label>
+                <label for="code">Code </label>
                 @text("code", ["placeholder" => "Enter Code"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="name">Name</label>
-                <!-- <span class='error'>*</span> -->
+                <label for="name">Name<span class='error'>*</span></label>
                 @text("name",["placeholder" => "Enter Surgery Name"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="description">Description <span class='error'>*</span></label>
+                <label for="description">Description </label>
                 @text("description", ["placeholder" => "Enter Description"])
               </div>
               
               <div class="col-md-12  form-group mb-3">            
-                <label for="category">Category <span class='error'>*</span></label>
+                <label for="category">Category </label>
                 @text("category", ["placeholder" => "Enter Category"])
               </div>
               
               <div class="col-md-12  form-group mb-3">            
-                <label for="sub_category">Sub category <span class='error'>*</span></label>
+                <label for="sub_category">Sub category </label>
                 @text("sub_category", ["placeholder" => "Enter Sub category"])
               </div>
               <div class="col-md-12  form-group mb-3">            
-                <label for="duration">Duration</label>
-                <!-- <span class='error'>*</span> -->
+                <label for="duration">Tentative Duration</label>
                 @text("duration",["placeholder" => "Enter Duration"])
               </div>     
             </div>

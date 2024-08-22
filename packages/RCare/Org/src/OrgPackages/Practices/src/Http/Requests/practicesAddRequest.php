@@ -29,13 +29,13 @@ class practicesAddRequest extends FormRequest
                 'location'              => 'required|min:2|regex:/^[a-zA-Z0-9.-]*$/',
                 'phone'                 => 'required|max:14|phone', 
                 // 'key_contact'           => 'required|min:2|regex:/^[a-zA-Z0-9,.-]*$/',
-                'key_contact'           => 'required|min:2|regex:/^[a-zA-Z0-9,.\s-]*$/', //for space
+                // 'key_contact'           => 'required|min:2|regex:/^[a-zA-Z0-9,.\s-]*$/', //for space
                 // 'address'               => 'required|min:3|address',
                 'address'               => 'required|min:3|regex:/^[a-zA-Z0-9,.\s-]*$/',
-                'outgoing_phone_number' => 'required|max:14|phone',
-                'billable'              => 'nullable|boolean',
-                'practice_group'        => 'nullable|integer',
-                'practice_type'         => 'required'
+                // 'outgoing_phone_number' => 'required|max:14|phone',
+                // 'billable'              => 'nullable|boolean',
+                // 'practice_group'        => 'nullable|integer',
+                // 'practice_type'         => 'required'
             ]
         );
 

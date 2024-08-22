@@ -28,7 +28,7 @@
 <body>
 	
     
-    <div class="auth-layout-wrap" style="background-image: url({{asset('assets/images/photo-wide-4.jpg')}})">
+    <div class="auth-layout-wrap" style="background: #fff;">
         <div class="auth-content" id="hd_login"> 
             <div class="card o-hidden">
                 <div class="row">
@@ -40,7 +40,7 @@
                             </div>
                             <div class="text-center text-18">Sign In</div>
 
-                               <!-- method="POST" action="{{ route('rcare-login') }}" -->
+                               <!-- method="POST" action="{{ route('login') }}" -->
                             <form  name="login_form" id="login_form" method="POST">
                                 <div class="card-body"> 
                                 <p class="alert alert-danger" id="danger" style= "display:none"; >
@@ -384,7 +384,7 @@ $(function () {
     $("#back_login").click(function(event){
         var base_url = "<?php echo url('').'/'; ?>";
         event.preventDefault();
-        var url = "rcare-login";
+        var url = "login";
         $('#hd_otp').hide();
         $('#hd_login').show();
         window.location.href=base_url+''+url;
@@ -413,7 +413,7 @@ $(function () {
             // check required otp for login or not
             $.ajax({
                 type: "POST",
-                url: "/rcare-login-verification",
+                url: "/login-verification",
                 dataType:"json",
                 data: $('#login_form').serialize(),
                 success: function(response) {
@@ -460,7 +460,7 @@ $(function () {
     //         $('#code').val('');
     //             $.ajax({
     //             type: "POST",
-    //             url: "/rcare-login-with-otp",
+    //             url: "/login-with-otp",
     //             dataType:"json",
     //             data: $('#login_form').serialize(),
     //             success: function(response) {
@@ -528,7 +528,7 @@ $(function () {
         $('#code').val('');
         $.ajax({
             type: "POST",
-            url: "/rcare-login",//"/rcare-login-without-otp",
+            url: "/login",//"/login-without-otp",
             dataType:"json",
             data: $('#login_form').serialize(),
             success: function(response) {

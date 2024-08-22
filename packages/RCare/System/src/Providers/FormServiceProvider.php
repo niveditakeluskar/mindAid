@@ -622,7 +622,7 @@ class FormServiceProvider extends ServiceProvider
                 }
 
                 $options = array_unique($options);
-                echo RCare\System\Support\Form::select("All Practices", $name, $options, $attributes, $selected);
+                echo RCare\System\Support\Form::select("All Clinic", $name, $options, $attributes, $selected);
             ?>';
             //$options    = ["0" => "All"];
         });
@@ -1077,6 +1077,56 @@ class FormServiceProvider extends ServiceProvider
                 echo RCare\System\Support\Form::select("Medication", $name, $options, $attributes, $selected);
             ?>';
         });
+
+        Blade::directive("selectsubcategory", function ($expression) {
+            return '<?php 
+               $options    = [];
+               $params     = [' . $expression . '];
+               $name       = $params[0]; 
+               $attributes = defaultParameter($params, 1, []);
+               $selected   = defaultParameter($params, 2, "");
+               $options    = [];
+               foreach (RCare\Org\OrgPackages\Medication\src\Models\SubCategory::activeSubCategory() as $medicine) {
+                   $options[$medicine->id] = $medicine->subcategory;
+               }
+               $options = array_unique($options);
+               echo RCare\System\Support\Form::select("Subcategory", $name, $options, $attributes, $selected);
+           ?>';
+       });
+
+       
+       Blade::directive("selectcategory", function ($expression) {
+        return '<?php 
+           $options    = [];
+           $params     = [' . $expression . '];
+           $name       = $params[0]; 
+           $attributes = defaultParameter($params, 1, []);
+           $selected   = defaultParameter($params, 2, "");
+           $options    = [];
+           foreach (RCare\Org\OrgPackages\Medication\src\Models\Category::activeCategory() as $medicine) {
+               $options[$medicine->id] = $medicine->category;
+           }
+           $options = array_unique($options);
+           echo RCare\System\Support\Form::select("Category", $name, $options, $attributes, $selected);
+       ?>';
+   });
+
+
+        Blade::directive("selectsurgery", function ($expression) {
+            return '<?php 
+               $options    = [];
+               $params     = [' . $expression . '];
+               $name       = $params[0]; 
+               $attributes = defaultParameter($params, 1, []);
+               $selected   = defaultParameter($params, 2, "");
+               $options    = [];
+               foreach (RCare\Org\OrgPackages\Medication\src\Models\Medication::activeMedication() as $medicine) {
+                   $options[$medicine->id] = $medicine->name;
+               }
+               $options = array_unique($options);
+               echo RCare\System\Support\Form::select("Surgery", $name, $options, $attributes, $selected);
+           ?>';
+       });
 
         Blade::directive("selectemrpractice", function ($expression) {
              return '<?php

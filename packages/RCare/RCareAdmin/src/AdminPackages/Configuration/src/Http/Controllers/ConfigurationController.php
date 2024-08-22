@@ -11,7 +11,7 @@ use Session;
 class ConfigurationController extends Controller{
 
      public function index()
-    {
+    { dd('dasssssssss');
         return view('Configuration::configuration-list'); 
     }
 
@@ -23,7 +23,7 @@ class ConfigurationController extends Controller{
             ->addIndexColumn()
             ->addColumn('action', function($row){
 
-              if($row->config_type == 'sms'){
+              if($row->config_type == 'sms'){ 
 
                  $btn = '<a data-toggle="modal" data-target="#myModal1" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" id="edit" class="edit_conf editconfigsms" title="Edit"><i class=" editform i-Pen-4" style="color: #2cb8ea;"></i></a>';
 
@@ -209,7 +209,7 @@ class ConfigurationController extends Controller{
         public function changeConfigurationStatus(Request $request)
         {
         $id= sanitizeVariable($request->id);
-        $row = Configurations::find($id);
+        $row = Configurations::find($id); 
        // dd($row);
         $row->status=!$row->status;
         $row->save();

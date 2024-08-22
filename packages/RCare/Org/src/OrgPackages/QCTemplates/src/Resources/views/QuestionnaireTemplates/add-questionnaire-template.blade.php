@@ -62,146 +62,54 @@
                         @hidden("add",["id"=>"add", "value"=>"add"])
                         <div class="form-group">
                             <div class="row">
-                                <div class="col-md-6 form-group mb-3">
+                                <div class="col-md-4 form-group mb-3">
                                     <label class="">Content Title <span class="error">*</span></label>
                                  
                                     @text("content_title", ["id"=>"content_title"])
                                   </div>  
-                                <div class="col-md-6 form-group mb-3">
+                                <div class="col-md-4 form-group mb-3">
                                     <label class="">Content Type <span class="error">*</span></label>
                                
-                                    <!--@selectContentType("template_type",["id"=>"template_type", "class"=>"col-md-6"])-->
+                                    <!--@selectContentType("template_type",["id"=>"template_type", "class"=>"col-md-4"])-->
                                     <select name="template_type" id="template_type" class="custom-select">
                                         <option value="5">Questionnaire</option>
                                     </select>
                                     <div class="invalid-feedback"></div>
-                                   </div>
-                                <div class="col-md-6 form-group mb-3">
+                                </div>
+                                <div class="col-md-4 form-group mb-3">
+                                    <label>Surgery</label>
+                                    @selectsurgery("surgery", ["id" => "surgery"])
+                                </div>
+                                <!-- <div class="col-md-6 form-group mb-3">
                                     <label for="loginuser" class="">Module <span class="error">*</span></label>
-                                     
                                     @selectMasterModule("module",["id"=>"module", "disabled"=>"disabled"])
                                 </div>
                                 <div class="col-md-6 form-group mb-3">
                                     <label for="loginuser" class="">Sub Module <span class="error">*</span></label>
-                                   
                                     @select("Sub Module", "sub_module", [], ["id" => "sub_module", "class"=>"custom-select"])
                                     </div>
                                 <div class="col-md-6 form-group mb-3">
                                     <label>Stage</label>
-                                   
                                     @select("Stage", "stages", [], ["id" => "stages"])
                                </div> 
                                 <div class="col-md-6 form-group mb-3">
                                     <label>Step</label>
-                                        
                                     @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select capital-first"])
-                                    </div>
-                            <div class="col-md-2 form-group mt-2">
-                                <div class="custom-control custom-checkbox">
-                                    <input id="add_to_patient_status" name="add_to_patient_status" type="checkbox" value="1" class="custom-control-input">
-                                    <label for="add_to_patient_status" class="custom-control-label">Add To Patients Status</label>
-                                </div>
-                            </div>
-                            <div class="col-md-2 form-group mt-2">
-                                <div class="custom-control custom-checkbox">
-                                    <input id="one_time_entry" name="one_time_entry" type="checkbox" value="1" class="custom-control-input">
-                                    <label for="one_time_entry" class="custom-control-label">One Time Entry</label>
-                                </div>
-                            </div>
-                            <div class="wrapMulDrop col-md-2">
-                                <button type="button" id="multiDrop" class="multiDrop form-control col-md-12">Select month<i style="float:right;" class="icon ion-android-arrow-dropdown"></i></button>
-                                    <ul>    
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[January]"  type="checkbox"><span class="">Jan</span><span class="checkmark"></span>            
-                                            </label>
-                                        </li>  
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[February]"  type="checkbox"><span class="">Feb</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[March]"  type="checkbox"><span class="">Mar</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[April]"  type="checkbox"><span class="">Apr</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[May]"  type="checkbox"><span class="">May</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[June]"  type="checkbox"><span class="">Jun</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[July]"  type="checkbox"><span class="">Jul</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[August]"  type="checkbox"><span class="">Aug</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[September]"  type="checkbox"><span class="">Sep</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[October]"  type="checkbox"><span class="">Oct</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[November]"  type="checkbox"><span class="">Nov</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                        <li>
-                                            <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[December]"  type="checkbox"><span class="">Dec</span><span class="checkmark"></span>             
-                                            </label>
-                                        </li> 
-                                    </ul>  
-                            </div> 
-                            <div class="col-md-2 form-group mt-2">
-                                <div class="custom-control custom-checkbox">
-                                    <input id="add_score" name="add_score" type="checkbox" value="1" class="custom-control-input">
-                                    <label for="add_score" class="custom-control-label">Score</label>
-                                </div>
-                            </div>
-                            <label class="col-md-1 mt-2" >Sequence</label>
+                                </div> -->
+                           
+                            <label class="col-md-1 mt-2">Sequence</label>
                             <input type="number" class="form-control col-md-2" name="sequence" id="sequence"> 
-            
                             <!--<div class="col-md-6 form-group mt-2 team-invite">
                                 <label for="tags" class="">Enter Tags</label>
                                 <input type="text" id='tags' name='tags' placeholder='enter tags here' size="30">
                                 <br>
                                 <p id='subtext'>You can enter multiple tags with comma</p>
-                            </div>-->
+                            </div>--> 
                             </div>
                             
                         </div>
                         <div class="separator-breadcrumb border-top"></div>
-                        <div class="form-group">  
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label for="copy_from" class="">Copy Questionnaire Template From </label>
-                                    <select class="custom-select select2" name="copy_from" id="copy_from"  >
-
-                                    </select>
-                                </div>
-                            </div>
-                        </div> 
+                        
                         <div id="question_content">
                         <div class="question_div" id="first_question_div">
                             <div class="form-group" id = "question">
@@ -250,7 +158,7 @@
                         <div class="abc" id="append_div"></div>
                 </div>
                         <div class="col-md-4 mb-3"><button type="button" class="btn btn-success btn-sm " id="addQuestion" style="">Add Question</button></div>
-                        <button type="" id="save-template" class="btn btn-info btn-lg btn-block">Save</button> 
+                        <button type="" id="save-template" class="btn btn-info btn-block offset-md-10 col-md-2">Save</button> 
                     </form>
                 </div>
             </div>

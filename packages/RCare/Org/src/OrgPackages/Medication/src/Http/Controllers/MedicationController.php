@@ -2,9 +2,12 @@
 namespace RCare\Org\OrgPackages\Medication\src\Http\Controllers;
 use App\Http\Controllers\Controller;
 use RCare\Org\OrgPackages\Medication\src\Http\Requests\MedicationRequest;
-use RCare\Org\OrgPackages\Medication\src\Http\Requests\MedicationUpdateRequest;
+use RCare\Org\OrgPackages\Medication\src\Http\Requests\CategoryRequest;
+use RCare\Org\OrgPackages\Medication\src\Http\Requests\SubCategoryRequest;
 use Illuminate\Http\Request;
 use RCare\Org\OrgPackages\Medication\src\Models\Medication;
+use RCare\Org\OrgPackages\Medication\src\Models\Category;
+use RCare\Org\OrgPackages\Medication\src\Models\SubCategory;
 //use RCare\Org\OrgPackages\Medication\src\Models\Providers;
 use DataTables;
 use Hash;
@@ -63,7 +66,30 @@ class MedicationController extends Controller {
         ->rawColumns(['action'])
         ->make(true);
         }
-        return view('Medication::medications_list');
+        return view('Medication::surgery-list');
+    }
+
+
+    public function CategoryList(Request $request){
+        if ($request->ajax()) { 
+            $data = Category::with('users')->get();
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editCategory" title="Edit"><i class="editform i-Pen-4"></i></a>';  
+                    if($row->status == 1){
+                            $btn = $btn. '<a href="javascript:void(0)" class="changeCategorystatus_active" data-id="'.$row->id.'"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                        }
+                    else
+                    {
+                        $btn = $btn.'<a href="javascript:void(0)" class="changeCategorystatus_deactive" data-id="'.$row->id.'"><i class="i-Closee i-Close"  title="Inactive"></i></a>';
+                    }
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+        return view('Medication::category-list');
     }
 
     public function populateMedication(Request $request) {   
@@ -82,7 +108,7 @@ class MedicationController extends Controller {
         $category = sanitizeVariable($request->category);
         $sub_category = sanitizeVariable($request->sub_category);
         $duration = sanitizeVariable($request->duration);
-        $created_by  = session()->get('userid');
+        $updated_by  = session()->get('userid');
        $update = array(
            'code'   => $code,
             'name'   => $name,
@@ -121,4 +147,74 @@ class MedicationController extends Controller {
         $medicationList = Medication::all();
         return $medicationList;
     }
+
+    public function createCategory(CategoryRequest $request) {
+        $data = [
+        'category'=> sanitizeVariable($request->category),     
+        'created_by' =>session()->get('userid'), 
+        'updated_by' =>session()->get('userid'),
+        'status' => 1,
+        ];
+        $exist=Category::where('category',sanitizeVariable($request->category))->exists();
+        if($exist==false){
+            $user = Category::create($data);
+        }
+        else
+        {
+            return "yes";
+        }
+       
+    }
+
+    public function SubCategoryList(Request $request){
+        if ($request->ajax()) {
+            $data = SubCategory::with('users','category')->get();
+            // dd($data);
+            return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $btn ='<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="editSubCategory" title="Edit"><i class="editform i-Pen-4"></i></a>';  
+                if($row->status == 1){
+                        $btn = $btn. '<a href="javascript:void(0)" class="changeSubCategorystatus_active" data-id="'.$row->id.'"><i class="i-Yess i-Yes" title="Active"></i></a>';
+                    }
+                else
+                {
+                    $btn = $btn.'<a href="javascript:void(0)" class="changeSubCategorystatus_deactive" data-id="'.$row->id.'"><i class="i-Closee i-Close"  title="Inactive"></i></a>';
+                }
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
+        return view('Medication::sub-category-list');
+    }
+
+    
+
+    public function updateSubcategory(SubCategoryRequest $request) {
+        $data = [
+            'category' =>sanitizeVariable($request->category),
+            'subcategory'=> sanitizeVariable($request->subcategory),
+            'created_by' =>session()->get('userid'),
+            'updated_by' =>session()->get('userid'),
+            'status' => 1,
+            ];
+            
+        $user = SubCategory::create($data);
+    }
+    public function createSubCategory(SubCategoryRequest $request) {
+        // dd($request);
+        // $id= sanitizeVariable($request->hidden_Subcategory_id);
+        $data = [
+        'category' =>sanitizeVariable($request->category),
+        'subcategory'=> sanitizeVariable($request->subcategory),
+        'created_by' =>session()->get('userid'),
+        'updated_by' =>session()->get('userid'),
+        'status' => 1,
+        ];
+        // dd($data);
+        $user = SubCategory::create($data);
+    }
+    
+
 } 

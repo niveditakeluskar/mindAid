@@ -57,8 +57,8 @@ class QuestionnaireTemplateController extends Controller
         $data = TemplateTypes::all();
         $module = Module::all();
         $components = ModuleComponents::all();
-        $devices = Devices::all();
-        return view('QCTemplates::QuestionnaireTemplates.add-questionnaire-template', compact('data','components','devices', 'module')); 
+        //$devices = Devices::all();
+        return view('QCTemplates::QuestionnaireTemplates.add-questionnaire-template', compact('data','components', 'module')); 
     }
 
     public function getTemplate($moduleid, $stepid, $type){
@@ -124,11 +124,11 @@ class QuestionnaireTemplateController extends Controller
                         'question'         => json_encode($questionDetails),
                         // 'status'        => $status,
                         'status'           =>1,
-                        'add_to_patient_status' => sanitizeVariable($request->add_to_patient_status),
-                        'one_time_entry'   => sanitizeVariable($request->one_time_entry),
-                        'score'   => sanitizeVariable($request->add_score),
+                        //'add_to_patient_status' => sanitizeVariable($request->add_to_patient_status),
+                        //'one_time_entry'   => sanitizeVariable($request->one_time_entry),
+                        //'score'   => sanitizeVariable($request->add_score),
                         'sequence' => sanitizeVariable($request->sequence),
-                        'display_months' => json_encode($months),
+                        //'display_months' => json_encode($months),
                        // 'tags' => sanitizeVariable($request->tags)
                     );
 

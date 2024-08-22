@@ -8,16 +8,18 @@ use RCare\System\Support\GeneratedFillableModel;
 use RCare\Patients\Models\PatientMedication;
 use RCare\System\Traits\DatesTimezoneConversion;
 
-class Medication extends Model
+class SubCategory extends Model
 {
-    use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
-    protected $table ='ren_core.surgery';
- 
-    /**
-    * The attributes that are mass assignable.
-    *
-    * @var array
-    */
+use DashboardFetchable, ModelMapper, DatesTimezoneConversion;
+
+    protected $table ='ren_core.sub_category';
+
+        /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    
     protected $population_include = [
         "id"
     ];
@@ -27,23 +29,17 @@ class Medication extends Model
         'updated_at'
     ];
     public $timestamps = true;
-    
     protected $fillable = [
-        'id',
-        'code',
-        'name',
-        'description', 
+		'id',
         'category',
-        'sub_category',
-        'duration',
+        'subcategory',
         'created_by',
         'updated_by',
-        'status',
+        'status'
     ];
-
-    public static function activeMedication()
+    public static function activeSubCategory()
     {
-        return Medication::where("status", 1)->orderBy('name','asc')->distinct('name')->get();
+        return SubCategory::where("status", 1)->orderBy('sub_category','asc')->distinct('sub_category')->get();
     }
 	
 	public function patientMedication()
@@ -51,9 +47,9 @@ class Medication extends Model
         return $this->hasMany('RCare\Patients\Models\PatientMedication', 'med_id');
     }
 	
-	public static function self($patientId)
-    {   $patientId  = sanitizeVariable($patientId);
-        return self::where('id', $patientId)->orderBy('created_at', 'desc')->first();
+	public static function self($id)
+    {   $id  = sanitizeVariable($id);
+        return self::where('id', $id)->orderBy('created_at', 'desc')->first();
     }
     public function users()
     {
@@ -64,9 +60,9 @@ class Medication extends Model
     {
          return $this->belongsTo('RCare\Org\OrgPackages\Medication\src\Models\Category','category');
     }
-    
-    public function subcategory()
-    {
-        return $this->belongsTo('RCare\Org\OrgPackages\Medication\src\Models\Category','sub_category');
-    }
+	
+	
+
+
+
 }

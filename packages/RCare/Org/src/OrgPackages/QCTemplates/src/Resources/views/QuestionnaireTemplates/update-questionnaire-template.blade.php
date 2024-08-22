@@ -67,122 +67,119 @@
                         <div class="row">
                             <div class="col-md-6 form-group mb-3">
                                 <label class="">Content Title <span class="error">*</span></label>
-                           
-                            @text("content_title", ["id"=>"content_title", "class"=>"custom-select", "value"=>"$data->content_title"])
-                                  </div>
-                            <div class="col-md-6 form-group mb-3">
-                                <label class="">Content Type <span class="error">*</span></label>
-                            
-                            <!--@selectContentType("template_type",["id"=>"template_type", "class"=>"col-md-3"])-->
-                            <select name="template_type" id="template_type" class="custom-select">
-                                <option value="5">Questionnaire</option>
-                            </select>
-                            <div class="invalid-feedback"></div>
-                              </div>
-                            <div class="col-md-6 form-group mb-3">
-                                <label for="loginuser" class="">Module <span class="error">*</span></label>
-                            
-                            @selectMasterModule("module",["id"=>"module","disabled"=>"disabled"])
+                                 @text("content_title", ["id"=>"content_title", "class"=>"custom-select", "value"=>"$data->content_title"])
                             </div>
                             <div class="col-md-6 form-group mb-3">
-                                <label for="sub_module" class="">Sub Module <span class="error">*</span></label>
-                           
-                            @select("Sub Module", "sub_module", [], ["id" => "sub_module", "class"=>"custom-select"])
-                                </div>
+                                <label>Surgery</label>
+                                @selectsurgery("surgery", ["id" => "surgery"])
+                            </div>
+                            <!-- <div class="col-md-6 form-group mb-3">
+                                <label class="">Content Type <span class="error">*</span></label> -->
+                                <!--@selectContentType("template_type",["id"=>"template_type", "class"=>"col-md-3"])-->
+                                <!-- <select name="template_type" id="template_type" class="custom-select">
+                                    <option value="5">Questionnaire</option>
+                                </select><div class="invalid-feedback"></div>
+                            </div> -->
+                            <!-- <div class="col-md-6 form-group mb-3">
+                                <label for="loginuser" class="">Module <span class="error">*</span></label>
+                               selectMasterModule("module",["id"=>"module","disabled"=>"disabled"])
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="sub_module" class="">Sub Module <span class="error">*</span></label>    
+                               select("Sub Module", "sub_module", [], ["id" => "sub_module", "class"=>"custom-select"])
+                            </div>
                             <div class="col-md-6 form-group mb-3">
                                 <label>Stage</label>
-                           
-                            @select("Stage", "stages", [], ["id" => "stages"])
+                               select("Stage", "stages", [], ["id" => "stages"])
                             </div>
                             <div class="col-md-6 form-group mb-3">
                                 <label>Step</label>
-                           
-                            @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select capital-first"])
-                             </div>
-                            <div class="col-md-2 form-group mt-2">
+                               select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select capital-first"])
+                            </div> -->
+                            <!-- <div class="col-md-2 form-group mt-2">
                                 <div class="custom-control custom-checkbox">
-                                    <input id="add_to_patient_status" name="add_to_patient_status" type="checkbox" value="1" class="custom-control-input" <?php if($data->add_to_patient_status == 1){echo 'checked';} ?>>
+                                    <input id="add_to_patient_status" name="add_to_patient_status" type="checkbox" value="1" class="custom-control-input" <?php //if($data->add_to_patient_status == 1){echo 'checked';} ?>>
                                     <label for="add_to_patient_status" class="custom-control-label">Add To Patients Status</label>
                                 </div>
                             </div>
                             <div class="col-md-2 form-group mt-2">
                                 <div class="custom-control custom-checkbox">
-                                    <input id="one_time_entry" name="one_time_entry" type="checkbox" value="1" class="custom-control-input" <?php if($data->one_time_entry == 1){echo 'checked';} ?>>
+                                    <input id="one_time_entry" name="one_time_entry" type="checkbox" value="1" class="custom-control-input" <?php //if($data->one_time_entry == 1){echo 'checked';} ?>>
                                     <label for="one_time_entry" class="custom-control-label">One Time Entry</label>
                                 </div>
-                            </div>   
-                            <?php $months = json_decode($data->display_months); ?>
+                            </div>    -->
+                            <!-- <?php //$months = json_decode($data->display_months); ?>
                             <div class="wrapMulDrop col-md-2">
                                 <button type="button" id="multiDrop" class="multiDrop form-control col-md-12">Select month<i style="float:right;" class="icon ion-android-arrow-dropdown"></i></button>
                                     <ul>    
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[January]"  type="checkbox" <?php if(!empty($months))if(in_array("January", $months)){echo "checked"; }?> ><span class="">Jan</span><span class="checkmark"></span>            
+                                                <input class="" name ="months[January]"  type="checkbox" <?php //if(!empty($months))if(in_array("January", $months)){echo "checked"; }?> ><span class="">Jan</span><span class="checkmark"></span>            
                                             </label>
                                         </li>  
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[February]"  type="checkbox" <?php if(!empty($months))if(in_array("February", $months)){echo "checked"; }?>><span class="">Feb</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[February]"  type="checkbox" <?php //if(!empty($months))if(in_array("February", $months)){echo "checked"; }?>><span class="">Feb</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[March]"  type="checkbox" <?php if(!empty($months))if(in_array("March", $months)){echo "checked"; }?>><span class="">Mar</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[March]"  type="checkbox" <?php //if(!empty($months))if(in_array("March", $months)){echo "checked"; }?>><span class="">Mar</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[April]"  type="checkbox" <?php if(!empty($months))if(in_array("April", $months)){echo "checked"; }?>><span class="">Apr</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[April]"  type="checkbox" <?php //if(!empty($months))if(in_array("April", $months)){echo "checked"; }?>><span class="">Apr</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[May]"  type="checkbox" <?php if(!empty($months))if(in_array("May", $months)){echo "checked"; }?>><span class="">May</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[May]"  type="checkbox" <?php //if(!empty($months))if(in_array("May", $months)){echo "checked"; }?>><span class="">May</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[June]"  type="checkbox" <?php if(!empty($months))if(in_array("June", $months)){echo "checked"; }?>><span class="">Jun</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[June]"  type="checkbox" <?php //if(!empty($months))if(in_array("June", $months)){echo "checked"; }?>><span class="">Jun</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[July]"  type="checkbox" <?php if(!empty($months))if(in_array("July", $months)){echo "checked"; }?>><span class="">Jul</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[July]"  type="checkbox" <?php //if(!empty($months))if(in_array("July", $months)){echo "checked"; }?>><span class="">Jul</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[August]"  type="checkbox" <?php if(!empty($months))if(in_array("August", $months)){echo "checked"; }?>><span class="">Aug</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[August]"  type="checkbox" <?php //if(!empty($months))if(in_array("August", $months)){echo "checked"; }?>><span class="">Aug</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[September]"  type="checkbox" <?php if(!empty($months))if(in_array("September", $months)){echo "checked"; }?>><span class="">Sep</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[September]"  type="checkbox" <?php //if(!empty($months))if(in_array("September", $months)){echo "checked"; }?>><span class="">Sep</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[October]"  type="checkbox" <?php if(!empty($months))if(in_array("October", $months)){echo "checked"; }?>><span class="">Oct</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[October]"  type="checkbox" <?php //if(!empty($months))if(in_array("October", $months)){echo "checked"; }?>><span class="">Oct</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[November]"  type="checkbox" <?php if(!empty($months))if(in_array("November", $months)){echo "checked"; }?>><span class="">Nov</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[November]"  type="checkbox" <?php //if(!empty($months))if(in_array("November", $months)){echo "checked"; }?>><span class="">Nov</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                         <li>
                                             <label class="forms-element checkbox checkbox-outline-primary"> 
-                                                <input class="" name ="months[December]"  type="checkbox" <?php if(!empty($months))if(in_array("December", $months)){echo "checked"; }?>><span class="">Dec</span><span class="checkmark"></span>             
+                                                <input class="" name ="months[December]"  type="checkbox" <?php //if(!empty($months))if(in_array("December", $months)){echo "checked"; }?>><span class="">Dec</span><span class="checkmark"></span>             
                                             </label>
                                         </li> 
                                     </ul>  
-                            </div>    
-                            <div class="col-md-2 form-group mt-2">
+                            </div>     -->
+                            <!-- <div class="col-md-2 form-group mt-2">
                                 <div class="custom-control custom-checkbox">
-                                    <input id="add_score" name="add_score" type="checkbox" value="1" <?php if($data->score == 1){echo 'checked';} ?> class="custom-control-input">
+                                    <input id="add_score" name="add_score" type="checkbox" value="1" <?php //if($data->score == 1){echo 'checked';} ?> class="custom-control-input">
                                     <label for="add_score" class="custom-control-label">Score</label>
                                 </div>
-                            </div>
+                            </div> -->
                             <label class="col-md-1 mt-2" >Sequence</label>
                             <input type="number" class="form-control col-md-2" value="<?php echo $data->sequence ?>" name="sequence" id="sequence"> 
                             
@@ -324,7 +321,7 @@
             <input type="hidden" value="{{$number-1}}" id="counter">
             <br>
             <div class="col-md-4 mb-3"><button type="button" class="btn btn-success btn-sm " id="addQuestion" style="">Add Question</button></div>
-            <button name="edit" id="update" class="btn btn-info btn-lg btn-block">Update</button>
+            <button name="edit" id="update" class="btn btn-info btn-block offset-md-10 col-md-2">Update</button>
             </form>
         </div>
     </div>
