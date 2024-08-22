@@ -24,15 +24,21 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
 });
 // Authenticated user only routes
 Route::middleware(["auth", "web"])->group(function () {
-    Route::prefix('patients')->group(function () {
+    Route::prefix('patients')->group(function () { 
         Route::get('/patients-list', 'RCare\Patients\Http\Controllers\PatientController@fetchPatients')->name('patients_list'); 
-        Route::get('{id}', 'RCare\Patients\Http\Controllers\PatientController@fetching')
-        ->name('patient.details');   
-
+        Route::get('/patientdetails/{id}', 'RCare\Patients\Http\Controllers\PatientController@fetching')->name('patient.details');   
+        Route::post('/patient-surgery', 'RCare\Patients\Http\Controllers\PatientController@savePatientSurgeryData')->name("save.patient.surgeryData");
+       
+        Route::post('/ajax/submitRegistration', 'RCare\Patients\Http\Controllers\PatientController@patientRegistration')->name("ajax.patient.registration");
+        
+        Route::get('/questions/{id}', 'RCare\Patients\Http\Controllers\PatientController@fetchQuestions')->name('questions'); 
+        Route::get('/patient-relationship-questionnaire/{patient_id}/{module_id}/{component_id}/patient-relationship-questionnaire', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientRelationshipQuestionnaires')->name('patient_relationship_questionnaire');
+        Route::post('/monthly-monitoring-call-relationship', 'RCare\Patients\Http\Controllers\PatientController@SaveCallRelationship')->name('monthly.monitoring.call.relationship');
     });
 });
 
 //testunscribed
+
 
 
 Route::get("/testlink", function () {

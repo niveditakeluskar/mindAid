@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Renova Healthcare</title>
+        <title>PeriOp</title>
           <!--  andy22nov21 -->
           
        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
@@ -73,7 +73,7 @@
         <!-- ============ Search UI Start ============= -->
         {{-- @include('Theme::layouts_2.search') --}}
         <!-- ============ Search UI End ============= -->
-        @include('Theme::layouts_2.to-list-customizer')
+        
         <!-- ============ Horizontal Layout End ============= -->
         <!-- LAModel Started here -->
         <div class="modal fade" id="logout_modal" aria-hidden="true">

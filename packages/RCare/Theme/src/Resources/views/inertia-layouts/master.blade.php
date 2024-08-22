@@ -69,39 +69,8 @@
         </div> <!-- ============ Body content End ============= -->
     </div> <!--=============== End app-admin-wrap ================-->
 
-    <?php
-    if ($module_name != '' && $module_name != 'patients' && $patient_list != 'patients' && (($module_name == 'ccm' && $component_name == 'monthly-monitoring') || ($module_name == 'ccm' && $component_name == 'care-plan-development') || ($module_name == 'rpm' && $patient_list != ''))) {
-    ?>
-        @include('Theme::layouts_2.patient_caretool_data')
-        @include('Theme::layouts_2.patient_status')
-        @include('Theme::layouts_2.patient_careplan')
-        @include('Theme::layouts_2.previous-month-notes')
-    <?php
-    }
-    ?>
-    @include('Theme::layouts_2.to-list-customizer')
-    @include('Theme::layouts_2.cm-patient-assign')
-    <!-- ============ Horizontal Layout End ============= -->
-
-    <!-- Model Started here -->
-    <!-- <div class="modal fade" id="logout_modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Logout Alert</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>You are inactive on screen since few minutes. Do you really want to logout?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary float-right" id="logout_yes" data-dismiss="modal">Yes</button>
-                    <button type="button" class="btn btn-default float-left" id="logout_no" data-dismiss="modal">No</button>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
+    
+    
     {{-- common js --}}
     <script defer src="{{  asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}

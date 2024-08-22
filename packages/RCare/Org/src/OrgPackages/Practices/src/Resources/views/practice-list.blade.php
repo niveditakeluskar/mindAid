@@ -9,12 +9,12 @@
             <div class="col-md-10">
              <div class="alert alert-success" id="success-alert" style="display: none;">
                 <button type="button" class="close" data-dismiss="alert">x</button>
-                <strong>Practice Data saved successfully! </strong><span id="text"></span>
+                <strong>Clinic Data saved successfully! </strong><span id="text"></span>
               </div>
               <div id ="success"></div>
             </div>
             <div class="col-md-2">
-              <a class="btn btn-success btn-sm mb-4 ml-5" href="javascript:void(0)" id="addPractice">Add Practice</a>  
+              <a class="btn btn-success btn-sm mb-4 ml-5" href="javascript:void(0)" id="addPractice">Add Clinic</a>  
             </div>
             <div class="separator-breadcrumb border-top"></div>
           <!--  <a class="btn btn-success btn-sm " href="javascript:void(0)" id="addUser"> Add Role</a>    -->            
@@ -24,9 +24,9 @@
                   <thead>
                       <tr>
                           <th width ="10px">Sr No.</th>
-                          <th width ="10px">Practice</th>        
+                          <th width ="10px">Clinic</th>        
                           <th width ="10px">Location</th>
-                          <th width ="10px">Practice Number</th>
+                          <th width ="10px">Clinic Number</th>
                           <th width ="10px">Address</th>
                           <th width ="10px">Phone Number</th>
                           <th width ="10px">Last Modified By</th>
@@ -48,7 +48,7 @@
     <div class="modal-dialog modal-lg" style="width: 635px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="modelHeading1">Add Practice</h4>
+                <h4 class="modal-title" id="modelHeading1">Add Clinic</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form action="{{ route('create_org_practice') }}" method="POST" name="AddPracticeForm" id="AddPracticeForm">
@@ -59,12 +59,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6 form-group mb-3 ">
-                                <label for="practicename">Practice  <span style="color:red">*</span></label>
-                                @text("name", ["placeholder" => "Enter Practice Name"])
+                                <label for="practicename">Clinic  <span style="color:red">*</span></label>
+                                @text("name", ["placeholder" => "Enter Clinic Name"])
                             </div>
                             <div class="col-md-6 form-group mb-3 ">
-                                <label for="practicename">Practice Number <span style="color:red">*</span></label>
-                                @text("number",["placeholder" => "Enter Practice Number"])
+                                <label for="clinicname">Clinic Number <span style="color:red">*</span></label>
+                                @text("number",["placeholder" => "Enter Clinic Number"])
                             </div>
                             <div class="col-md-6 form-group mb-3 ">
                                 <label for="practicename">Location <span style="color:red">*</span></label>

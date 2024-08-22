@@ -32,11 +32,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Questionnaire Name</th>
-                                <th>Type</th> 
-                                <th>Module</th>
-                                <th>Sub Module</th>
-                                <th>Stage</th>
-                                <th>Step</th> 
+                                <th>Surgery</th> 
                                 <th>Sequence</th>
                                 <th>Last Modified By</th>  
                                 <th>Last Modified On</th>           
@@ -65,20 +61,8 @@
                         }
                     },
                     {data: 'template.template_type', name: 'template.template_type'},
-                    {data: 'module.module', name: 'module.module'},
-                    {data: 'components.components', name: 'components.components'},
-                    {data: 'stage.description', name: 'stage.description',render: function(data, type, full, meta){
-                        if(data!='' && data!='NULL' && data!=undefined){
-                            return data;
-                        }else{return '';}
-                        }
-                    },
-                    {data: 'step.description', name: 'step.description',render: function(data, type, full, meta){
-                        if(data!='' && data!='NULL' && data!=undefined){
-                            return data;
-                        }else{return '';}
-                        }
-                    },
+                    // surgery name
+                    
                     {data: 'sequence', name: 'sequence'},
                     {data: 'users.f_name', name: 'users.f_name',render: function(data, type, full, meta){
                         if(data!='' && data!='NULL' && data!=undefined){

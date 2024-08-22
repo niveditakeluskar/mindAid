@@ -28,13 +28,13 @@ $stage_id = getFormStagesId($module_id, 'Relationship');
             <form name="copy_question_form" id="copy_question_form" >
             @csrf
                 <div class="card-body">
-                    <div class="form-group">
+                    <div class="form-group"> 
                         <div class="row">
                             <div class="col-md-3 form-group mb-3">
                                 <label class="">Content Title <span class="error">*</span></label>
                                 @text("content_title", ["id"=>"content_title"])
                             </div> 
-                            <div class="col-md-3 form-group mb-3">
+                            <!-- <div class="col-md-3 form-group mb-3">
                                 <label for="loginuser" class="">Module <span class="error">*</span></label> 
                                  @selectMasterModule("module",["id"=>"module", "disabled"=>"disabled"])
                             </div>
@@ -45,20 +45,20 @@ $stage_id = getFormStagesId($module_id, 'Relationship');
                             <div class="col-md-3 form-group mb-3">
                                 <label>Stage</label>
                                 @select("Stage", "stages", [], ["id" => "stages"])
-                            </div> 
+                            </div>  -->
                         </div>
                     </div>    
 
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-md-6 form-group mb-3">
+                            <!-- <div class="col-md-6 form-group mb-3">
                                 <label>From Step</label>     
                                 @select("Step", "from_stage_code", [], ["id" => "from_stage_code", "class"=>"custom-select select2 capital-first"])
                             </div>
                             <div class="col-md-6 form-group mb-3">
                                 <label>To Step</label>     
                                 @select("Step", "to_stage_code", [], ["id" => "to_stage_code", "class"=>"custom-select select2 capital-first"])
-                            </div>
+                            </div> -->
                         </div>
                     </div> 
                     <div id="list_of_template">

@@ -72,7 +72,7 @@
                                    @text("f_name", ["id" => "txtName", "class" => "capital-first "])
                                </div>
                                <div class="col-md-4 form-group mb-3">
-                                    <label for="username"><span class="error">*</span> Last Name</label>
+                                    <label for="username">Middle Name</label>
                                     @text("m_name", ["id" => "m_name","class" => "capital-first"])
                                 </div>
                                 <div class="col-md-4 form-group mb-3">
@@ -82,11 +82,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 form-group mb-3" >
-                                   <label>Date of Birth</label>
+                                   <label for="dob"><span class="error">*</span> Date of Birth</label>
 									@date("dob")
                                </div>
                                <div class="col-md-6 form-group mb-3">
-                                    <label>Gender</label>
+                                    <label for="gender"><span class="error">*</span> Gender</label>
                                     @select("Gender", "gender", [ 0 => "Male", 1 => "Female"])
                                 </div>
                             </div>
@@ -97,7 +97,7 @@
                                 </div>
                                 <div class="col-md-6 form-group mb-3">
                                     <label for="email"><span class="error">*</span> Email Address</label>
-                                    @email("email", ["id" => "email", "class" => " "])
+                                    @email("email", ["id" => "email", "class" => "email"])
                                 </div>
                             </div>
                         </div>
@@ -113,11 +113,11 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group mb-3">
-								<label>Country Code</label>
+								<label for="country_code"><span class="error">*</span> Country Code</label>
 								@selectcountrycode("country_code", ["id" => "country_code"]) 
 							</div> 
                             <div class="col-md-6 form-group mb-3">
-                                <label for="password"><span class="error">*</span> Contact Number (MFA)</label>
+                                <label for="number"><span class="error">*</span> Contact Number (MFA)</label>
                                  @phone("number", ["id"=> "number"])
                             </div>
                         </div>
@@ -216,7 +216,7 @@
                                                     @text("l_name", ["id" => "edit-l-name", "class" => "capital-first"])
                                                 </div>
                                                 <div class="col-md-4 form-group mb-3">
-                                                    <label for="username"><span class="error">*</span> Middle Name</label>
+                                                    <label for="username"> Middle Name</label>
                                                     @text("m_name", ["id" => "edit-m-name", "class" => "capital-first"])
                                                 </div> 
                                             </div>

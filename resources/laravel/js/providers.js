@@ -229,8 +229,9 @@ var onResult = function (form, fields, response, error) {
 
 
 var init = function () {
+	alert('hy!!!!');
 	// renderProvidersTable();
-	// renderProvidersTypeTable();
+	// renderProvidersTypeTable(); 
 	// renderProvidersSubtypeTable();
 //Provider
 $('#addProvider').click(function () {

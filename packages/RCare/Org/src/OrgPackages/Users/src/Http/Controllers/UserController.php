@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use RCare\Org\OrgPackages\Users\src\Models\Users;
 use RCare\Org\OrgPackages\Users\src\Models\OrgUserRole;
 use RCare\Org\OrgPackages\Roles\src\Models\Roles;
+use RCare\Org\OrgPackages\Providers\src\Models\Providers;
 use Carbon\Carbon;
 use RCare\Org\OrgPackages\Roles\src\Models\RolesTypes;
 use Illuminate\Http\UploadedFile; 
@@ -61,11 +62,10 @@ class UserController extends Controller {
        try {
             $userdata = array(
                 'f_name'       => sanitizeVariable($request->f_name), 
-                'l_name'       => sanitizeVariable($request->l_name), 
-                'email'        => sanitizeVariable($request->email), 
+                'l_name'       => sanitizeVariable($request->l_name),
+                'm_name'       => sanitizeVariable($request->m_name),
                 'role'         => sanitizeVariable($request->role),
-                'm_name'       => sanitizeVariable($request->l_name), 
-                'report_to'    => sanitizeVariable($request->report_to), 
+                'email'        => sanitizeVariable($request->email), 
                 'password'     => Hash::make(sanitizeVariable($request->input('password'))),
                 'created_by'   => session()->get('userid'),
                 'updated_by'   => session()->get('userid'),
@@ -75,23 +75,31 @@ class UserController extends Controller {
                 'address'      => sanitizeVariable($request->address),
                 'city'         => sanitizeVariable($request->city),
                 'dob'          => sanitizeVariable($request->dob),
-                'qualification'       => sanitizeVariable($request->qualification),
-                'licenese_number'       => sanitizeVariable($request->licenese_number),
-                'speciality_id'       => sanitizeVariable($request->speciality_id),
             );
              //dd($userdata);
             $user = Users::create($userdata);
-            // $user->save();
             $userId = $user->id;
-           // dd($userId);
-           $roleId = $user->role;
+            $roleId = $user->role;
            // dd($roleId);
-           if($userId) {
+           if($roleId) {
+                //echo $UserRole;
                 $UserRole = OrgUserRole::create([
-                    'user_id' => $userId,
-                    'role_id' => $roleId
+                    'user_id'      => $userId,
+                    'role_id'      => $roleId,
+                    'created_by'   => session()->get('userid'),
+                    'updated_by'   => session()->get('userid'),
                 ]);
-                //echo $UserRole; 
+            }
+            if($userId){ 
+                $userId = Providers::create([
+                    'physician_id'        => $userId,
+                    'qualification'       => sanitizeVariable($request->qualification),
+                    'licenese_number'     => sanitizeVariable($request->licenese_number),
+                    'speciality_id'       => sanitizeVariable($request->speciality_id),
+                    'created_by'          => session()->get('userid'),
+                    'updated_by'          => session()->get('userid'),
+                    'is_active'           => 1,
+                ]);
             }
         } catch (\Exception $ex){
             // \Log::error("Error in store(): ".$ex->getMessage());

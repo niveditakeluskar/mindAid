@@ -39,7 +39,7 @@ class Module extends Model
     public static function activeModule()
     {
         // return Module::all()->where("status", 1);
-        return Module::where("status", 1)->where('patients_service', 1)->orderBy('module', 'asc')->get();
+        return Module::where("status", 1)->orderBy('module', 'asc')->get();
     }
 
     public static function activeMasterModule()
@@ -50,7 +50,7 @@ class Module extends Model
     public static function mainModule()
     {
         // return Module::all()->where("status", 1); RPM CCm only
-        return Module::where("status", 1)->whereIn('id', array(2, 3))->orderBy('module', 'asc')->get();
+        return Module::where("status", 1)->orderBy('module', 'asc')->get();
     }
 
 

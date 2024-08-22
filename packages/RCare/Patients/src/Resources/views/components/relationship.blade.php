@@ -1,15 +1,15 @@
 <?php
 
-    $rmodule_id = 3;
-    $rsubmodule_id = 19;
-    $patient_id = 1805770252;
+    $rmodule_id = getPageModuleName();
+    $rsubmodule_id = 87;
+    $patient_id = $patient[0]->pid;
 ?>
 <div class="card">
 <form id="relationship_form" name="relationship_form" action="{{ route("monthly.monitoring.call.relationship") }}" method="post"> 
         @csrf
         <div class="card-body">
             
-            <input type="hidden" name="patient_id" value="1805770252" />   
+            <input type="hidden" name="patient_id" value="{{ $patient[0]->pid }}" />   
             <input type="hidden" name="form_name" value="relationship_form">
             <div class="alert alert-success" id="success-alert" style="display: none;">
                 <button type="button" class="close" data-dismiss="alert">x</button>

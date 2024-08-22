@@ -3,7 +3,7 @@
             <div class="flex-grow-1"></div>
            <!--  <div class="app-footer"> -->
                 <div class="row" id="footer">
-                   <p><strong  style="margin-left: 26px">&copy;<?php echo date("Y"); ?> Renova Healthcare. All rights reserved.</strong></p>
+                   <p><strong  style="margin-left: 26px">&copy;<?php echo date("Y"); ?> PeriOps. All rights reserved.</strong></p>
                     <span class="flex-grow-1"></span>
 					
 

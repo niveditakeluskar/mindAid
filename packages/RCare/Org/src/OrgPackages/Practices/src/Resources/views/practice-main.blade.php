@@ -7,7 +7,7 @@
                 <div class="col-md-12 ">  
                     <div class="card text-left">
                         <div class="card-body" >
-                            <h4 class="card-title mb-3">Practices</h4>
+                            <h4 class="card-title mb-3">Clinic</h4>
                             @include('Theme::layouts.flash-message')
                             @if(isset($message))
                                 <div class="col-sm-12">

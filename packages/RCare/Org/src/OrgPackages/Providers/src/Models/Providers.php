@@ -29,6 +29,7 @@ class Providers extends Model
         'created_at',
         'updated_at'
     ];
+    
     // public $timestamps = true;
     // protected $dates = [
     //     'created_at',
@@ -51,14 +52,13 @@ class Providers extends Model
         return self::where('id', $id)->orderBy('created_at', 'desc')->first();
     }
 
-    public static function practices($type)
-    {   $type = sanitizeVariable($type);
-        return Providers::where('provider_type_id',$type)->where("status",1);
-    }
+    // public static function practices($type)
+    // {   $type = sanitizeVariable($type);
+    //     return Providers::where('provider_type_id',$type)->where("status",1);
+    // }
 
-     public static function activeProviders()
-    { 
-      
+    //  public static function activeProviders(){ 
+    //   
         // $providers = \DB::table('ren_core.providers')->where("is_active", 1)->where("name","!=","null")->orderBy('name','asc')->get();
          
         // foreach($providers as $p)
@@ -88,7 +88,7 @@ class Providers extends Model
         //     $p->count = $providerscount;
         // }
         // return $providers;
-    }
+    // }
 
     // public static function newactiveProviders()
     // { 
@@ -139,29 +139,34 @@ class Providers extends Model
     // }
 
 
-      public static function activePracticeProvider($practiceid)
-    {   $practiceid = sanitizeVariable($practiceid);
-        return Providers::orderBy('name','asc')->where('practice_id',$practiceid)->where("is_active", 1)->where("name","!=","null")->get();
-    }
+    //   public static function activePracticeProvider($practiceid)
+    // {   $practiceid = sanitizeVariable($practiceid);
+    //     return Providers::orderBy('name','asc')->where('practice_id',$practiceid)->where("is_active", 1)->where("name","!=","null")->get();
+    // }
 
-    public static function activePCPProvider()
-    {
-        return Providers::where("is_active", 1)->where('provider_type_id',1)->where("name","!=","null")->orderBy('name','asc')->get();
-    }
+    // public static function activePCPProvider()
+    // {
+    //     return Providers::where("is_active", 1)->where('provider_type_id',1)->where("name","!=","null")->orderBy('name','asc')->get();
+    // }
+
+    // public function  users_physician()
+    // {
+    //     return $this->belongsTo('RCare\Org\OrgPackages\Users\src\Models\Users', 'physician_id');
+    // }
 
     public function  practice()
     {
         return $this->belongsTo('RCare\Org\OrgPackages\Practices\src\Models\Practices', 'practice_id');
     }
-    public function provider_type()
-    {
-        return $this->hasMany('RCare\Org\OrgPackages\Providers\src\Models\ProviderType', 'provider_type_id');
-    }
+    // public function provider_type()
+    // {
+    //     return $this->hasMany('RCare\Org\OrgPackages\Providers\src\Models\ProviderType', 'provider_type_id');
+    // }
 
-    public function subprovider_type()
-    {
-        return $this->hasMany('RCare\Org\OrgPackages\Providers\src\Models\ProviderSubtype', 'provider_subtype_id');
-    }
+    // public function subprovider_type()
+    // {
+    //     return $this->hasMany('RCare\Org\OrgPackages\Providers\src\Models\ProviderSubtype', 'provider_subtype_id');
+    // }
     public function users()
     {
          return $this->belongsTo('RCare\Org\OrgPackages\Users\src\Models\Users','updated_by');

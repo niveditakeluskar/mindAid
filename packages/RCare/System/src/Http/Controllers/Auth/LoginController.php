@@ -65,7 +65,7 @@ class LoginController extends Controller
             $this->setLogOutLog_renCore();
             Auth::logout();
         }      
-        $base_url = strtolower(URL::to('/').'/rcare-login'); 
+        $base_url = strtolower(URL::to('/').'/login'); 
         $DomainFeatures=DomainFeatures::where('features','2FA')
         // ->where(DB::raw('lower(url)'), $base_url)
         ->first(); 
@@ -137,7 +137,7 @@ class LoginController extends Controller
         $role_type = $role_details[0]->role_type;
         $timezone    =   !empty(sanitizeVariable($request->input('timezone')))? sanitizeVariable($request->input('timezone')) : config('app.timezone');
         $base_url_data = URL::to('/');
-        $base_url = strtolower(URL::to('/').'/rcare-login');  
+        $base_url = strtolower(URL::to('/').'/login');  
         if(sanitizeVariable($request->input('page_name')=='login')){
             $request->validate([
                 'code'=>'required', 
@@ -214,7 +214,7 @@ class LoginController extends Controller
                            'email' => $chk_attempts->email, 
                            'name'  => $chk_attempts->f_name, 
                            'url'   =>  $base_url_data.'/password/reset?token='.$chk_attempts->token.'&login_as=2',
-                           'link'  => $base_url_data.'/rcare-login'
+                           'link'  => $base_url_data.'/login'
                     );
                     try{
 
@@ -256,9 +256,9 @@ class LoginController extends Controller
 
     public function generateCode($id,$user_level_sms,$user_level_email){   
         try {
-            $base_url = URL::to('/').'/rcare-login'; 
+            $base_url = URL::to('/').'/login'; 
             // dd($base_url);
-            //strtolower(URL::to('/').'/rcare-login');
+            //strtolower(URL::to('/').'/login');
             $userlevelmfa = Users::where('id',$id)->first();
             $user_level_sms = isset($user_level_sms)?$user_level_sms:0;
             $user_level_email =isset($user_level_email)?$user_level_email:0;
@@ -330,7 +330,7 @@ class LoginController extends Controller
                         'name'=>$emailID->f_name, 
                         'url'=> $base_url.'/password/reset?token='.$emailID->token.'&login_as=1',
                         'otp' =>$emailID->otp_code, 
-                        'link'=> $base_url.'/rcare-login'
+                        'link'=> $base_url.'/login'
                     );
                     // try{
                         $data['message'] = 'Hi '. $data["name"];
@@ -417,7 +417,7 @@ class LoginController extends Controller
                         'name'=>$emailID->f_name, 
                         'url'=> $base_url.'/password/reset?token='.$emailID->token.'&login_as=1',
                         'otp' =>$emailID->otp_code, 
-                        'link'=> $base_url.'/rcare-login'
+                        'link'=> $base_url.'/login'
                     );
                         
                     try{
@@ -574,7 +574,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {  //dd($password_attempts);  
-        $base_url = strtolower(URL::to('/').'/rcare-login'); 
+        $base_url = strtolower(URL::to('/').'/login'); 
         // dd($base_url); 
         $remember    =    sanitizeVariable($request->input('remember'));
         $credentials =    sanitizeVariable($request->only('email', 'password')); 
@@ -763,7 +763,7 @@ class LoginController extends Controller
                                             $response['success']='n';
                                             $response['url']='';
                                             $response['error']='Incorrect username or password. Please try again.';
-                                        // return redirect()->route('rcare-login')->with('message','Incorrect username or password. Please try again.');
+                                        // return redirect()->route('login')->with('message','Incorrect username or password. Please try again.');
                                     }
                             }
                         }else{//without 2FA
@@ -1375,7 +1375,7 @@ class LoginController extends Controller
     //                                     $response['success']='n';
     //                                     $response['url']='';
     //                                     $response['error']='Incorrect username or password. Please try again.';
-    //                                 // return redirect()->route('rcare-login')->with('message','Incorrect username or password. Please try again.');
+    //                                 // return redirect()->route('login')->with('message','Incorrect username or password. Please try again.');
     //                             }
     //                     }
     //                 }else{//without 2FA
@@ -1448,7 +1448,7 @@ class LoginController extends Controller
         
         $this->setLogOutLog_renCore();
         Auth::logout();
-        return redirect()->route("rcare-login");
+        return redirect()->route("login");
     }
 
      // REN_CORE USERS//created by ashvini 27 january 2021

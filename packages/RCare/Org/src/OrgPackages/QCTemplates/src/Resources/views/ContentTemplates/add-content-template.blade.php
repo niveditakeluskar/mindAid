@@ -95,12 +95,7 @@
                                     @text("subject", ["id" => "subject", "placeholder" => "Enter Subject"])
                                 </div>  
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 form-group mb-3">
-                                    <label>Devices</label>                                   
-                                    @selectDevice("devices",["id"=>"devices"])
-                                     </div>                                
-                            </div>
+                            
                         </div>
                         <h1>Content <span class="error">*</span></h1>
                         <textarea name="content" id="editor" cols="30" rows="10"></textarea>

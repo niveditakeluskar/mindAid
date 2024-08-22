@@ -621,6 +621,7 @@
     {
 
         $role = Session::get('role');
+        
         if ($role == '') {
             $role = 0;
         }
@@ -1852,7 +1853,7 @@
     {
         $module_id = $m;
         $submodule_id = $sm;
-        $stage_id = getFormStageId($module_id, $submodule_id, "Relationship");
+        $stage_id = getFormStageId($module_id, $submodule_id, "Question");
         $i = 0;
 
         $content = "";
@@ -1904,7 +1905,7 @@
                         $monthly_notes = $patientsRelationQuestionnaire->monthly_notes;
                     }
                     $q_arr         = $question_data->question->q;
-                    $content = $content . '<div class="card-title">' . $step_name . '</div>';
+                    $content = $content . '<div class="card-title">' . $step->description . '</div>';
                     //$content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[\'template_id\']" value="'.json_decode($questionnaire[0]->id).'">';
 
                     $content = $content . "<input type='hidden' name=" . $step_name_trimmed . "[template_id] value=" . json_decode($questionnaire[0]->id) . ">";
@@ -1966,7 +1967,8 @@
                                     $score_value = $scoreid;
                                 }
                             }
-                            $content = $content . '<input type="text" ' . $onclick . ' name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" class="form-control col-md-8"  value="' . ($questionExist ? $patient_questionnaire[$questionTitle] : '') . '"><div class="invalid-feedback"></div><input  type="hidden" class="text-' . $step_name_trimmed . '" value="' . $score_value . '" id="text-score-' . $qid . '">';
+                            // $content = $content . '<input type="text" ' . $onclick . ' name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" class="form-control col-md-8"  value="' . ($questionExist ? $patient_questionnaire[$questionTitle] : '') . '"><div class="invalid-feedback"></div><input  type="hidden" class="text-' . $step_name_trimmed . '" value="' . $score_value . '" id="text-score-' . $qid . '">';
+                            $content = $content . '<span>' . ($questionExist ? $patient_questionnaire[$questionTitle] : '') . '</span>';
                             $txtinc++;
                         } elseif (property_exists($q, 'label') && $q->answerFormat == '3') {
                             $content = $content . '<div class="checkRadio forms-element">';
@@ -1980,11 +1982,12 @@
                                         $score_value = $scoreid;
                                     }
                                 }
-                                $content = $content . '<label class="radio radio-primary col-md-4 float-left" for="' . $questionTitle . '_' . $labels . '">
-                                                    <input ' . $onclick . ' type="radio" name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" value="' . $labels . '" formControlName="radio" id="' . $questionTitle . '_' . $labels . '"  ' . ($questionExist && $patient_questionnaire[$questionTitle] == $labels ? 'checked' : '') . '>
-                                                    <span>' . $labels . '</span>
-                                                    <span class="checkmark"></span>
-                                                </label>';
+                                // $content = $content . '<label class="radio radio-primary col-md-4 float-left" for="' . $questionTitle . '_' . $labels . '">
+                                //                     <input ' . $onclick . ' type="radio" name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" value="' . $labels . '" formControlName="radio" id="' . $questionTitle . '_' . $labels . '"  ' . ($questionExist && $patient_questionnaire[$questionTitle] == $labels ? 'checked' : '') . '>
+                                //                     <span>' . $labels . '</span>
+                                //                     <span class="checkmark"></span>
+                                //                 </label>';
+                                 $content = $content . ' <span >' .($questionExist && $patient_questionnaire[$questionTitle] == $labels ? $labels : '').'</span>';
                                 $k++;
                             }
                             $content = $content . '</div><div class="invalid-feedback"></div><input  type="hidden" class="radio-' . $step_name_trimmed . '" value="' . $score_value . '" id="radio-score-' . $qid . '">';
@@ -1995,11 +1998,7 @@
                             $qid = $step_name_trimmed . '' . $checkinc;
                             foreach ($q->label as $labels) {
                                 $checked = '';
-                                if (array_key_exists($questionTitle, $patient_questionnaire)) {
-                                    if (array_key_exists(str_replace(' ', '_', $labels), $patient_questionnaire[$questionTitle])) {
-                                        $checked = 'checked';
-                                    }
-                                }
+                               
                                 if ($exist == 1) {
                                     $scoreid = $score[$k];
                                     $onclick = "onclick=add_score($scoreid,'$qid','check')";
@@ -2011,11 +2010,18 @@
                                 //echo "--".str_replace(' ','_',$labels).'<br/>';
 
                                 $labelArray = str_replace(' ', '_', trim($labels));
-                                $content = $content . '<label class="checkbox checkbox-primary col-md-4 float-left" for="' . $questionTitle . '_' . $labelArray . '">
-                                                    <input ' . $onclick . ' class="form-check-input" value="' . $labels . '" type="checkbox" name="' . $step_name_trimmed . '[question][' . $questionTitle . '][' . $labelArray . ']" id="' . $questionTitle . '_' . $labelArray . '"  ' . $checked . '>
-                                                    <span>' . $labels . '</span>
-                                                    <span class="checkmark"></span>
-                                                </label>';
+                                // $content = $content . '<label class="checkbox checkbox-primary col-md-4 float-left" for="' . $questionTitle . '_' . $labelArray . '">
+                                //                     <input ' . $onclick . ' class="form-check-input" value="' . $labels . '" type="checkbox" name="' . $step_name_trimmed . '[question][' . $questionTitle . '][' . $labelArray . ']" id="' . $questionTitle . '_' . $labelArray . '"  ' . $checked . '>
+                                //                     <span>' . $labels . '</span>
+                                //                     <span class="checkmark"></span>
+                                //                 </label>';
+                                if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                                    if (array_key_exists(str_replace(' ', '_', $labels), $patient_questionnaire[$questionTitle])) {
+                                         $content = $content . '<span>'.$labels.'</span>';
+                                         $content = $content .  ', ';
+                                    }
+                                }
+                               
                                 $k++;
                             }
                             $content = $content . '</div><div class="invalid-feedback"></div><input type="hidden" class="check-' . $step_name_trimmed . '" value="' . $score_value . '"  id="check-score-' . $qid . '">';
@@ -2052,7 +2058,7 @@
             }
         }
         
-        echo '<div class="form-row"><div class="col-md-12 form-group card-title">Patient Relationship Building</div></div>';
+        //echo '<div class="form-row"><div class="col-md-12 form-group card-title">Patient Relationship Building</div></div>';
         $patientqut = RCare\Patients\Models\PatientQuestionnaire::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
         $patientsRelationBuildingQuestionnaire =  RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('template_id', 0)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
         $patient_building_template_exists = 0;
@@ -2199,6 +2205,240 @@ function getDevice($id){
         }
 
         echo $content;
+    }
+
+
+
+    function getRelationshipQuestionnairePriop($patient_id, $mid, $cid)
+    {
+        $module_id = $mid;
+        $submodule_id = $cid;
+        $stage_id = getFormStageId($module_id, $submodule_id, "Question");
+        $i = 0;
+
+        $content = "";
+        $content = $content . '<input type="hidden" name="stage_id" value="' . $stage_id . '">';
+        //$patientqut =  RCare\Patients\Models\PatientQuestionnaire::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        // return " module_id==" . $module_id . "  submodule_id=="  . $submodule_id . "  stage_id==" .$stage_id;
+        // $steps = DB::connection('ren_core')->select("SELECT * FROM ren_core.stage_codes WHERE module_id = '".$module_id."' AND submodule_id = '".$submodule_id."' AND stage_id ='".$stage_id."'");
+        $steps = RCare\Org\OrgPackages\StageCodes\src\Models\StageCode::where('module_id', $module_id)->where('submodule_id', $submodule_id)->where('stage_id', $stage_id)->orderBy('sequence', 'ASC')->get();
+
+        $callp = RCare\Ccm\Models\CallPreparation::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        foreach ($steps as $step) {
+            $new_stage_id = $step->stage_id;
+            $step_id   = $step->id;
+            $step_name = $step->description;
+            $step_name = preg_replace('/[^A-Za-z0-9\-]/', '', trim($step_name));
+            $step_name_trimmed = str_replace(' ', '_', trim($step_name));
+
+            $one_time = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('one_time_entry', 1)->where('stage_code', $step_id)->get();
+            //print_r($one_time[0]->one_time_entry);
+            if (isset($one_time[0]->one_time_entry)) {
+                $patientsRelationQuestionnaire = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('stage_id', $stage_id)->where('stage_code', $step_id)->orderBy('created_at', 'desc')->first();
+            } else {
+                $patientsRelationQuestionnaire = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('stage_id', $stage_id)->where('stage_code', $step_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+            }
+
+
+
+            // $questionnaire = RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('stage_id', $stage_id)->where('stage_code', $step_id)->latest()->get();
+            $questionnaire = RCare\Org\OrgPackages\QCTemplates\src\Models\QuestionnaireTemplate::where('module_id', $module_id)->where('status', 1)->where('template_type_id', 5)->where('stage_id', $new_stage_id)->where('stage_code', $step_id)->orderBy('id', 'DESC')->take(1)->get();
+            if (isset($questionnaire) && ($questionnaire != null) && ($questionnaire != "") && count($questionnaire) > 0) {
+
+                $months = json_decode($questionnaire[0]->display_months);
+                if (empty($months)) {
+                    $months = array("All");
+                }
+                if (in_array(date('F'), $months) || in_array("All", $months)) {
+                    $question_data = json_decode($questionnaire[0]->question);
+                    $template_id = json_decode($questionnaire[0]->id);
+
+                    $patient_template_exists = 0;
+                    $monthly_notes = '';
+                    $patient_questionnaire = array();
+                    if (isset($patientsRelationQuestionnaire->template_id) && $patientsRelationQuestionnaire->template_id != "") {
+                        $patient_rel_template_id = $patientsRelationQuestionnaire->template_id;
+                        if ($patient_rel_template_id == $template_id) { //  condition needs to be analysed basedon if we are updating or making new entry for same template.
+                            $patient_template_exists = 1;
+                            $patient_questionnaire = json_decode($patientsRelationQuestionnaire->template, true);
+                        }
+                        $monthly_notes = $patientsRelationQuestionnaire->monthly_notes;
+                    }
+                    $q_arr         = $question_data->question->q;
+                    $content = $content . '<div class="card-title"> Test Questionnaire </div>';
+                    //$content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[\'template_id\']" value="'.json_decode($questionnaire[0]->id).'">';
+
+                    $content = $content . "<input type='hidden' name=" . $step_name_trimmed . "[template_id] value=" . json_decode($questionnaire[0]->id) . ">";
+                    // $content = $content . '<input type="hidden" name="'.$step_name_trimmed.'[stage_id]" value="'.$stage_id.'">';
+                    $content = $content . '<input type="hidden" name="' . $step_name_trimmed . '[step_id]" value="' . $step_id . '">';
+                    $content = $content . '<input type="hidden" name="step_id" value="' . $step_id . '">';
+                    $content = $content . '<input type="hidden" name="' . $step_name_trimmed . '[template_type_id]" value="' . json_decode($questionnaire[0]->template_type_id) . '">';
+                    $j = 1;
+                    $radioinc = 0;
+                    $txtinc = 0;
+                    $dropinc = 0;
+                    $areainc = 0;
+                    $checkinc = 0;
+                    foreach ($q_arr as $q) {
+                        $questionTitle = str_replace(' ', '_', trim($q->questionTitle));
+                        $questionExist = 0;
+                        if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                            $questionExist = 1;
+                        }
+
+                        $exist = 0;
+                        $scoreid = '';
+                        $score_value = 0;
+                        $onclick = '';
+                        if (property_exists($q, 'score') && $questionnaire[0]->score) {
+                            $exist = 1;
+                            $score = $q->score;
+                        }
+
+                       
+                        if (property_exists($q, 'label') && $q->answerFormat == '1') {
+                            $content = $content . '<div class="form-row"> <div class="col-md-12 form-group"> <div class="mb-1"><strong class="mr-1">' . $j . ': <span>' . $q->questionTitle . '</span> </strong></div>';
+                            $qid = $step_name_trimmed . '' . $dropinc;
+                            if ($exist == 1) {
+                                $onclick = "onchange=add_score(this,'$qid','drop')";
+                            }
+                            //print_r($patient_questionnaire);
+                            $content = $content . '<select name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" class="col-md-3 custom-select" ' . $onclick . '>';
+                            $content = $content . '<option value="">Select Option</option>';
+                            $k = 0;
+                            foreach ($q->label as $labels) {
+                                if ($exist == 1) {
+                                    $scoreid = $score[$k];
+                                    $onclick = "onclick=add_score($scoreid,'$step_name_trimmed','drop')";
+                                    if ($questionExist && $patient_questionnaire[$questionTitle] == $labels) {
+                                        $score_value = $scoreid;
+                                    }
+                                }
+                                $content = $content . '<option  id="' . $scoreid . '" value="' . $labels . '" ' . ($questionExist && $patient_questionnaire[$questionTitle] == $labels ? 'selected' : '') . '>' . $labels . '</option>';
+                                $k++;
+                            }
+                            $content = $content . '</select><div class="invalid-feedback"></div><input class="drop-' . $step_name_trimmed . '" type="hidden" value="' . $score_value . '" id="drop-score-' . $qid . '">';
+                            $dropinc++;
+                        } elseif ($q->answerFormat == '2') {
+                            $content = $content . '<div class="text-input">';
+                            $content = $content . '<div class="info"><span class="question">'.$j.': '.$q->questionTitle.'</span><span class="steps">'.$j.'/3</span></div>';
+                            $qid = $step_name_trimmed . '' . $txtinc;
+                            if ($exist == 1) {
+                                $scoreid = $score[0];
+                                $onclick = "onclick=add_score($scoreid,'$qid','text')";
+                                if ($questionExist) {
+                                    $score_value = $scoreid;
+                                }
+                            }
+                            $content = $content . '<input type="text" ' . $onclick . ' name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" class="form-control"  value="' . ($questionExist ? $patient_questionnaire[$questionTitle] : '') . '"></div><div class="invalid-feedback"></div><input  type="hidden" class="text-' . $step_name_trimmed . '" value="' . $score_value . '" id="text-score-' . $qid . '">';
+                            $txtinc++;
+                        } elseif (property_exists($q, 'label') && $q->answerFormat == '3') {
+                            $content = $content . '<div class="radio-input mt-2">';
+                            $content = $content . '<div class="info"><span class="question">'.$j.': '.$q->questionTitle.'</span><span class="steps">'.$j.'/3</span></div>';
+                            $k = 0;
+                            $qid = $step_name_trimmed . '' . $radioinc;
+                            foreach ($q->label as $labels) {
+                                if ($exist == 1) {
+                                    $scoreid = $score[$k];
+                                    $onclick = "onclick=add_score($scoreid,'$qid','radio')";
+                                    if ($questionExist && $patient_questionnaire[$questionTitle] == $labels) {
+                                        $score_value = $scoreid;
+                                    }
+                                }
+                                $content = $content . '<input ' . $onclick . ' type="radio" name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" value="' . $labels . '"  id="' . $questionTitle . '_' . $labels . '"  ' . ($questionExist && $patient_questionnaire[$questionTitle] == $labels ? 'checked' : '') . '>
+                                                    <label for="' . $questionTitle . '_' . $labels . '">' . $labels . '</label>';
+                                $k++;
+                            }
+                            $content = $content . '</div><div class="invalid-feedback"></div><input  type="hidden" class="radio-' . $step_name_trimmed . '" value="' . $score_value . '" id="radio-score-' . $qid . '">';
+                            $radioinc++;
+                        } elseif (property_exists($q, 'label') && $q->answerFormat == '4') {
+                            $content = $content . '<div class="mutation-selection-container mt-2">';
+                            $content = $content . '<div class="info"><span class="question">'.$j.': '.$q->questionTitle.'</span><span class="steps">'.$j.'/3</span></div>';
+                            $k = 0;
+                            $qid = $step_name_trimmed . '' . $checkinc;
+                            foreach ($q->label as $labels) {
+                                $checked = '';
+                                if (array_key_exists($questionTitle, $patient_questionnaire)) {
+                                    if (array_key_exists(str_replace(' ', '_', $labels), $patient_questionnaire[$questionTitle])) {
+                                        $checked = 'checked';
+                                    }
+                                }
+                                if ($exist == 1) {
+                                    $scoreid = $score[$k];
+                                    $onclick = "onclick=add_score($scoreid,'$qid','check')";
+                                    if ($questionExist && $patient_questionnaire[$questionTitle][str_replace(' ', '_', $labels)] == 1) {
+                                        $score_value = $score_value + $scoreid;
+                                    }
+                                }
+                                //print_r($patient_questionnaire[$questionTitle][str_replace(' ','_',$labels)]);
+                                //echo "--".str_replace(' ','_',$labels).'<br/>';
+
+                                $labelArray = str_replace(' ', '_', trim($labels));
+                                $content = $content . '<label for="' . $questionTitle . '_' . $labelArray . '">
+                                                    <input ' . $onclick . ' value="' . $labels . '" type="checkbox" name="' . $step_name_trimmed . '[question][' . $questionTitle . '][' . $labelArray . ']" id="' . $questionTitle . '_' . $labelArray . '"  ' . $checked . '>
+                                                    ' . $labels . '</label>';
+                                $k++;
+                            }
+                            $content = $content . '</div><div class="invalid-feedback"></div><input type="hidden" class="check-' . $step_name_trimmed . '" value="' . $score_value . '"  id="check-score-' . $qid . '">';
+                            $checkinc++;
+                        } elseif ($q->answerFormat == '5') {
+                            $content = $content . '<div class="form-row"> <div class="col-md-12 form-group"> <div class="mb-1"><strong class="mr-1">' . $j . ': <span>' . $q->questionTitle . '</span> </strong></div>';
+                            $qid = $step_name_trimmed . '' . $areainc;
+                            if ($exist == 1) {
+                                $scoreid = $score[0];
+                                $onclick = "onclick=add_score($scoreid,'$qid','textarea')";
+                                if ($questionExist) {
+                                    $score_value = $scoreid;
+                                }
+                            }
+                            $content = $content . '<textarea ' . $onclick . ' class="form-control col-md-8" name="' . $step_name_trimmed . '[question][' . $questionTitle . ']" >' . ($questionExist ? $patient_questionnaire[$questionTitle] : '') . '</textarea><div class="invalid-feedback"></div><input  type="hidden" class="textarea-' . $step_name_trimmed . '" value="' . $score_value . '" id="textarea-score-' . $qid . '">';
+                            $areainc++;
+                        }
+                        $content = $content . '</div></div>';
+                        // $content = $content . '<div class="invalid-feedback"></div>';  
+                        $content = $content . '';
+                        $j++;
+
+                        $patientsRelationQuestionnaire = "";
+                    }
+                    $sc = '';
+                    if ($exist == 1) {
+                        $sc = '<strong>Score :</strong> <span id="total-' . $step_name_trimmed . '">' . ($questionExist && $exist ? $patient_questionnaire['score'] : '0') . '</span>';
+                    }
+                    $content = $content . '<div><span class="mr-3">Current Monthly Notes:</span><textarea class="form-control col-md-8" placeholder="Current Monthly Notes" name="' . $step_name_trimmed . '[current_monthly_notes]">' . $monthly_notes . '</textarea><div class="invalid-feedback"></div></div> <div class="mt-2">' . $sc . '</div>';
+                    if ($exist == 1) {
+                        $content = $content . '<input type="hidden" name="' . $step_name_trimmed . '[question][score]"  value="' . ($questionExist && $exist ? $patient_questionnaire['score'] : '0') . '" id="score-' . $step_name_trimmed . '"><hr>';
+                    }
+                    $i++;
+                }
+            }
+        }
+        
+       // echo '<div class="form-row"><div class="col-md-12 form-group card-title">Patient Relationship Building</div></div>';
+        $patientqut = RCare\Patients\Models\PatientQuestionnaire::where('patient_id', $patient_id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        $patientsRelationBuildingQuestionnaire =  RCare\Ccm\Models\QuestionnaireTemplatesUsageHistory::where('patient_id', $patient_id)->where('template_id', 0)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->orderBy('created_at', 'desc')->first();
+        $patient_building_template_exists = 0;
+        $patient_building_questionnaire = array();
+        if(isset($patientsRelationBuildingQuestionnaire->template) && $patientsRelationBuildingQuestionnaire->template != ""){
+            $patient_building_questionnaire = json_decode($patientsRelationBuildingQuestionnaire->template, true);  
+        }
+        echo '<div id="patient_build">';
+        if($patientqut != '') {
+            $pq =  json_decode($patientqut->questionnaire);
+            if (array_key_exists($pq, $patient_building_questionnaire)){
+                $patient_building_template_exists = 1;
+            }
+            echo '<strong><spam id="patient-relationship-building">'.$pq.'</spam></strong>';
+            echo '<textarea class="form-control col-md-8" name="patient_relationship_building'.'[question]['.$pq.']" >'.($patient_building_template_exists ? $patient_building_questionnaire[$pq] : '').'</textarea>';
+        }
+        echo '</div>';
+
+
+        echo $content;
+        // }else{
+        // echo $content;
+        // }
+
     }
 
     //created by pranali on 29Oct2020

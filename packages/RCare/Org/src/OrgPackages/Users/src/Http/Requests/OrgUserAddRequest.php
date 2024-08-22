@@ -29,7 +29,10 @@ class OrgUserAddRequest extends FormRequest
                 'email'                 => 'required|email:rfc,dns|unique:ren_core.users,email',
                 'password'              => 'required|min:6|confirmed', 
                 'role'                  => 'required|integer',
-                'report_to'             => 'required|integer',
+                'country_code'          => 'required',
+                'dob'                   => 'required',
+                'gender'                => 'required',
+                // 'report_to'             => 'required|integer',
                 // 'practice__id'          => 'required|integer', 
               /*  'profile_img'         => 'required',*/
                 // 'category_id'        => 'required',

@@ -16,16 +16,16 @@ use Illuminate\Support\Facades\Cache;
 //logout
 Route::get("/logout", "RCare\System\Http\Controllers\Auth\LoginController@logout")->name("logout");
 Route::middleware("web")->group(function () {
-
+ 
     Route::get("/", function () {
         // if(Auth::check()) {
         //     return redirect('/dashboard');
         // } else {
-        return redirect('rcare-login');
+        return redirect('login');
         // }
-    })->name("rcare-login");
+    })->name("login");
 
-    //Route::view('rcare-login', 'System::auth.login')->name('rcare-login');
+    //Route::view('login', 'System::auth.login')->name('login');
 
     route::get("access-denied", function () {
         return view("Theme::access-denied");
@@ -47,13 +47,13 @@ Route::middleware("web")->group(function () {
     Route::post('/login-otp/resend-another-method', "RCare\System\Http\Controllers\Auth\LoginController@resendAnotherMethod")->name('resend-another-method');
 
 
-    Route::get("rcare-login", "RCare\System\Http\Controllers\Auth\LoginController@index")->name("rcare-login");
-    Route::post("/rcare-login", "RCare\System\Http\Controllers\Auth\LoginController@login");
+    Route::get("login", "RCare\System\Http\Controllers\Auth\LoginController@index")->name("login");
+    Route::post("/login", "RCare\System\Http\Controllers\Auth\LoginController@login");
     //ask otp code on login screen
-    Route::post("/rcare-login-verification", "RCare\System\Http\Controllers\Auth\LoginController@loginVerify");
-    Route::post("/rcare-login-with-otp", "RCare\System\Http\Controllers\Auth\LoginController@loginWithOtp");
+    Route::post("/login-verification", "RCare\System\Http\Controllers\Auth\LoginController@loginVerify");
+    Route::post("/login-with-otp", "RCare\System\Http\Controllers\Auth\LoginController@loginWithOtp");
 
-    Route::post("/rcare-login-without-otp", "RCare\System\Http\Controllers\Auth\LoginController@loginWithoutOtp");
+    Route::post("/login-without-otp", "RCare\System\Http\Controllers\Auth\LoginController@loginWithoutOtp");
 
     // Password reset link request routes... priyasingh95161@gmail.com
     Route::get('password_requestform', 'RCare\System\Http\Controllers\Auth\ForgotPasswordController@showLinkRequestForm')->name('password_requestform');
