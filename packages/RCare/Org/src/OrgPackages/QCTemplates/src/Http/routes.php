@@ -28,7 +28,7 @@ Route::middleware(["auth", "roleAccess", "web"])->group(function () {
     Route::prefix('patients')->group(function () {
         // Route::get('/content-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\ContentTemplateController@listContentTemplates')->name('patients-content-template');
         Route::get('/questionnaire-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@listQuestionnaireTemplates')->name('patients-questionnaire-template');
-        // Route::get('/decisiontree-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@listDecision')->name('patients-decisiontree-template');
+         Route::get('/decisiontree-template', 'RCare\Org\OrgPackages\QCTemplates\src\Http\Controllers\QuestionnaireTemplateController@listDecision')->name('patients-decisiontree-template');
     });
 });
 

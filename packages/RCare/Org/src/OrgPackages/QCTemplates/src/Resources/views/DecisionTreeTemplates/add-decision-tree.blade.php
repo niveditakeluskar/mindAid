@@ -148,23 +148,36 @@ The markup will be simple nested lists
           
                 <form class="" method="post" action="{{ route('save-dtemplate') }}"> 
                     @csrf
-                    <div class="form-group">
+                    <div class="row">
+
+                    <div class="col-md-4 form-group mb-3">
+                            <label class="">Content Title <span class="error">*</span></label>  
+                            @text("content_title", ["id"=>"content_title"])
+                    </div>  
+                    <div class="col-md-4 form-group mb-3">
+                        <label class="">Sequence <span class="error">*</span></label>
+                        <input type="number" class="form-control " name="sequence" id="sequence">       
+                    </div>
+                    <div class="col-md-4 form-group mb-3">
+                            <label>Surgery</label>
+                            @selectsurgery("surgery", ["id" => "surgery"])
+                     </div>
                         
-                            <div class="row"><div class="col-md-2"><label>Content Name <span class="error">*</span></label> </div>
-                            <input type="text" class="form-control col-md-3" name="content_title" id="content_title">
                             
-                            <div class="col-md-2 offset-md-1"><label>Content Type <span class="error">*</span></label></div>
-                            <select class="custom-select col-md-3" name="template_type" id="template_type">
+                        
+                            
+                            <div class="col-md-2 offset-md-1" style="display:none"><label>Content Type <span class="error">*</span></label></div>
+                            <select class="custom-select col-md-3" name="template_type" id="template_type"  style="display:none">
                             
                                     <option value="{{ 6 }}">Decision Tree</option>
                     
                             </select>
-                            </div>
+                            
                     </div>  
                     <div class="form-group" style="text-align: end;">  
                         <div class="col-md-2 offset-md-3"><span class="cerror" style="display:none;color:red">Content Name Requred</span></div>
                     </div>  
-                    <div class="form-group">
+                    <div class="form-group" style="display:none">
                         <div class="row"><label class="col-md-2">Module <span class="error">*</span></label>
                         <select class="custom-select col-md-3" name="module" id="module" >
                            
@@ -180,12 +193,12 @@ The markup will be simple nested lists
                         
                         </select></div>
                     </div>
-                    <div class="form-group">  
+                    <div class="form-group" style="display:none">  
                         <div class="col-md-3 offset-md-4"><span class="merror" style="display:none;color:red">Select module</span></div>
                         <div class="col-md-2 offset-md-10"><span class="smerror" style="display:none;color:red">Select Sub module</span></div>
                     </div> 
 
-                    <div class="form-group">
+                    <div class="form-group" style="display:none">
                         <div class="row">
                         <label class="col-md-2" id="stage_label" >Stage</label>
                             <select class="custom-select col-md-3" name="stage_id" id="stages"  >
@@ -196,14 +209,13 @@ The markup will be simple nested lists
                             
                         </div>
                     </div> 
-                    <div class="form-group">  
+                    <div class="form-group" style="display:none">  
                         <div class="col-md-3 offset-md-4"><span class="stageerror" style="display:none;color:red">Select Stage</span></div>
                         <div class="col-md-2 offset-md-10"><span class="steperror" style="display:none;color:red">Select Step</span></div> 
                     </div> 
-                    <div class="form-group">
+                    <div class="form-group" style="display:none">
                         <div class="row">
-                        <label class="col-md-2" >Sequence</label>
-                        <input type="number" class="form-control col-md-3" name="sequence" id="sequence">    
+                           
 
                         <label class="col-md-2 offset-md-1" >Months</label>
                             <div class="wrapMulDrop col-md-3">
@@ -284,7 +296,7 @@ The markup will be simple nested lists
                         </div>
                     </div>  
                     <hr>
-            <div class="form-group">  
+            <!--div class="form-group">  
                 <div class="row">
                     <div class="col-md-6 form-group mb-3">
                         <label for="copy_from" class="">Copy Decision Tree From </label>
@@ -293,7 +305,7 @@ The markup will be simple nested lists
                         </select>
                     </div>
                 </div>
-            </div>  
+            </div-->  
 <div class="tree" id="decision_tree_content">
     <ul>
 		<li class="question_tree" id="question_tree_1">
@@ -489,22 +501,22 @@ function empty(){
     }else{
         $('.cerror').hide();
     }
-    if($('#module').val()==0){
-        $('.merror').show();
-        return false;
-    }else{ $('.merror').hide();}
-    if($('#sub_module').val()=='Select Sub Module'){
-        $('.smerror').show();
-        return false;
-    }else{ $('.smerror').hide();}
-    if($('#stages').val()=='Select Stage'){
-        $('.stageerror').show();
-        return false;
-    }else{ $('.stageerror').hide();}
-    if($('#stage_code').val()=='Select Stage Code'){
-        $('.steperror').show();
-        return false;
-    }else{ $('.steperror').hide();}
+    // if($('#module').val()==0){
+    //     $('.merror').show();
+    //     return false;
+    // }else{ $('.merror').hide();}
+    // if($('#sub_module').val()=='Select Sub Module'){
+    //     $('.smerror').show();
+    //     return false;
+    // }else{ $('.smerror').hide();}
+    // if($('#stages').val()=='Select Stage'){
+    //     $('.stageerror').show();
+    //     return false;
+    // }else{ $('.stageerror').hide();}
+    // if($('#stage_code').val()=='Select Stage Code'){
+    //     $('.steperror').show();
+    //     return false;
+    // }else{ $('.steperror').hide();}
     
     var valid = true;
     $(".qt").each(function(){

@@ -32,6 +32,7 @@ Route::middleware(["auth", "web"])->group(function () {
         Route::post('/ajax/submitRegistration', 'RCare\Patients\Http\Controllers\PatientController@patientRegistration')->name("ajax.patient.registration");
         
         Route::get('/questions/{id}', 'RCare\Patients\Http\Controllers\PatientController@fetchQuestions')->name('questions'); 
+        Route::get('/questions-render/{id}', 'RCare\Patients\Http\Controllers\PatientController@fetchTreeQuestions')->name('questions.render'); 
         Route::get('/patient-relationship-questionnaire/{patient_id}/{module_id}/{component_id}/patient-relationship-questionnaire', 'RCare\Patients\Http\Controllers\PatientController@fetchPatientRelationshipQuestionnaires')->name('patient_relationship_questionnaire');
         Route::post('/monthly-monitoring-call-relationship', 'RCare\Patients\Http\Controllers\PatientController@SaveCallRelationship')->name('monthly.monitoring.call.relationship');
     });

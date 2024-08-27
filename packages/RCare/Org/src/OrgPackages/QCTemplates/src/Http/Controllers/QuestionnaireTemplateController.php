@@ -283,7 +283,8 @@ class QuestionnaireTemplateController extends Controller
             $configTZ = config('app.timezone');
 			$userTZ = Session::get('timezone') ? Session::get('timezone') : config('app.timezone');
             //$data = QuestionnaireTemplate::where('module_id',$module_id)->where('template_type_id',6)->with('module','components','template','users','stage','step')->where('status',1)->get();
-            $data = DB::select("select a.id as \"DT_RowId\", content_title, template_type, a.status, a.sequence, to_char(a.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, a.id, module, components,d.description as stage, e.description as step, f_name, l_name FROM ren_core.questionnaire_templates as a join ren_core.modules as b on a.module_id=b.id join ren_core.module_components as c on a.component_id=c.id join ren_core.stage as d on a.stage_id=d.id join ren_core.stage_codes as e on a.stage_code=e.id join rcare_admin.template as f on a.template_type_id=f.id left join ren_core.users as u on a.created_by=u.id  WHERE  a.module_id='".$module_id."' AND  template_type_id = 6  and a.status != 2 order by a.updated_at DESC");
+            $data = DB::select("select a.id as \"DT_RowId\", content_title, a.status, a.sequence, to_char(a.updated_at at time zone '".$configTZ."' at time zone '".$userTZ."', 'MM-DD-YYYY HH24:MI:SS') as updated_at, a.id FROM ren_core.questionnaire_templates as a 
+            WHERE  a.module_id='".$module_id."' AND  template_type_id = 6  and a.status != 2 order by a.updated_at DESC");
             // $data = QuestionnaireTemplate::with('module','components')->get();
             return Datatables::of($data)
             ->addIndexColumn()
@@ -312,8 +313,8 @@ class QuestionnaireTemplateController extends Controller
         $data = TemplateTypes::all();
         $service = Module::all();
         $sub_service = ModuleComponents::all();
-        $devices = Devices::all();
-        return view('QCTemplates::DecisionTreeTemplates.add-decision-tree', compact('data','service','devices', 'sub_service'));
+        //$devices = Devices::all();
+        return view('QCTemplates::DecisionTreeTemplates.add-decision-tree', compact('data','service', 'sub_service'));
     }
 
     public function copyDecision(){
@@ -330,12 +331,12 @@ class QuestionnaireTemplateController extends Controller
 
        // dd($request->months); 
        
-        $months = array();
-        if($request->months != null || $request->months != ''){
-            foreach(sanitizeVariable($request->months) as $key => $val){
-                $months[] = $key;       
-            }
-        }
+        // $months = array();
+        // if($request->months != null || $request->months != ''){
+        //     foreach(sanitizeVariable($request->months) as $key => $val){
+        //         $months[] = $key;       
+        //     }
+        // }
         //dd($months);
         //check for the stage
         if(sanitizeVariable($request->has('module')) && sanitizeVariable($request->module) != "Select Module") {
@@ -373,7 +374,7 @@ class QuestionnaireTemplateController extends Controller
         'question' => json_encode($questionDetails),
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
-        'display_months' => json_encode($months),
+        //'display_months' => json_encode($months),
        // 'tags' => sanitizeVariable($request->tags)
         );
         
@@ -437,12 +438,12 @@ class QuestionnaireTemplateController extends Controller
 
     public function EditDecision(Request $request){
 
-        $months = array();
-        if($request->months != null || $request->months != ''){
-            foreach(sanitizeVariable($request->months) as $key => $val){
-                $months[] = $key;       
-            }
-        }
+        // $months = array();
+        // if($request->months != null || $request->months != ''){
+        //     foreach(sanitizeVariable($request->months) as $key => $val){
+        //         $months[] = $key;       
+        //     }
+        // }
 
         if(sanitizeVariable($request->has('stages')) && sanitizeVariable($request->stages) != "" && sanitizeVariable($request->stages) != "Select Stage" ) {
             $stages = sanitizeVariable($request->stages);
@@ -457,14 +458,14 @@ class QuestionnaireTemplateController extends Controller
         $questionDetails = array('question' => sanitizeVariable($request->DT));
         $data = array('content_title' => sanitizeVariable($request->content_title),
         'template_type_id' => sanitizeVariable($request->template_type),
-        'module_id' => sanitizeVariable($request->module),
-        'stage_id' => $stages,
-        'stage_code' => $stage_code,
-        'component_id' => sanitizeVariable($request->sub_module),
+        'module_id' => 8,
+        'stage_id' => 0,
+        'stage_code' => 0,
+        'component_id' => 0,
         'question' => json_encode($questionDetails),
         'status'   => 1,
         'sequence' => sanitizeVariable($request->sequence),
-        'display_months' => json_encode($months),
+        //'display_months' => json_encode($months),
         //'tags' => sanitizeVariable($request->tags)
         );
         //dd($data);
@@ -474,7 +475,7 @@ class QuestionnaireTemplateController extends Controller
         if($request->module==2){
             return redirect()->route('rpm-decisiontree-template')->with('success','Template Modified successfully!');
         }else{
-            return redirect()->route('ccm-decisiontree-template')->with('success','Template Modified successfully!');
+            return redirect()->route('patients-decisiontree-template')->with('success','Template Modified successfully!');
         }
         
 

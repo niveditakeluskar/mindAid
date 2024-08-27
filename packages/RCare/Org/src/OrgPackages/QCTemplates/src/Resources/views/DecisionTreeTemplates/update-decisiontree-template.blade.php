@@ -434,14 +434,16 @@ Thanks :)*/
                <div class="row">
                     <div class="col-md-2"><label>Content Name <span class="error">*</span></label></div>
                     <input type="text" class="form-control col-md-3" name="content_title" value="{{ $data->content_title }}">
-                    <div class="col-md-2 offset-md-1"><label>Content Type <span class="error">*</span></label></div>
+                    <div class="col-md-2 offset-md-1" style="display:none"><label>Content Type <span class="error">*</span></label></div>
 
-                    <select class="custom-select col-md-3" name="template_type" id="template_type">
+                    <select class="custom-select col-md-3" name="template_type" id="template_type" style="display:none">
                          <option value="{{ 6 }}">Decision Tree</option>
                     </select>
+                    <label class="col-md-2 offset-md-1" >Sequence</label>
+                    <input type="number" class="form-control col-md-3" name="sequence" id="sequence" value="{{ $data->sequence }}"> 
                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <div class="row">
                     <label class="col-md-2">Module<span class="error">*</span></label>
                     @selectOrgModule("module",["id"=>"module", "class"=>"col-md-3"])
@@ -449,7 +451,7 @@ Thanks :)*/
                      @select("Sub Module", "sub_module", [], ["id" => "sub_module", "class"=>"custom-select col-md-3"])
                  </div>  
             </div>  
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <div class="row">
                     <label class="col-md-2">Stage</label>
                     @select("Stage", "stages", [], ["id" => "stages", "class"=>"col-md-3"])
@@ -457,7 +459,7 @@ Thanks :)*/
                     @select("Step", "stage_code", [], ["id" => "stage_code", "class"=>"custom-select col-md-3 capital-first"])    
                  </div>  
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <div class="row">
                     <label class="col-md-2" >Sequence</label>
                     <input type="number" class="form-control col-md-3" name="sequence" id="sequence" value="{{ $data->sequence }}"> 
@@ -873,22 +875,22 @@ function empty(){
     }else{
         $('.cerror').hide();
     }
-    if($('#module').val()==0){
-        $('.merror').show();
-        return false;
-    }else{ $('.merror').hide();}
-    if($('#sub_module').val()=='Select Sub Module'){
-        $('.smerror').show();
-        return false;
-    }else{ $('.smerror').hide();}
-    if($('#stages').val()=='Select Stage'){
-        $('.stageerror').show();
-        return false;
-    }else{ $('.stageerror').hide();}
-    if($('#stage_code').val()=='Select Stage Code'){
-        $('.steperror').show();
-        return false;
-    }else{ $('.steperror').hide();}
+    // if($('#module').val()==0){
+    //     $('.merror').show();
+    //     return false;
+    // }else{ $('.merror').hide();}
+    // if($('#sub_module').val()=='Select Sub Module'){
+    //     $('.smerror').show();
+    //     return false;
+    // }else{ $('.smerror').hide();}
+    // if($('#stages').val()=='Select Stage'){
+    //     $('.stageerror').show();
+    //     return false;
+    // }else{ $('.stageerror').hide();}
+    // if($('#stage_code').val()=='Select Stage Code'){
+    //     $('.steperror').show();
+    //     return false;
+    // }else{ $('.steperror').hide();}
     
     var valid = true;
     $(".qt").each(function(){
@@ -1057,16 +1059,16 @@ $(document).ready(function(){
 
 
 	
-    var module_id = {{$data->module_id}};
-    var submodule_id = {{$data->component_id}};
-    var stage_id = {{($data->stage_id != "") ? $data->stage_id : 0 }};
-    var stage_code = {{ ($data->stage_code != "") ? $data->stage_code : 0 }}
-    var template_type = {{$data->template_type_id}};
-    $('#template_type').val(template_type);
-    $('#module').val(module_id);
-    util.updateSubModuleList(parseInt(module_id), $("#sub_module"), parseInt(submodule_id));
-    util.updateStageList(parseInt(submodule_id), $("#stages"), parseInt(stage_id));
-    util.updateStageCodeList(parseInt(stage_id), $("#stage_code"), parseInt(stage_code));
+    // var module_id = {{$data->module_id}};
+    // var submodule_id = {{$data->component_id}};
+    // var stage_id = {{($data->stage_id != "") ? $data->stage_id : 0 }};
+    // var stage_code = {{ ($data->stage_code != "") ? $data->stage_code : 0 }}
+    // var template_type = {{$data->template_type_id}};
+    //$('#template_type').val(template_type);
+   // $('#module').val(module_id);
+    //util.updateSubModuleList(parseInt(module_id), $("#sub_module"), parseInt(submodule_id));
+   // util.updateStageList(parseInt(submodule_id), $("#stages"), parseInt(stage_id));
+    //util.updateStageCodeList(parseInt(stage_id), $("#stage_code"), parseInt(stage_code));
     $("[name='module']").on("change", function () {
         util.updateSubModuleList(parseInt($(this).val()), $("#sub_module"));
     });
@@ -1078,7 +1080,7 @@ $(document).ready(function(){
     $("[name='stages']").on("change", function () {
         util.updateStageCodeList(parseInt($(this).val()), $("#stage_code"));
     });
-    util.getToDoListData(0, {{getPageModuleName()}});
+    //util.getToDoListData(0, {{getPageModuleName()}});
 
     setTimeout(function () {
        
