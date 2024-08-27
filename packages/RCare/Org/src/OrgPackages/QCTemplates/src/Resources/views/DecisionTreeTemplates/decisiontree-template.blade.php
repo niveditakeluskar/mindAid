@@ -95,13 +95,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Questionnaire Name</th>
-                                <th>Type</th> 
-                                <th>Module</th>
-                                <th>Sub Module</th>
-                                <th>Stage</th>
-                                <th>Step</th>   
                                 <th>Sequence</th>   
-                                <th>Last Modifed By</th>
                                 <th>Last Modifed On</th>           
                                 <th>Action</th>
                             </tr>
@@ -237,18 +231,18 @@
                             return name
                         }
                     },
-                    {data: 'template_type', name: 'template_type'},
-                    {data: 'module', name: 'module'},
-                    {data: 'components', name: 'components'},
-                    {data: 'stage', name: 'stage'},
-                    {data: 'step', name: 'step'},
+                   
+                    // {data: 'module', name: 'module'},
+                    // {data: 'components', name: 'components'},
+                    // {data: 'stage', name: 'stage'},
+                    // {data: 'step', name: 'step'},
                     {data: 'sequence', name: 'sequence'},
-                    {data: 'f_name', name: 'f_name',render: function(data, type, full, meta){
-                        if(data!='' && data!='NULL' && data!=undefined){
-                            return data + ' ' + full.l_name;
-                        }else{ return '';}
-                        }
-                    },
+                    // {data: 'f_name', name: 'f_name',render: function(data, type, full, meta){
+                    //     if(data!='' && data!='NULL' && data!=undefined){
+                    //         return data + ' ' + full.l_name;
+                    //     }else{ return '';}
+                    //     }
+                    // },
                     {data: 'updated_at', name: 'updated_at'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ];

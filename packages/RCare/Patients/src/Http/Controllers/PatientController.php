@@ -37,6 +37,16 @@ class PatientController extends Controller
         ]);
     }
 
+    public function fetchTreeQuestions($id){
+        $module_id    = getPageModuleName();
+        $submodule_id = 0;
+        return Inertia::render('Patients/PatientGeneralQuestion', [
+            'patientId' => $id,
+            'moduleId' => $module_id,
+            'componentId' => $submodule_id,
+        ]);
+    }
+
     public function getquestion($id){
 
     }
